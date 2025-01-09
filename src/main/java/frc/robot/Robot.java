@@ -77,7 +77,7 @@ public class Robot extends LoggedRobot {
     Logger.start();
 
     // Version Number (Issue #, Commit #, Functionality 0 = working, 1 = WIP, 2 = doesn't work)
-    SmartDashboard.putString("Version Number", "2.7.1");
+    SmartDashboard.putString("Version Number", "2.9.1");
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
     robotContainer = new RobotContainer();

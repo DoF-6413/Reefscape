@@ -1,11 +1,10 @@
 package frc.robot.Subsystems.Drive;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import org.littletonrobotics.junction.Logger;
 
 public class Module {
   private final ModuleIO io;
@@ -26,7 +25,6 @@ public class Module {
     io.setDriveVoltage(0.0);
     io.setTurnVoltage(0.0);
   }
-
 
   /** Manually Sets Voltage of the Drive Motor in Individual Module (Max is 12 Volts) */
   public void setDriveVoltage(double volts) {
@@ -105,4 +103,3 @@ public class Module {
     Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
   }
 }
-
