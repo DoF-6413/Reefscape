@@ -4,4 +4,4 @@
 
 package frc.robot.Subsystems.Drive;
 
-public class ModuleIOSim {}
+public class ModuleIOSim implements ModuleIO{}

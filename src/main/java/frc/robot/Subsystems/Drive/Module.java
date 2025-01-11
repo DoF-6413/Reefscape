@@ -1,6 +1,8 @@
 package frc.robot.Subsystems.Drive;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -10,6 +12,13 @@ public class Module {
   private final ModuleIO io;
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
+
+  // initialize PID controllers
+  private PIDController drivePID;
+  private PIDController steerPID;
+
+  // initialize feedforward controllers TODO: Update
+  private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(1, 1);
 
   public Module(ModuleIO io, int index) {
     System.out.println("[Init] Creating Module");
@@ -92,6 +101,35 @@ public class Module {
   public void setBrakeModeAll(boolean enable) {
     io.setDriveBrakeMode(enable);
     io.setTurnBrakeMode(enable);
+  }
+
+  /**
+   * Run Setpoint is what Runs a Module based on Chassis Speeds
+   *
+   * @param Desired Swerve Module State (Desired Velocity and Angle)
+   */
+  public SwerveModuleState runSetpoint(SwerveModuleState state) {
+
+    // Optimize state based on current angle, aka take the shortest path for wheel to reach desired
+    // angle in rad (-pi,pi))
+    state.optimize(getState().angle);
+    var optimizedState = state;
+
+    // Run turn controller
+    io.setTurnVoltage(
+        steerPID.calculate(getAngle().getRadians(), optimizedState.angle.getRadians()));
+
+    // Update velocity based on turn error
+    optimizedState.speedMetersPerSecond *= Math.cos(steerPID.getPositionError());
+
+    // Turn Speed m/s into Vel rad/s
+    double velocityRadPerSec = optimizedState.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
+
+    // Run drive controller
+    io.setDriveVoltage(
+        driveFeedforward.calculate(velocityRadPerSec)
+            + (drivePID.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec)));
+    return optimizedState;
   }
 
   /**

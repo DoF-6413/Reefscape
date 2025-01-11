@@ -28,7 +28,7 @@ public class GyroIOPigeon2 implements GyroIO {
 
     gyro.getConfigurator().apply(new Pigeon2Configuration());
     gyro.optimizeBusUtilization();
-    
+
     yawRad = gyro.getYaw();
     yawVelocityRadPerSec = gyro.getAngularVelocityZWorld();
 
@@ -44,7 +44,8 @@ public class GyroIOPigeon2 implements GyroIO {
             MathUtil.inputModulus(yawRad.getValueAsDouble(), 0, 360)
                 + GyroConstants.HEADING_OFFSET_DEGREES);
     // and converts it to radians per second
-    inputs.yawVelocityRadPerSec = Units.degreesToRadians(gyro.getAngularVelocityZWorld().getValueAsDouble());
+    inputs.yawVelocityRadPerSec =
+        Units.degreesToRadians(gyro.getAngularVelocityZWorld().getValueAsDouble());
     inputs.rawYawPositionRad = Rotation2d.fromDegrees(yawRad.getValueAsDouble());
   }
 
