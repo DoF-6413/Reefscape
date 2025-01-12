@@ -4,7 +4,6 @@
 
 package frc.robot.Subsystems.Drive;
 
-import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -20,18 +19,13 @@ public final class DriveConstants {
   public static final double GEAR_RATIO = 6.12;
   /** Max Linear Speed of Robot */
   public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger
-  /** Set the inverted for the drive TalonFX */
-  // Default/Uninverted = CW; Inverted = CCW
-  public static final InvertedValue DRIVE_IS_INVERTED = InvertedValue.CounterClockwise_Positive;
   /** Set the inverted for the turn SparkMax */
   public static final boolean TURN_IS_INVERTED = true;
-
-  public static final boolean IS_BRAKE_MODE = true;
-  /** */
+  /**  */
   public static final double UPDATE_FREQUENCY_HZ = 100;
   /** Current limiting in amps */
   public static final int CUR_LIM_A = 60;
-  /** Enebles the current limit */
+  /** Enables the current limit */
   public static final boolean ENABLE_CUR_LIM = true;
 
   // SIM CONSTANTS

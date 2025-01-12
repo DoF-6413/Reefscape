@@ -98,7 +98,7 @@ public class Module {
    *
    * @param enable enables break mode on true, coast on false
    */
-  public void setBrakeModeAll(boolean enable) {
+  public void setBrakeMode(boolean enable) {
     io.setDriveBrakeMode(enable);
     io.setTurnBrakeMode(enable);
   }

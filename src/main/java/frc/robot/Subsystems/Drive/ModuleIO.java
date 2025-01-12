@@ -16,6 +16,8 @@ public interface ModuleIO {
     public double driveCurrentAmps = 0.0;
     /** Temperature of the motor in celsius */
     public double driveTempCelsius = 0.0;
+    /** If a singal is being recieved from the Drive motor */
+    public boolean driveIsConnected = false;
 
     /** Voltage that turn motor draws */
     public double turnAppliedVoltage = 0.0;
@@ -29,6 +31,8 @@ public interface ModuleIO {
     public double turnCurrentAmps = 0.0;
     /** Temperature of the motor in celsius */
     public double turnTempCelsius = 0.0;
+    /** If a singal is being recieved from the CANcoder */
+    public boolean absoluteEncoderIsConnected = false;
   }
 
   /** Updates logged inputs periodically */

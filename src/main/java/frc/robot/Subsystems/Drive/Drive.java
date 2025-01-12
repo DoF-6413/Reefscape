@@ -59,14 +59,19 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public void coastOnDisable(boolean isDisabled) {
+  /**
+   * Sets the entire Drive Train to either brake or coast mode
+   * 
+   * @param isDisabled True for brake, false for coast
+   */
+  public void setBrakeModeAll(boolean isDisabled) {
     if (isDisabled) {
       for (var module : modules) {
-        module.setBrakeModeAll(false);
+        module.setBrakeMode(true);
       }
     } else {
       for (var module : modules) {
-        module.setBrakeModeAll(true);
+        module.setBrakeMode(false);
       }
     }
   }
@@ -94,13 +99,13 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedStates);
   }
+
   public void moduleSteerDirectly(double setpoint) {
     steerSetpoint = setpoint;
   }
 
   /** Get Swerve Mesured States */
-
-  public SwerveModuleState[] getMeasuredStates(){
+  public SwerveModuleState[] getMeasuredStates() {
 
     // Tracks the state each module is in
 
@@ -114,7 +119,6 @@ public class Drive extends SubsystemBase {
     // and Angle)
     Logger.recordOutput("SwerveStates/Measured", measuredStates);
     return measuredStates;
-
   }
 
   /**
@@ -126,7 +130,7 @@ public class Drive extends SubsystemBase {
     setpoint = discreteSpeeds;
   }
 
-    /**
+  /**
    * Runs the drivetrain with raw values on a scale
    *
    * @param x velociy in x direction of Entire Swerve Drive
@@ -137,6 +141,9 @@ public class Drive extends SubsystemBase {
     runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(x, y, rot, this.getRotation()));
   }
 
+  /**
+   * @return A list of SwerveModulePositions containing the change in module position and angle
+   */
   public SwerveModulePosition[] getWheelDeltas() {
     SwerveModulePosition[] wheelDeltas = new SwerveModulePosition[4];
     /* Wheel Deltas or Wheel Positions */
@@ -152,10 +159,10 @@ public class Drive extends SubsystemBase {
   }
 
   public Rotation2d getRotation() {
-    
+
     var gyroYaw = new Rotation2d(gyro.getYaw().getRadians());
 
-     /*
+    /*
      * Twist2d is a change in distance along an arc
      * // x is the forward distance driven
      * // y is the distance driven to the side
@@ -169,7 +176,8 @@ public class Drive extends SubsystemBase {
               gyroYaw.minus(lastGyroYaw).getRadians()); // Updates twist based on GYRO
     } else {
       twist =
-          swerveDriveKinematics.toTwist2d(getWheelDeltas()); // Updates Twist Based on MODULE position
+          swerveDriveKinematics.toTwist2d(
+              getWheelDeltas()); // Updates Twist Based on MODULE position
       gyroYaw =
           lastGyroYaw.minus(
               new Rotation2d(twist.dtheta)); // Updates rotation 2d based on robot module position

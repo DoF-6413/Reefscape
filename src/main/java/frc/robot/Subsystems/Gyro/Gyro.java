@@ -50,7 +50,7 @@ public class Gyro extends SubsystemBase {
   }
 
   /**
-   * @return Returns whether or not the gyro is connected
+   * @return Whether or not the gyro is connected
    */
   public boolean isConnected() {
     return inputs.connected;
