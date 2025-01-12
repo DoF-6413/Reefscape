@@ -45,7 +45,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   private final StatusSignal<Voltage> driveAppliedVolts;
   private final StatusSignal<Current> driveCurrentAmps;
   private final StatusSignal<Temperature> driveTempCelsius;
-  
+
   // CANcoder inputs
   private final StatusSignal<Angle> absoluteEncoderPositionRad;
   private final StatusSignal<AngularVelocity> absoluteEncoderVelocityRadPerSec;
@@ -141,20 +141,32 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
     // Drive motor inputs
-    inputs.driveIsConnected = BaseStatusSignal.refreshAll(drivePositionRad, driveVelocityRadPerSec, driveAppliedVolts, driveCurrentAmps, driveTempCelsius).isOK();
+    inputs.driveIsConnected =
+        BaseStatusSignal.refreshAll(
+                drivePositionRad,
+                driveVelocityRadPerSec,
+                driveAppliedVolts,
+                driveCurrentAmps,
+                driveTempCelsius)
+            .isOK();
     inputs.drivePositionRad = Units.rotationsToRadians(drivePositionRad.getValueAsDouble());
-    inputs.driveVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(driveVelocityRadPerSec.getValueAsDouble() * 60);
+    inputs.driveVelocityRadPerSec =
+        Units.rotationsPerMinuteToRadiansPerSecond(driveVelocityRadPerSec.getValueAsDouble() * 60);
     inputs.driveAppliedVoltage = driveAppliedVolts.getValueAsDouble();
     inputs.driveCurrentAmps = driveCurrentAmps.getValueAsDouble();
     inputs.driveTempCelsius = driveTempCelsius.getValueAsDouble();
 
     // Turn motor inputs
-    inputs.absoluteEncoderIsConnected = BaseStatusSignal.refreshAll(absoluteEncoderPositionRad, absoluteEncoderVelocityRadPerSec).isOK();
+    inputs.absoluteEncoderIsConnected =
+        BaseStatusSignal.refreshAll(absoluteEncoderPositionRad, absoluteEncoderVelocityRadPerSec)
+            .isOK();
     inputs.turnAbsolutePositionRad =
-        (Units.rotationsToRadians(absoluteEncoderPositionRad.getValueAsDouble()) + absoluteEncoderOffsetRad)
+        (Units.rotationsToRadians(absoluteEncoderPositionRad.getValueAsDouble())
+                + absoluteEncoderOffsetRad)
             / DriveConstants.GEAR_RATIO;
     inputs.turnVelocityRadPerSec =
-        Units.rotationsPerMinuteToRadiansPerSecond(absoluteEncoderVelocityRadPerSec.getValueAsDouble() * 60)
+        Units.rotationsPerMinuteToRadiansPerSecond(
+                absoluteEncoderVelocityRadPerSec.getValueAsDouble() * 60)
             / DriveConstants.GEAR_RATIO;
     inputs.turnAppliedVoltage = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
     inputs.turnCurrentAmps = turnSparkMax.getOutputCurrent();

@@ -1,11 +1,16 @@
 package frc.robot.Subsystems.Drive;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems.Gyro.Gyro;
 import org.littletonrobotics.junction.Logger;
@@ -61,7 +66,7 @@ public class Drive extends SubsystemBase {
 
   /**
    * Sets the entire Drive Train to either brake or coast mode
-   * 
+   *
    * @param isDisabled True for brake, false for coast
    */
   public void setBrakeModeAll(boolean isDisabled) {
@@ -184,5 +189,35 @@ public class Drive extends SubsystemBase {
     }
     lastGyroYaw = gyroYaw;
     return lastGyroYaw;
+  }
+
+  public void driveWithDeadband(double x, double y, double rot) {
+    // apply deadband to x, y, and rot
+
+    double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DriveConstants.DEADBAND);
+    Rotation2d linearDirection = new Rotation2d(x, y);
+    double omega = MathUtil.applyDeadband(rot, DriveConstants.DEADBAND);
+
+    // square values
+    linearMagnitude = Math.pow(linearMagnitude, 2);
+    omega = Math.copySign(omega * omega, omega);
+
+    // Calculate new linear velocity
+    Translation2d linearVelocity =
+        new Pose2d(new Translation2d(), linearDirection)
+            .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
+            .getTranslation();
+
+    if (Math.abs(omega) > 0.01) {
+      headingSetpoint = new Rotation2d().plus(new Rotation2d(omega * Units.degreesToRadians(60)));
+    }
+
+    // the actual run command itself
+    this.runVelocity(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
+            linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
+            omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
+            this.getRotation()));
   }
 }

@@ -20,13 +20,20 @@ public final class DriveConstants {
   /** Max Linear Speed of Robot */
   public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger
   /** Set the inverted for the turn SparkMax */
+  public static final double MAX_ANGULAR_SPEED_RAD_PER_S =
+      MAX_LINEAR_SPEED_M_PER_S / (Math.sqrt(2) * TRACK_WIDTH_M / 2);
+
   public static final boolean TURN_IS_INVERTED = true;
-  /**  */
+  /** */
   public static final double UPDATE_FREQUENCY_HZ = 100;
   /** Current limiting in amps */
   public static final int CUR_LIM_A = 60;
   /** Enables the current limit */
   public static final boolean ENABLE_CUR_LIM = true;
+  /**
+   * Within 5% of the desired direction, the joystick is considered to be going in that direction
+   */
+  public static final double DEADBAND = 0.05;
 
   // SIM CONSTANTS
   // TODO: Update

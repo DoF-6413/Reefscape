@@ -18,13 +18,11 @@ public class DefaultDriveCommand extends Command {
   int index = 1;
   int prevIndex = index;
 
-  public DefaultDriveCommand(
-      Drive drive, Gyro gyro, CommandXboxController controller, int startingIndex) {
+  public DefaultDriveCommand(Drive drive, Gyro gyro, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drive = drive;
     this.gyro = gyro;
     this.controller = controller;
-    index = startingIndex;
 
     addRequirements(drive);
   }
@@ -33,5 +31,17 @@ public class DefaultDriveCommand extends Command {
   public void initialize() {}
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    /* Normal Drive Mode */
+    drive.driveWithDeadband(
+        controller.getLeftX(), // Forward/backward
+        -controller.getLeftY(), // Left/Right (multiply by -1 bc controller a())is inverted)
+        -controller.getRightX()); // Rotation;
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    drive.driveWithDeadband(0, 0, 0);
+  }
 }
