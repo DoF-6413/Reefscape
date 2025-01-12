@@ -24,7 +24,7 @@ public class GyroIOPigeon2 implements GyroIO {
   public GyroIOPigeon2() {
     System.out.println("[Init] Creating GyroIOPigeon2");
 
-    gyro = new Pigeon2(GyroConstants.CAN_ID, "CAN2");
+    gyro = new Pigeon2(GyroConstants.CAN_ID, "DriveTrain");
 
     gyro.getConfigurator().apply(new Pigeon2Configuration());
     gyro.optimizeBusUtilization();

@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Commands.TeleopCommands.DefaultDriveCommand;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotStateConstants;
-import frc.robot.Commands.TeleopCommands.DefaultDriveCommand;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
@@ -98,11 +98,10 @@ public class RobotContainer {
   private void driverControllerBindings() {
     /* Driving the robot */
 
-        m_driveSubsystem.setDefaultCommand(
-        new DefaultDriveCommand(m_driveSubsystem,
-         m_gyroSubsystem, controller));
+    m_driveSubsystem.setDefaultCommand(
+        new DefaultDriveCommand(m_driveSubsystem, m_gyroSubsystem, controller));
 
-        controller
+    controller
         .a()
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
