@@ -96,14 +96,14 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
     // Update Kraken configurations *NOTE: inverted = InvertedValue.CounterClockwise_Positive
     driveMotorConfigs.withInverted(InvertedValue.Clockwise_Positive);
-    driveMotorConfigs.withNeutralMode(NeutralModeValue.Coast);
+    driveMotorConfigs.withNeutralMode(NeutralModeValue.Brake);
     driveMotorConfigs.withControlTimesyncFreqHz(DriveConstants.UPDATE_FREQUENCY_HZ);
     driveTalonFX.optimizeBusUtilization();
 
     // Update SPARK MAX configurations
 
     turnConfig.inverted(DriveConstants.TURN_IS_INVERTED);
-    turnConfig.idleMode(IdleMode.kCoast);
+    turnConfig.idleMode(IdleMode.kBrake);
     turnConfig.smartCurrentLimit(DriveConstants.CUR_LIM_A);
 
     // Optimize CANcoder CAN bus ussage
@@ -130,7 +130,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
     // Initializes position to 0
     driveTalonFX.setPosition(0.0);
-
+    driveTalonFX.resetSignalFrequencies();
     // Craete Drive motor Status Signals
     drivePositionRad = driveTalonFX.getPosition();
     driveVelocityRadPerSec = driveTalonFX.getVelocity();
@@ -139,21 +139,17 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     driveTempCelsius = driveTalonFX.getDeviceTemp();
 
     // Create CANcoder Status Signals
+
+    turnAbsoluteEncoder.resetSignalFrequencies();
     absoluteEncoderPositionRad = turnAbsoluteEncoder.getAbsolutePosition();
     absoluteEncoderVelocityRadPerSec = turnAbsoluteEncoder.getVelocity();
   }
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
+
     // Drive motor inputs
-    inputs.driveIsConnected =
-        BaseStatusSignal.refreshAll(
-                drivePositionRad,
-                driveVelocityRadPerSec,
-                driveAppliedVolts,
-                driveCurrentAmps,
-                driveTempCelsius)
-            .isOK();
+    inputs.driveIsConnected = BaseStatusSignal.isAllGood();
     inputs.drivePositionRad = Units.rotationsToRadians(drivePositionRad.getValueAsDouble());
     inputs.driveVelocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(driveVelocityRadPerSec.getValueAsDouble() * 60);
@@ -162,9 +158,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     inputs.driveTempCelsius = driveTempCelsius.getValueAsDouble();
 
     // Turn motor inputs
-    inputs.absoluteEncoderIsConnected =
-        BaseStatusSignal.refreshAll(absoluteEncoderPositionRad, absoluteEncoderVelocityRadPerSec)
-            .isOK();
+    inputs.absoluteEncoderIsConnected = BaseStatusSignal.isAllGood();
     inputs.turnAbsolutePositionRad =
         (Units.rotationsToRadians(absoluteEncoderPositionRad.getValueAsDouble())
                 + absoluteEncoderOffsetRad)
@@ -195,7 +189,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
   @Override
   public void setTurnBrakeMode(boolean enable) {
-    turnConfig.inverted(enable);
+    turnConfig.idleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
     turnSparkMax.configure(
         turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }

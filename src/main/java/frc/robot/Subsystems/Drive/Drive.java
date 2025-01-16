@@ -30,7 +30,7 @@ public class Drive extends SubsystemBase {
   public Rotation2d lastGyroYaw = new Rotation2d();
 
   // Gets previous module positions
-  private double[] lastModulePositionsMeters = new double[] {0.0, 0.0, 0.0, 0.0};
+  private double[] lastModulePositionsMeters;
 
   public Drive(
       ModuleIO FRModuleIO,
@@ -190,11 +190,15 @@ public class Drive extends SubsystemBase {
     // apply deadband to x, y, and rot
 
     double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DriveConstants.DEADBAND);
-    Rotation2d linearDirection = new Rotation2d(x, y);
+
+    Rotation2d linearDirection = new Rotation2d();
+    if (x != 0 && y != 0) {
+      linearDirection = new Rotation2d(x, y);
+    }
     double omega = MathUtil.applyDeadband(rot, DriveConstants.DEADBAND);
 
     // square values
-    linearMagnitude = Math.pow(linearMagnitude, 2);
+    linearMagnitude = linearMagnitude * linearMagnitude;
     omega = Math.copySign(omega * omega, omega);
 
     // Calculate new linear velocity

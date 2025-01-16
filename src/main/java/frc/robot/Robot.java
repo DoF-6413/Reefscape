@@ -83,13 +83,14 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
     robotContainer = new RobotContainer();
+
+    robotContainer.mechamismsCoastOnDisable(true);
   }
 
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    robotContainer.mechamismsCoastOnDisable(true);
   }
 
   /** This function is called once when the robot is disabled. */

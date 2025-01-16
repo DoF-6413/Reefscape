@@ -14,8 +14,8 @@ public class Module {
   private final int index;
 
   // initialize PID controllers //TODO: update
-  private PIDController drivePID = new PIDController(1, 0, 0);
-  private PIDController steerPID = new PIDController(1, 0, 0.0);
+  private PIDController drivePID;
+  private PIDController steerPID;
 
   // initialize feedforward controllers TODO: Update
   private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(1, 1);
@@ -24,6 +24,12 @@ public class Module {
     System.out.println("[Init] Creating Module");
     this.io = io;
     this.index = index;
+
+    drivePID = new PIDController(1, 0, 0);
+    steerPID = new PIDController(1, 0, 0);
+    driveFeedforward = new SimpleMotorFeedforward(1, 1);
+
+    steerPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   public void updateInputs() {

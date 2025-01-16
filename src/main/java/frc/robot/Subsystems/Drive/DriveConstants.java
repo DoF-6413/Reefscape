@@ -31,14 +31,13 @@ public final class DriveConstants {
   /** Enables the current limit */
   public static final boolean ENABLE_CUR_LIM = true;
   /**
-   * Within 5% of the desired direction, the joystick is considered to be going in that direction
+   * Within 10% of the desired direction, the joystick is considered to be going in that direction
    */
-  public static final double DEADBAND = 0.05;
+  public static final double DEADBAND = 0.1;
 
   // SIM CONSTANTS
   // TODO: Update
 
-  /** Max Linear Speed of Robot */
   public static final double DRIVE_MOI_KG_M2 = 0.0;
 
   public static final double TURN_MOI_KG_M2 = 0.0;
@@ -47,10 +46,10 @@ public final class DriveConstants {
     // Translation 2d assumes that the robot front facing is in the positive x direction and the
     // robot left is in the positive y direction
     return new Translation2d[] {
-      new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
       new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
       new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
       new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
+      new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
     };
   }
   // talons , neos, cancoders

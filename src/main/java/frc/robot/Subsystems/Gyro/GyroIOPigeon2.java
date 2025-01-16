@@ -38,15 +38,15 @@ public class GyroIOPigeon2 implements GyroIO {
 
   @Override
   public void updateInputs(GyroIOInputs inputs) {
-    inputs.connected = BaseStatusSignal.refreshAll(yawRad, yawVelocityRadPerSec).isOK();
+    inputs.connected = BaseStatusSignal.isAllGood();
     inputs.yawPositionRad =
-        Rotation2d.fromDegrees(
-            MathUtil.inputModulus(yawRad.getValueAsDouble(), 0, 360)
-                + GyroConstants.HEADING_OFFSET_DEGREES);
+        Rotation2d.fromRadians(
+            MathUtil.inputModulus(Math.toRadians(yawRad.getValueAsDouble()), 0, 360)
+                + GyroConstants.HEADING_OFFSET_RAD);
     // and converts it to radians per second
     inputs.yawVelocityRadPerSec =
         Units.degreesToRadians(gyro.getAngularVelocityZWorld().getValueAsDouble());
-    inputs.rawYawPositionRad = Rotation2d.fromDegrees(yawRad.getValueAsDouble());
+    inputs.rawYawPositionRad = Rotation2d.fromRadians(Math.toRadians(yawRad.getValueAsDouble()));
   }
 
   @Override
