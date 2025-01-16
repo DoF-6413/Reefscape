@@ -11,12 +11,8 @@ import frc.robot.Subsystems.Gyro.Gyro;
 public class DefaultDriveCommand extends Command {
   /** Creates a new DefaultDriveCommand. */
   CommandXboxController controller;
-
   Drive drive;
   Gyro gyro;
-
-  int index = 1;
-  int prevIndex = index;
 
   public DefaultDriveCommand(Drive drive, Gyro gyro, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -34,8 +30,8 @@ public class DefaultDriveCommand extends Command {
   public void execute() {
     /* Normal Drive Mode */
     drive.driveWithDeadband(
-        controller.getLeftX(), // Forward/backward
-        -controller.getLeftY(), // Left/Right (multiply by -1 bc controller a())is inverted)
+        controller.getLeftY(), // Forward/backward
+        -controller.getLeftX(), // Left/Right (multiply by -1 bc controller a())is inverted)
         -controller.getRightX()); // Rotation;
   }
 
@@ -43,5 +39,10 @@ public class DefaultDriveCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     drive.driveWithDeadband(0, 0, 0);
+  }
+  // Returns true when the command should end
+  @Override
+  public boolean isFinished() {
+    return false;
   }
 }

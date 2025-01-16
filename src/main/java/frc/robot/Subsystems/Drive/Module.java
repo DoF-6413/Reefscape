@@ -13,9 +13,9 @@ public class Module {
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
 
-  // initialize PID controllers
-  private PIDController drivePID;
-  private PIDController steerPID;
+  // initialize PID controllers //TODO: update
+  private PIDController drivePID = new PIDController(1, 0, 0);
+  private PIDController steerPID = new PIDController(1, 0, 0.0);
 
   // initialize feedforward controllers TODO: Update
   private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(1, 1);
@@ -120,7 +120,7 @@ public class Module {
         steerPID.calculate(getAngle().getRadians(), optimizedState.angle.getRadians()));
 
     // Update velocity based on turn error
-    optimizedState.speedMetersPerSecond *= Math.cos(steerPID.getPositionError());
+    optimizedState.speedMetersPerSecond *= Math.cos(steerPID.getError());
 
     // Turn Speed m/s into Vel rad/s
     double velocityRadPerSec = optimizedState.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;

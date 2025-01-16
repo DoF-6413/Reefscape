@@ -101,6 +101,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     driveTalonFX.optimizeBusUtilization();
 
     // Update SPARK MAX configurations
+
     turnConfig.inverted(DriveConstants.TURN_IS_INVERTED);
     turnConfig.idleMode(IdleMode.kCoast);
     turnConfig.smartCurrentLimit(DriveConstants.CUR_LIM_A);

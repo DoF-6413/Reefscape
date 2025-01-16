@@ -10,7 +10,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems.Gyro.Gyro;
 import org.littletonrobotics.junction.Logger;
@@ -27,14 +26,11 @@ public class Drive extends SubsystemBase {
   // The current state of the robot
   public ChassisSpeeds setpoint = new ChassisSpeeds();
 
-  private double steerSetpoint = 0;
-
   // Gets previous gyro yaw
   public Rotation2d lastGyroYaw = new Rotation2d();
 
   // Gets previous module positions
   private double[] lastModulePositionsMeters = new double[] {0.0, 0.0, 0.0, 0.0};
-  private Rotation2d headingSetpoint = new Rotation2d(-Math.PI / 2.0);
 
   public Drive(
       ModuleIO FRModuleIO,
@@ -62,6 +58,9 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       modules[i].periodic();
     }
+
+    runSwerveModules(getAdjustedSpeeds());
+    getMeasuredStates();
   }
 
   /**
@@ -103,10 +102,6 @@ public class Drive extends SubsystemBase {
     // Updates setpoint logs
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedStates);
-  }
-
-  public void moduleSteerDirectly(double setpoint) {
-    steerSetpoint = setpoint;
   }
 
   /** Get Swerve Mesured States */
@@ -207,10 +202,6 @@ public class Drive extends SubsystemBase {
         new Pose2d(new Translation2d(), linearDirection)
             .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
             .getTranslation();
-
-    if (Math.abs(omega) > 0.01) {
-      headingSetpoint = new Rotation2d().plus(new Rotation2d(omega * Units.degreesToRadians(60)));
-    }
 
     // the actual run command itself
     this.runVelocity(
