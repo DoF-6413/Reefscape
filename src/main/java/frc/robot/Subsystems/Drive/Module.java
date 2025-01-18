@@ -1,6 +1,5 @@
 package frc.robot.Subsystems.Drive;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,9 +24,9 @@ public class Module {
     this.io = io;
     this.index = index;
 
-    drivePID = new PIDController(1, 0, 0);
-    steerPID = new PIDController(1, 0, 0);
-    driveFeedforward = new SimpleMotorFeedforward(1, 1);
+    drivePID = new PIDController(0, 0, 0);
+    steerPID = new PIDController(1, 0, 0.0);
+    driveFeedforward = new SimpleMotorFeedforward(0.115, 0.12978);
 
     steerPID.enableContinuousInput(-Math.PI, Math.PI);
   }
@@ -70,7 +69,7 @@ public class Module {
   /** Returns the current turn angle of the module. */
   public Rotation2d getAngle() {
     // Angle Modulus sets the Value Returned to be on a -pi, pi scale
-    return new Rotation2d(MathUtil.angleModulus(inputs.turnAbsolutePositionRad));
+    return new Rotation2d(inputs.turnAbsolutePositionRad);
   }
 
   /** Returns the current drive position of the module in meters. */

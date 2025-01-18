@@ -16,7 +16,10 @@ public final class DriveConstants {
   /** Radius of the robot (diagonal) in meters */
   public static final double DRIVETRAIN_RADIUS_M = TRACK_WIDTH_M / 2 * Math.sqrt(2);
   /** Gear Ratio for MK4i L3 Krakens */
-  public static final double GEAR_RATIO = 6.12;
+  public static final double DRIVE_GEAR_RATIO = 6.12;
+
+  public static final double STEER_GEAR_RATIO = 150 / 7;
+
   /** Max Linear Speed of Robot */
   public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger
   /** Set the inverted for the turn SparkMax */
