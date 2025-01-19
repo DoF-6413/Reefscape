@@ -17,8 +17,14 @@ public final class DriveConstants {
   public static final double DRIVETRAIN_RADIUS_M = TRACK_WIDTH_M / 2 * Math.sqrt(2);
   /** Gear Ratio for MK4i L3 Krakens */
   public static final double DRIVE_GEAR_RATIO = 6.12;
-
+  /** Gear Ratio for MK4i Neos */
   public static final double STEER_GEAR_RATIO = 150 / 7;
+
+  public static final double TURN_KP = 1;
+
+  public static final double TURN_KI = 0;
+
+  public static final double TURN_KD = 0;
 
   /** Max Linear Speed of Robot */
   public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger
@@ -97,14 +103,14 @@ public final class DriveConstants {
   }
 
   public enum ABSOLUTE_ENCODER_OFFSET {
-    FRONT_RIGHT(0), // Module 0
-    FRONT_LEFT(0), // Module 1
-    BACK_LEFT(0), // Module 2
-    BACK_RIGHT(0); // Module 3
+    FRONT_RIGHT(1.8775924843720249), // Module 0
+    FRONT_LEFT(1.1489516101263453), // Module 1
+    BACK_LEFT(-0.6534758156392831), // Module 2
+    BACK_RIGHT(1.0615147052168636); // Module 3
 
-    public final int OFFSET;
+    public final double OFFSET;
 
-    ABSOLUTE_ENCODER_OFFSET(int value) {
+    ABSOLUTE_ENCODER_OFFSET(double value) {
       OFFSET = value;
     }
   }

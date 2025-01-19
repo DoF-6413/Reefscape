@@ -120,6 +120,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     // Apply all SPARK MAX configurations: inverted, idleMode, Current Limit
     turnSparkMax.configure(
         turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    turnConfig.closedLoop.pid(DriveConstants.TURN_KP, 0, 0);
 
     // Apply Current Limit Configurations
     CurrentLimitsConfigs currentLimitsConfig =
@@ -163,7 +164,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     inputs.turnAbsolutePositionRad =
         MathUtil.angleModulus(
                 Units.rotationsToRadians(absoluteEncoderPositionRot.getValueAsDouble()))
-            + absoluteEncoderOffsetRad / DriveConstants.STEER_GEAR_RATIO;
+            + absoluteEncoderOffsetRad;
     inputs.turnVelocityRadPerSec =
         absoluteEncoderVelocityRotPerSec.getValueAsDouble() * 60 / DriveConstants.STEER_GEAR_RATIO;
     inputs.turnAppliedVoltage = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();

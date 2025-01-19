@@ -25,7 +25,7 @@ public class Module {
     this.index = index;
 
     drivePID = new PIDController(0, 0, 0);
-    steerPID = new PIDController(1, 0, 0.0);
+    steerPID = new PIDController(6.4, 0, 0.05);
     driveFeedforward = new SimpleMotorFeedforward(0.115, 0.12978);
 
     steerPID.enableContinuousInput(-Math.PI, Math.PI);
