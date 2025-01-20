@@ -20,13 +20,33 @@ public final class DriveConstants {
   /** Gear Ratio for MK4i Neos */
   public static final double STEER_GEAR_RATIO = 150 / 7;
 
-  public static final double DRIVE_KP = 1;
+  /**
+   * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
+   */
+  public static final double DRIVE_KP = 0;
+  /**
+   * KI represents the constant multiplied by the integral of the error from setpoint (Integral
+   * Error)
+   */
   public static final double DRIVE_KI = 0;
+  /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
   public static final double DRIVE_KD = 0;
+  /** KS represents the voltage required to overcome static friction */
+  public static final double DRIVE_KS_KRAKEN = 0.115;
+  /** KV represents the voltage used every second per meter */
+  public static final double DRIVE_KV_KRAKEN = 0.12978;
 
-  public static final double TURN_KP = 1;
+  /**
+   * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
+   */
+  public static final double TURN_KP = 6.4;
+  /**
+   * KI represents the constant multiplied by the integral of the error from setpoint (Integral
+   * Error)
+   */
   public static final double TURN_KI = 0;
-  public static final double TURN_KD = 0;
+  /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
+  public static final double TURN_KD = 0.05;
 
   /** Max Linear Speed of Robot */
   public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger

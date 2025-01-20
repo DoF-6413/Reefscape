@@ -12,7 +12,7 @@ public interface GyroIO {
 
   @AutoLog
   public static class GyroIOInputs {
-    /** Returns whether or not the */
+    /** Returns whether or not the gyro is connected */
     public boolean connected = false;
 
     public Rotation2d yawPositionRad = new Rotation2d();

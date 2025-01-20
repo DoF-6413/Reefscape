@@ -62,6 +62,7 @@ public class Drive extends SubsystemBase {
 
   /**
    * Sets the entire Drive Train to either brake or coast mode
+   *
    * @param isDisabled True for brake, false for coast
    */
   public void setBrakeModeAll(boolean isDisabled) {
@@ -73,6 +74,8 @@ public class Drive extends SubsystemBase {
   /**
    * Sets the Velocity of the Swerve Drive through Passing in a ChassisSpeeds (Can be Field Relative
    * OR Robot Orientated)
+   *
+   * @param speeds the desired chassis speeds
    */
   public void runVelocity(ChassisSpeeds speeds) {
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);

@@ -18,8 +18,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 public class GyroIOPigeon2 implements GyroIO {
 
   private final Pigeon2 gyro;
-  private final StatusSignal<Angle> yawRad;
-  private final StatusSignal<AngularVelocity> yawVelocityRadPerSec;
+  private StatusSignal<Angle> yawRad;
+  private StatusSignal<AngularVelocity> yawVelocityRadPerSec;
 
   public GyroIOPigeon2() {
     System.out.println("[Init] Creating GyroIOPigeon2");
@@ -29,15 +29,20 @@ public class GyroIOPigeon2 implements GyroIO {
     gyro.getConfigurator().apply(new Pigeon2Configuration());
     gyro.optimizeBusUtilization();
 
-    yawRad = gyro.getYaw();
     yawVelocityRadPerSec = gyro.getAngularVelocityZWorld();
+    yawRad = gyro.getYaw();
 
     yawRad.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
     yawVelocityRadPerSec.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
   }
 
+  // Updates the gyro inputs
   @Override
   public void updateInputs(GyroIOInputs inputs) {
+
+    yawVelocityRadPerSec = gyro.getAngularVelocityZWorld();
+    yawRad = gyro.getYaw();
+
     inputs.connected = BaseStatusSignal.isAllGood();
     inputs.yawPositionRad =
         Rotation2d.fromRadians(
@@ -48,7 +53,7 @@ public class GyroIOPigeon2 implements GyroIO {
         Units.degreesToRadians(gyro.getAngularVelocityZWorld().getValueAsDouble());
     inputs.rawYawPositionRad = Rotation2d.fromRadians(Math.toRadians(yawRad.getValueAsDouble()));
   }
-
+  // Sets the yaw to zero
   @Override
   public void zeroHeading() {
     gyro.reset();

@@ -19,7 +19,7 @@ public class Gyro extends SubsystemBase {
     System.out.println("[Init] Creating Gyro");
     this.io = io;
   }
-
+  /** This method is called once per scheduler run. */
   @Override
   public void periodic() {
     io.updateInputs(inputs);
@@ -32,7 +32,9 @@ public class Gyro extends SubsystemBase {
   public Rotation2d getYaw() {
     return inputs.yawPositionRad;
   }
-
+  /**
+   * @return returns the Yaw (Z Axis) in Radians (-pi, pi) without any offset
+   */
   public Rotation2d getRawYaw() {
     return inputs.rawYawPositionRad;
   }
@@ -55,7 +57,9 @@ public class Gyro extends SubsystemBase {
   public boolean isConnected() {
     return inputs.connected;
   }
-
+  /**
+   * @return the angle of the robot in radians
+   */
   public Rotation2d adjustedYaw(double adjustedAngle) {
     return inputs.yawPositionRad.plus(new Rotation2d(Units.degreesToRadians(adjustedAngle)));
   }

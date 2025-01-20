@@ -41,11 +41,11 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   private final double absoluteEncoderOffsetRad;
 
   // Drive motor inputs
-  private final StatusSignal<Angle> drivePositionRad;
-  private final StatusSignal<AngularVelocity> driveVelocityRadPerSec;
-  private final StatusSignal<Voltage> driveAppliedVolts;
-  private final StatusSignal<Current> driveCurrentAmps;
-  private final StatusSignal<Temperature> driveTempCelsius;
+  private StatusSignal<Angle> drivePositionRad;
+  private StatusSignal<AngularVelocity> driveVelocityRadPerSec;
+  private StatusSignal<Voltage> driveAppliedVolts;
+  private StatusSignal<Current> driveCurrentAmps;
+  private StatusSignal<Temperature> driveTempCelsius;
 
   // CANcoder inputs
   private StatusSignal<Angle> absoluteEncoderPositionRot;
@@ -135,18 +135,18 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     driveTalonFX.resetSignalFrequencies();
     // Craete Drive motor Status Signals
 
-    drivePositionRad = driveTalonFX.getPosition();
-    driveVelocityRadPerSec = driveTalonFX.getVelocity();
-    driveAppliedVolts = driveTalonFX.getMotorVoltage();
-    driveCurrentAmps = driveTalonFX.getStatorCurrent();
-    driveTempCelsius = driveTalonFX.getDeviceTemp();
-
     // Create CANcoder Status Signals
     turnAbsoluteEncoder.resetSignalFrequencies();
   }
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
+    // TODO: Make sure to update the inputs
+    drivePositionRad = driveTalonFX.getPosition();
+    driveVelocityRadPerSec = driveTalonFX.getVelocity();
+    driveAppliedVolts = driveTalonFX.getMotorVoltage();
+    driveCurrentAmps = driveTalonFX.getStatorCurrent();
+    driveTempCelsius = driveTalonFX.getDeviceTemp();
 
     absoluteEncoderPositionRot = turnAbsoluteEncoder.getAbsolutePosition();
     absoluteEncoderVelocityRotPerSec = turnAbsoluteEncoder.getVelocity();

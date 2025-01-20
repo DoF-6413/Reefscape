@@ -12,40 +12,50 @@ public class Module {
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
 
-  // initialize PID controllers //TODO: update
+  // initialize PID controllers
   private PIDController drivePID;
   private PIDController steerPID;
 
-  // initialize feedforward controllers TODO: Update
-  private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(1, 1);
+  private final SimpleMotorFeedforward driveFeedforward;
 
   public Module(ModuleIO io, int index) {
     System.out.println("[Init] Creating Module");
     this.io = io;
     this.index = index;
 
-    drivePID = new PIDController(0, 0, 0);
-    steerPID = new PIDController(6.4, 0, 0.05);
-    driveFeedforward = new SimpleMotorFeedforward(0.115, 0.12978);
+    drivePID =
+        new PIDController(
+            DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD);
+    steerPID =
+        new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
 
-    steerPID.enableContinuousInput(-Math.PI, Math.PI);
+    driveFeedforward =
+        new SimpleMotorFeedforward(DriveConstants.DRIVE_KS_KRAKEN, DriveConstants.DRIVE_KV_KRAKEN);
   }
-
+  /** update the inputs of the modules */
   public void updateInputs() {
     io.updateInputs(inputs);
   }
-  /** Stops the Robot */
+  /** Stops the drive and turn motors */
   public void stop() {
     io.setDriveVoltage(0.0);
     io.setTurnVoltage(0.0);
   }
 
-  /** Manually Sets Voltage of the Drive Motor in Individual Module (Max is 12 Volts) */
+  /**
+   * Manually Sets Voltage of the Drive Motor in Individual Module (Max is 12 Volts)
+   *
+   * @param volts the voltage to set the drive motor to
+   */
   public void setDriveVoltage(double volts) {
     io.setDriveVoltage(volts);
   }
 
-  /** Manually Sets Voltage of the Turn Motor in Individual Module (Max is 12 Volts) */
+  /**
+   * Manually Sets Voltage of the Turn Motor in Individual Module (Max is 12 Volts)
+   *
+   * @param volts the voltage to set the turn motor to
+   */
   public void setTurnVoltage(double volts) {
     io.setTurnVoltage(volts);
   }
@@ -53,6 +63,8 @@ public class Module {
   /**
    * Manually Sets the Percent Speed of the Drive Motor in Individual Module (On a -1 to 1 Scale. 1
    * representing 100)
+   *
+   * @param percent the percent speed to set the drive motor to
    */
   public void setDrivePercentSpeed(double percent) {
     io.setDriveVoltage(percent * 12);
@@ -61,18 +73,24 @@ public class Module {
   /**
    * Manually Sets the Percent Speed of the Turn Motor in Individual Module (On a -1 to 1 Scale. 1
    * representing 100)
+   *
+   * @param percent the percent speed to set the turn motor to
    */
   public void setTurnPercentSpeed(double percent) {
     io.setTurnVoltage(percent * 12);
   }
 
-  /** Returns the current turn angle of the module. */
+  /**
+   * @return the current turn angle of the module.
+   */
   public Rotation2d getAngle() {
     // Angle Modulus sets the Value Returned to be on a -pi, pi scale
     return new Rotation2d(inputs.turnAbsolutePositionRad);
   }
 
-  /** Returns the current drive position of the module in meters. */
+  /**
+   * @return the current drive position of the module in meters.
+   */
   public double getPositionMeters() {
     return inputs.drivePositionRad * DriveConstants.WHEEL_RADIUS_M;
   }
