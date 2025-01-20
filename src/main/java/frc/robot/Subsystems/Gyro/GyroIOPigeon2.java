@@ -47,6 +47,7 @@ public class GyroIOPigeon2 implements GyroIO {
     m_yawVelocityDegPerSec.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
   }
 
+  // Updates the gyro inputs
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     inputs.connected = BaseStatusSignal.refreshAll(m_yawDeg, m_yawVelocityDegPerSec).isOK();
@@ -62,7 +63,7 @@ public class GyroIOPigeon2 implements GyroIO {
     inputs.rawYawPositionRad =
         Rotation2d.fromRadians(Units.degreesToRadians(m_yawDeg.getValueAsDouble()));
   }
-
+  // Sets the yaw to zero
   @Override
   public void zeroHeading() {
     m_gyro.reset();
