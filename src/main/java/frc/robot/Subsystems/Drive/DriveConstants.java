@@ -20,10 +20,12 @@ public final class DriveConstants {
   /** Gear Ratio for MK4i Neos */
   public static final double STEER_GEAR_RATIO = 150 / 7;
 
+  public static final double DRIVE_KP = 1;
+  public static final double DRIVE_KI = 0;
+  public static final double DRIVE_KD = 0;
+
   public static final double TURN_KP = 1;
-
   public static final double TURN_KI = 0;
-
   public static final double TURN_KD = 0;
 
   /** Max Linear Speed of Robot */
@@ -61,8 +63,7 @@ public final class DriveConstants {
       new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
     };
   }
-  // talons , neos, cancoders
-  // TODO: update all CAN IDs
+  // Krakens, Neos, CANcoders
   public enum DRIVE_MOTOR {
     FRONT_RIGHT(2), // Module 0
     FRONT_LEFT(3), // Module 1

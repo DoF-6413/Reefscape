@@ -44,8 +44,8 @@ public class Drive extends SubsystemBase {
     this.gyro = gyro;
     modules[0] = new Module(FRModuleIO, 0);
     modules[1] = new Module(FLModuleIO, 1);
-    modules[2] = new Module(BLModuleIO, 3);
-    modules[3] = new Module(BRModuleIO, 2);
+    modules[2] = new Module(BLModuleIO, 2);
+    modules[3] = new Module(BRModuleIO, 3);
 
     // Initialize the swerve drive kinematics
     swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
@@ -58,25 +58,15 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       modules[i].periodic();
     }
-
-    // runSwerveModules(getAdjustedSpeeds());
-    // getMeasuredStates();
   }
 
   /**
    * Sets the entire Drive Train to either brake or coast mode
-   *
    * @param isDisabled True for brake, false for coast
    */
   public void setBrakeModeAll(boolean isDisabled) {
-    if (isDisabled) {
-      for (var module : modules) {
-        module.setBrakeMode(true);
-      }
-    } else {
-      for (var module : modules) {
-        module.setBrakeMode(false);
-      }
+    for (var module : modules) {
+      module.setBrakeMode(isDisabled ? true : false);
     }
   }
 
@@ -187,44 +177,4 @@ public class Drive extends SubsystemBase {
             omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
             this.getRotation()));
   }
-
-  // public void runSwerveModules(SwerveModuleState[] setpointStates) {
-  // Runs Modules to Run at Specific Setpoints (Linear and Angular Velocity) that
-  // is Quick & Optimized for smoothest movement
-
-  // SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
-  // for (int i = 0; i < 4; i++) {
-  //   optimizedStates[i] = modules[i].runSetpoint(setpointStates[i]);
-  // }
-  // // Updates setpoint logs
-  // Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-  // Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedStates);
-  // }
-
-  // /** Get Swerve Mesured States */
-  // public SwerveModuleState[] getMeasuredStates() {
-  //   // // Tracks the state each module is in
-
-  //   // SwerveModuleState[] measuredStates = new SwerveModuleState[4];
-
-  //   // for (int i = 0; i < 4; i++) {
-  //   //   measuredStates[i] = modules[i].getState();
-  //   // }
-
-  //   // // Updates what states each module is in (Current Velocity, Angular Velocity,
-  //   // // and Angle)
-  //   // Logger.recordOutput("SwerveStates/Measured", measuredStates);
-  //   return measuredStates;
-  // }
-
-  // public SwerveModuleState[] getAdjustedSpeeds() {
-  //   SwerveModuleState[] setpointStates = new SwerveModuleState[4];
-  //   setpointStates = swerveDriveKinematics.toSwerveModuleStates(setpoint);
-
-  //   // Renormalizes all wheel speeds so the ratio of velocity remains the same but
-  //   // they don't exceed the maximum speed anymore
-  //   SwerveDriveKinematics.desaturateWheelSpeeds(
-  //       setpointStates, DriveConstants.MAX_LINEAR_SPEED_M_PER_S);
-  //   return setpointStates;
-  // }
 }
