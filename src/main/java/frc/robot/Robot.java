@@ -79,11 +79,11 @@ public class Robot extends LoggedRobot {
     Logger.start();
 
     // Version Number (Issue #, Commit #, Functionality 0 = working, 1 = WIP, 2 = doesn't work)
-    SmartDashboard.putString("Version Number", "4.9.1");
+    SmartDashboard.putString("Version Number", "4.10.1");
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
     robotContainer = new RobotContainer();
-    robotContainer.mechamismsCoastOnDisable(true);
+    robotContainer.mechamismsCoastOnDisable(false);
   }
 
   /** This function is called periodically during all modes. */

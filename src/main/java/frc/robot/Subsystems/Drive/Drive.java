@@ -88,11 +88,15 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveChassisStates/Setpoints", discreteSpeeds);
 
+    SwerveModuleState[] measuredStates = new SwerveModuleState[4];
+
     for (int i = 0; i < 4; i++) {
       modules[i].runSetpoint(setpointStates[i]);
+      measuredStates[i] = modules[i].getState();
     }
 
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
+    Logger.recordOutput("SwerveStates/SetpointsMeasured", measuredStates);
   }
 
   /**

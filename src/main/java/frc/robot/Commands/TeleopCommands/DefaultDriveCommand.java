@@ -33,7 +33,7 @@ public class DefaultDriveCommand extends Command {
     drive.driveWithDeadband(
         controller.getLeftY(), // Forward/backward
         -controller.getLeftX(), // Left/Right (multiply by -1 bc controller a())is inverted)
-        -controller.getRightX()); // Rotation;
+        controller.getRightX()); // Rotation;
   }
 
   /**

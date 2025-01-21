@@ -137,16 +137,17 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
     // Create CANcoder Status Signals
     turnAbsoluteEncoder.resetSignalFrequencies();
-  }
 
-  @Override
-  public void updateInputs(ModuleIOInputs inputs) {
-    // TODO: Make sure to update the inputs
     drivePositionRad = driveTalonFX.getPosition();
     driveVelocityRadPerSec = driveTalonFX.getVelocity();
     driveAppliedVolts = driveTalonFX.getMotorVoltage();
     driveCurrentAmps = driveTalonFX.getStatorCurrent();
     driveTempCelsius = driveTalonFX.getDeviceTemp();
+  }
+
+  @Override
+  public void updateInputs(ModuleIOInputs inputs) {
+    // TODO: Make sure to update the inputs
 
     absoluteEncoderPositionRot = turnAbsoluteEncoder.getAbsolutePosition();
     absoluteEncoderVelocityRotPerSec = turnAbsoluteEncoder.getVelocity();
