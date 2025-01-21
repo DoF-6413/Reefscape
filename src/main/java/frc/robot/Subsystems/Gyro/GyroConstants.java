@@ -3,7 +3,6 @@ package frc.robot.Subsystems.Gyro;
 import edu.wpi.first.math.util.Units;
 
 public class GyroConstants {
-  // TODO: Change these values to match the robot
   /**
    * Sets the offset of the heading so that the side opposite of the battery is the front of the
    * robot

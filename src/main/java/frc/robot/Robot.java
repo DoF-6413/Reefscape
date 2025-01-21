@@ -97,7 +97,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    robotContainer.mechamismsCoastOnDisable(true); //TODO: Update false for comps
+    robotContainer.mechamismsCoastOnDisable(true); // TODO: Update false for comps
   }
 
   /** This function is called periodically when disabled. */

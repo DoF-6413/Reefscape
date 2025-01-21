@@ -16,6 +16,7 @@ public class Module {
   private PIDController drivePID;
   private PIDController steerPID;
 
+  // initialize Feedforward
   private final SimpleMotorFeedforward driveFeedforward;
 
   public Module(ModuleIO io, int index) {

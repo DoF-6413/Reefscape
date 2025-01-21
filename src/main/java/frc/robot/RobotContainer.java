@@ -21,7 +21,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
   // Subsystems
-  // Drive
+  // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
 
@@ -29,7 +29,7 @@ public class RobotContainer {
   private final CommandXboxController controller =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
 
-  // Auto
+  // Autos
   private final LoggedDashboardChooser<Command> autoChooser =
       new LoggedDashboardChooser<>("Auto Choices");
 
@@ -71,7 +71,7 @@ public class RobotContainer {
         break;
     }
 
-    // Adds an "auto" tab on ShuffleBoard
+    // Adds an "Auto" tab on ShuffleBoard
     Shuffleboard.getTab("Auto").add(autoChooser.getSendableChooser());
 
     // Configure the button bindings

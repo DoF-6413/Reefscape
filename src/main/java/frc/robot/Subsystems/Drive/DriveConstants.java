@@ -49,13 +49,14 @@ public final class DriveConstants {
   public static final double TURN_KD = 0.05;
 
   /** Max Linear Speed of Robot */
-  public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger
+  public static final double MAX_LINEAR_SPEED_M_PER_S =
+      5.2; // TODO: Update? Since robot is larger //TODO:I still not knowing the answere
   /** Set the inverted for the turn SparkMax */
   public static final double MAX_ANGULAR_SPEED_RAD_PER_S =
       MAX_LINEAR_SPEED_M_PER_S / (Math.sqrt(2) * TRACK_WIDTH_M / 2);
 
   public static final boolean TURN_IS_INVERTED = true;
-  /** */
+  /** the update frecuency */
   public static final double UPDATE_FREQUENCY_HZ = 100;
   /** Current limiting in amps */
   public static final int CUR_LIM_A = 60;
@@ -67,7 +68,7 @@ public final class DriveConstants {
   public static final double DEADBAND = 0.1;
 
   // SIM CONSTANTS
-  // TODO: Update
+  // TODO: Update, ask darash later
 
   public static final double DRIVE_MOI_KG_M2 = 0.0;
 

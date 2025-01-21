@@ -152,7 +152,7 @@ public class Drive extends SubsystemBase {
               new Rotation2d(twist.dtheta)); // Updates rotation 2d based on robot module position
     }
     lastGyroYaw = gyroYaw;
-    return lastGyroYaw;
+    return gyroYaw;
   }
 
   public void driveWithDeadband(double x, double y, double rot) {

@@ -18,8 +18,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 public class GyroIOPigeon2 implements GyroIO {
 
   private final Pigeon2 gyro;
-  private StatusSignal<Angle> yawRad;
-  private StatusSignal<AngularVelocity> yawVelocityRadPerSec;
+  private StatusSignal<Angle> yawDeg;
+  private StatusSignal<AngularVelocity> yawVelocityDegPerSec;
 
   public GyroIOPigeon2() {
     System.out.println("[Init] Creating GyroIOPigeon2");
@@ -29,26 +29,30 @@ public class GyroIOPigeon2 implements GyroIO {
     gyro.getConfigurator().apply(new Pigeon2Configuration());
     gyro.optimizeBusUtilization();
 
-    yawRad = gyro.getYaw();
-    yawVelocityRadPerSec = gyro.getAngularVelocityZWorld();
+    yawDeg = gyro.getYaw();
+    yawVelocityDegPerSec = gyro.getAngularVelocityZWorld();
 
-    yawRad.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
-    yawVelocityRadPerSec.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
+    yawDeg.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
+    yawVelocityDegPerSec.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
   }
 
   // Updates the gyro inputs
   @Override
   public void updateInputs(GyroIOInputs inputs) {
 
-    inputs.connected = BaseStatusSignal.refreshAll(yawRad, yawVelocityRadPerSec).isOK();
+    inputs.connected = BaseStatusSignal.refreshAll(yawDeg, yawVelocityDegPerSec).isOK();
     inputs.yawPositionRad =
         Rotation2d.fromRadians(
-            MathUtil.inputModulus(Math.toRadians(yawRad.getValueAsDouble()), 0, 2 * Math.PI)
-                + GyroConstants.HEADING_OFFSET_RAD);
+            MathUtil.inputModulus(
+                Units.degreesToRadians(yawDeg.getValueAsDouble())
+                    + GyroConstants.HEADING_OFFSET_RAD,
+                0,
+                2 * Math.PI));
     // and converts it to radians per second
     inputs.yawVelocityRadPerSec =
         Units.degreesToRadians(gyro.getAngularVelocityZWorld().getValueAsDouble());
-    inputs.rawYawPositionRad = Rotation2d.fromRadians(Math.toRadians(yawRad.getValueAsDouble()));
+    inputs.rawYawPositionRad =
+        Rotation2d.fromRadians(Units.degreesToRadians(yawDeg.getValueAsDouble()));
   }
   // Sets the yaw to zero
   @Override
