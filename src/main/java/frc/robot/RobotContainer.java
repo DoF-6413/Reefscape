@@ -118,6 +118,6 @@ public class RobotContainer {
   }
 
   public void mechamismsCoastOnDisable(boolean isDisabled) {
-    m_driveSubsystem.setBrakeModeAll(isDisabled);
+    m_driveSubsystem.setBrakeModeAll(!isDisabled);
   }
 }

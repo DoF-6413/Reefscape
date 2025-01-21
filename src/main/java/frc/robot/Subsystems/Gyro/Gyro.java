@@ -32,6 +32,7 @@ public class Gyro extends SubsystemBase {
   public Rotation2d getYaw() {
     return inputs.yawPositionRad;
   }
+
   /**
    * @return returns the Yaw (Z Axis) in Radians (-pi, pi) without any offset
    */
@@ -57,6 +58,7 @@ public class Gyro extends SubsystemBase {
   public boolean isConnected() {
     return inputs.connected;
   }
+
   /**
    * @return the angle of the robot in radians
    */

@@ -143,31 +143,43 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     driveAppliedVolts = driveTalonFX.getMotorVoltage();
     driveCurrentAmps = driveTalonFX.getStatorCurrent();
     driveTempCelsius = driveTalonFX.getDeviceTemp();
+
+    absoluteEncoderPositionRot = turnAbsoluteEncoder.getAbsolutePosition();
+    absoluteEncoderVelocityRotPerSec = turnAbsoluteEncoder.getVelocity();
   }
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
     // TODO: Make sure to update the inputs
 
-    absoluteEncoderPositionRot = turnAbsoluteEncoder.getAbsolutePosition();
-    absoluteEncoderVelocityRotPerSec = turnAbsoluteEncoder.getVelocity();
     // Drive motor inputs
-    inputs.driveIsConnected = BaseStatusSignal.isAllGood();
+    inputs.driveIsConnected =
+        BaseStatusSignal.refreshAll(
+                driveAppliedVolts,
+                driveCurrentAmps,
+                driveTempCelsius,
+                driveVelocityRadPerSec,
+                drivePositionRad)
+            .isOK();
     inputs.drivePositionRad = Units.rotationsToRadians(drivePositionRad.getValueAsDouble());
     inputs.driveVelocityRadPerSec =
-        Units.rotationsPerMinuteToRadiansPerSecond(driveVelocityRadPerSec.getValueAsDouble() * 60);
+        Units.rotationsPerMinuteToRadiansPerSecond(driveVelocityRadPerSec.getValueAsDouble() * 60)
+            / DriveConstants.DRIVE_GEAR_RATIO;
     inputs.driveAppliedVoltage = driveAppliedVolts.getValueAsDouble();
     inputs.driveCurrentAmps = driveCurrentAmps.getValueAsDouble();
     inputs.driveTempCelsius = driveTempCelsius.getValueAsDouble();
 
     // Turn motor inputs
-    inputs.absoluteEncoderIsConnected = BaseStatusSignal.isAllGood();
+    inputs.absoluteEncoderIsConnected =
+        BaseStatusSignal.refreshAll(absoluteEncoderPositionRot, absoluteEncoderVelocityRotPerSec)
+            .isOK();
     inputs.turnAbsolutePositionRad =
         MathUtil.angleModulus(
                 Units.rotationsToRadians(absoluteEncoderPositionRot.getValueAsDouble()))
             + absoluteEncoderOffsetRad;
     inputs.turnVelocityRadPerSec =
-        absoluteEncoderVelocityRotPerSec.getValueAsDouble() * 60 / DriveConstants.STEER_GEAR_RATIO;
+        Units.rotationsToRadians(absoluteEncoderVelocityRotPerSec.getValueAsDouble() * 60)
+            / DriveConstants.STEER_GEAR_RATIO;
     inputs.turnAppliedVoltage = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
     inputs.turnCurrentAmps = turnSparkMax.getOutputCurrent();
     inputs.turnTempCelsius = turnSparkMax.getMotorTemperature();

@@ -129,7 +129,7 @@ public class Drive extends SubsystemBase {
 
   public Rotation2d getRotation() {
 
-    var gyroYaw = new Rotation2d(gyro.getYaw().getRadians());
+    var gyroYaw = gyro.getYaw();
 
     /*
      * Twist2d is a change in distance along an arc

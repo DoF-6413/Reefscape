@@ -18,7 +18,7 @@ public final class DriveConstants {
   /** Gear Ratio for MK4i L3 Krakens */
   public static final double DRIVE_GEAR_RATIO = 6.12;
   /** Gear Ratio for MK4i Neos */
-  public static final double STEER_GEAR_RATIO = 150 / 7;
+  public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
 
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
@@ -44,7 +44,7 @@ public final class DriveConstants {
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
    */
-  public static final double TURN_KI = 0;
+  public static final double TURN_KI = 0.0;
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
   public static final double TURN_KD = 0.05;
 
@@ -77,10 +77,10 @@ public final class DriveConstants {
     // Translation 2d assumes that the robot front facing is in the positive x direction and the
     // robot left is in the positive y direction
     return new Translation2d[] {
-      new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
       new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
       new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
       new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
+      new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
     };
   }
   // Krakens, Neos, CANcoders
