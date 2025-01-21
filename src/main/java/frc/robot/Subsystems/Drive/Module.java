@@ -138,6 +138,16 @@ public class Module {
   }
 
   /**
+   * Locks module orientation at 0 degrees and runs drive motor at specified voltage
+   *
+   * @param output Voltage
+   */
+  public void runCharacterization(double output) {
+    io.setDriveVoltage(output);
+    io.setTurnPosition(new Rotation2d());
+  }
+
+  /**
    * Put Values that Should Be Called Periodically for EACH individual Module Here. Module.periodic
    * NEEDS to be in Drive periodic OR it wont run
    */

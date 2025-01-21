@@ -1,5 +1,6 @@
 package frc.robot.Subsystems.Drive;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ModuleIO {
@@ -43,6 +44,9 @@ public interface ModuleIO {
 
   /** Overrides the turn voltage */
   public default void setTurnVoltage(double voltage) {}
+
+  /** Overrides the turn position */
+  public default void setTurnPosition(Rotation2d angle) {}
 
   /** Enables brake mode for drive */
   public default void setDriveBrakeMode(boolean brake) {}

@@ -1,5 +1,7 @@
 package frc.robot.Subsystems.Drive;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,7 +12,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Subsystems.Gyro.Gyro;
 import org.littletonrobotics.junction.Logger;
 
@@ -32,6 +36,9 @@ public class Drive extends SubsystemBase {
   // Gets previous module positions
   private double[] lastModulePositionsMeters;
 
+  // System ID
+  private SysIdRoutine sysId;
+
   public Drive(
       ModuleIO FRModuleIO,
       ModuleIO FLModuleIO,
@@ -44,11 +51,27 @@ public class Drive extends SubsystemBase {
     this.gyro = gyro;
     modules[0] = new Module(FRModuleIO, 0);
     modules[1] = new Module(FLModuleIO, 1);
-    modules[2] = new Module(BLModuleIO, 3);
-    modules[3] = new Module(BRModuleIO, 2);
+    modules[2] = new Module(BLModuleIO, 2);
+    modules[3] = new Module(BRModuleIO, 3);
 
     // Initialize the swerve drive kinematics
     swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
+
+    // // Initialize system id
+    // sysId = new SysIdRoutine(new SysIdRoutine.Config(null, null, null),
+    //   new SysIdRoutine.Mechanism((voltage) -> runcharacterization(Voltage.in(Volts)),
+    //   (state) -> Logger.recordOutput("Drive", state),
+    //   this,
+    //   "Drive"
+    // ));
+
+    sysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(null, null, null),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> runCharacterization(voltage.in(Volts)),
+                (state) -> Logger.recordOutput("Drive/SysId State", state.toString()),
+                this));
   }
 
   @Override
@@ -58,9 +81,6 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       modules[i].periodic();
     }
-
-    // runSwerveModules(getAdjustedSpeeds());
-    // getMeasuredStates();
   }
 
   /**
@@ -69,14 +89,8 @@ public class Drive extends SubsystemBase {
    * @param isDisabled True for brake, false for coast
    */
   public void setBrakeModeAll(boolean isDisabled) {
-    if (isDisabled) {
-      for (var module : modules) {
-        module.setBrakeMode(true);
-      }
-    } else {
-      for (var module : modules) {
-        module.setBrakeMode(false);
-      }
+    for (var module : modules) {
+      module.setBrakeMode(isDisabled ? true : false);
     }
   }
 
@@ -131,9 +145,7 @@ public class Drive extends SubsystemBase {
   }
 
   public Rotation2d getRotation() {
-
     var gyroYaw = new Rotation2d(gyro.getYaw().getRadians());
-
     /*
      * Twist2d is a change in distance along an arc
      * // x is the forward distance driven
@@ -188,43 +200,47 @@ public class Drive extends SubsystemBase {
             this.getRotation()));
   }
 
-  // public void runSwerveModules(SwerveModuleState[] setpointStates) {
-  // Runs Modules to Run at Specific Setpoints (Linear and Angular Velocity) that
-  // is Quick & Optimized for smoothest movement
+  /**
+   * Locks module orientation at 0 degrees and runs drive motors at specified voltage
+   *
+   * @param output Voltage
+   */
+  public void runCharacterization(double output) {
+    for (int i = 0; i < 4; i++) {
+      modules[i].runCharacterization(output);
+    }
+  }
 
-  // SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
-  // for (int i = 0; i < 4; i++) {
-  //   optimizedStates[i] = modules[i].runSetpoint(setpointStates[i]);
-  // }
-  // // Updates setpoint logs
-  // Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
-  // Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedStates);
-  // }
+  /**
+   * @param direction Forward or Reverse direction
+   * @return A quasistatic test in the specified direction
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(0)) // Allows module positions to reset
+        .withTimeout(1.0)
+        .andThen(sysId.quasistatic(direction));
+  }
 
-  // /** Get Swerve Mesured States */
-  // public SwerveModuleState[] getMeasuredStates() {
-  //   // // Tracks the state each module is in
+  /**
+   * @param direction Forward or Reverse direction
+   * @return A dynamic test in the specified direction
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(0)) // Allows module positions to reset
+        .withTimeout(1.0)
+        .andThen(sysId.dynamic(direction));
+  }
 
-  //   // SwerveModuleState[] measuredStates = new SwerveModuleState[4];
+  public void runSwerveModules(SwerveModuleState[] setpointStates) {
+    // Runs Modules to Run at Specific Setpoints (Linear and Angular Velocity) that
+    // is Quick & Optimized for smoothest movement
 
-  //   // for (int i = 0; i < 4; i++) {
-  //   //   measuredStates[i] = modules[i].getState();
-  //   // }
-
-  //   // // Updates what states each module is in (Current Velocity, Angular Velocity,
-  //   // // and Angle)
-  //   // Logger.recordOutput("SwerveStates/Measured", measuredStates);
-  //   return measuredStates;
-  // }
-
-  // public SwerveModuleState[] getAdjustedSpeeds() {
-  //   SwerveModuleState[] setpointStates = new SwerveModuleState[4];
-  //   setpointStates = swerveDriveKinematics.toSwerveModuleStates(setpoint);
-
-  //   // Renormalizes all wheel speeds so the ratio of velocity remains the same but
-  //   // they don't exceed the maximum speed anymore
-  //   SwerveDriveKinematics.desaturateWheelSpeeds(
-  //       setpointStates, DriveConstants.MAX_LINEAR_SPEED_M_PER_S);
-  //   return setpointStates;
-  // }
+    SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
+    for (int i = 0; i < 4; i++) {
+      optimizedStates[i] = modules[i].runSetpoint(setpointStates[i]);
+    }
+    // Updates setpoint logs
+    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+    Logger.recordOutput("SwerveStates/SetpointsOptimized", optimizedStates);
+  }
 }
