@@ -183,6 +183,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     inputs.absoluteEncoderIsConnected =
         BaseStatusSignal.refreshAll(absoluteEncoderPositionRot, absoluteEncoderVelocityRotPerSec)
             .isOK();
+
     inputs.turnAbsolutePositionRad =
         MathUtil.angleModulus(
                 Units.rotationsToRadians(absoluteEncoderPositionRot.getValueAsDouble()))
@@ -194,24 +195,40 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     inputs.turnCurrentAmps = m_turnSparkMax.getOutputCurrent();
     inputs.turnTempCelsius = m_turnSparkMax.getMotorTemperature();
   }
-
+  /**
+   * Sets the drive motor voltage.
+   *
+   * @param volts the voltage to set the drive motor to.
+   */
   @Override
   public void setDriveVoltage(double volts) {
     m_driveTalonFX.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
-
+  /**
+   * Sets the turn motor voltage.
+   *
+   * @param volts the voltage to set the turn motor to.
+   */
   @Override
   public void setTurnVoltage(double volts) {
     m_turnSparkMax.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
-
+  /**
+   * Sets the drive motor to brake mode.
+   *
+   * @param enable true if brake mode should be enabled, false if coast mode should be enabled.
+   */
   @Override
   public void setDriveBrakeMode(boolean enable) {
     m_driveTalonFX.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
-
+  /**
+   * Sets the turn motor to brake mode.
+   *
+   * @param enable true if brake mode should be enabled, false if coast mode should be enabled.
+   */
   @Override
   public void setTurnBrakeMode(boolean enable) {
     m_turnConfig.idleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
