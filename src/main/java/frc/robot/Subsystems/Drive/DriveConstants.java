@@ -73,13 +73,15 @@ public final class DriveConstants {
   public static final double DRIVE_MOI_KG_M2 = 0.0;
 
   public static final double TURN_MOI_KG_M2 = 0.0;
-  
-  /** Translation 2d assumes that the robot front facing is in the positive x direction and the
-  * robot left is in the positive y direction <br></br>
 
-  * Directions of the VECTORS that each module turns in (i.e. Module 0, 
-  * front right, when the robot spins ccw, will point towards Quadrant II
-  * which is (-,+)) */
+  /**
+   * Translation 2d assumes that the robot front facing is in the positive x direction and the robot
+   * left is in the positive y direction <br>
+   * </br>
+   *
+   * <p>Directions of the VECTORS that each module turns in (i.e. Module 0, front right, when the
+   * robot spins ccw, will point towards Quadrant II which is (-,+))
+   */
   public static final Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
       new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
