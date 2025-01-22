@@ -21,11 +21,11 @@ public interface ModuleIO {
 
     /** Voltage that turn motor draws */
     public double turnAppliedVoltage = 0.0;
-    /** Relative position of the wheel in radians */
+    /** Relative position of the wheel in radians (NEO encoder) */
     public double turnPositionRad = 0.0;
-    /** Absolute position of the wheel in radians */
+    /** Absolute position of the wheel in radians (CANcoder) */
     public double turnAbsolutePositionRad = 0.0;
-    /** Turn velocity of the wheel in radians per sec */
+    /** Turn velocity of the wheel in radians per sec (CANcoder) */
     public double turnVelocityRadPerSec = 0.0;
     /** Current drawn by the motor in amps */
     public double turnCurrentAmps = 0.0;
@@ -38,15 +38,31 @@ public interface ModuleIO {
   /** Updates logged inputs periodically */
   public default void updateInputs(ModuleIOInputs inputs) {}
 
-  /** Overrides the drive voltage */
+  /**
+   * Manually sets voltage of the Drive Motor
+   *
+   * @param volts the voltage to set the Drive Motor to [-12 to 12]
+   */
   public default void setDriveVoltage(double voltage) {}
 
-  /** Overrides the turn voltage */
+  /**
+   * Manually sets voltage of the Turn Motor
+   *
+   * @param volts the voltage to set the Turn Motor to [-12 to 12]
+   */
   public default void setTurnVoltage(double voltage) {}
 
-  /** Enables brake mode for drive */
-  public default void setDriveBrakeMode(boolean brake) {}
+  /**
+   * Sets the idle mode for the Drive Motor
+   *
+   * @param enable Sets break mode on true, coast on false
+   */
+  public default void setDriveBrakeMode(boolean enable) {}
 
-  /** Enables brake mode for turn */
-  public default void setTurnBrakeMode(boolean brake) {}
+  /**
+   * Sets the idle mode for the Turn Motor
+   *
+   * @param enable Sets break mode on true, coast on false
+   */
+  public default void setTurnBrakeMode(boolean enable) {}
 }

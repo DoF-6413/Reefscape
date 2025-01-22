@@ -12,12 +12,11 @@ public class Module {
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
 
-  // initialize PID controllers
-  private PIDController drivePID;
-  private PIDController steerPID;
+  // Closed loop controllers
+  private final PIDController drivePID;
+  private final PIDController steerPID;
 
-  // initialize Feedforward
-  private final SimpleMotorFeedforward driveFeedforward;
+  private SimpleMotorFeedforward driveFeedforward;
 
   public Module(ModuleIO io, int index) {
     System.out.println("[Init] Creating Module");
@@ -33,94 +32,106 @@ public class Module {
     driveFeedforward =
         new SimpleMotorFeedforward(DriveConstants.DRIVE_KS_KRAKEN, DriveConstants.DRIVE_KV_KRAKEN);
   }
-  /** update the inputs of the modules */
+
+  /**
+   * Put Values that Should Be Called Periodically for EACH individual Module Here. Module.periodic
+   * NEEDS to be in Drive periodic OR it wont run
+   */
+  public void periodic() {
+    this.updateInputs();
+    Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
+  }
+
+  /** Update the inputs of the Modules */
   public void updateInputs() {
     io.updateInputs(inputs);
   }
-  /** Stops the drive and turn motors */
+
+  /** Stops the Drive and Turn motors */
   public void stop() {
     io.setDriveVoltage(0.0);
     io.setTurnVoltage(0.0);
   }
 
   /**
-   * Manually Sets Voltage of the Drive Motor in Individual Module (Max is 12 Volts)
+   * Manually sets voltage of the Drive motor
    *
-   * @param volts the voltage to set the drive motor to
+   * @param volts the voltage to set the Drive motor to [-12 to 12]
    */
   public void setDriveVoltage(double volts) {
     io.setDriveVoltage(volts);
   }
 
   /**
-   * Manually Sets Voltage of the Turn Motor in Individual Module (Max is 12 Volts)
+   * Manually sets voltage of the Turn motor
    *
-   * @param volts the voltage to set the turn motor to
+   * @param volts the voltage to set the Turn motor to [-12 to 12]
    */
   public void setTurnVoltage(double volts) {
     io.setTurnVoltage(volts);
   }
 
   /**
-   * Manually Sets the Percent Speed of the Drive Motor in Individual Module (On a -1 to 1 Scale. 1
-   * representing 100)
+   * Set the speed of the Drive motor based on a percent scale
    *
-   * @param percent the percent speed to set the drive motor to
+   * <p>On a -1 to 1 Scale. 1 representing 100
+   *
+   * @param percent the percent speed to set the drive motor to [-1 to 1]
    */
   public void setDrivePercentSpeed(double percent) {
     io.setDriveVoltage(percent * 12);
   }
 
   /**
-   * Manually Sets the Percent Speed of the Turn Motor in Individual Module (On a -1 to 1 Scale. 1
-   * representing 100)
+   * Set the speed of the Turn motor based on a percent scale
    *
-   * @param percent the percent speed to set the turn motor to
+   * <p>On a -1 to 1 Scale. 1 representing 100
+   *
+   * @param percent the percent speed to set the Turn motor to [-1 to 1]
    */
   public void setTurnPercentSpeed(double percent) {
     io.setTurnVoltage(percent * 12);
   }
 
   /**
-   * @return the current turn angle of the module.
+   * @return the current turn angle of the Module.
    */
   public Rotation2d getAngle() {
-    // Angle Modulus sets the Value Returned to be on a -pi, pi scale
     return new Rotation2d(inputs.turnAbsolutePositionRad);
   }
 
   /**
-   * @return the current drive position of the module in meters.
+   * @return the current Drive position of the Module in meters.
    */
   public double getPositionMeters() {
     return inputs.drivePositionRad * DriveConstants.WHEEL_RADIUS_M;
   }
 
   /**
-   * @return the current drive velocity of the module in meters per second
+   * @return the current Drive Velocity of the Module in meters per second
    */
   public double getVelocityMetersPerSec() {
     return inputs.driveVelocityRadPerSec * DriveConstants.WHEEL_RADIUS_M;
   }
 
   /**
-   * @return the module position (turn angle and drive position)
+   * @return the Module position (Turn angle and Drive position)
    */
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(getPositionMeters(), getAngle());
   }
 
   /**
-   * @return the module state (turn angle and drive velocity).
+   * @return the Module state (Turn angle and Drive velocity).
    */
   public SwerveModuleState getState() {
     return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
   }
 
   /**
-   * Sets Break Mode for Turn and Drive Motors
+   * Sets the idle mode for Turn and Drive motors
    *
-   * @param enable enables break mode on true, coast on false
+   * @param enable Sets break mode on true, coast on false
    */
   public void setBrakeMode(boolean enable) {
     io.setDriveBrakeMode(enable);
@@ -128,9 +139,10 @@ public class Module {
   }
 
   /**
-   * Run Setpoint is what Runs a Module based on Chassis Speeds
+   * Using a PID controller, calculates the voltage of the Drive and Turn motors based on the
+   * current inputed setpoint.
    *
-   * @param Desired Swerve Module State (Desired Velocity and Angle)
+   * @param state Desired Swerve Module State (Desired velocity and angle)
    */
   public void runSetpoint(SwerveModuleState state) {
 
@@ -151,14 +163,5 @@ public class Module {
     io.setDriveVoltage(
         driveFeedforward.calculate(velocityRadPerSec)
             + (drivePID.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec)));
-  }
-
-  /**
-   * Put Values that Should Be Called Periodically for EACH individual Module Here. Module.periodic
-   * NEEDS to be in Drive periodic OR it wont run
-   */
-  public void periodic() {
-    this.updateInputs();
-    Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
   }
 }

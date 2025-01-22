@@ -18,6 +18,7 @@ public class Gyro extends SubsystemBase {
     System.out.println("[Init] Creating Gyro");
     this.io = io;
   }
+
   /** This method is called once per scheduler run. */
   @Override
   public void periodic() {

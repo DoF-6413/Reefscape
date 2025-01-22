@@ -14,32 +14,37 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
-/** Runs Real NavX Gyroscope */
+/** Runs real Pigeon 2.0 Gyroscope */
 public class GyroIOPigeon2 implements GyroIO {
 
   private final Pigeon2 gyro;
+
+  // Pigeon inputs
   private StatusSignal<Angle> yawDeg;
   private StatusSignal<AngularVelocity> yawVelocityDegPerSec;
 
   public GyroIOPigeon2() {
     System.out.println("[Init] Creating GyroIOPigeon2");
-
+    // Ininitalize Pigeon Gyro
     gyro = new Pigeon2(GyroConstants.CAN_ID, "DriveTrain");
 
+    // Pigeon configuration
     gyro.getConfigurator().apply(new Pigeon2Configuration());
     gyro.optimizeBusUtilization();
 
+    // Initialize Gyro inputs
     yawDeg = gyro.getYaw();
     yawVelocityDegPerSec = gyro.getAngularVelocityZWorld();
 
+    // Update Gyro signals every 0.01 seconds
     yawDeg.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
     yawVelocityDegPerSec.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
   }
 
-  // Updates the gyro inputs
+  // Updates the Gyro inputs
   @Override
   public void updateInputs(GyroIOInputs inputs) {
-
+    // Update all Gyro signals and check if they are good
     inputs.connected = BaseStatusSignal.refreshAll(yawDeg, yawVelocityDegPerSec).isOK();
     inputs.yawPositionRad =
         Rotation2d.fromRadians(
@@ -54,7 +59,7 @@ public class GyroIOPigeon2 implements GyroIO {
     inputs.rawYawPositionRad =
         Rotation2d.fromRadians(Units.degreesToRadians(yawDeg.getValueAsDouble()));
   }
-  // Sets the yaw to zero
+
   @Override
   public void zeroHeading() {
     gyro.reset();

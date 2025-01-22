@@ -23,9 +23,6 @@ public class Drive extends SubsystemBase {
   // The swerve drive kinematics
   public SwerveDriveKinematics swerveDriveKinematics;
 
-  // The current state of the robot
-  public ChassisSpeeds setpoint = new ChassisSpeeds();
-
   // Gets previous gyro yaw
   public Rotation2d lastGyroYaw = new Rotation2d();
 
@@ -54,7 +51,6 @@ public class Drive extends SubsystemBase {
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
-    // creates four modules
     for (int i = 0; i < 4; i++) {
       modules[i].periodic();
     }
@@ -67,7 +63,7 @@ public class Drive extends SubsystemBase {
    */
   public void setBrakeModeAll(boolean isDisabled) {
     for (var module : modules) {
-      module.setBrakeMode(isDisabled ? true : false);
+      module.setBrakeMode(isDisabled);
     }
   }
 
@@ -78,16 +74,18 @@ public class Drive extends SubsystemBase {
    * @param speeds the desired chassis speeds
    */
   public void runVelocity(ChassisSpeeds speeds) {
+    // Convert chassis speeds to Swerve Module States, these will be the setpoints for the drive and
+    // turn motors
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-    setpoint = discreteSpeeds;
-
     SwerveModuleState[] setpointStates = swerveDriveKinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         setpointStates, DriveConstants.MAX_LINEAR_SPEED_M_PER_S);
 
+    // Record chassis speed and module states (setpoint)
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveChassisStates/Setpoints", discreteSpeeds);
 
+    // The current velocity and position of each module
     SwerveModuleState[] measuredStates = new SwerveModuleState[4];
 
     for (int i = 0; i < 4; i++) {
@@ -95,8 +93,9 @@ public class Drive extends SubsystemBase {
       measuredStates[i] = modules[i].getState();
     }
 
+    // Record optimized setpoints and measured states
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
-    Logger.recordOutput("SwerveStates/SetpointsMeasured", measuredStates);
+    Logger.recordOutput("SwerveStates/Measured", measuredStates);
   }
 
   /**
