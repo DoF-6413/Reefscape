@@ -68,7 +68,7 @@ public final class DriveConstants {
   public static final double DEADBAND = 0.1;
 
   // SIM CONSTANTS
-  // TODO: Update, ask darash later
+  // TODO: Update
 
   public static final double DRIVE_MOI_KG_M2 = 0.0003125;
 
