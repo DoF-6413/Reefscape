@@ -8,28 +8,28 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
-  private final ModuleIO io;
-  private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
-  private final int index;
+  private final ModuleIO m_io;
+  private final ModuleIOInputsAutoLogged m_inputs = new ModuleIOInputsAutoLogged();
+  private final int m_index;
 
   // Closed loop PID controllers
-  private final PIDController drivePID;
-  private final PIDController steerPID;
+  private final PIDController m_drivePID;
+  private final PIDController m_steerPID;
 
-  private SimpleMotorFeedforward driveFeedforward;
+  private SimpleMotorFeedforward m_driveFeedforward;
 
   public Module(ModuleIO io, int index) {
     System.out.println("[Init] Creating Module");
-    this.io = io;
-    this.index = index;
+    m_io = io;
+    m_index = index;
 
-    drivePID =
+    m_drivePID =
         new PIDController(
             DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD);
-    steerPID =
+    m_steerPID =
         new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
 
-    driveFeedforward =
+    m_driveFeedforward =
         new SimpleMotorFeedforward(DriveConstants.DRIVE_KS_KRAKEN, DriveConstants.DRIVE_KV_KRAKEN);
   }
 
@@ -39,18 +39,18 @@ public class Module {
    */
   public void periodic() {
     this.updateInputs();
-    Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
+    Logger.processInputs("Drive/Module" + Integer.toString(m_index), m_inputs);
   }
 
   /** Update the inputs of the Modules */
   public void updateInputs() {
-    io.updateInputs(inputs);
+    m_io.updateInputs(m_inputs);
   }
 
   /** Stops the Drive and Turn motors */
   public void stop() {
-    io.setDriveVoltage(0.0);
-    io.setTurnVoltage(0.0);
+    m_io.setDriveVoltage(0.0);
+    m_io.setTurnVoltage(0.0);
   }
 
   /**
@@ -59,7 +59,7 @@ public class Module {
    * @param volts A value between -12 (full reverse) to 12 (full forward)
    */
   public void setDriveVoltage(double volts) {
-    io.setDriveVoltage(volts);
+    m_io.setDriveVoltage(volts);
   }
 
   /**
@@ -68,7 +68,7 @@ public class Module {
    * @param volts A value between -12 (full reverse) to 12 (full forward)
    */
   public void setTurnVoltage(double volts) {
-    io.setTurnVoltage(volts);
+    m_io.setTurnVoltage(volts);
   }
 
   /**
@@ -79,7 +79,7 @@ public class Module {
    * @param percent -1 (full reverse) to 1 (full forward)
    */
   public void setDrivePercentSpeed(double percent) {
-    io.setDriveVoltage(percent * 12);
+    m_io.setDriveVoltage(percent * 12);
   }
 
   /**
@@ -90,7 +90,7 @@ public class Module {
    * @param percent -1 (full reverse) to 1 (full forward)
    */
   public void setTurnPercentSpeed(double percent) {
-    io.setTurnVoltage(percent * 12);
+    m_io.setTurnVoltage(percent * 12);
   }
 
   /**
@@ -99,7 +99,7 @@ public class Module {
    * @return The current turn angle of the module in radians.
    */ 
   public Rotation2d getAngle() {
-    return new Rotation2d(inputs.turnAbsolutePositionRad);
+    return new Rotation2d(m_inputs.turnAbsolutePositionRad);
   }
 
   /**
@@ -108,7 +108,7 @@ public class Module {
    * @return The current drive position of the module in meters.
    */
   public double getPositionMeters() {
-    return inputs.drivePositionRad * DriveConstants.WHEEL_RADIUS_M;
+    return m_inputs.drivePositionRad * DriveConstants.WHEEL_RADIUS_M;
   }
 
   /**
@@ -117,7 +117,7 @@ public class Module {
    * @return The current drive velocity of the module in meters per second.
    */
   public double getVelocityMetersPerSec() {
-    return inputs.driveVelocityRadPerSec * DriveConstants.WHEEL_RADIUS_M;
+    return m_inputs.driveVelocityRadPerSec * DriveConstants.WHEEL_RADIUS_M;
   }
 
   /**
@@ -140,8 +140,8 @@ public class Module {
    * @param enable Sets break mode on true, coast on false
    */
   public void setBrakeMode(boolean enable) {
-    io.setDriveBrakeMode(enable);
-    io.setTurnBrakeMode(enable);
+    m_io.setDriveBrakeMode(enable);
+    m_io.setTurnBrakeMode(enable);
   }
 
   /**
@@ -157,17 +157,17 @@ public class Module {
     state.optimize(getAngle());
 
     // Run turn controller
-    io.setTurnVoltage(steerPID.calculate(getAngle().getRadians(), state.angle.getRadians()));
+    m_io.setTurnVoltage(m_steerPID.calculate(getAngle().getRadians(), state.angle.getRadians()));
 
     // Update velocity based on turn error
-    state.speedMetersPerSecond *= Math.cos(steerPID.getError());
+    state.speedMetersPerSecond *= Math.cos(m_steerPID.getError());
 
     // Turn Speed m/s into Vel rad/s
     double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
 
     // Run drive controller
-    io.setDriveVoltage(
-        driveFeedforward.calculate(velocityRadPerSec)
-            + (drivePID.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec)));
+    m_io.setDriveVoltage(
+        m_driveFeedforward.calculate(velocityRadPerSec)
+            + (m_drivePID.calculate(m_inputs.driveVelocityRadPerSec, velocityRadPerSec)));
   }
 }

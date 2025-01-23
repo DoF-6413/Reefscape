@@ -18,16 +18,16 @@ public class Drive extends SubsystemBase {
 
   private final Module[] m_modules = new Module[4];
   private final Gyro m_gyro;
-  private Twist2d twist = new Twist2d();
+  private Twist2d m_twist = new Twist2d();
 
   // The swerve drive kinematics
-  public SwerveDriveKinematics swerveDriveKinematics;
+  public SwerveDriveKinematics m_swerveDriveKinematics;
 
   // Previous yaw angle of the robot
-  public Rotation2d lastRobotYaw = new Rotation2d();
+  public Rotation2d m_lastRobotYaw = new Rotation2d();
 
   // Gets previous module positions
-  private double[] lastModulePositionsMeters;
+  private double[] m_lastModulePositionsMeters;
 
   public Drive(
       ModuleIO FRModuleIO,
@@ -45,7 +45,7 @@ public class Drive extends SubsystemBase {
     m_modules[3] = new Module(BRModuleIO, 3);
 
     // Initialize the swerve drive kinematics
-    swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
+    m_swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
   }
 
   @Override
@@ -59,11 +59,11 @@ public class Drive extends SubsystemBase {
   /**
    * Sets the entire Drive Train to either brake or coast mode
    *
-   * @param isDisabled True for brake, false for coast
+   * @param enable True for brake, false for coast
    */
-  public void setBrakeModeAll(boolean isEnabled) {
+  public void setBrakeModeAll(boolean enable) {
     for (var module : m_modules) {
-      module.setBrakeMode(isEnabled);
+      module.setBrakeMode(enable);
     }
   }
 
@@ -77,7 +77,7 @@ public class Drive extends SubsystemBase {
     // Convert chassis speeds to Swerve Module States, these will be the setpoints for the drive and
     // turn motors
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-    SwerveModuleState[] setpointStates = swerveDriveKinematics.toSwerveModuleStates(discreteSpeeds);
+    SwerveModuleState[] setpointStates = m_swerveDriveKinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         setpointStates, DriveConstants.MAX_LINEAR_SPEED_M_PER_S);
 
@@ -119,9 +119,9 @@ public class Drive extends SubsystemBase {
       wheelDeltas[i] =
           new SwerveModulePosition(
               (m_modules[i].getPositionMeters()
-                  - lastModulePositionsMeters[i]), // This calculates the change in angle
+                  - m_lastModulePositionsMeters[i]), // This calculates the change in angle
               m_modules[i].getAngle()); // Gets individual MODULE rotation
-      lastModulePositionsMeters[i] = m_modules[i].getPositionMeters();
+      m_lastModulePositionsMeters[i] = m_modules[i].getPositionMeters();
     }
     return wheelDeltas;
   }
@@ -144,14 +144,14 @@ public class Drive extends SubsystemBase {
     if (m_gyro.isConnected()) {
       robotYaw = m_gyro.getYaw();
     } else {
-      twist =
-          swerveDriveKinematics.toTwist2d(
+      m_twist =
+          m_swerveDriveKinematics.toTwist2d(
               getWheelDeltas()); // Updates Twist Based on MODULE position
       robotYaw =
-          lastRobotYaw.minus(
-              new Rotation2d(twist.dtheta)); // Updates rotation 2d based on robot module position
+          m_lastRobotYaw.minus(
+              new Rotation2d(m_twist.dtheta)); // Updates rotation 2d based on robot module position
     }
-    lastRobotYaw = robotYaw;
+    m_lastRobotYaw = robotYaw;
     return robotYaw;
   }
 

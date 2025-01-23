@@ -17,28 +17,28 @@ import edu.wpi.first.units.measure.AngularVelocity;
 /** Runs real Pigeon 2.0 Gyroscope */
 public class GyroIOPigeon2 implements GyroIO {
 
-  private final Pigeon2 gyro;
+  private final Pigeon2 m_gyro;
 
   // Pigeon inputs
-  private StatusSignal<Angle> yawDeg;
-  private StatusSignal<AngularVelocity> yawVelocityDegPerSec;
+  private StatusSignal<Angle> m_yawDeg;
+  private StatusSignal<AngularVelocity> m_yawVelocityDegPerSec;
 
   public GyroIOPigeon2() {
     System.out.println("[Init] Creating GyroIOPigeon2");
     // Ininitalize Pigeon Gyro
-    gyro = new Pigeon2(GyroConstants.CAN_ID, "DriveTrain");
+    m_gyro = new Pigeon2(GyroConstants.CAN_ID, "DriveTrain");
 
     // Pigeon configuration
-    gyro.getConfigurator().apply(new Pigeon2Configuration());
-    gyro.optimizeBusUtilization();
+    m_gyro.getConfigurator().apply(new Pigeon2Configuration());
+    m_gyro.optimizeBusUtilization();
 
     // Initialize Gyro inputs
-    yawDeg = gyro.getYaw();
-    yawVelocityDegPerSec = gyro.getAngularVelocityZWorld();
+    m_yawDeg = m_gyro.getYaw();
+    m_yawVelocityDegPerSec = m_gyro.getAngularVelocityZWorld();
 
     // Update Gyro signals every 0.01 seconds
-    yawDeg.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
-    yawVelocityDegPerSec.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
+    m_yawDeg.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
+    m_yawVelocityDegPerSec.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
   }
 
   /**
@@ -51,22 +51,22 @@ public class GyroIOPigeon2 implements GyroIO {
    */
   @Override
   public void updateInputs(GyroIOInputs inputs) {
-    inputs.connected = BaseStatusSignal.refreshAll(yawDeg, yawVelocityDegPerSec).isOK();
+    inputs.connected = BaseStatusSignal.refreshAll(m_yawDeg, m_yawVelocityDegPerSec).isOK();
     inputs.yawPositionRad =
         Rotation2d.fromRadians(
             MathUtil.inputModulus(
-                Units.degreesToRadians(yawDeg.getValueAsDouble())
+                Units.degreesToRadians(m_yawDeg.getValueAsDouble())
                     + GyroConstants.HEADING_OFFSET_RAD,
                 0,
                 2 * Math.PI));
     inputs.yawVelocityRadPerSec =
-        Units.degreesToRadians(gyro.getAngularVelocityZWorld().getValueAsDouble());
+        Units.degreesToRadians(m_gyro.getAngularVelocityZWorld().getValueAsDouble());
     inputs.rawYawPositionRad =
-        Rotation2d.fromRadians(Units.degreesToRadians(yawDeg.getValueAsDouble()));
+        Rotation2d.fromRadians(Units.degreesToRadians(m_yawDeg.getValueAsDouble()));
   }
 
   @Override
   public void zeroHeading() {
-    gyro.reset();
+    m_gyro.reset();
   }
 }

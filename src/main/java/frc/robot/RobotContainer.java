@@ -119,9 +119,9 @@ public class RobotContainer {
   /**
    * Sets all mechanisms to brake mode, intended for use when the robot is disabled.
    *
-   * @param isEnabled - True to set brake mode, False to set coast mode
+   * @param enable - True to set brake mode, False to set coast mode
    */
-  public void allMechanismsBrakeMode(boolean isEnabled) {
-    m_driveSubsystem.setBrakeModeAll(isEnabled);
+  public void allMechanismsBrakeMode(boolean enable) {
+    m_driveSubsystem.setBrakeModeAll(enable);
   }
 }

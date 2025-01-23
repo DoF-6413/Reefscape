@@ -11,52 +11,52 @@ import org.littletonrobotics.junction.Logger;
 /** This Runs the Gyro for all Modes of the Robot */
 public class Gyro extends SubsystemBase {
 
-  private final GyroIO io;
-  private final GyroIOInputsAutoLogged inputs = new GyroIOInputsAutoLogged();
+  private final GyroIO m_io;
+  private final GyroIOInputsAutoLogged m_inputs = new GyroIOInputsAutoLogged();
 
   public Gyro(GyroIO io) {
     System.out.println("[Init] Creating Gyro");
-    this.io = io;
+    m_io = io;
   }
 
   /** This method is called once per scheduler run. */
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Gyro", inputs);
+    m_io.updateInputs(m_inputs);
+    Logger.processInputs("Gyro", m_inputs);
   }
 
   /**
    * @return returns the Yaw (Z Axis) in Radians (-pi, pi)
    */
   public Rotation2d getYaw() {
-    return inputs.yawPositionRad;
+    return m_inputs.yawPositionRad;
   }
 
   /**
    * @return returns the Yaw (Z Axis) in Radians (-pi, pi) without any offset
    */
   public Rotation2d getRawYaw() {
-    return inputs.rawYawPositionRad;
+    return m_inputs.rawYawPositionRad;
   }
 
   /**
    * @return the angular velocity of the robot in Radians per sec
    */
   public double getYawAngularVelocity() {
-    return inputs.yawVelocityRadPerSec;
+    return m_inputs.yawVelocityRadPerSec;
   }
 
   /** Resets the Heading to the Direction the Gyro is Facing */
   public void zeroYaw() {
-    io.zeroHeading();
+    m_io.zeroHeading();
   }
 
   /**
    * @return Whether or not the gyro is connected
    */
   public boolean isConnected() {
-    return inputs.connected;
+    return m_inputs.connected;
   }
 
   /**
@@ -66,10 +66,10 @@ public class Gyro extends SubsystemBase {
    * adjustment angle (also in radians) to it. The result is a new `Rotation2d` object representing
    * the adjusted yaw angle.
    *
-   * @param adjustedAngle The angle to adjust the yaw by in radians.
+   * @param adjustedAngleRad The angle to adjust the yaw by in radians.
    * @return A new `Rotation2d` object representing the adjusted yaw angle.
    */
   public Rotation2d adjustedYaw(double adjustedAngleRad) {
-    return inputs.yawPositionRad.plus(new Rotation2d(adjustedAngleRad));
+    return m_inputs.yawPositionRad.plus(new Rotation2d(adjustedAngleRad));
   }
 }
