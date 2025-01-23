@@ -47,9 +47,9 @@ public final class DriveConstants {
   // SIM CONSTANTS
   // TODO: Update
 
-  public static final double DRIVE_MOI_KG_M2 = 0.0;
+  public static final double DRIVE_MOI_KG_M2 = 0.0003125;
 
-  public static final double TURN_MOI_KG_M2 = 0.0;
+  public static final double TURN_MOI_KG_M2 = 0.0000158025413;
 
   public static final Translation2d[] getModuleTranslations() {
     // Translation 2d assumes that the robot front facing is in the positive x direction and the

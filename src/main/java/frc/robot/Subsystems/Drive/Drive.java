@@ -30,7 +30,7 @@ public class Drive extends SubsystemBase {
   public Rotation2d lastGyroYaw = new Rotation2d();
 
   // Gets previous module positions
-  private double[] lastModulePositionsMeters;
+  private double[] lastModulePositionsMeters = new double[4];
 
   public Drive(
       ModuleIO FRModuleIO,
