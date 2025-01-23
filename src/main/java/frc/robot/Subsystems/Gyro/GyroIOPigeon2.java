@@ -43,6 +43,9 @@ public class GyroIOPigeon2 implements GyroIO {
 
   /** Updates all Gyro signals (inputs) and check if they are connected,
    * including yaw position and velocity
+   * 
+   * Note: Pigeon2 "getYaw" method returns unconstrained yaw in degrees
+   * @param inputs - the GyroIOInputs object to update
    */
   @Override
   public void updateInputs(GyroIOInputs inputs) {
@@ -54,7 +57,6 @@ public class GyroIOPigeon2 implements GyroIO {
                     + GyroConstants.HEADING_OFFSET_RAD,
                 0,
                 2 * Math.PI));
-    // and converts it to radians per second
     inputs.yawVelocityRadPerSec =
         Units.degreesToRadians(gyro.getAngularVelocityZWorld().getValueAsDouble());
     inputs.rawYawPositionRad =

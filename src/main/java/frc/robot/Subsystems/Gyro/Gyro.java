@@ -69,7 +69,7 @@ public class Gyro extends SubsystemBase {
    * @param adjustedAngle The angle to adjust the yaw by in radians.
    * @return A new `Rotation2d` object representing the adjusted yaw angle.
    */
-  public Rotation2d adjustedYaw(double adjustedAngle) {
-    return inputs.yawPositionRad.plus(new Rotation2d(adjustedAngle));
+  public Rotation2d adjustedYaw(double adjustedAngleRad) {
+    return inputs.yawPositionRad.plus(new Rotation2d(adjustedAngleRad));
   }
 }
