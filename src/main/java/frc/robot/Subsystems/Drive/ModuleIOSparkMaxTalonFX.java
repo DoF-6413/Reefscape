@@ -126,9 +126,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     driveTalonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
     turnSparkMax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
 
-    // driveTalonFX.resetSignalFrequencies(); // TODO: Test without theses lines
-    // turnAbsoluteEncoder.resetSignalFrequencies();
-
     // Apply the CTRE configurations
     driveTalonFX.getConfigurator().apply(driveConfig);
 
@@ -138,14 +135,21 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
     // Initialize Drive motor signals
     drivePositionRot = driveTalonFX.getPosition();
+    drivePositionRot.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     driveVelocityRotPerSec = driveTalonFX.getVelocity();
+    driveVelocityRotPerSec.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     driveAppliedVolts = driveTalonFX.getMotorVoltage();
+    driveAppliedVolts.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     driveCurrentAmps = driveTalonFX.getStatorCurrent();
+    driveCurrentAmps.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     driveTempCelsius = driveTalonFX.getDeviceTemp();
+    driveTempCelsius.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
 
     // Initialize Absolute Encoder signals
     absoluteEncoderPositionRot = turnAbsoluteEncoder.getAbsolutePosition();
+    absoluteEncoderPositionRot.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     absoluteEncoderVelocityRotPerSec = turnAbsoluteEncoder.getVelocity();
+    absoluteEncoderVelocityRotPerSec.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
   }
 
   @Override

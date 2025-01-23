@@ -80,7 +80,7 @@ public class Robot extends LoggedRobot {
 
     // Version Number (# of Pushes to Dev, Issue #, Commit #, Functionality 0 = working, 1 = WIP, 2
     // = doesn't work)
-    SmartDashboard.putString("Version Number", "7.4.13.0");
+    SmartDashboard.putString("Version Number", "7.4.16.0");
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
     robotContainer = new RobotContainer();
@@ -98,7 +98,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    robotContainer.mechamismsCoastOnDisable(true); // TODO: Update false for comps
+    robotContainer.allMechanismsBrake(true); // TODO: Update false for comps
   }
 
   /** This function is called periodically when disabled. */
@@ -125,7 +125,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    robotContainer.mechamismsCoastOnDisable(true);
+    robotContainer.allMechanismsBrake(true);
   }
 
   /** This function is called periodically during operator control. */

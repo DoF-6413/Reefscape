@@ -97,7 +97,6 @@ public class RobotContainer {
   // Driver Controls
   private void driverControllerBindings() {
     /* Driving the robot */
-
     m_driveSubsystem.setDefaultCommand(
         new DefaultDriveCommand(m_driveSubsystem, m_gyroSubsystem, controller));
 
