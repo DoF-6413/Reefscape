@@ -117,7 +117,7 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  public void mechamismsCoastOnDisable(boolean isDisabled) {
-    m_driveSubsystem.setBrakeModeAll(!isDisabled);
+  public void allMechanismsBrake(boolean isEnabled) {
+    m_driveSubsystem.setBrakeModeAll(isEnabled);
   }
 }

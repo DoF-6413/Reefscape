@@ -61,9 +61,9 @@ public class Drive extends SubsystemBase {
    *
    * @param isDisabled True for brake, false for coast
    */
-  public void setBrakeModeAll(boolean isDisabled) {
+  public void setBrakeModeAll(boolean isEnabled) {
     for (var module : modules) {
-      module.setBrakeMode(isDisabled);
+      module.setBrakeMode(isEnabled);
     }
   }
 

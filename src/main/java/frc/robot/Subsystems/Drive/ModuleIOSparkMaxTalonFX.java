@@ -178,7 +178,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
                 Units.rotationsToRadians(absoluteEncoderPositionRot.getValueAsDouble()))
             + absoluteEncoderOffsetRad;
     inputs.turnVelocityRadPerSec =
-        Units.rotationsToRadians(absoluteEncoderVelocityRotPerSec.getValueAsDouble() * 60)
+        Units.rotationsToRadians(absoluteEncoderVelocityRotPerSec.getValueAsDouble())
             / DriveConstants.STEER_GEAR_RATIO;
     inputs.turnAppliedVoltage = turnSparkMax.getAppliedOutput() * turnSparkMax.getBusVoltage();
     inputs.turnCurrentAmps = turnSparkMax.getOutputCurrent();
