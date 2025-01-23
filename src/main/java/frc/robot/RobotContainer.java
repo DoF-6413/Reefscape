@@ -116,6 +116,10 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
+  /**
+   * Sets all mechanisms to brake mode, intended for use when the robot is disabled.
+   * @param isEnabled
+   */
   public void allMechanismsBrake(boolean isEnabled) {
     m_driveSubsystem.setBrakeModeAll(isEnabled);
   }

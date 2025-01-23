@@ -41,10 +41,11 @@ public class GyroIOPigeon2 implements GyroIO {
     yawVelocityDegPerSec.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
   }
 
-  // Updates the Gyro inputs
+  /** Updates all Gyro signals (inputs) and check if they are connected,
+   * including yaw position and velocity
+   */
   @Override
   public void updateInputs(GyroIOInputs inputs) {
-    // Update all Gyro signals and check if they are good
     inputs.connected = BaseStatusSignal.refreshAll(yawDeg, yawVelocityDegPerSec).isOK();
     inputs.yawPositionRad =
         Rotation2d.fromRadians(

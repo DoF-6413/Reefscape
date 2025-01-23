@@ -80,7 +80,7 @@ public class Robot extends LoggedRobot {
 
     // Version Number (# of Pushes to Dev, Issue #, Commit #, Functionality 0 = working, 1 = WIP, 2
     // = doesn't work)
-    SmartDashboard.putString("Version Number", "7.4.16.0");
+    SmartDashboard.putString("Version Number", "8.4.17.0");
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
     robotContainer = new RobotContainer();
@@ -98,7 +98,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    robotContainer.allMechanismsBrake(true); // TODO: Update false for comps
+    robotContainer.allMechanismsBrake(false); // TODO: Update true for comps; easier to test in coast mode
   }
 
   /** This function is called periodically when disabled. */

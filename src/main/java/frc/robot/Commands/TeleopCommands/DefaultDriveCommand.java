@@ -31,16 +31,15 @@ public class DefaultDriveCommand extends Command {
   public void execute() {
     /* Normal Drive Mode */
     drive.driveWithDeadband(
-        controller.getLeftX(), // Left/Right (multiply by -1 bc controller a())is inverted)
-        -controller.getLeftY(), // Forward/backward
+        controller.getLeftY(), // Left/Right (multiply by -1 bc controller a())is inverted)
+        -controller.getLeftX(), // Forward/backward
         controller.getRightX()); // Rotation;
   }
 
   /**
    * Called once the command ends or is interrupted.
-   *
-   * @param interrupted whether the command was interrupted or finished
-   */
+   * 
+   * @param interrupted - True if the command was interrupted, False if it simply finished.   */
   @Override
   public void end(boolean interrupted) {
     drive.driveWithDeadband(0, 0, 0);

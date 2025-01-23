@@ -12,7 +12,7 @@ public class Module {
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
 
-  // Closed loop controllers
+  // Closed loop PID controllers
   private final PIDController drivePID;
   private final PIDController steerPID;
 

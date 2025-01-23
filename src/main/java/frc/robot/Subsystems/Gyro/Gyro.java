@@ -60,8 +60,14 @@ public class Gyro extends SubsystemBase {
   }
 
   /**
-   * @return the angle of the robot in radians
-   * @param adjustedAngle the angle to adjust the yaw by in radiants
+   * Calculates and returns a new adjusted yaw angle for the robot.
+   *
+   * This method takes the current yaw angle of the robot (in radians)
+   * and adds the specified adjustment angle (also in radians) to it. 
+   * The result is a new `Rotation2d` object representing the adjusted yaw angle.
+   *
+   * @param adjustedAngle The angle to adjust the yaw by in radians.
+   * @return A new `Rotation2d` object representing the adjusted yaw angle.
    */
   public Rotation2d adjustedYaw(double adjustedAngle) {
     return inputs.yawPositionRad.plus(new Rotation2d(adjustedAngle));
