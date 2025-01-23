@@ -26,11 +26,11 @@ public class RobotContainer {
   private final Gyro m_gyroSubsystem;
 
   // Controllers
-  private final CommandXboxController controller =
+  private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
 
   // Autos
-  private final LoggedDashboardChooser<Command> autoChooser =
+  private final LoggedDashboardChooser<Command> m_autoChooser =
       new LoggedDashboardChooser<>("Auto Choices");
 
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
@@ -72,7 +72,7 @@ public class RobotContainer {
     }
 
     // Adds an "Auto" tab on ShuffleBoard
-    Shuffleboard.getTab("Auto").add(autoChooser.getSendableChooser());
+    Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -98,9 +98,9 @@ public class RobotContainer {
   private void driverControllerBindings() {
     /* Driving the robot */
     m_driveSubsystem.setDefaultCommand(
-        new DefaultDriveCommand(m_driveSubsystem, m_gyroSubsystem, controller));
+        new DefaultDriveCommand(m_driveSubsystem, m_gyroSubsystem, m_driverController));
 
-    controller
+    m_driverController
         .a()
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
@@ -113,14 +113,15 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return m_autoChooser.get();
   }
 
   /**
    * Sets all mechanisms to brake mode, intended for use when the robot is disabled.
-   * @param isEnabled
+   *
+   * @param isEnabled - True to set brake mode, False to set coast mode
    */
-  public void allMechanismsBrake(boolean isEnabled) {
+  public void allMechanismsBrakeMode(boolean isEnabled) {
     m_driveSubsystem.setBrakeModeAll(isEnabled);
   }
 }

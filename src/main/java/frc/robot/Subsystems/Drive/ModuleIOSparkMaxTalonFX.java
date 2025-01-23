@@ -191,12 +191,12 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
   @Override
   public void setDriveVoltage(double volts) {
-    driveTalonFX.setVoltage(volts);
+    driveTalonFX.setVoltage(MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
 
   @Override
   public void setTurnVoltage(double volts) {
-    turnSparkMax.setVoltage(volts);
+    turnSparkMax.setVoltage(MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
 
   @Override

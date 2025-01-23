@@ -56,7 +56,7 @@ public class Module {
   /**
    * Manually sets voltage of the Drive motor
    *
-   * @param volts the voltage to set the Drive motor to [-12 to 12]
+   * @param volts A value between -12 (full reverse) to 12 (full forward)
    */
   public void setDriveVoltage(double volts) {
     io.setDriveVoltage(volts);
@@ -65,7 +65,7 @@ public class Module {
   /**
    * Manually sets voltage of the Turn motor
    *
-   * @param volts the voltage to set the Turn motor to [-12 to 12]
+   * @param volts A value between -12 (full reverse) to 12 (full forward)
    */
   public void setTurnVoltage(double volts) {
     io.setTurnVoltage(volts);
@@ -74,9 +74,9 @@ public class Module {
   /**
    * Set the speed of the Drive motor based on a percent scale
    *
-   * <p>On a -1 to 1 Scale. 1 representing 100
+   * <p>On a -1 to 1 Scale. 1 representing 100% 
    *
-   * @param percent the percent speed to set the drive motor to [-1 to 1]
+   * @param percent -1 (full reverse) to 1 (full forward)
    */
   public void setDrivePercentSpeed(double percent) {
     io.setDriveVoltage(percent * 12);
@@ -85,30 +85,36 @@ public class Module {
   /**
    * Set the speed of the Turn motor based on a percent scale
    *
-   * <p>On a -1 to 1 Scale. 1 representing 100
+   * <p>On a -1 to 1 Scale. 1 representing 100% 
    *
-   * @param percent the percent speed to set the Turn motor to [-1 to 1]
+   * @param percent -1 (full reverse) to 1 (full forward)
    */
   public void setTurnPercentSpeed(double percent) {
     io.setTurnVoltage(percent * 12);
   }
 
   /**
-   * @return the current turn angle of the Module.
-   */
+   * The current absolute turn angle of the module in radians, normalized to a range of negative pi to pi.
+   *
+   * @return The current turn angle of the module in radians.
+   */ 
   public Rotation2d getAngle() {
     return new Rotation2d(inputs.turnAbsolutePositionRad);
   }
 
   /**
-   * @return the current Drive position of the Module in meters.
+   * Calculates the current drive position of the module based on the encoder readings and the wheel radius.
+   *
+   * @return The current drive position of the module in meters.
    */
   public double getPositionMeters() {
     return inputs.drivePositionRad * DriveConstants.WHEEL_RADIUS_M;
   }
 
   /**
-   * @return the current Drive Velocity of the Module in meters per second
+   * Calculates the current linear velocity of the module based on the encoder readings and the wheel radius.
+   *
+   * @return The current drive velocity of the module in meters per second.
    */
   public double getVelocityMetersPerSec() {
     return inputs.driveVelocityRadPerSec * DriveConstants.WHEEL_RADIUS_M;

@@ -16,15 +16,15 @@ import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
 
-  private final Module[] modules = new Module[4];
-  private final Gyro gyro;
+  private final Module[] m_modules = new Module[4];
+  private final Gyro m_gyro;
   private Twist2d twist = new Twist2d();
 
   // The swerve drive kinematics
   public SwerveDriveKinematics swerveDriveKinematics;
 
-  // Gets previous gyro yaw
-  public Rotation2d lastGyroYaw = new Rotation2d();
+  // Previous yaw angle of the robot
+  public Rotation2d lastRobotYaw = new Rotation2d();
 
   // Gets previous module positions
   private double[] lastModulePositionsMeters;
@@ -38,11 +38,11 @@ public class Drive extends SubsystemBase {
 
     // Initialize the Drive subsystem
     System.out.println("[Init] Creating Drive");
-    this.gyro = gyro;
-    modules[0] = new Module(FRModuleIO, 0);
-    modules[1] = new Module(FLModuleIO, 1);
-    modules[2] = new Module(BLModuleIO, 2);
-    modules[3] = new Module(BRModuleIO, 3);
+    m_gyro = gyro;
+    m_modules[0] = new Module(FRModuleIO, 0);
+    m_modules[1] = new Module(FLModuleIO, 1);
+    m_modules[2] = new Module(BLModuleIO, 2);
+    m_modules[3] = new Module(BRModuleIO, 3);
 
     // Initialize the swerve drive kinematics
     swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
@@ -52,7 +52,7 @@ public class Drive extends SubsystemBase {
   // This method will be called once per scheduler run
   public void periodic() {
     for (int i = 0; i < 4; i++) {
-      modules[i].periodic();
+      m_modules[i].periodic();
     }
   }
 
@@ -62,7 +62,7 @@ public class Drive extends SubsystemBase {
    * @param isDisabled True for brake, false for coast
    */
   public void setBrakeModeAll(boolean isEnabled) {
-    for (var module : modules) {
+    for (var module : m_modules) {
       module.setBrakeMode(isEnabled);
     }
   }
@@ -89,8 +89,8 @@ public class Drive extends SubsystemBase {
     SwerveModuleState[] measuredStates = new SwerveModuleState[4];
 
     for (int i = 0; i < 4; i++) {
-      modules[i].runSetpoint(setpointStates[i]);
-      measuredStates[i] = modules[i].getState();
+      m_modules[i].runSetpoint(setpointStates[i]);
+      measuredStates[i] = m_modules[i].getState();
     }
 
     // Record optimized setpoints and measured states
@@ -118,40 +118,41 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       wheelDeltas[i] =
           new SwerveModulePosition(
-              (modules[i].getPositionMeters()
+              (m_modules[i].getPositionMeters()
                   - lastModulePositionsMeters[i]), // This calculates the change in angle
-              modules[i].getAngle()); // Gets individual MODULE rotation
-      lastModulePositionsMeters[i] = modules[i].getPositionMeters();
+              m_modules[i].getAngle()); // Gets individual MODULE rotation
+      lastModulePositionsMeters[i] = m_modules[i].getPositionMeters();
     }
     return wheelDeltas;
   }
 
+  /**
+   * Current heading of the robot. Updates based on the Gyro. If gyro is not connected, uses change in module position instead
+   * 
+   * @return The current angle of the robot
+   */
   public Rotation2d getRotation() {
 
-    var gyroYaw = gyro.getYaw();
-
+    Rotation2d robotYaw;
+    
     /*
-     * Twist2d is a change in distance along an arc
-     * // x is the forward distance driven
-     * // y is the distance driven to the side
-     * // (left positive), and the component is the change in heading.
-     */
-    if (gyro.isConnected()) {
-      twist =
-          new Twist2d(
-              twist.dx,
-              twist.dy,
-              gyroYaw.minus(lastGyroYaw).getRadians()); // Updates twist based on GYRO
+    * Twist2d is a change in distance along an arc
+    * // x is the forward distance driven
+    * // y is the distance driven to the side
+    * // (left positive), and the component is the change in heading.
+    */
+    if (m_gyro.isConnected()) {
+      robotYaw = m_gyro.getYaw();
     } else {
       twist =
           swerveDriveKinematics.toTwist2d(
               getWheelDeltas()); // Updates Twist Based on MODULE position
-      gyroYaw =
-          lastGyroYaw.minus(
+      robotYaw =
+          lastRobotYaw.minus(
               new Rotation2d(twist.dtheta)); // Updates rotation 2d based on robot module position
     }
-    lastGyroYaw = gyroYaw;
-    return gyroYaw;
+    lastRobotYaw = robotYaw;
+    return robotYaw;
   }
 
   public void driveWithDeadband(double x, double y, double rot) {

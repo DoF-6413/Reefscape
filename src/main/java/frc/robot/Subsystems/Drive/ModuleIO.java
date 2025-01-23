@@ -39,28 +39,28 @@ public interface ModuleIO {
   public default void updateInputs(ModuleIOInputs inputs) {}
 
   /**
-   * Manually sets voltage of the Drive Motor
+   * Manually sets voltage of the Drive motor
    *
-   * @param volts the voltage to set the Drive Motor to [-12 to 12]
+   * @param volts A value between -12 (full reverse) to 12 (full forward)
    */
-  public default void setDriveVoltage(double voltage) {}
+  public default void setDriveVoltage(double volts) {}
 
   /**
-   * Manually sets voltage of the Turn Motor
+   * Manually sets voltage of the Turn motor
    *
-   * @param volts the voltage to set the Turn Motor to [-12 to 12]
+   * @param volts A value between -12 (full reverse) to 12 (full forward)
    */
-  public default void setTurnVoltage(double voltage) {}
+  public default void setTurnVoltage(double volts) {}
 
   /**
-   * Sets the idle mode for the Drive Motor
+   * Sets the idle mode for the Drive motor
    *
    * @param enable Sets break mode on true, coast on false
    */
   public default void setDriveBrakeMode(boolean enable) {}
 
   /**
-   * Sets the idle mode for the Turn Motor
+   * Sets the idle mode for the Turn motor
    *
    * @param enable Sets break mode on true, coast on false
    */

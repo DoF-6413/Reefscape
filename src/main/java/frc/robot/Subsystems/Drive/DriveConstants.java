@@ -50,7 +50,7 @@ public final class DriveConstants {
 
   /** Max Linear Speed of Robot */
   public static final double MAX_LINEAR_SPEED_M_PER_S =
-      5.2; // TODO: Update? Since robot is larger //TODO:I still not knowing the answere
+      5.2; // TODO: Update? Since robot is larger
   /** Set the inverted for the turn SparkMax */
   public static final double MAX_ANGULAR_SPEED_RAD_PER_S =
       MAX_LINEAR_SPEED_M_PER_S / (Math.sqrt(2) * TRACK_WIDTH_M / 2);
@@ -76,8 +76,7 @@ public final class DriveConstants {
 
   /**
    * Translation 2d assumes that the robot front facing is in the positive x direction and the robot
-   * left is in the positive y direction <br>
-   * </br>
+   * left is in the positive y direction 
    *
    * <p>Directions of the VECTORS that each module turns in (i.e. Module 0, front right, when the
    * robot spins ccw, will point towards Quadrant II which is (-,+))

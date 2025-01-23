@@ -41,10 +41,12 @@ public class GyroIOPigeon2 implements GyroIO {
     yawVelocityDegPerSec.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
   }
 
-  /** Updates all Gyro signals (inputs) and check if they are connected,
-   * including yaw position and velocity
-   * 
-   * Note: Pigeon2 "getYaw" method returns unconstrained yaw in degrees
+  /**
+   * Updates all Gyro signals (inputs) and check if they are connected, including yaw position and
+   * velocity
+   *
+   * <p>Note: Pigeon2 "getYaw" method returns unconstrained yaw in degrees
+   *
    * @param inputs - the GyroIOInputs object to update
    */
   @Override

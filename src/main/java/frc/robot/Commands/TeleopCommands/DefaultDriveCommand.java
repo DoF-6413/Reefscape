@@ -23,27 +23,27 @@ public class DefaultDriveCommand extends Command {
 
     addRequirements(drive);
   }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     /* Normal Drive Mode */
     drive.driveWithDeadband(
-        controller.getLeftY(), // Left/Right 
+        controller.getLeftY(), // Left/Right
         -controller.getLeftX(), // Forward/backward (multiply by -1 bc controller axis inverted)
-        controller.getRightX()); // Rotation;
+        controller.getRightX()); // Rotation
   }
 
-  /**
-   * Called once the command ends or is interrupted.
-   * 
-   * @param interrupted - True if the command was interrupted, False if it simply finished.   */
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     drive.driveWithDeadband(0, 0, 0);
   }
+
   // Returns true when the command should end
   @Override
   public boolean isFinished() {

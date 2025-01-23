@@ -98,7 +98,8 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    robotContainer.allMechanismsBrake(false); // TODO: Update true for comps; easier to test in coast mode
+    robotContainer.allMechanismsBrakeMode(
+        false); // TODO: Update true for comps; easier to test in coast mode
   }
 
   /** This function is called periodically when disabled. */
@@ -125,7 +126,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    robotContainer.allMechanismsBrake(true);
+    robotContainer.allMechanismsBrakeMode(true);
   }
 
   /** This function is called periodically during operator control. */
