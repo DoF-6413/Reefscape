@@ -42,7 +42,11 @@ public class Module {
     Logger.processInputs("Drive/Module" + Integer.toString(m_index), m_inputs);
   }
 
-  /** Update the inputs of the Modules */
+  /**
+   * Peridocially updates the logged inputs for the Module.
+   *
+   * @param inputs Inputs from the auto logger
+   */
   public void updateInputs() {
     m_io.updateInputs(m_inputs);
   }
@@ -74,7 +78,7 @@ public class Module {
   /**
    * Set the speed of the Drive motor based on a percent scale
    *
-   * <p>On a -1 to 1 Scale. 1 representing 100% 
+   * <p>On a -1 to 1 Scale. -1 representing -100%, 1 representing 100%
    *
    * @param percent -1 (full reverse) to 1 (full forward)
    */
@@ -85,7 +89,7 @@ public class Module {
   /**
    * Set the speed of the Turn motor based on a percent scale
    *
-   * <p>On a -1 to 1 Scale. 1 representing 100% 
+   * <p>On a -1 to 1 Scale. -1 representing -100%, 1 representing 100%
    *
    * @param percent -1 (full reverse) to 1 (full forward)
    */
@@ -94,16 +98,18 @@ public class Module {
   }
 
   /**
-   * The current absolute turn angle of the module in radians, normalized to a range of negative pi to pi.
+   * The current absolute turn angle of the module in radians, normalized to a range of negative pi
+   * to pi.
    *
    * @return The current turn angle of the module in radians.
-   */ 
+   */
   public Rotation2d getAngle() {
     return new Rotation2d(m_inputs.turnAbsolutePositionRad);
   }
 
   /**
-   * Calculates the current drive position of the module based on the encoder readings and the wheel radius.
+   * Calculates the current drive position of the module based on the encoder readings and the wheel
+   * radius.
    *
    * @return The current drive position of the module in meters.
    */
@@ -112,7 +118,8 @@ public class Module {
   }
 
   /**
-   * Calculates the current linear velocity of the module based on the encoder readings and the wheel radius.
+   * Calculates the current linear velocity of the module based on the encoder readings and the
+   * wheel radius.
    *
    * @return The current drive velocity of the module in meters per second.
    */

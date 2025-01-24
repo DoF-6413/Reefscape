@@ -22,7 +22,11 @@ public interface GyroIO {
     public double yawVelocityRadPerSec = 0.0;
   }
 
-  /** Updates the set of loggable inputs. */
+  /**
+   * Peridocially updates the logged inputs for the Gyro.
+   *
+   * @param inputs Inputs from the auto logger
+   */
   public default void updateInputs(GyroIOInputs inputs) {}
 
   /**

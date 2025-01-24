@@ -35,7 +35,11 @@ public interface ModuleIO {
     public boolean absoluteEncoderIsConnected = false;
   }
 
-  /** Updates logged inputs periodically */
+  /**
+   * Peridocially updates the logged inputs for the Module.
+   *
+   * @param inputs Inputs from the auto logger
+   */
   public default void updateInputs(ModuleIOInputs inputs) {}
 
   /**

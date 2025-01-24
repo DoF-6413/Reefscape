@@ -77,7 +77,8 @@ public class Drive extends SubsystemBase {
     // Convert chassis speeds to Swerve Module States, these will be the setpoints for the drive and
     // turn motors
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-    SwerveModuleState[] setpointStates = m_swerveDriveKinematics.toSwerveModuleStates(discreteSpeeds);
+    SwerveModuleState[] setpointStates =
+        m_swerveDriveKinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         setpointStates, DriveConstants.MAX_LINEAR_SPEED_M_PER_S);
 
@@ -127,20 +128,20 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Current heading of the robot. Updates based on the Gyro. If gyro is not connected, uses change in module position instead
-   * 
+   * Current heading of the robot. Updates based on the Gyro. If gyro is not connected, uses change
+   * in module position instead
+   *
    * @return The current angle of the robot
    */
   public Rotation2d getRotation() {
-
     Rotation2d robotYaw;
-    
+
     /*
-    * Twist2d is a change in distance along an arc
-    * // x is the forward distance driven
-    * // y is the distance driven to the side
-    * // (left positive), and the component is the change in heading.
-    */
+     * Twist2d is a change in distance along an arc
+     * // x is the forward distance driven
+     * // y is the distance driven to the side
+     * // (left positive), and the component is the change in heading.
+     */
     if (m_gyro.isConnected()) {
       robotYaw = m_gyro.getYaw();
     } else {
@@ -155,18 +156,28 @@ public class Drive extends SubsystemBase {
     return robotYaw;
   }
 
+  /**
+   * Drives the robot with a 10% joystick deadband applied. This means joystick values between 0-0.1
+   * (or 0-10%) will be ignored and not more the robot for both axises and rotation.
+   *
+   * <p>The joystick inputs run the robot at a percent scale from -1 (-100% reverse) to 1 (100%
+   * forward)
+   *
+   * @param x The desired x-axis velocity from joystick
+   * @param y The desired y-axis velocity from joystick
+   * @param rot The desired angular velocity from joystick
+   */
   public void driveWithDeadband(double x, double y, double rot) {
-    // apply deadband to x, y, and rot
-
+    // Apply deadband to x, y, and rot
     double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DriveConstants.DEADBAND);
+    double omega = MathUtil.applyDeadband(rot, DriveConstants.DEADBAND);
 
     Rotation2d linearDirection = new Rotation2d();
     if (x != 0 && y != 0) {
       linearDirection = new Rotation2d(x, y);
     }
-    double omega = MathUtil.applyDeadband(rot, DriveConstants.DEADBAND);
 
-    // square values
+    // Square values
     linearMagnitude = linearMagnitude * linearMagnitude;
     omega = Math.copySign(omega * omega, omega);
 
@@ -176,7 +187,7 @@ public class Drive extends SubsystemBase {
             .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
             .getTranslation();
 
-    // the actual run command itself
+    // Run modules based on field orientated Chassis speeds
     this.runVelocity(
         ChassisSpeeds.fromFieldRelativeSpeeds(
             linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,

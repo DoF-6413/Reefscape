@@ -49,8 +49,7 @@ public final class DriveConstants {
   public static final double TURN_KD = 0.05;
 
   /** Max Linear Speed of Robot */
-  public static final double MAX_LINEAR_SPEED_M_PER_S =
-      5.2; // TODO: Update? Since robot is larger
+  public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger
   /** Set the inverted for the turn SparkMax */
   public static final double MAX_ANGULAR_SPEED_RAD_PER_S =
       MAX_LINEAR_SPEED_M_PER_S / (Math.sqrt(2) * TRACK_WIDTH_M / 2);
@@ -76,7 +75,7 @@ public final class DriveConstants {
 
   /**
    * Translation 2d assumes that the robot front facing is in the positive x direction and the robot
-   * left is in the positive y direction 
+   * left is in the positive y direction
    *
    * <p>Directions of the VECTORS that each module turns in (i.e. Module 0, front right, when the
    * robot spins ccw, will point towards Quadrant II which is (-,+))
@@ -89,7 +88,8 @@ public final class DriveConstants {
       new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
     };
   }
-  // Krakens, Neos, CANcoders
+
+  // KrakenX60 CAN IDs
   public enum DRIVE_MOTOR {
     FRONT_RIGHT(2), // Module 0
     FRONT_LEFT(3), // Module 1
@@ -103,6 +103,7 @@ public final class DriveConstants {
     }
   }
 
+  // NEOs CAN IDs
   public enum TURN_MOTOR {
     FRONT_RIGHT(6), // Module 0
     FRONT_LEFT(7), // Module 1
@@ -116,6 +117,7 @@ public final class DriveConstants {
     }
   }
 
+  // CANcoders CAN IDs
   public enum ABSOLUTE_ENCODER {
     FRONT_RIGHT(10), // Module 0
     FRONT_LEFT(11), // Module 1

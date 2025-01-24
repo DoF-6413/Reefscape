@@ -31,8 +31,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * project.
  */
 public class Robot extends LoggedRobot {
-  private RobotContainer robotContainer;
-  private Command autonomousCommand;
+  private RobotContainer m_robotContainer;
+  private Command m_autonomousCommand;
 
   public Robot() {
     // Record metadata
@@ -83,7 +83,7 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putString("Version Number", "8.0.8.0");
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
-    robotContainer = new RobotContainer();
+    m_robotContainer = new RobotContainer();
   }
 
   /** This function is called periodically during all modes. */
@@ -95,10 +95,10 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
     }
-    robotContainer.allMechanismsBrakeMode(
+    m_robotContainer.allMechanismsBrakeMode(
         false); // TODO: Update true for comps; easier to test in coast mode
   }
 
@@ -109,10 +109,10 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    autonomousCommand = robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    if (autonomousCommand != null) {
-      autonomousCommand.schedule();
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
     }
   }
 
@@ -123,10 +123,10 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
     }
-    robotContainer.allMechanismsBrakeMode(true);
+    m_robotContainer.allMechanismsBrakeMode(true);
   }
 
   /** This function is called periodically during operator control. */

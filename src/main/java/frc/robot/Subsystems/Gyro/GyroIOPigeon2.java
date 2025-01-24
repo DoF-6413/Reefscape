@@ -14,7 +14,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
-/** Runs real Pigeon 2.0 Gyroscope */
+/** GyroIO implementation for the real mode of the robot. Runs the Gyro with a Pigeon 2.0 sensor */
 public class GyroIOPigeon2 implements GyroIO {
 
   private final Pigeon2 m_gyro;
@@ -41,14 +41,6 @@ public class GyroIOPigeon2 implements GyroIO {
     m_yawVelocityDegPerSec.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
   }
 
-  /**
-   * Updates all Gyro signals (inputs) and check if they are connected, including yaw position and
-   * velocity
-   *
-   * <p>Note: Pigeon2 "getYaw" method returns unconstrained yaw in degrees
-   *
-   * @param inputs - the GyroIOInputs object to update
-   */
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     inputs.connected = BaseStatusSignal.refreshAll(m_yawDeg, m_yawVelocityDegPerSec).isOK();

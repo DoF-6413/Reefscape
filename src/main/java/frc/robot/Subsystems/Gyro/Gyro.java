@@ -27,33 +27,35 @@ public class Gyro extends SubsystemBase {
   }
 
   /**
-   * @return returns the Yaw (Z Axis) in Radians (-pi, pi)
+   * The angle of the Gyro is normalized to a range of 0 to 2 pi
+   *
+   * @return Yaw angle (about the Z Axis) of the robot in Radians
    */
   public Rotation2d getYaw() {
     return m_inputs.yawPositionRad;
   }
 
   /**
-   * @return returns the Yaw (Z Axis) in Radians (-pi, pi) without any offset
+   * @return Yaw angle (about the Z Axis) in Radians without any offset
    */
   public Rotation2d getRawYaw() {
     return m_inputs.rawYawPositionRad;
   }
 
   /**
-   * @return the angular velocity of the robot in Radians per sec
+   * @return Angular velocity of the robot in Radians per sec
    */
   public double getYawAngularVelocity() {
     return m_inputs.yawVelocityRadPerSec;
   }
 
-  /** Resets the Heading to the Direction the Gyro is Facing */
+  /** Resets the Heading to the direction the Gyro is facing (aka the front of the robot) */
   public void zeroYaw() {
     m_io.zeroHeading();
   }
 
   /**
-   * @return Whether or not the gyro is connected
+   * @return Whether or not the Gyro is connected
    */
   public boolean isConnected() {
     return m_inputs.connected;

@@ -12,7 +12,7 @@ public class DefaultDriveCommand extends Command {
   Drive m_drive;
   Gyro m_gyro;
   CommandXboxController m_controller;
-  
+
   /** Creates a new DefaultDriveCommand. */
   public DefaultDriveCommand(Drive drive, Gyro gyro, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.

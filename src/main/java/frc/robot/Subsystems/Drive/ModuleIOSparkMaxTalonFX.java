@@ -26,7 +26,10 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants.RobotStateConstants;
 
-/** Add your docs here. */
+/**
+ * ModuleIO implementation for the real mode of the robot. Runs a Module with a KrakenX60 Drive
+ * motor and NEO Turn motor
+ */
 public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
   // Drive motor
@@ -154,7 +157,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-
     // Update all Drive motor signals and check if they are good
     inputs.driveIsConnected =
         BaseStatusSignal.refreshAll(
@@ -164,7 +166,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
                 m_driveVelocityRotPerSec,
                 m_drivePositionRot)
             .isOK();
-
     inputs.drivePositionRad = Units.rotationsToRadians(m_drivePositionRot.getValueAsDouble());
     inputs.driveVelocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_driveVelocityRotPerSec.getValueAsDouble() * 60)
@@ -191,12 +192,14 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
   @Override
   public void setDriveVoltage(double volts) {
-    m_driveTalonFX.setVoltage(MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+    m_driveTalonFX.setVoltage(
+        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
 
   @Override
   public void setTurnVoltage(double volts) {
-    m_turnSparkMax.setVoltage(MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+    m_turnSparkMax.setVoltage(
+        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
 
   @Override
