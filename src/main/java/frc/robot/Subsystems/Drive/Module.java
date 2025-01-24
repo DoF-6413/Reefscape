@@ -10,7 +10,7 @@ import org.littletonrobotics.junction.Logger;
 public class Module {
   private final ModuleIO m_io;
   private final ModuleIOInputsAutoLogged m_inputs = new ModuleIOInputsAutoLogged();
-  private final int m_index;
+  private final int m_moduleNumber;
 
   // Closed loop PID controllers
   private final PIDController m_drivePID;
@@ -18,10 +18,17 @@ public class Module {
 
   private SimpleMotorFeedforward m_driveFeedforward;
 
-  public Module(ModuleIO io, int index) {
+  /**
+   * Constructs a new Module instance.
+   * <p> This creates a new Module object used to run the Drive and Turn motors of each module.
+   * 
+   * @param io ModuleIO implementation of the current robot mode
+   * @param index Module number
+   */
+  public Module(ModuleIO io, int moduleNumber) {
     System.out.println("[Init] Creating Module");
     m_io = io;
-    m_index = index;
+    m_moduleNumber = moduleNumber;
 
     m_drivePID =
         new PIDController(
@@ -39,7 +46,7 @@ public class Module {
    */
   public void periodic() {
     this.updateInputs();
-    Logger.processInputs("Drive/Module" + Integer.toString(m_index), m_inputs);
+    Logger.processInputs("Drive/Module" + Integer.toString(m_moduleNumber), m_inputs);
   }
 
   /**

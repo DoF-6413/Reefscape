@@ -29,6 +29,16 @@ public class Drive extends SubsystemBase {
   // Gets previous module positions
   private double[] m_lastModulePositionsMeters;
 
+  /**
+   * Constructs a new Drive subsystem instance.
+   * <p> This constructor creates a new Drive object that stores the IO implementation of each Module and the Gyroscope. 
+   * 
+   * @param FRModuleIO Front Right ModuleIO implementation of the current robot mode
+   * @param FLModuleIO Front Left ModuleIO implementation of the current robot mode
+   * @param BLModuleIO Back Left ModuleIO implementation of the current robot mode
+   * @param BRModuleIO Back Right ModuleIO implementation of the current robot mode
+   * @param gyro Gyro subsystem
+   */
   public Drive(
       ModuleIO FRModuleIO,
       ModuleIO FLModuleIO,
