@@ -214,7 +214,7 @@ public class Drive extends SubsystemBase {
    * @return the Swerve kinematics of the robot
    */
   public SwerveDriveKinematics getKinematics() {
-    return swerveDriveKinematics;
+    return m_swerveDriveKinematics;
   }
 
   /**
@@ -223,7 +223,7 @@ public class Drive extends SubsystemBase {
   public SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
     for (int i = 0; i < 4; i++) {
-      modulePositions[i] = modules[i].getPosition();
+      modulePositions[i] = m_modules[i].getPosition();
     }
     return modulePositions;
   }
