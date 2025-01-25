@@ -9,31 +9,32 @@ import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Gyro.Gyro;
 
 public class DefaultDriveCommand extends Command {
+  Drive m_drive;
+  Gyro m_gyro;
+  CommandXboxController m_controller;
+
   /** Creates a new DefaultDriveCommand. */
-  CommandXboxController controller;
-
-  Drive drive;
-  Gyro gyro;
-
   public DefaultDriveCommand(Drive drive, Gyro gyro, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.drive = drive;
-    this.gyro = gyro;
-    this.controller = controller;
+    m_drive = drive;
+    m_gyro = gyro;
+    m_controller = controller;
 
     addRequirements(drive);
   }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     /* Normal Drive Mode */
-    drive.driveWithDeadband(
-        controller.getLeftX(), // Left/Right (multiply by -1 bc controller a())is inverted)
-        -controller.getLeftY(), // Forward/backward
-        controller.getRightX()); // Rotation;
+    m_drive.driveWithDeadband(
+        m_controller.getLeftX(), // Forward/backward (multiply by -1 bc controller axis inverted)
+        -m_controller.getLeftY(), // Left/Right
+        m_controller.getRightX()); // Rotation
   }
 
   /**
@@ -43,8 +44,9 @@ public class DefaultDriveCommand extends Command {
    */
   @Override
   public void end(boolean interrupted) {
-    drive.driveWithDeadband(0, 0, 0);
+    m_drive.driveWithDeadband(0, 0, 0);
   }
+
   // Returns true when the command should end
   @Override
   public boolean isFinished() {

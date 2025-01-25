@@ -23,6 +23,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   // Chassis
+  // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
 
@@ -30,11 +31,11 @@ public class RobotContainer {
   private final PoseEstimator m_PoseEstimator;
 
   // Controllers
-  private final CommandXboxController controller =
+  private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
 
-  // Autos
-  private final LoggedDashboardChooser<Command> autoChooser =
+  // Autoss
+  private final LoggedDashboardChooser<Command> m_autoChooser =
       new LoggedDashboardChooser<>("Auto Choices");
 
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
@@ -77,7 +78,7 @@ public class RobotContainer {
     m_PoseEstimator = new PoseEstimator(m_driveSubsystem, m_gyroSubsystem);
 
     // Adds an "Auto" tab on ShuffleBoard
-    Shuffleboard.getTab("Auto").add(autoChooser.getSendableChooser());
+    Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -102,11 +103,10 @@ public class RobotContainer {
   // Driver Controls
   private void driverControllerBindings() {
     /* Driving the robot */
-
     m_driveSubsystem.setDefaultCommand(
-        new DefaultDriveCommand(m_driveSubsystem, m_gyroSubsystem, controller));
+        new DefaultDriveCommand(m_driveSubsystem, m_gyroSubsystem, m_driverController));
 
-    controller
+    m_driverController
         .a()
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
@@ -119,10 +119,15 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return m_autoChooser.get();
   }
 
-  public void mechamismsCoastOnDisable(boolean isDisabled) {
-    m_driveSubsystem.setBrakeModeAll(!isDisabled);
+  /**
+   * Sets all mechanisms to brake mode, intended for use when the robot is disabled.
+   *
+   * @param enable - True to set brake mode, False to set coast mode
+   */
+  public void allMechanismsBrakeMode(boolean enable) {
+    m_driveSubsystem.setBrakeModeAll(enable);
   }
 }

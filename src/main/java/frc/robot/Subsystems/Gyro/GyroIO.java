@@ -12,24 +12,26 @@ public interface GyroIO {
 
   @AutoLog
   public static class GyroIOInputs {
-    /** Returns whether or not the gyro is connected */
+    // Whether or not the signals from the Gyro are being recieved
     public boolean connected = false;
-
+    // Current yaw angle
     public Rotation2d yawPositionRad = new Rotation2d();
+    // Unadjusted yaw angle (no applied offset or modulus)
     public Rotation2d rawYawPositionRad = new Rotation2d();
-    public Rotation2d anglePositionRad = new Rotation2d();
-    /** Gets the angular velocity of the yaw */
+    // The angular velocity of the yaw
     public double yawVelocityRadPerSec = 0.0;
-
-    public double rateRadPerSec = 0.0;
   }
 
-  /** Updates the set of loggable inputs. */
+  /**
+   * Peridocially updates the logged inputs for the Gyro.
+   *
+   * @param inputs Inputs from the auto logger
+   */
   public default void updateInputs(GyroIOInputs inputs) {}
 
   /**
-   * Resets the heading to be whereever the front of the robot is facing (front being the intake
-   * side)
+   * Resets the heading to be whereever the front of the robot is facing (front being the opposite
+   * side to the battery)
    */
   public default void zeroHeading() {}
 }

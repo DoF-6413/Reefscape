@@ -21,11 +21,11 @@ public interface ModuleIO {
 
     /** Voltage that turn motor draws */
     public double turnAppliedVoltage = 0.0;
-    /** Relative position of the wheel in radians */
+    /** Relative position of the wheel in radians (NEO encoder) */
     public double turnPositionRad = 0.0;
-    /** Absolute position of the wheel in radians */
+    /** Absolute position of the wheel in radians (CANcoder) */
     public double turnAbsolutePositionRad = 0.0;
-    /** Turn velocity of the wheel in radians per sec */
+    /** Turn velocity of the wheel in radians per sec (CANcoder) */
     public double turnVelocityRadPerSec = 0.0;
     /** Current drawn by the motor in amps */
     public double turnCurrentAmps = 0.0;
@@ -35,18 +35,38 @@ public interface ModuleIO {
     public boolean absoluteEncoderIsConnected = false;
   }
 
-  /** Updates logged inputs periodically */
+  /**
+   * Peridocially updates the logged inputs for the Module.
+   *
+   * @param inputs Inputs from the auto logger
+   */
   public default void updateInputs(ModuleIOInputs inputs) {}
 
-  /** Overrides the drive voltage */
-  public default void setDriveVoltage(double voltage) {}
+  /**
+   * Manually sets voltage of the Drive motor
+   *
+   * @param volts A value between -12 (full reverse) to 12 (full forward)
+   */
+  public default void setDriveVoltage(double volts) {}
 
-  /** Overrides the turn voltage */
-  public default void setTurnVoltage(double voltage) {}
+  /**
+   * Manually sets voltage of the Turn motor
+   *
+   * @param volts A value between -12 (full reverse) to 12 (full forward)
+   */
+  public default void setTurnVoltage(double volts) {}
 
-  /** Enables brake mode for drive */
-  public default void setDriveBrakeMode(boolean brake) {}
+  /**
+   * Sets the idle mode for the Drive motor
+   *
+   * @param enable Sets break mode on true, coast on false
+   */
+  public default void setDriveBrakeMode(boolean enable) {}
 
-  /** Enables brake mode for turn */
-  public default void setTurnBrakeMode(boolean brake) {}
+  /**
+   * Sets the idle mode for the Turn motor
+   *
+   * @param enable Sets break mode on true, coast on false
+   */
+  public default void setTurnBrakeMode(boolean enable) {}
 }
