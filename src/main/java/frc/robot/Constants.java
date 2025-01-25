@@ -39,7 +39,9 @@ public final class Constants {
       REPLAY
     }
 
-    /** Returns Robot Mode (Real/Sim/Replay) */
+    /**
+     * @return Robot Mode (Real/Sim/Replay)
+     */
     public static Mode getMode() {
       if (RobotBase.isReal()) {
         return Mode.REAL;
@@ -50,18 +52,24 @@ public final class Constants {
       }
     }
 
-    // returns alliance from FMS
+    /**
+     * @return Alliance from FMS
+     */
     public static Optional<Alliance> getAlliance() {
       return DriverStation.getAlliance();
     }
 
-    // after 500 seconds, the CAN times out
+    /** After 500 seconds, the CAN times out */
     public static final int CAN_CONFIG_TIMEOUT_SEC = 500;
 
-    // every 200 ms, periodic commands loop
+    /** Every 20 ms, periodic commands loop */
     public static final double LOOP_PERIODIC_SEC = 0.02;
+
+    /** Max voltage to send to motor */
+    public static final double MAX_VOLTAGE = 12;
   }
 
+  /** Controller ports */
   public static class OperatorConstants {
     public static final int DRIVER_CONTROLLER = 0;
     public static final int AUX_CONTROLLER = 1;

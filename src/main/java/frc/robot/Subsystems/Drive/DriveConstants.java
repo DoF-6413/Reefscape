@@ -18,13 +18,35 @@ public final class DriveConstants {
   /** Gear Ratio for MK4i L3 Krakens */
   public static final double DRIVE_GEAR_RATIO = 6.12;
   /** Gear Ratio for MK4i Neos */
-  public static final double STEER_GEAR_RATIO = 150 / 7;
+  public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
 
-  public static final double TURN_KP = 1;
+  /**
+   * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
+   */
+  public static final double DRIVE_KP = 0;
+  /**
+   * KI represents the constant multiplied by the integral of the error from setpoint (Integral
+   * Error)
+   */
+  public static final double DRIVE_KI = 0;
+  /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
+  public static final double DRIVE_KD = 0;
+  /** KS represents the voltage required to overcome static friction */
+  public static final double DRIVE_KS_KRAKEN = 0.115;
+  /** KV represents the voltage used every second per meter */
+  public static final double DRIVE_KV_KRAKEN = 0.12978;
 
-  public static final double TURN_KI = 0;
-
-  public static final double TURN_KD = 0;
+  /**
+   * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
+   */
+  public static final double TURN_KP = 6.4;
+  /**
+   * KI represents the constant multiplied by the integral of the error from setpoint (Integral
+   * Error)
+   */
+  public static final double TURN_KI = 0.0;
+  /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
+  public static final double TURN_KD = 0.05;
 
   /** Max Linear Speed of Robot */
   public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger
@@ -33,7 +55,7 @@ public final class DriveConstants {
       MAX_LINEAR_SPEED_M_PER_S / (Math.sqrt(2) * TRACK_WIDTH_M / 2);
 
   public static final boolean TURN_IS_INVERTED = true;
-  /** */
+  /** the update frequency */
   public static final double UPDATE_FREQUENCY_HZ = 100;
   /** Current limiting in amps */
   public static final int CUR_LIM_A = 60;
@@ -51,18 +73,23 @@ public final class DriveConstants {
 
   public static final double TURN_MOI_KG_M2 = 0.0000158025413;
 
+  /**
+   * Translation 2d assumes that the robot front facing is in the positive x direction and the robot
+   * left is in the positive y direction
+   *
+   * <p>Directions of the VECTORS that each module turns in (i.e. Module 0, front right, when the
+   * robot spins ccw, will point towards Quadrant II which is (-,+))
+   */
   public static final Translation2d[] getModuleTranslations() {
-    // Translation 2d assumes that the robot front facing is in the positive x direction and the
-    // robot left is in the positive y direction
     return new Translation2d[] {
-      new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
       new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
       new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
       new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
+      new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
     };
   }
-  // talons , neos, cancoders
-  // TODO: update all CAN IDs
+
+  // KrakenX60 CAN IDs
   public enum DRIVE_MOTOR {
     FRONT_RIGHT(2), // Module 0
     FRONT_LEFT(3), // Module 1
@@ -76,6 +103,7 @@ public final class DriveConstants {
     }
   }
 
+  // NEOs CAN IDs
   public enum TURN_MOTOR {
     FRONT_RIGHT(6), // Module 0
     FRONT_LEFT(7), // Module 1
@@ -89,6 +117,7 @@ public final class DriveConstants {
     }
   }
 
+  // CANcoders CAN IDs
   public enum ABSOLUTE_ENCODER {
     FRONT_RIGHT(10), // Module 0
     FRONT_LEFT(11), // Module 1

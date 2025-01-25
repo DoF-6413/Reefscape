@@ -29,14 +29,14 @@ public class ModuleIOSim implements ModuleIO {
                 DriveConstants.DRIVE_MOI_KG_M2,
                 DriveConstants.DRIVE_GEAR_RATIO),
             DCMotor.getKrakenX60(1),
-            1);
+            0);
 
     steerSim =
         new FlywheelSim(
             LinearSystemId.createFlywheelSystem(
                 DCMotor.getNEO(1), DriveConstants.TURN_MOI_KG_M2, DriveConstants.STEER_GEAR_RATIO),
             DCMotor.getNEO(1),
-            1);
+          0);
   }
 
   @Override
