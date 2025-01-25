@@ -23,8 +23,11 @@ public class GyroIOPigeon2 implements GyroIO {
   private StatusSignal<Angle> m_yawDeg;
   private StatusSignal<AngularVelocity> m_yawVelocityDegPerSec;
 
-  /** Constructs a new GyroIOPigeon2 instance
-   * <p> This creates a new GyroIO object that uses the real Pigeon 2.0 IMU sensor for updating values
+  /**
+   * Constructs a new GyroIOPigeon2 instance
+   *
+   * <p>This creates a new GyroIO object that uses the real Pigeon 2.0 IMU sensor for updating
+   * values
    */
   public GyroIOPigeon2() {
     System.out.println("[Init] Creating GyroIOPigeon2");

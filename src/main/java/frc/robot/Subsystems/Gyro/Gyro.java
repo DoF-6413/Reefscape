@@ -16,8 +16,10 @@ public class Gyro extends SubsystemBase {
 
   /**
    * Constructs a new Gyro subsystem instance.
-   * <p> This constructor creates a new Gyro object that updates the heading of the robot based on an IMU sensor
-   * 
+   *
+   * <p>This constructor creates a new Gyro object that updates the heading of the robot based on an
+   * IMU sensor
+   *
    * @param io GyroIO implementation of the current robot mode (only real or blank)
    */
   public Gyro(GyroIO io) {

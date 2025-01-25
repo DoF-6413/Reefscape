@@ -20,8 +20,9 @@ public class Module {
 
   /**
    * Constructs a new Module instance.
-   * <p> This creates a new Module object used to run the Drive and Turn motors of each module.
-   * 
+   *
+   * <p>This creates a new Module object used to run the Drive and Turn motors of each module.
+   *
    * @param io ModuleIO implementation of the current robot mode
    * @param index Module number
    */

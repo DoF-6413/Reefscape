@@ -26,9 +26,7 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants.RobotStateConstants;
 
-/**
- * ModuleIO implementation for the real mode of the robot
- */
+/** ModuleIO implementation for the real mode of the robot */
 public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
   // Drive motor
@@ -54,8 +52,10 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
   /**
    * Constructs a new ModuleIOSparkMaxTalonFX instance
-   * <p> This creates a new ModuleIO object that uses the real KrakenX60 and NEO motors to run the Drive and Turn of the Module
-   * 
+   *
+   * <p>This creates a new ModuleIO object that uses the real KrakenX60 and NEO motors to run the
+   * Drive and Turn of the Module
+   *
    * @param moduleNumber Number of the module
    */
   public ModuleIOSparkMaxTalonFX(int moduleNumber) {
