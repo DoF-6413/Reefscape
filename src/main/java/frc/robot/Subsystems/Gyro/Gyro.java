@@ -39,14 +39,7 @@ public class Gyro extends SubsystemBase {
    * @return Yaw angle (about the Z Axis) of the robot in Radians
    */
   public Rotation2d getYaw() {
-    return inputs.yawPositionRad;
-  }
-
-  /**
-   * @return returns the Yaw (Z Axis) in Radians (-pi, pi) without any offset
-   */
-  public Rotation2d getRawYaw() {
-    return inputs.rawYawPositionRad;
+    return m_inputs.yawPositionRad;
   }
 
   /**
