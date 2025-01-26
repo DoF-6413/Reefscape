@@ -7,10 +7,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Gyro.Gyro;
+import frc.robot.Utils.HeadingController;
 
 public class DefaultDriveCommand extends Command {
   Drive m_drive;
   Gyro m_gyro;
+  HeadingController m_headingController;
   CommandXboxController m_controller;
 
   /** Creates a new DefaultDriveCommand. */
@@ -19,6 +21,7 @@ public class DefaultDriveCommand extends Command {
     m_drive = drive;
     m_gyro = gyro;
     m_controller = controller;
+    m_headingController = new HeadingController();
 
     addRequirements(drive);
   }
