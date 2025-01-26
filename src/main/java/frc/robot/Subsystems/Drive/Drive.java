@@ -27,7 +27,7 @@ public class Drive extends SubsystemBase {
   public Rotation2d m_lastRobotYaw = new Rotation2d();
 
   // Gets previous module positions
-  private double[] m_lastModulePositionsMeters;
+  private double[] m_lastModulePositionsMeters = new double[4];
 
   /**
    * Constructs a new Drive subsystem instance.
