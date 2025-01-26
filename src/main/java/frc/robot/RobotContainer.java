@@ -23,6 +23,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   // Chassis
+  // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
 
@@ -33,7 +34,7 @@ public class RobotContainer {
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
 
-  // Autos
+  // Autoss
   private final LoggedDashboardChooser<Command> m_autoChooser =
       new LoggedDashboardChooser<>("Auto Choices");
 
