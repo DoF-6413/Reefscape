@@ -38,7 +38,7 @@ public class Module {
         new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
 
     m_driveFeedforward =
-        new SimpleMotorFeedforward(DriveConstants.DRIVE_KS_KRAKEN, DriveConstants.DRIVE_KV_KRAKEN);
+        new SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV);
   }
 
   /**
@@ -103,6 +103,24 @@ public class Module {
    */
   public void setTurnPercentSpeed(double percent) {
     m_io.setTurnVoltage(percent * 12);
+  }
+
+  /**
+   * Sets the velocity of the Drive motor using the closed loop controller built into the TalonFX speed controller
+   * 
+   * @param velocityRadPerSec Velocity to set Drive motor to in radians per second
+   */
+  public void setDriveVelocity(double velocityRadPerSec) {
+    m_io.setDriveVelocity(velocityRadPerSec);
+  }
+
+  /**
+   * Sets the position of the Turn motor using the closed loop controller built into the SparkMax speed controller
+   * 
+   * @param position Rotation2d with angle to set the Module wheel to 
+   */
+  public void setTurnPosition(Rotation2d position) {
+    m_io.setTurnPosition(position);
   }
 
   /**
@@ -184,5 +202,31 @@ public class Module {
     m_io.setDriveVoltage(
         m_driveFeedforward.calculate(velocityRadPerSec)
             + (m_drivePID.calculate(m_inputs.driveVelocityRadPerSec, velocityRadPerSec)));
+  }
+
+  /**
+   * Using the built in PID controllers of the speed controllers, calculates the voltage of the Drive and Turn motors based on the
+   * current inputed setpoint.
+   *
+   * @param state Desired Swerve Module State (Desired velocity and angle)
+   */
+  public void runSetpointSpeedController(SwerveModuleState state) {
+    var currentModuleAngle = getAngle();
+
+    // Optimize state based on current angle, aka take the shortest path for wheel to reach desired
+    // angle in rad (-pi,pi))
+    state.optimize(currentModuleAngle);
+
+    // Run turn controller
+    m_io.setTurnPosition(state.angle);;
+
+    // Update velocity based on turn error
+    state.speedMetersPerSecond *= Math.cos(state.angle.getRadians() - currentModuleAngle.getRadians());
+
+    // Turn Speed m/s into Vel rad/s
+    double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
+
+    // Run drive controller
+    m_io.setDriveVelocity(velocityRadPerSec);
   }
 }

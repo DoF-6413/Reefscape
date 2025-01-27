@@ -102,7 +102,7 @@ public class Drive extends SubsystemBase {
     SwerveModuleState[] measuredStates = new SwerveModuleState[4];
 
     for (int i = 0; i < 4; i++) {
-      m_modules[i].runSetpoint(setpointStates[i]);
+      m_modules[i].runSetpointSpeedController(setpointStates[i]);
       measuredStates[i] = m_modules[i].getState();
     }
 

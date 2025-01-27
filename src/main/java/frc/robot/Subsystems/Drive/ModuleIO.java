@@ -1,5 +1,6 @@
 package frc.robot.Subsystems.Drive;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ModuleIO {
@@ -69,4 +70,18 @@ public interface ModuleIO {
    * @param enable Sets break mode on true, coast on false
    */
   public default void setTurnBrakeMode(boolean enable) {}
+
+  /**
+   * Sets the velocity of the Drive motor using the closed loop controller built into the TalonFX speed controller
+   * 
+   * @param velocityRadPerSec Velocity to set Drive motor to in radians per second
+   */
+  public default void setDriveVelocity(double velocityRadPerSec) {}
+
+  /**
+   * Sets the position of the Turn motor using the closed loop controller built into the SparkMax speed controller
+   * 
+   * @param position Rotation2d with angle to set the Module wheel to 
+   */
+  public default void setTurnPosition(Rotation2d position) {}
 }
