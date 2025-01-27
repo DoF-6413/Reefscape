@@ -185,7 +185,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     inputs.absoluteEncoderIsConnected =
         BaseStatusSignal.refreshAll(absoluteEncoderPositionRot, absoluteEncoderVelocityRotPerSec)
             .isOK();
-
     inputs.turnAbsolutePositionRad =
         MathUtil.angleModulus(
                 Units.rotationsToRadians(absoluteEncoderPositionRot.getValueAsDouble()))
@@ -197,24 +196,24 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     inputs.turnCurrentAmps = m_turnSparkMax.getOutputCurrent();
     inputs.turnTempCelsius = m_turnSparkMax.getMotorTemperature();
   }
-  
+
   @Override
   public void setDriveVoltage(double volts) {
     m_driveTalonFX.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
- 
+
   @Override
   public void setTurnVoltage(double volts) {
     m_turnSparkMax.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
-  
+
   @Override
   public void setDriveBrakeMode(boolean enable) {
     m_driveTalonFX.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
-  
+
   @Override
   public void setTurnBrakeMode(boolean enable) {
     m_turnConfig.idleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);

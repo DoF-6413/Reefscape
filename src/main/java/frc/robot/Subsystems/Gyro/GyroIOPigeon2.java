@@ -62,7 +62,7 @@ public class GyroIOPigeon2 implements GyroIO {
     inputs.rawYawPositionRad =
         Rotation2d.fromRadians(Units.degreesToRadians(m_yawDeg.getValueAsDouble()));
   }
-  
+
   @Override
   public void zeroHeading() {
     m_gyro.reset();
