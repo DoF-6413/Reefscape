@@ -106,8 +106,9 @@ public class Module {
   }
 
   /**
-   * Sets the velocity of the Drive motor using the closed loop controller built into the TalonFX speed controller
-   * 
+   * Sets the velocity of the Drive motor using the closed loop controller built into the TalonFX
+   * speed controller
+   *
    * @param velocityRadPerSec Velocity to set Drive motor to in radians per second
    */
   public void setDriveVelocity(double velocityRadPerSec) {
@@ -115,9 +116,10 @@ public class Module {
   }
 
   /**
-   * Sets the position of the Turn motor using the closed loop controller built into the SparkMax speed controller
-   * 
-   * @param position Rotation2d with angle to set the Module wheel to 
+   * Sets the position of the Turn motor using the closed loop controller built into the SparkMax
+   * speed controller
+   *
+   * @param position Rotation2d with angle to set the Module wheel to
    */
   public void setTurnPosition(Rotation2d position) {
     m_io.setTurnPosition(position);
@@ -205,8 +207,8 @@ public class Module {
   }
 
   /**
-   * Using the built in PID controllers of the speed controllers, calculates the voltage of the Drive and Turn motors based on the
-   * current inputed setpoint.
+   * Using the built in PID controllers of the speed controllers, calculates the voltage of the
+   * Drive and Turn motors based on the current inputed setpoint.
    *
    * @param state Desired Swerve Module State (Desired velocity and angle)
    */
@@ -218,10 +220,11 @@ public class Module {
     state.optimize(currentModuleAngle);
 
     // Run turn controller
-    m_io.setTurnPosition(state.angle);;
+    m_io.setTurnPosition(state.angle);
 
     // Update velocity based on turn error
-    state.speedMetersPerSecond *= Math.cos(state.angle.getRadians() - currentModuleAngle.getRadians());
+    state.speedMetersPerSecond *=
+        Math.cos(state.angle.getRadians() - currentModuleAngle.getRadians());
 
     // Turn Speed m/s into Vel rad/s
     double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
