@@ -37,7 +37,7 @@ Dev:
   - No hardcoded values, add them to Constants
   - Explanatory comments
   - Code is fully functional
-- Make ALL branches off of *this* branch!! (exepto si el programming lead te da permiso de crear ramas desde otras ramas)
+- Make ALL branches off of *this* branch!!
 
 feat#[Issue#]-[name]:
 

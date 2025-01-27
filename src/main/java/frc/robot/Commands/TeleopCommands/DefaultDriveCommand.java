@@ -37,11 +37,7 @@ public class DefaultDriveCommand extends Command {
         m_controller.getRightX()); // Rotation
   }
 
-  /**
-   * Called once the command ends or is interrupted.
-   *
-   * @param interrupted whether the command was interrupted or finished
-   */
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_drive.driveWithDeadband(0, 0, 0);

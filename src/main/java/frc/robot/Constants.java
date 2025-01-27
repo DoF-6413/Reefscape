@@ -69,7 +69,7 @@ public final class Constants {
     public static final double MAX_VOLTAGE = 12;
   }
 
-  // returns the controller port for the driver controller and the aux controller
+  /** Controller ports */
   public static class OperatorConstants {
     public static final int DRIVER_CONTROLLER = 0;
     public static final int AUX_CONTROLLER = 1;
