@@ -12,55 +12,73 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems.Drive.Drive;
-import frc.robot.Subsystems.Gyro.Gyro;
 
 public class PoseEstimator extends SubsystemBase {
+  // Subsystem
+  private final Drive m_drive;
 
-  // The standard deviation for the measurements
+  // Pose Estimation objects
+  private final SwerveDrivePoseEstimator m_poseEstimator;
+  public final Vector<N3> m_statesStandarDeviation = VecBuilder.fill(0.1, 0.1, 0.1);
+  private Field2d m_field;
+  private double m_timestamp;
 
-  public final Vector<N3> statesStandarDeviation = VecBuilder.fill(0.1, 0.1, 0.1);
-  private double timestamp;
+  /**
+   * This constructs a new PoseEstimator instance
+   *
+   * <p>This creates a new Pose Estimator object that takes the encoder values from each Swerve
+   * Module and the Gyro reading to create a 2D posisiton for the robot on the field.
+   *
+   * @param drive Drive subsystem
+   */
+  public PoseEstimator(Drive drive) {
+    m_drive = drive;
 
-  private final Drive drive;
-  private final Gyro gyro;
+    m_field = new Field2d();
 
-  private final SwerveDrivePoseEstimator poseEstimator;
-
-  private Field2d field;
-
-  public PoseEstimator(Drive drive, Gyro gyro) {
-
-    field = new Field2d();
-    SmartDashboard.putData("Field", field);
-
-    this.drive = drive;
-    this.gyro = gyro;
-
-    poseEstimator =
+    m_poseEstimator =
         new SwerveDrivePoseEstimator(
             drive.getKinematics(),
-            gyro.getYaw(),
+            drive.getRotation(),
             drive.getModulePositions(),
             new Pose2d(new Translation2d(), new Rotation2d()));
+
+    SmartDashboard.putData("Field", m_field);
   }
 
   @Override
   public void periodic() {
-    timestamp = Timer.getFPGATimestamp();
+    // Update timestamp
+    m_timestamp = Timer.getFPGATimestamp();
 
-    field.setRobotPose(getCurrentPose());
-    poseEstimator.updateWithTime(timestamp, gyro.getYaw(), drive.getModulePositions());
+    // Update robot position based on Module movments and Gyro reading
+    m_poseEstimator.updateWithTime(
+        m_timestamp, m_drive.getRotation(), m_drive.getModulePositions());
+
+    // Put robot's current position onto field
+    m_field.setRobotPose(getCurrentPose2d());
   }
 
-  public Pose2d getCurrentPose() {
-    return poseEstimator.getEstimatedPosition();
+  /**
+   * @return The current 2D position of the robot on the field
+   */
+  public Pose2d getCurrentPose2d() {
+    return m_poseEstimator.getEstimatedPosition();
   }
 
+  /**
+   * Resets the current position of the robot
+   *
+   * @param pose 2D position to set robot to
+   */
   public void resetPose(Pose2d pose) {
-    poseEstimator.resetPosition(gyro.getYaw(), drive.getModulePositions(), pose);
+    m_poseEstimator.resetPosition(m_drive.getRotation(), m_drive.getModulePositions(), pose);
   }
 
+  /**
+   * @return Current yaw rotation of the robot
+   */
   public Rotation2d getRotation() {
-    return poseEstimator.getEstimatedPosition().getRotation();
+    return m_poseEstimator.getEstimatedPosition().getRotation();
   }
 }

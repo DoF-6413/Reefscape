@@ -28,7 +28,7 @@ public class RobotContainer {
   private final Gyro m_gyroSubsystem;
 
   // Utils
-  private final PoseEstimator m_PoseEstimator;
+  private final PoseEstimator m_poseEstimator;
 
   // Controllers
   private final CommandXboxController m_driverController =
@@ -75,7 +75,7 @@ public class RobotContainer {
                 m_gyroSubsystem);
         break;
     }
-    m_PoseEstimator = new PoseEstimator(m_driveSubsystem, m_gyroSubsystem);
+    m_poseEstimator = new PoseEstimator(m_driveSubsystem);
 
     // Adds an "Auto" tab on ShuffleBoard
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());

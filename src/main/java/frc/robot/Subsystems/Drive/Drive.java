@@ -209,22 +209,22 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Returns the current state of the robot
-   *
-   * @return the Swerve kinematics of the robot
+   * @return Swerve kinematics configuration of the robot
    */
   public SwerveDriveKinematics getKinematics() {
     return m_swerveDriveKinematics;
   }
 
   /**
-   * @return array of the modules positions (turn angle and drive position)
+   * @return The position of each Module, distance travelled and wheel angles
    */
   public SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+
     for (int i = 0; i < 4; i++) {
       modulePositions[i] = m_modules[i].getPosition();
     }
+
     return modulePositions;
   }
 }
