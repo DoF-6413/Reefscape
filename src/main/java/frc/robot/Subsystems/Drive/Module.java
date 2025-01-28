@@ -31,14 +31,10 @@ public class Module {
     m_io = io;
     m_moduleNumber = moduleNumber;
 
-    m_drivePID =
-        new PIDController(
-            DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD);
-    m_steerPID =
-        new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
+    m_drivePID = new PIDController(0, 0, 0);
+    m_steerPID = new PIDController(0, 0, 0);
 
-    m_driveFeedforward =
-        new SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV);
+    m_driveFeedforward = new SimpleMotorFeedforward(0, 0);
   }
 
   /**

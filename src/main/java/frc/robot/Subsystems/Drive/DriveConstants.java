@@ -39,14 +39,14 @@ public final class DriveConstants {
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */
-  public static final double TURN_KP = 6.4;
+  public static final double TURN_KP = 1;
   /**
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
    */
   public static final double TURN_KI = 0.0;
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
-  public static final double TURN_KD = 0.05;
+  public static final double TURN_KD = 0.0;
 
   /** Max Linear Speed of Robot */
   public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger
