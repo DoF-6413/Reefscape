@@ -1,4 +1,4 @@
-package frc.robot.Commands;
+package frc.robot.Commands.TeleopCommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -78,9 +78,9 @@ public class DriveCommands {
       Supplier<Rotation2d> rotationSupplier) {
     ProfiledPIDController angleController =
         new ProfiledPIDController(
-            5,
+            0.5,
             0,
-            0,
+            100,
             new TrapezoidProfile.Constraints(
                 DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
                 DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S));

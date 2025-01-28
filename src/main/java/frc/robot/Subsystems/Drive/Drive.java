@@ -1,16 +1,11 @@
 package frc.robot.Subsystems.Drive;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Utils.HeadingController;
@@ -170,65 +165,6 @@ public class Drive extends SubsystemBase {
     }
     m_lastRobotYaw = robotYaw;
     return robotYaw;
-  }
-
-  public void driveWithDeadband(double x, double y, double rot) {}
-
-  /* drive with deadband Plus heading Controller */
-  public void driveWithHeading(double x, double y, double rot) {
-    // Apply deadband to x, y, and rot
-    double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DriveConstants.DEADBAND);
-    Rotation2d linearDirection = new Rotation2d(x, y);
-    double omega = MathUtil.applyDeadband(rot, DriveConstants.DEADBAND);
-
-    // Square values
-    linearMagnitude = linearMagnitude * linearMagnitude;
-    omega = Math.copySign(omega * omega, omega);
-
-    if (Math.abs(omega) > 0.01) {
-      headingSetpoint = getRotation().plus(new Rotation2d(omega * Units.degreesToRadians(60)));
-    }
-
-    // Calculate new linear velocity
-    Translation2d linearVelocity =
-        new Pose2d(new Translation2d(), linearDirection)
-            .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
-            .getTranslation();
-
-    // Run modules based on field orientated Chassis speeds
-    this.runVelocity(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-            linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-            m_headingController.update(
-                headingSetpoint, getRotation(), m_gyro.getYawAngularVelocity()),
-            this.getRotation()));
-  }
-  /* drive with deadband Plus heading Controller */
-  public void driveAtAngle(double x, double y, double heading) {
-    // Apply deadband to x, y, and rot
-    double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DriveConstants.DEADBAND);
-    Rotation2d linearDirection = new Rotation2d(x, y);
-
-    // Square values
-    linearMagnitude = linearMagnitude * linearMagnitude;
-
-    headingSetpoint = getRotation().plus(new Rotation2d(heading * Units.degreesToRadians(60)));
-
-    // Calculate new linear velocity
-    Translation2d linearVelocity =
-        new Pose2d(new Translation2d(), linearDirection)
-            .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
-            .getTranslation();
-
-    // Run modules based on field orientated Chassis speeds
-    this.runVelocity(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-            linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-            m_headingController.update(
-                headingSetpoint, getRotation(), m_gyro.getYawAngularVelocity()),
-            this.getRotation()));
   }
 
   /**
