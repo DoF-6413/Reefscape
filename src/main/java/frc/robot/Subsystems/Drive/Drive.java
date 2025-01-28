@@ -207,4 +207,24 @@ public class Drive extends SubsystemBase {
             omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
             this.getRotation()));
   }
+
+  /**
+   * @return Swerve kinematics configuration of the robot
+   */
+  public SwerveDriveKinematics getKinematics() {
+    return m_swerveDriveKinematics;
+  }
+
+  /**
+   * @return The position of each Module, distance travelled and wheel angles
+   */
+  public SwerveModulePosition[] getModulePositions() {
+    SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+
+    for (int i = 0; i < 4; i++) {
+      modulePositions[i] = m_modules[i].getPosition();
+    }
+
+    return modulePositions;
+  }
 }

@@ -44,6 +44,7 @@ public class ModuleIOSim implements ModuleIO {
                 DriveConstants.DRIVE_GEAR_RATIO),
             DCMotor.getKrakenX60(1),
             0);
+
     m_turnSim =
         new FlywheelSim(
             LinearSystemId.createFlywheelSystem(
