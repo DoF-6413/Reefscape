@@ -27,8 +27,8 @@ public class Gyro extends SubsystemBase {
     m_io = io;
   }
 
-  /** This method is called once per scheduler run. */
   @Override
+  // This method will be called once per scheduler run
   public void periodic() {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Gyro", m_inputs);
