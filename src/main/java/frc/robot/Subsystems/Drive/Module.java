@@ -228,4 +228,36 @@ public class Module {
     // Run drive controller
     m_io.setDriveVelocity(velocityRadPerSec);
   }
+
+  /**
+   * Sets the PID values for the Drive motor's built in closed loop controller
+   *
+   * @param kP P gain value
+   * @param kI I gain value
+   * @param kD D gain value
+   */
+  public void setDrivePID(double kP, double kI, double kD) {
+    m_io.setDrivePID(kP, kI, kD);
+  }
+
+  /**
+   * Sets the FF values for the Drive motor's built in closed loop controller
+   *
+   * @param kS S gain value
+   * @param kV V gain value
+   */
+  public void setDriveFF(double kS, double kV) {
+    m_io.setDriveFF(kS, kV);
+  }
+
+  /**
+   * Sets the PID values for the Turn motor's built in closed loop controller
+   *
+   * @param kP P gain value
+   * @param kI I gain value
+   * @param kD D gain value
+   */
+  public void setTurnPID(double kP, double kI, double kD) {
+    m_io.setTurnPID(kP, kI, kD);
+  }
 }

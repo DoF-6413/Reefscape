@@ -113,15 +113,19 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     }
 
     // TalonFX motor configurations
-    m_driveConfig.MotorOutput.withInverted(InvertedValue.Clockwise_Positive);
-    m_driveConfig.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
-    m_driveConfig.MotorOutput.withControlTimesyncFreqHz(DriveConstants.UPDATE_FREQUENCY_HZ);
+    m_driveConfig
+        .MotorOutput
+        .withInverted(InvertedValue.Clockwise_Positive)
+        .withNeutralMode(NeutralModeValue.Brake)
+        .withControlTimesyncFreqHz(DriveConstants.UPDATE_FREQUENCY_HZ);
 
     // TalonFX current limit configurations
-    m_driveConfig.CurrentLimits.withSupplyCurrentLimit(DriveConstants.CUR_LIM_A);
-    m_driveConfig.CurrentLimits.withSupplyCurrentLimitEnable(DriveConstants.ENABLE_CUR_LIM);
-    m_driveConfig.CurrentLimits.withStatorCurrentLimit(DriveConstants.CUR_LIM_A);
-    m_driveConfig.CurrentLimits.withStatorCurrentLimitEnable(DriveConstants.ENABLE_CUR_LIM);
+    m_driveConfig
+        .CurrentLimits
+        .withSupplyCurrentLimit(DriveConstants.CUR_LIM_A)
+        .withSupplyCurrentLimitEnable(DriveConstants.ENABLE_CUR_LIM)
+        .withStatorCurrentLimit(DriveConstants.CUR_LIM_A)
+        .withStatorCurrentLimitEnable(DriveConstants.ENABLE_CUR_LIM);
 
     // TalonFX closed loop configurations
     m_driveConfig
@@ -136,9 +140,10 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     m_driveController.withUpdateFreqHz(DriveConstants.UPDATE_FREQUENCY_HZ);
 
     // SPARK MAX configurations
-    m_turnConfig.inverted(DriveConstants.TURN_IS_INVERTED);
-    m_turnConfig.idleMode(IdleMode.kBrake);
-    m_turnConfig.smartCurrentLimit(DriveConstants.CUR_LIM_A);
+    m_turnConfig
+        .inverted(DriveConstants.TURN_IS_INVERTED)
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(DriveConstants.CUR_LIM_A);
     m_turnRelativeEncoder = m_turnSparkMax.getEncoder();
 
     // SPARK MAX closed loop controller configurations
@@ -148,7 +153,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         .pid(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD)
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .positionWrappingEnabled(true)
-        .positionWrappingInputRange(-Math.PI, Math.PI);
+        .positionWrappingInputRange(-1, 1);
 
     // Optimize CAN bus usage, disable all signals beside refreshed signals in code
     m_driveTalonFX.optimizeBusUtilization();
@@ -156,11 +161,12 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
     // Set CAN timeouts
     m_driveTalonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
-    m_turnSparkMax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
+    m_turnSparkMax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);
 
     // Initilize encoder positions
     m_driveTalonFX.setPosition(0.0);
-    m_turnRelativeEncoder.setPosition(m_turnAbsoluteEncoder.getPosition().getValueAsDouble());
+    m_turnRelativeEncoder.setPosition(
+        m_turnAbsoluteEncoder.getAbsolutePosition().getValueAsDouble());
 
     // Apply the CTRE configurations
     m_driveTalonFX.getConfigurator().apply(m_driveConfig);
@@ -261,6 +267,25 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   @Override
   public void setTurnBrakeMode(boolean enable) {
     m_turnConfig.idleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
+    m_turnSparkMax.configure(
+        m_turnConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+  }
+
+  @Override
+  public void setDrivePID(double kP, double kI, double kD) {
+    m_driveConfig.Slot0.withKP(kP).withKI(kI).withKD(kD);
+    m_driveTalonFX.getConfigurator().apply(m_driveConfig);
+  }
+
+  @Override
+  public void setDriveFF(double kS, double kV) {
+    m_driveConfig.Slot0.withKS(kS).withKV(kV);
+    m_driveTalonFX.getConfigurator().apply(m_driveConfig);
+  }
+
+  @Override
+  public void setTurnPID(double kP, double kI, double kD) {
+    m_turnConfig.closedLoop.pid(kP, kI, kD);
     m_turnSparkMax.configure(
         m_turnConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }

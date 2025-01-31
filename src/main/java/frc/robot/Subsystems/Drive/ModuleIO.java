@@ -86,4 +86,30 @@ public interface ModuleIO {
    * @param position Rotation2d with angle to set the Module wheel to
    */
   public default void setTurnPosition(Rotation2d position) {}
+
+  /**
+   * Sets the PID values for the Drive motor's built in closed loop controller
+   *
+   * @param kP P gain value
+   * @param kI I gain value
+   * @param kD D gain value
+   */
+  public default void setDrivePID(double kP, double kI, double kD) {}
+
+  /**
+   * Sets the FF values for the Drive motor's built in closed loop controller
+   *
+   * @param kS S gain value
+   * @param kV V gain value
+   */
+  public default void setDriveFF(double kS, double kV) {}
+
+  /**
+   * Sets the PID values for the Turn motor's built in closed loop controller
+   *
+   * @param kP P gain value
+   * @param kI I gain value
+   * @param kD D gain value
+   */
+  public default void setTurnPID(double kP, double kI, double kD) {}
 }

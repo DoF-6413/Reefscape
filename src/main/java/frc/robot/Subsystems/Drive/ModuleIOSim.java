@@ -22,9 +22,9 @@ public class ModuleIOSim implements ModuleIO {
   // PID FF controllers
   private final PIDController m_driveController;
   private final PIDController m_turnController;
-  private final SimpleMotorFeedforward m_driveFeedforward;
-  private double driveSetpoint = 0.0;
-  private double turnSetpoint = 0.0;
+  private SimpleMotorFeedforward m_driveFeedForward;
+  private double m_driveSetpoint = 0.0;
+  private double m_turnSetpoint = 0.0;
 
   /**
    * Constructs a new ModuleIOSim instance
@@ -58,7 +58,7 @@ public class ModuleIOSim implements ModuleIO {
             DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD);
     m_turnController =
         new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
-    m_driveFeedforward =
+    m_driveFeedForward =
         new SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV);
 
     // Configure controllers
@@ -69,9 +69,9 @@ public class ModuleIOSim implements ModuleIO {
   public void updateInputs(ModuleIOInputs inputs) {
     // Update Drive and Turn based on setpoint
     double driveVoltage =
-        m_driveController.calculate(inputs.driveVelocityRadPerSec, driveSetpoint)
-            + m_driveFeedforward.calculate(driveSetpoint);
-    double turnVoltage = m_turnController.calculate(inputs.turnAbsolutePositionRad, turnSetpoint);
+        m_driveController.calculate(inputs.driveVelocityRadPerSec, m_driveSetpoint)
+            + m_driveFeedForward.calculate(m_driveSetpoint);
+    double turnVoltage = m_turnController.calculate(inputs.turnAbsolutePositionRad, m_turnSetpoint);
 
     // Update simulated motors
     this.setDriveVoltage(driveVoltage);
@@ -114,11 +114,26 @@ public class ModuleIOSim implements ModuleIO {
 
   @Override
   public void setDriveVelocity(double velocityRadPerSec) {
-    driveSetpoint = velocityRadPerSec;
+    m_driveSetpoint = velocityRadPerSec;
   }
 
   @Override
   public void setTurnPosition(Rotation2d position) {
-    turnSetpoint = position.getRadians();
+    m_turnSetpoint = position.getRadians();
+  }
+
+  @Override
+  public void setDrivePID(double kP, double kI, double kD) {
+    m_driveController.setPID(kP, kI, kD);
+  }
+
+  @Override
+  public void setDriveFF(double kS, double kV) {
+    m_driveFeedForward = new SimpleMotorFeedforward(kS, kV);
+  }
+
+  @Override
+  public void setTurnPID(double kP, double kI, double kD) {
+    m_turnController.setPID(kP, kI, kD);
   }
 }
