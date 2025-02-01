@@ -1,5 +1,6 @@
 package frc.robot.Subsystems.Drive;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,6 +19,9 @@ public class Module {
 
   private SimpleMotorFeedforward m_driveFeedforward;
 
+  private double counter = 0;
+  private final double updateFrequency = 25;
+
   /**
    * Constructs a new Module instance.
    *
@@ -31,10 +35,15 @@ public class Module {
     m_io = io;
     m_moduleNumber = moduleNumber;
 
-    m_drivePID = new PIDController(0, 0, 0);
-    m_steerPID = new PIDController(0, 0, 0);
+    m_drivePID =
+        new PIDController(
+            DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD);
+    m_steerPID =
+        new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
 
-    m_driveFeedforward = new SimpleMotorFeedforward(0, 0);
+    m_driveFeedforward =
+        new SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV);
+    m_steerPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   /**
@@ -44,6 +53,12 @@ public class Module {
   public void periodic() {
     this.updateInputs();
     Logger.processInputs("Drive/Module" + Integer.toString(m_moduleNumber), m_inputs);
+
+    if (counter % updateFrequency == 0) {
+      this.updateRelativePosition();
+    }
+
+    counter++;
   }
 
   /**
@@ -128,7 +143,7 @@ public class Module {
    * @return The current turn angle of the module in radians.
    */
   public Rotation2d getAngle() {
-    return new Rotation2d(m_inputs.turnAbsolutePositionRad);
+    return new Rotation2d(MathUtil.angleModulus(m_inputs.turnAbsolutePositionRad));
   }
 
   /**
@@ -259,5 +274,9 @@ public class Module {
    */
   public void setTurnPID(double kP, double kI, double kD) {
     m_io.setTurnPID(kP, kI, kD);
+  }
+
+  public void updateRelativePosition() {
+    m_io.updateRelativePosition();
   }
 }

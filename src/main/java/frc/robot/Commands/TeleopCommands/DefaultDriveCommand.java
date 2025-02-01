@@ -32,8 +32,8 @@ public class DefaultDriveCommand extends Command {
   public void execute() {
     /* Normal Drive Mode */
     m_drive.driveWithDeadband(
-        m_controller.getLeftX(), // Forward/backward (multiply by -1 bc controller axis inverted)
         -m_controller.getLeftY(), // Left/Right
+        -m_controller.getLeftX(), // Forward/backward (multiply by -1 bc controller axis inverted)
         m_controller.getRightX()); // Rotation
   }
 

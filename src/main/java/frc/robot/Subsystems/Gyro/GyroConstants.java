@@ -9,7 +9,7 @@ public class GyroConstants {
    *
    * <p>Offset = difference between gyro & rio orientation rather than gyro orientation w robot
    */
-  public static final double HEADING_OFFSET_RAD = Units.degreesToRadians(90);
+  public static final double HEADING_OFFSET_RAD = 00;
   /** Sets the ID for the Pigeon2 gyro */
   public static final int CAN_ID = 14;
   /** How many times a second a signal is sent */

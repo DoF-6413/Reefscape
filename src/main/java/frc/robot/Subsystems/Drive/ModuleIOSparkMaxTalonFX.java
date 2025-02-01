@@ -145,6 +145,10 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(DriveConstants.CUR_LIM_A);
     m_turnRelativeEncoder = m_turnSparkMax.getEncoder();
+    m_turnConfig
+        .encoder
+        .positionConversionFactor(2 * Math.PI)
+        .velocityConversionFactor(2 * Math.PI);
 
     // SPARK MAX closed loop controller configurations
     m_turnController = m_turnSparkMax.getClosedLoopController();
@@ -153,7 +157,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         .pid(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD)
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .positionWrappingEnabled(true)
-        .positionWrappingInputRange(-1, 1);
+        .positionWrappingInputRange(-Math.PI, Math.PI);
 
     // Optimize CAN bus usage, disable all signals beside refreshed signals in code
     m_driveTalonFX.optimizeBusUtilization();
@@ -166,7 +170,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     // Initilize encoder positions
     m_driveTalonFX.setPosition(0.0);
     m_turnRelativeEncoder.setPosition(
-        m_turnAbsoluteEncoder.getAbsolutePosition().getValueAsDouble());
+        Units.rotationsToRadians(m_turnAbsoluteEncoder.getAbsolutePosition().getValueAsDouble()));
 
     // Apply the CTRE configurations
     m_driveTalonFX.getConfigurator().apply(m_driveConfig);
@@ -221,12 +225,14 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
             .isOK();
     inputs.turnPositionRad =
         MathUtil.angleModulus(
-            Units.rotationsToRadians(m_turnRelativeEncoder.getPosition())
+            (m_turnRelativeEncoder.getPosition() + m_absoluteEncoderOffsetRad)
                 / DriveConstants.STEER_GEAR_RATIO);
     inputs.turnAbsolutePositionRad =
         MathUtil.angleModulus(
-                Units.rotationsToRadians(absoluteEncoderPositionRot.getValueAsDouble()))
-            + m_absoluteEncoderOffsetRad;
+            new Rotation2d(
+                    Units.rotationsToRadians(absoluteEncoderPositionRot.getValueAsDouble())
+                        + m_absoluteEncoderOffsetRad)
+                .getRadians());
     inputs.turnVelocityRadPerSec =
         Units.rotationsToRadians(absoluteEncoderVelocityRotPerSec.getValueAsDouble())
             / DriveConstants.STEER_GEAR_RATIO;
@@ -288,5 +294,11 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     m_turnConfig.closedLoop.pid(kP, kI, kD);
     m_turnSparkMax.configure(
         m_turnConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+  }
+
+  @Override
+  public void updateRelativePosition() {
+    m_turnRelativeEncoder.setPosition(
+        Units.rotationsToRadians(absoluteEncoderPositionRot.getValueAsDouble()));
   }
 }

@@ -81,10 +81,10 @@ public final class DriveConstants {
    */
   public static final Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
-      new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
-      new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
       new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
       new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
+      new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
+      new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
     };
   }
 
@@ -131,10 +131,10 @@ public final class DriveConstants {
   }
 
   public enum ABSOLUTE_ENCODER_OFFSET {
-    FRONT_RIGHT(1.8775924843720249), // Module 0
-    FRONT_LEFT(1.1489516101263453), // Module 1
-    BACK_LEFT(-0.6534758156392831), // Module 2
-    BACK_RIGHT(1.0615147052168636); // Module 3
+    FRONT_RIGHT(1.88059248437), // Module 0
+    FRONT_LEFT(1.16695161013), // Module 1
+    BACK_LEFT(-0.60147581563), // Module 2
+    BACK_RIGHT(1.04951470522); // Module 3
 
     public final double OFFSET;
 
