@@ -206,12 +206,15 @@ public class Module {
     m_io.setTurnVoltage(m_steerPID.calculate(getAngle().getRadians(), state.angle.getRadians()));
 
     // Update velocity based on turn error
-    state.speedMetersPerSecond *= Math.cos(m_steerPID.getError());
+    // state.speedMetersPerSecond *= Math.cos(m_steerPID.getError());
 
     // Turn Speed m/s into Vel rad/s
     double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
 
     // Run drive controller
+    // m_io.setDriveVoltage(
+    //     m_driveFeedforward.calculate(velocityRadPerSec)
+    //         + m_drivePID.calculate(m_inputs.driveVelocityRadPerSec, velocityRadPerSec));
     m_io.setDriveVelocity(velocityRadPerSec);
   }
 

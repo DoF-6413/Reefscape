@@ -1,10 +1,6 @@
 package frc.robot.Subsystems.Drive;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -13,12 +9,14 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems.Gyro.Gyro;
+import frc.robot.Utils.HeadingController;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
 
   private final Module[] m_modules = new Module[4];
   private final Gyro m_gyro;
+  private final HeadingController m_headingController = new HeadingController();
   private Twist2d m_twist = new Twist2d();
 
   // The swerve drive kinematics
@@ -30,6 +28,7 @@ public class Drive extends SubsystemBase {
   // Gets previous module positions
   private double[] m_lastModulePositionsMeters = new double[4];
 
+  private Rotation2d headingSetpoint = new Rotation2d(-Math.PI / 2);
   /**
    * Constructs a new Drive subsystem instance.
    *
@@ -184,46 +183,6 @@ public class Drive extends SubsystemBase {
     }
     m_lastRobotYaw = robotYaw;
     return robotYaw;
-  }
-
-  /**
-   * Drives the robot with a 10% joystick deadband applied. This means joystick values between 0-0.1
-   * (or 0-10%) will be ignored and not more the robot for both axises and rotation.
-   *
-   * <p>The joystick inputs run the robot at a percent scale from -1 (-100% reverse) to 1 (100%
-   * forward)
-   *
-   * @param x The desired x-axis velocity from joystick
-   * @param y The desired y-axis velocity from joystick
-   * @param rot The desired angular velocity from joystick
-   */
-  public void driveWithDeadband(double x, double y, double rot) {
-    // Apply deadband to x, y, and rot
-    double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DriveConstants.DEADBAND);
-    double omega = MathUtil.applyDeadband(rot, DriveConstants.DEADBAND);
-
-    Rotation2d linearDirection = new Rotation2d();
-    if (x != 0 && y != 0) {
-      linearDirection = new Rotation2d(x, y);
-    }
-
-    // Square values
-    linearMagnitude = linearMagnitude * linearMagnitude;
-    omega = Math.copySign(omega * omega, omega);
-
-    // Calculate new linear velocity
-    Translation2d linearVelocity =
-        new Pose2d(new Translation2d(), linearDirection)
-            .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
-            .getTranslation();
-
-    // Run modules based on field orientated Chassis speeds
-    this.runVelocity(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-            linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-            omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
-            this.getRotation()));
   }
 
   /**

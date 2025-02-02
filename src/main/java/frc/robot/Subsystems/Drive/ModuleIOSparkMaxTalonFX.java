@@ -12,14 +12,10 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
@@ -42,7 +38,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
   // Turn motor
   private final SparkMax m_turnSparkMax;
-  private final RelativeEncoder m_turnRelativeEncoder;
   private final SparkMaxConfig m_turnConfig = new SparkMaxConfig();
   // private final SparkClosedLoopController m_turnController;
   private final CANcoder m_turnAbsoluteEncoder;
@@ -144,11 +139,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         .inverted(DriveConstants.TURN_IS_INVERTED)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(DriveConstants.CUR_LIM_A);
-    m_turnRelativeEncoder = m_turnSparkMax.getEncoder();
-    m_turnConfig
-        .encoder
-        .positionConversionFactor(2 * Math.PI)
-        .velocityConversionFactor(2 * Math.PI);
 
     // SPARK MAX closed loop controller configurations
     // m_turnController = m_turnSparkMax.getClosedLoopController();
@@ -169,8 +159,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
     // Initilize encoder positions
     m_driveTalonFX.setPosition(0.0);
-    m_turnRelativeEncoder.setPosition(
-        Units.rotationsToRadians(m_turnAbsoluteEncoder.getAbsolutePosition().getValueAsDouble()));
 
     // Apply the CTRE configurations
     m_driveTalonFX.getConfigurator().apply(m_driveConfig);
@@ -223,10 +211,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     inputs.absoluteEncoderIsConnected =
         BaseStatusSignal.refreshAll(absoluteEncoderPositionRot, absoluteEncoderVelocityRotPerSec)
             .isOK();
-    inputs.turnPositionRad =
-        MathUtil.angleModulus(
-            (m_turnRelativeEncoder.getPosition() + m_absoluteEncoderOffsetRad)
-                / DriveConstants.STEER_GEAR_RATIO);
     inputs.turnAbsolutePositionRad =
         MathUtil.angleModulus(
             new Rotation2d(
@@ -255,8 +239,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
   @Override
   public void setDriveVelocity(double velocityRadPerSec) {
-    m_driveTalonFX.setControl(
-        m_driveController.withVelocity(Units.radiansToRotations(velocityRadPerSec)));
+    m_driveTalonFX.setControl(m_driveController.withVelocity(velocityRadPerSec));
   }
 
   // @Override

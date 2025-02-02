@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -7,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Commands.TeleopCommands.DefaultDriveCommand;
+import frc.robot.Commands.TeleopCommands.DriveCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
@@ -103,8 +104,53 @@ public class RobotContainer {
   private void driverControllerBindings() {
     /* Driving the robot */
     m_driveSubsystem.setDefaultCommand(
-        new DefaultDriveCommand(m_driveSubsystem, m_gyroSubsystem, m_driverController)
-    );
+        DriveCommands.fieldRelativeDrive(
+            m_driveSubsystem,
+            () -> -m_driverController.getLeftY(),
+            () -> -m_driverController.getLeftX(),
+            () -> -m_driverController.getRightX()));
+
+    m_driverController
+        .b()
+        .onTrue(
+            DriveCommands.robotRelativeDrive(
+                m_driveSubsystem,
+                () -> -m_driverController.getLeftX(),
+                () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getRightX()));
+
+    m_driverController
+        .povUp()
+        .onTrue(
+            DriveCommands.fieldRelativeDriveAtAngle(
+                m_driveSubsystem,
+                () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getLeftX(),
+                () -> Rotation2d.fromRadians(0)));
+    m_driverController
+        .povLeft()
+        .onTrue(
+            DriveCommands.fieldRelativeDriveAtAngle(
+                m_driveSubsystem,
+                () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getLeftX(),
+                () -> Rotation2d.fromRadians(Math.PI / 2)));
+    m_driverController
+        .povDown()
+        .onTrue(
+            DriveCommands.fieldRelativeDriveAtAngle(
+                m_driveSubsystem,
+                () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getLeftX(),
+                () -> Rotation2d.fromRadians(Math.PI)));
+    m_driverController
+        .povRight()
+        .onTrue(
+            DriveCommands.fieldRelativeDriveAtAngle(
+                m_driveSubsystem,
+                () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getLeftX(),
+                () -> Rotation2d.fromRadians(-Math.PI / 2)));
 
     m_driverController
         .a()
