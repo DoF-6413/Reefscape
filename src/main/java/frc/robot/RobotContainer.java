@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.TeleopCommands.DefaultDriveCommand;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotStateConstants;
@@ -75,6 +76,13 @@ public class RobotContainer {
         break;
     }
     m_poseEstimator = new PoseEstimator(m_driveSubsystem);
+    
+    /* SysId Routines */
+    m_autoChooser.addOption("Drive SysId (Quasistatic Forward)", m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_autoChooser.addOption("Drive SysId (Quasistatic Reverse)", m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    m_autoChooser.addOption("Drive SysId (Dynamic Forward)", m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_autoChooser.addOption("Drive SysId (Dynamic Reverse)", m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    m_autoChooser.addOption("Drive FeedForward Characterization", m_driveSubsystem.feedforwardCharacterization());
 
     // Adds an "Auto" tab on ShuffleBoard
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());

@@ -138,6 +138,13 @@ public class Module {
   }
 
   /**
+   * @return The current velocity of the Drive motor in rad per sec
+   */
+  public double getVelocityRadPerSec() {
+    return m_inputs.driveVelocityRadPerSec;
+  }
+
+  /**
    * @return the Module position (Turn angle and Drive position)
    */
   public SwerveModulePosition getPosition() {
