@@ -19,8 +19,8 @@ public class Module {
 
   private SimpleMotorFeedforward m_driveFeedforward;
 
-  private double counter = 0;
-  private final double updateFrequency = 25;
+  // private double counter = 0;
+  // private final double updateFrequency = 25;
 
   /**
    * Constructs a new Module instance.
@@ -54,11 +54,11 @@ public class Module {
     this.updateInputs();
     Logger.processInputs("Drive/Module" + Integer.toString(m_moduleNumber), m_inputs);
 
-    if (counter % updateFrequency == 0) {
-      this.updateRelativePosition();
-    }
+    // if (counter % updateFrequency == 0) {
+    //   this.updateRelativePosition();
+    // }
 
-    counter++;
+    // counter++;
   }
 
   /**
@@ -212,35 +212,6 @@ public class Module {
     double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
 
     // Run drive controller
-    m_io.setDriveVoltage(
-        m_driveFeedforward.calculate(velocityRadPerSec)
-            + (m_drivePID.calculate(m_inputs.driveVelocityRadPerSec, velocityRadPerSec)));
-  }
-
-  /**
-   * Using the built in PID controllers of the speed controllers, calculates the voltage of the
-   * Drive and Turn motors based on the current inputed setpoint.
-   *
-   * @param state Desired Swerve Module State (Desired velocity and angle)
-   */
-  public void runSetpointSpeedController(SwerveModuleState state) {
-    var currentModuleAngle = getAngle();
-
-    // Optimize state based on current angle, aka take the shortest path for wheel to reach desired
-    // angle in rad (-pi,pi))
-    state.optimize(currentModuleAngle);
-
-    // Run turn controller
-    m_io.setTurnPosition(state.angle);
-
-    // Update velocity based on turn error
-    state.speedMetersPerSecond *=
-        Math.cos(state.angle.getRadians() - currentModuleAngle.getRadians());
-
-    // Turn Speed m/s into Vel rad/s
-    double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
-
-    // Run drive controller
     m_io.setDriveVelocity(velocityRadPerSec);
   }
 
@@ -273,10 +244,10 @@ public class Module {
    * @param kD D gain value
    */
   public void setTurnPID(double kP, double kI, double kD) {
-    m_io.setTurnPID(kP, kI, kD);
+    m_steerPID.setPID(kP, kI, kD);
   }
 
-  public void updateRelativePosition() {
-    m_io.updateRelativePosition();
-  }
+  // public void updateRelativePosition() {
+  //   m_io.updateRelativePosition();
+  // }
 }

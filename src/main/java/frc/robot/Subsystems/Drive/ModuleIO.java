@@ -111,7 +111,7 @@ public interface ModuleIO {
    * @param kI I gain value
    * @param kD D gain value
    */
-  public default void setTurnPID(double kP, double kI, double kD) {}
+  // public default void setTurnPID(double kP, double kI, double kD) {}
 
-  public default void updateRelativePosition() {}
+  // public default void updateRelativePosition() {}
 }

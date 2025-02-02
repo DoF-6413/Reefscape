@@ -132,8 +132,8 @@ public class ModuleIOSim implements ModuleIO {
     m_driveFeedForward = new SimpleMotorFeedforward(kS, kV);
   }
 
-  @Override
-  public void setTurnPID(double kP, double kI, double kD) {
-    m_turnController.setPID(kP, kI, kD);
-  }
+  // @Override
+  // public void setTurnPID(double kP, double kI, double kD) {
+  //   m_turnController.setPID(kP, kI, kD);
+  // }
 }
