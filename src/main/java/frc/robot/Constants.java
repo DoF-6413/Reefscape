@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Optional;
 
+import com.pathplanner.lib.path.PathConstraints;
+
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
  * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
@@ -101,5 +103,16 @@ public final class Constants {
     // Photon Camera names
     public static final String FRONT_CAMERA_NAME = "Front";
     public static final String BACK_CAMERA_NAME = "Back";
+  }
+
+  public final class PathPlannerConstants {
+
+    // PathFinding
+    /**
+     * Max translational and rotational speed and acceleration used for PathPlanner's PathFinding
+     */
+    public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
+        new PathConstraints(3, 3, 2, 2); //TODO: update this 
+
   }
 }

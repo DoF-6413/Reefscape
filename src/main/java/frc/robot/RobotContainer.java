@@ -18,6 +18,7 @@ import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
+import frc.robot.Utils.PathPlanner;
 import frc.robot.Utils.PoseEstimator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -29,6 +30,7 @@ public class RobotContainer {
 
   // Utils
   private final PoseEstimator m_poseEstimator;
+  private final PathPlanner m_PathPlanner;
 
   // Controllers
   private final CommandXboxController m_driverController =
@@ -75,8 +77,10 @@ public class RobotContainer {
                 m_gyroSubsystem);
         break;
     }
-    m_poseEstimator = new PoseEstimator(m_driveSubsystem);
 
+    // Utils
+    m_poseEstimator = new PoseEstimator(m_driveSubsystem);
+    m_PathPlanner = new PathPlanner(m_driveSubsystem, m_poseEstimator);
     // Adds an "Auto" tab on ShuffleBoard
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
 

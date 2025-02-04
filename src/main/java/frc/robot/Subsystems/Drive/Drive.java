@@ -186,4 +186,18 @@ public class Drive extends SubsystemBase {
 
     return modulePositions;
   }
+
+  /** 
+   * @return a swereveModuleState of chassis speeds  
+   */
+  public ChassisSpeeds getChassisSpeeds() {
+    return m_swerveDriveKinematics.toChassisSpeeds(
+      new SwerveModuleState[] {
+        m_modules[0].getState(),
+        m_modules[1].getState(),
+        m_modules[2].getState(),
+        m_modules[3].getState(),
+      }
+    );
+  }
 }
