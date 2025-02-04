@@ -78,9 +78,9 @@ public class DriveCommands {
       Supplier<Rotation2d> rotationSupplier) {
     ProfiledPIDController angleController =
         new ProfiledPIDController(
-            0.5,
+            1,
             0,
-            100,
+            0,
             new TrapezoidProfile.Constraints(
                 DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
                 DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S));

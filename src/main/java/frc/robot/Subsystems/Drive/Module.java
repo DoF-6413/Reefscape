@@ -43,6 +43,9 @@ public class Module {
 
     m_driveFeedforward =
         new SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV);
+
+    // Considers min and max the same point, needed for our Swerve Modules since we wrap the
+    // position from -pi to pi
     m_steerPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
