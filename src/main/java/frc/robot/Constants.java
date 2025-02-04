@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -21,8 +22,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Optional;
-
-import com.pathplanner.lib.path.PathConstraints;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -112,7 +111,6 @@ public final class Constants {
      * Max translational and rotational speed and acceleration used for PathPlanner's PathFinding
      */
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
-        new PathConstraints(3, 3, 2, 2); //TODO: update this 
-
+        new PathConstraints(1 / 2, 1 / 2, 1 / 2, 1 / 2); // TODO: update this
   }
 }

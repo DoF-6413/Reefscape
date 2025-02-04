@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -82,6 +83,10 @@ public class RobotContainer {
     m_poseEstimator = new PoseEstimator(m_driveSubsystem);
     m_PathPlanner = new PathPlanner(m_driveSubsystem, m_poseEstimator);
     // Adds an "Auto" tab on ShuffleBoard
+
+    m_autoChooser.addOption("Do Nothing", new InstantCommand());
+    m_autoChooser.addOption("Path Planner", new PathPlannerAuto("test1"));
+
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
 
     // Configure the button bindings
