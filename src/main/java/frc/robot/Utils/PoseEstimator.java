@@ -1,15 +1,5 @@
 package frc.robot.Utils;
 
-import java.util.Optional;
-
-import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
@@ -25,6 +15,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Subsystems.Drive.Drive;
+import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PoseEstimator extends SubsystemBase {
   // Subsystem
@@ -34,11 +32,11 @@ public class PoseEstimator extends SubsystemBase {
   private final SwerveDrivePoseEstimator m_swervePoseEstimator;
   private double m_timestamp;
   private double m_prevTimestamp;
-  
+
   // Field objects
   private Field2d m_field;
   private final AprilTagFieldLayout m_aprilTagFieldLayout;
-  
+
   // Vision Pose Estimation Objects
   private final PhotonPoseEstimator m_visionPoseEstimatorFront;
   private final PhotonPoseEstimator m_visionPoseEstimatorBack;
@@ -57,7 +55,6 @@ public class PoseEstimator extends SubsystemBase {
   private int m_fiducialIDBack = 0;
   private double m_poseAmbiguityFront = 0;
   private double m_poseAmbiguityBack = 0;
-
 
   /**
    * This constructs a new PoseEstimator instance
@@ -89,10 +86,10 @@ public class PoseEstimator extends SubsystemBase {
     m_cameraFront = new PhotonCamera(VisionConstants.FRONT_CAMERA_NAME);
     m_cameraBack = new PhotonCamera(VisionConstants.BACK_CAMERA_NAME);
 
-    m_visionPoseEstimatorFront = 
-      new PhotonPoseEstimator(
-            m_aprilTagFieldLayout, 
-            PoseStrategy.LOWEST_AMBIGUITY, 
+    m_visionPoseEstimatorFront =
+        new PhotonPoseEstimator(
+            m_aprilTagFieldLayout,
+            PoseStrategy.LOWEST_AMBIGUITY,
             VisionConstants.FRONT_CAMERA_ROBOT_OFFSET);
     m_visionPoseEstimatorBack =
         new PhotonPoseEstimator(
@@ -117,17 +114,19 @@ public class PoseEstimator extends SubsystemBase {
       // Saves pipeline results from Front camera if present
       m_tempPipelineResult = m_cameraFront.getLatestResult();
       m_hasTargetsFront = m_tempPipelineResult.hasTargets();
-      Optional<EstimatedRobotPose> frontPose = m_visionPoseEstimatorFront.update(m_tempPipelineResult);
+      Optional<EstimatedRobotPose> frontPose =
+          m_visionPoseEstimatorFront.update(m_tempPipelineResult);
       if (m_hasTargetsFront) {
         m_frontTarget = m_tempPipelineResult.getBestTarget();
         m_fiducialIDFront = m_frontTarget.getFiducialId();
         m_poseAmbiguityFront = m_frontTarget.getPoseAmbiguity();
       }
-      
+
       // Saves pipeline results from Back camera if present
       m_tempPipelineResult = m_cameraBack.getLatestResult();
       m_hasTargetsBack = m_tempPipelineResult.hasTargets();
-      Optional<EstimatedRobotPose> backPose = m_visionPoseEstimatorBack.update(m_tempPipelineResult);
+      Optional<EstimatedRobotPose> backPose =
+          m_visionPoseEstimatorBack.update(m_tempPipelineResult);
       if (m_hasTargetsBack) {
         m_backTarget = m_tempPipelineResult.getBestTarget();
         m_fiducialIDBack = m_backTarget.getFiducialId();
@@ -135,15 +134,16 @@ public class PoseEstimator extends SubsystemBase {
       }
 
       // Log if the cameras see an AprilTag
-      Logger.recordOutput("Vision/Back_Front/HasTarget", m_hasTargetsFront);
-      Logger.recordOutput("Vision/Back_Back/HasTarget", m_hasTargetsBack);
+      Logger.recordOutput("Vision/Front/HasTarget", m_hasTargetsFront);
+      Logger.recordOutput("Vision/Back/HasTarget", m_hasTargetsBack);
 
       if (!m_hasTargetsFront && !m_hasTargetsBack) {
         // If no AprilTags are seen, immediently end
         return;
 
       } else if (m_hasTargetsFront && m_hasTargetsBack) {
-        // If both cameras see an AprilTag, average their estimated positions and add that measurement to the Swerve Pose Estimator
+        // If both cameras see an AprilTag, average their estimated positions and add that
+        // measurement to the Swerve Pose Estimator
         if (m_prevTimestamp != m_timestamp) {
           m_prevTimestamp = m_timestamp;
 
@@ -157,8 +157,10 @@ public class PoseEstimator extends SubsystemBase {
               && m_fiducialIDFront <= 22
               && m_fiducialIDBack >= 1
               && m_fiducialIDBack <= 22) {
-            Logger.recordOutput("Vision/Back_Front/EstimatedPose", frontPose.get().estimatedPose.toPose2d());
-            Logger.recordOutput("Vision/Back_Back/EstimatedPose", backPose.get().estimatedPose.toPose2d());
+            Logger.recordOutput(
+                "Vision/Front/EstimatedPose", frontPose.get().estimatedPose.toPose2d());
+            Logger.recordOutput(
+                "Vision/Back/EstimatedPose", backPose.get().estimatedPose.toPose2d());
             m_swervePoseEstimator.addVisionMeasurement(
                 averageVisionPoses(
                     frontPose.get().estimatedPose.toPose2d(),
@@ -178,8 +180,10 @@ public class PoseEstimator extends SubsystemBase {
               && m_poseAmbiguityFront >= 0.0
               && m_fiducialIDFront >= 1
               && m_fiducialIDFront <= 22) {
-            Logger.recordOutput("Vision/Back_Front/EstimatedPose", frontPose.get().estimatedPose.toPose2d());
-            m_swervePoseEstimator.addVisionMeasurement(frontPose.get().estimatedPose.toPose2d(), m_timestamp, m_visionStandardDeviations);
+            Logger.recordOutput(
+                "Vision/Front/EstimatedPose", frontPose.get().estimatedPose.toPose2d());
+            m_swervePoseEstimator.addVisionMeasurement(
+                frontPose.get().estimatedPose.toPose2d(), m_timestamp, m_visionStandardDeviations);
           }
         }
 
@@ -193,8 +197,10 @@ public class PoseEstimator extends SubsystemBase {
               && m_poseAmbiguityBack >= 0.0
               && m_fiducialIDBack >= 1
               && m_fiducialIDBack <= 22) {
-            Logger.recordOutput("Vision/Back_Back/EstimatedPose", backPose.get().estimatedPose.toPose2d());
-            m_swervePoseEstimator.addVisionMeasurement(backPose.get().estimatedPose.toPose2d(), m_timestamp, m_visionStandardDeviations);
+            Logger.recordOutput(
+                "Vision/Back/EstimatedPose", backPose.get().estimatedPose.toPose2d());
+            m_swervePoseEstimator.addVisionMeasurement(
+                backPose.get().estimatedPose.toPose2d(), m_timestamp, m_visionStandardDeviations);
           }
         }
       }

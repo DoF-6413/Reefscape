@@ -13,8 +13,6 @@
 
 package frc.robot;
 
-import java.util.Optional;
-
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -22,6 +20,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
+import java.util.Optional;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -90,17 +89,17 @@ public final class Constants {
     /** Offsets the back left camera's position to the center of the robot */
     public static final Transform3d FRONT_CAMERA_ROBOT_OFFSET =
         new Transform3d(
-            new Translation3d(0, 0, 0),
+            new Translation3d(Units.inchesToMeters(13.5), 0, Units.inchesToMeters(3.5)),
             new Rotation3d(0, 0, 0)); // TODO: Measure out offsets for both cameras
 
     /** Offsets the back right camera's position to the center of the robot */
     public static final Transform3d BACK_CAMERA_ROBOT_OFFSET =
-    new Transform3d(
-      new Translation3d(0, 0, 0),
-      new Rotation3d(0, 0, 0));
+        new Transform3d(
+            new Translation3d(Units.inchesToMeters(-13.5), 0, Units.inchesToMeters(3.5)),
+            new Rotation3d(0, Units.degreesToRadians(35), Math.PI));
 
     // Photon Camera names
-    public static final String FRONT_CAMERA_NAME = "Back_Left";
-    public static final String BACK_CAMERA_NAME = "Back_Right";
+    public static final String FRONT_CAMERA_NAME = "Front";
+    public static final String BACK_CAMERA_NAME = "Back";
   }
 }
