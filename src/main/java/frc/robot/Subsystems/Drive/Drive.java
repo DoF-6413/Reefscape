@@ -1,12 +1,7 @@
 package frc.robot.Subsystems.Drive;
 
 import static edu.wpi.first.units.Units.Volts;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.LinkedList;
-import java.util.List;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -21,6 +16,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Utils.HeadingController;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.LinkedList;
+import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
@@ -76,11 +75,13 @@ public class Drive extends SubsystemBase {
 
     m_sysId =
         new SysIdRoutine(
-            new SysIdRoutine.Config(null, null, null, (state) -> Logger.recordOutput("Drive/SysId State", state.toString())),
-            new SysIdRoutine.Mechanism(
-                (voltage) -> runCharacterization(voltage.in(Volts)),
+            new SysIdRoutine.Config(
                 null,
-                this));
+                null,
+                null,
+                (state) -> Logger.recordOutput("/SysId/Drive/SysId State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   @Override
@@ -133,11 +134,12 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
     Logger.recordOutput("SwerveStates/Measured", measuredStates);
   }
-  
+
   /**
    * Run each Swerve Module at a specified speed and angle.
-   * 
-   * @param setpointStates An array of SwerveModuleStates (Module speed in m/s, and the Module angle). The index of the array corresponds to that Module number
+   *
+   * @param setpointStates An array of SwerveModuleStates (Module speed in m/s, and the Module
+   *     angle). The index of the array corresponds to that Module number
    */
   public void runSwerveModules(SwerveModuleState[] setpointStates) {
     // Runs Modules to Run at Specific Setpoints (Linear and Angular Velocity) that
@@ -263,7 +265,8 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * @return Average velocity of drive motors in rotations per second, for FeedForward characterization
+   * @return Average velocity of drive motors in rotations per second, for FeedForward
+   *     characterization
    */
   public double getAverageDriveVelocity() {
     double velocity = 0.0;
@@ -332,5 +335,5 @@ public class Drive extends SubsystemBase {
                   System.out.println("\tkS: " + formatter.format(kS));
                   System.out.println("\tkV: " + formatter.format(kV));
                 }));
-    }
+  }
 }

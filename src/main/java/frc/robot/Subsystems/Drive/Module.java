@@ -193,7 +193,7 @@ public class Module {
     m_io.setDriveVoltage(
         m_driveFeedforward.calculate(velocityRadPerSec)
             + (m_drivePID.calculate(m_inputs.driveVelocityRadPerSec, velocityRadPerSec)));
-  }  
+  }
 
   /**
    * Locks module orientation at 0 degrees and runs drive motor at specified voltage
