@@ -102,7 +102,8 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)",
         m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     m_autoChooser.addOption(
-        "Drive FeedForward Characterization", m_driveSubsystem.feedforwardCharacterization());
+        "Drive FeedForward Characterization",
+        DriveCommands.feedforwardCharacterization(m_driveSubsystem));
 
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
 
@@ -141,8 +142,8 @@ public class RobotContainer {
         .onTrue(
             DriveCommands.robotRelativeDrive(
                 m_driveSubsystem,
-                () -> -m_driverController.getLeftX(),
                 () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getLeftX(),
                 () -> -m_driverController.getRightX()));
 
     m_driverController

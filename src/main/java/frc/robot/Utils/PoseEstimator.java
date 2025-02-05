@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import java.util.Optional;
@@ -110,7 +111,7 @@ public class PoseEstimator extends SubsystemBase {
     // Put robot's current position onto field
     m_field.setRobotPose(getCurrentPose2d());
 
-    if (m_enableVision) {
+    if (m_enableVision && RobotStateConstants.getMode() == RobotStateConstants.Mode.REAL) {
       // Saves pipeline results from Front camera if present
       m_tempPipelineResult = m_cameraFront.getLatestResult();
       m_hasTargetsFront = m_tempPipelineResult.hasTargets();

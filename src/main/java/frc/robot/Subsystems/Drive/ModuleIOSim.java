@@ -7,7 +7,6 @@ package frc.robot.Subsystems.Drive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -19,12 +18,14 @@ public class ModuleIOSim implements ModuleIO {
   private final FlywheelSim m_driveSim;
   private final FlywheelSim m_turnSim;
 
+  // Motor voltages
+  private double m_driveAppliedVolts = 0.0;
+  private double m_turnAppliedVolts = 0.0;
+
   // PID FF controllers
   private final PIDController m_driveController;
-  private final PIDController m_turnController;
   private SimpleMotorFeedforward m_driveFeedForward;
   private double m_driveSetpoint = 0.0;
-  private double m_turnSetpoint = 0.0;
 
   /**
    * Constructs a new ModuleIOSim instance
@@ -56,26 +57,19 @@ public class ModuleIOSim implements ModuleIO {
     m_driveController =
         new PIDController(
             DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD);
-    m_turnController =
-        new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
     m_driveFeedForward =
         new SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV);
-
-    // Configure controllers
-    m_turnController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
     // Update Drive and Turn based on setpoint
-    double driveVoltage =
+    m_driveAppliedVolts =
         m_driveController.calculate(inputs.driveVelocityRadPerSec, m_driveSetpoint)
             + m_driveFeedForward.calculate(m_driveSetpoint);
-    double turnVoltage = m_turnController.calculate(inputs.turnAbsolutePositionRad, m_turnSetpoint);
 
     // Update simulated motors
-    this.setDriveVoltage(driveVoltage);
-    this.setTurnVoltage(turnVoltage);
+    this.setDriveVoltage(m_driveAppliedVolts);
     m_driveSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
     m_turnSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
@@ -84,7 +78,7 @@ public class ModuleIOSim implements ModuleIO {
     inputs.drivePositionRad +=
         m_driveSim.getAngularVelocityRadPerSec() * RobotStateConstants.LOOP_PERIODIC_SEC;
     inputs.driveVelocityRadPerSec = m_driveSim.getAngularVelocityRadPerSec();
-    inputs.driveAppliedVoltage = driveVoltage;
+    inputs.driveAppliedVoltage = m_driveAppliedVolts;
     inputs.driveCurrentAmps = Math.abs(m_driveSim.getCurrentDrawAmps());
 
     // Update Turn motor inputs
@@ -96,12 +90,13 @@ public class ModuleIOSim implements ModuleIO {
                     * RobotStateConstants.LOOP_PERIODIC_SEC));
     inputs.turnPositionRad = inputs.turnAbsolutePositionRad;
     inputs.turnVelocityRadPerSec = m_turnSim.getAngularVelocityRadPerSec();
-    inputs.turnAppliedVoltage = turnVoltage;
+    inputs.turnAppliedVoltage = m_turnAppliedVolts;
     inputs.turnCurrentAmps = Math.abs(m_turnSim.getCurrentDrawAmps());
   }
 
   @Override
   public void setDriveVoltage(double volts) {
+    m_turnAppliedVolts = volts;
     m_driveSim.setInputVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
@@ -118,11 +113,6 @@ public class ModuleIOSim implements ModuleIO {
   }
 
   @Override
-  public void setTurnPosition(Rotation2d position) {
-    m_turnSetpoint = position.getRadians();
-  }
-
-  @Override
   public void setDrivePID(double kP, double kI, double kD) {
     m_driveController.setPID(kP, kI, kD);
   }
@@ -131,9 +121,4 @@ public class ModuleIOSim implements ModuleIO {
   public void setDriveFF(double kS, double kV) {
     m_driveFeedForward = new SimpleMotorFeedforward(kS, kV);
   }
-
-  // @Override
-  // public void setTurnPID(double kP, double kI, double kD) {
-  //   m_turnController.setPID(kP, kI, kD);
-  // }
 }

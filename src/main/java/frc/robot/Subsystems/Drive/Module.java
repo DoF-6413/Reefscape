@@ -130,16 +130,6 @@ public class Module {
   }
 
   /**
-   * Sets the position of the Turn motor using the closed loop controller built into the SparkMax
-   * speed controller
-   *
-   * @param position Rotation2d with angle to set the Module wheel to
-   */
-  public void setTurnPosition(Rotation2d position) {
-    m_io.setTurnPosition(position);
-  }
-
-  /**
    * The current absolute turn angle of the module in radians, normalized to a range of negative pi
    * to pi.
    *

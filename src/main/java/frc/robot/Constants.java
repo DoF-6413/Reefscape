@@ -84,8 +84,8 @@ public final class Constants {
   }
   /** Heading Controller */
   public static class HeadingControllerConstants {
-    public static final double KP = 0.1;
-    public static final double KD = 0.1;
+    public static final double KP = 1.0;
+    public static final double KD = 0.0;
   }
 
   /** Constants for all Vision systems */

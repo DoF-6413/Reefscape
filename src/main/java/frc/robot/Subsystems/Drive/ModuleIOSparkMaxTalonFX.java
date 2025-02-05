@@ -39,7 +39,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   // Turn motor
   private final SparkMax m_turnSparkMax;
   private final SparkMaxConfig m_turnConfig = new SparkMaxConfig();
-  // private final SparkClosedLoopController m_turnController;
   private final CANcoder m_turnAbsoluteEncoder;
   private final double m_absoluteEncoderOffsetRad;
 
@@ -140,15 +139,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(DriveConstants.CUR_LIM_A);
 
-    // SPARK MAX closed loop controller configurations
-    // m_turnController = m_turnSparkMax.getClosedLoopController();
-    // m_turnConfig
-    //     .closedLoop
-    //     .pid(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD)
-    //     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-    //     .positionWrappingEnabled(true)
-    //     .positionWrappingInputRange(-Math.PI, Math.PI);
-
     // Optimize CAN bus usage, disable all signals beside refreshed signals in code
     m_driveTalonFX.optimizeBusUtilization();
     m_turnAbsoluteEncoder.optimizeBusUtilization();
@@ -242,12 +232,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     m_driveTalonFX.setControl(m_driveController.withVelocity(velocityRadPerSec));
   }
 
-  // @Override
-  // public void setTurnPosition(Rotation2d position) {
-  //   double setpoint = position.getRadians();
-  //   m_turnController.setReference(setpoint, ControlType.kPosition);
-  // }
-
   @Override
   public void setDriveBrakeMode(boolean enable) {
     m_driveTalonFX.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
@@ -271,17 +255,4 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     m_driveConfig.Slot0.withKS(kS).withKV(kV);
     m_driveTalonFX.getConfigurator().apply(m_driveConfig);
   }
-
-  // @Override
-  // public void setTurnPID(double kP, double kI, double kD) {
-  //   m_turnConfig.closedLoop.pid(kP, kI, kD);
-  //   m_turnSparkMax.configure(
-  //       m_turnConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-  // }
-
-  // @Override
-  // public void updateRelativePosition() {
-  //   m_turnRelativeEncoder.setPosition(
-  //       Units.rotationsToRadians(absoluteEncoderPositionRot.getValueAsDouble()));
-  // }
 }

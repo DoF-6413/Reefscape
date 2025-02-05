@@ -1,6 +1,5 @@
 package frc.robot.Subsystems.Drive;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ModuleIO {
@@ -80,14 +79,6 @@ public interface ModuleIO {
   public default void setDriveVelocity(double velocityRadPerSec) {}
 
   /**
-   * Sets the position of the Turn motor using the closed loop controller built into the SparkMax
-   * speed controller
-   *
-   * @param position Rotation2d with angle to set the Module wheel to
-   */
-  public default void setTurnPosition(Rotation2d position) {}
-
-  /**
    * Sets the PID values for the Drive motor's built in closed loop controller
    *
    * @param kP P gain value
@@ -103,15 +94,4 @@ public interface ModuleIO {
    * @param kV V gain value
    */
   public default void setDriveFF(double kS, double kV) {}
-
-  /**
-   * Sets the PID values for the Turn motor's built in closed loop controller
-   *
-   * @param kP P gain value
-   * @param kI I gain value
-   * @param kD D gain value
-   */
-  // public default void setTurnPID(double kP, double kI, double kD) {}
-
-  // public default void updateRelativePosition() {}
 }
