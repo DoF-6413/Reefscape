@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -8,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.TeleopCommands.DriveCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotStateConstants;
@@ -18,6 +20,7 @@ import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
+import frc.robot.Utils.PathPlanner;
 import frc.robot.Utils.PoseEstimator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -29,6 +32,7 @@ public class RobotContainer {
 
   // Utils
   private final PoseEstimator m_poseEstimator;
+  private final PathPlanner m_pathPlanner;
 
   // Controllers
   private final CommandXboxController m_driverController =
@@ -75,9 +79,31 @@ public class RobotContainer {
                 m_gyroSubsystem);
         break;
     }
-    m_poseEstimator = new PoseEstimator(m_driveSubsystem);
 
+    // Utils
+    m_poseEstimator = new PoseEstimator(m_driveSubsystem);
+    m_pathPlanner = new PathPlanner(m_driveSubsystem, m_poseEstimator);
     // Adds an "Auto" tab on ShuffleBoard
+
+    /** Autonomous Routines */
+    m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
+    m_autoChooser.addOption("Path Planner", new PathPlannerAuto("test1"));
+    /* SysId Routines */
+    m_autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    m_autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)",
+        m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)",
+        m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    m_autoChooser.addOption(
+        "Drive FeedForward Characterization", m_driveSubsystem.feedforwardCharacterization());
+
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
 
     // Configure the button bindings

@@ -1,15 +1,26 @@
 package frc.robot.Subsystems.Drive;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Utils.HeadingController;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.LinkedList;
+import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
@@ -27,6 +38,9 @@ public class Drive extends SubsystemBase {
 
   // Gets previous module positions
   private double[] m_lastModulePositionsMeters = new double[4];
+
+  // System ID
+  private SysIdRoutine m_sysId;
 
   private Rotation2d headingSetpoint = new Rotation2d(-Math.PI / 2);
   /**
@@ -47,9 +61,9 @@ public class Drive extends SubsystemBase {
       ModuleIO BLModuleIO,
       ModuleIO BRModuleIO,
       Gyro gyro) {
-
     // Initialize the Drive subsystem
     System.out.println("[Init] Creating Drive");
+
     m_gyro = gyro;
     m_modules[0] = new Module(FRModuleIO, 0);
     m_modules[1] = new Module(FLModuleIO, 1);
@@ -58,6 +72,16 @@ public class Drive extends SubsystemBase {
 
     // Initialize the swerve drive kinematics
     m_swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
+
+    m_sysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput("/SysId/Drive/SysId State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
 
     // Tunable PIDFF values
     SmartDashboard.putBoolean("PIDFF/Drive/EnableTuning", false);
@@ -129,6 +153,47 @@ public class Drive extends SubsystemBase {
   }
 
   /**
+   * Run each Swerve Module at a specified speed and angle.
+   *
+   * @param setpointStates An array of SwerveModuleStates (Module speed in m/s, and the Module
+   *     angle). The index of the array corresponds to that Module number
+   */
+  public void runSwerveModules(SwerveModuleState[] setpointStates) {
+    // Runs Modules to Run at Specific Setpoints (Linear and Angular Velocity) that
+    // is Quick & Optimized for smoothest movement
+
+    SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
+    for (int i = 0; i < 4; i++) {
+      m_modules[i].runSetpoint(setpointStates[i]);
+      optimizedStates[i] = m_modules[i].getState();
+    }
+
+    // Updates setpoint logs
+    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+    Logger.recordOutput("SwerveStates/Measured", optimizedStates);
+  }
+
+  /**
+   * @return Swerve kinematics configuration of the robot
+   */
+  public SwerveDriveKinematics getKinematics() {
+    return m_swerveDriveKinematics;
+  }
+
+  /**
+   * @return The position of each Module, distance travelled and wheel angles
+   */
+  public SwerveModulePosition[] getModulePositions() {
+    SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+
+    for (int i = 0; i < 4; i++) {
+      modulePositions[i] = m_modules[i].getPosition();
+    }
+
+    return modulePositions;
+  }
+
+  /**
    * Runs the drivetrain with raw values on a scale
    *
    * @param x velociy in x direction of Entire Swerve Drive
@@ -186,23 +251,120 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * @return Swerve kinematics configuration of the robot
+   * Locks module orientation at 0 degrees and runs drive motors at specified voltage
+   *
+   * @param output Voltage
    */
-  public SwerveDriveKinematics getKinematics() {
-    return m_swerveDriveKinematics;
+  public void runCharacterization(double output) {
+    for (int i = 0; i < 4; i++) {
+      m_modules[i].runCharacterization(output);
+    }
   }
 
   /**
-   * @return The position of each Module, distance travelled and wheel angles
+   * @param direction Forward or Reverse direction
+   * @return A quasistatic test in the specified direction
    */
-  public SwerveModulePosition[] getModulePositions() {
-    SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(0)) // Allows module positions to reset
+        .withTimeout(1.0)
+        .andThen(m_sysId.quasistatic(direction));
+  }
 
+  /**
+   * @param direction Forward or Reverse direction
+   * @return A dynamic test in the specified direction
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return run(() -> runCharacterization(0)) // Allows module positions to reset
+        .withTimeout(1.0)
+        .andThen(m_sysId.dynamic(direction));
+  }
+
+  /**
+   * @return Average velocity of drive motors in rotations per second, for FeedForward
+   *     characterization
+   */
+  public double getAverageDriveVelocity() {
+    double velocity = 0.0;
     for (int i = 0; i < 4; i++) {
-      modulePositions[i] = m_modules[i].getPosition();
+      velocity += Units.radiansToRotations(m_modules[i].getVelocityRadPerSec());
     }
+    return velocity;
+  }
 
-    return modulePositions;
+  /** Measures the velocity feedforward constants for the drive motors */
+  public Command feedforwardCharacterization() {
+    List<Double> velocitySamples = new LinkedList<>();
+    List<Double> voltageSamples = new LinkedList<>();
+    Timer timer = new Timer();
+    double rampRateVoltPerSec = 0.1;
+    double startDelay = 2;
+
+    return Commands.sequence(
+        // Reset data
+        Commands.runOnce(
+            () -> {
+              velocitySamples.clear();
+              voltageSamples.clear();
+            }),
+
+        // Allow modules to orient
+        Commands.run(
+                () -> {
+                  this.runCharacterization(0.0);
+                },
+                this)
+            .withTimeout(startDelay),
+
+        // Start timer
+        Commands.runOnce(timer::restart),
+
+        // Accelerate and gather data
+        Commands.run(
+                () -> {
+                  double voltage = timer.get() * rampRateVoltPerSec;
+                  this.runCharacterization(voltage);
+                  velocitySamples.add(this.getAverageDriveVelocity());
+                  voltageSamples.add(voltage);
+                },
+                this)
+
+            // When cancelled, calculate and print results
+            .finallyDo(
+                () -> {
+                  int n = velocitySamples.size();
+                  double sumX = 0.0;
+                  double sumY = 0.0;
+                  double sumXY = 0.0;
+                  double sumX2 = 0.0;
+                  for (int i = 0; i < n; i++) {
+                    sumX += velocitySamples.get(i);
+                    sumY += voltageSamples.get(i);
+                    sumXY += velocitySamples.get(i) * voltageSamples.get(i);
+                    sumX2 += velocitySamples.get(i) * velocitySamples.get(i);
+                  }
+                  double kS = (sumY * sumX2 - sumX * sumXY) / (n * sumX2 - sumX * sumX);
+                  double kV = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+
+                  NumberFormat formatter = new DecimalFormat("#0.00000");
+                  System.out.println("********** Drive FF Characterization Results **********");
+                  System.out.println("\tkS: " + formatter.format(kS));
+                  System.out.println("\tkV: " + formatter.format(kV));
+                }));
+  }
+
+  /**
+   * @return a swereveModuleState of chassis speeds
+   */
+  public ChassisSpeeds getChassisSpeeds() {
+    return m_swerveDriveKinematics.toChassisSpeeds(
+        new SwerveModuleState[] {
+          m_modules[0].getState(),
+          m_modules[1].getState(),
+          m_modules[2].getState(),
+          m_modules[3].getState(),
+        });
   }
 
   /**

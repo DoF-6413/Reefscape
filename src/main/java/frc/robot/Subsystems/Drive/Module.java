@@ -170,6 +170,13 @@ public class Module {
   }
 
   /**
+   * @return The current velocity of the Drive motor in rad per sec
+   */
+  public double getVelocityRadPerSec() {
+    return m_inputs.driveVelocityRadPerSec;
+  }
+
+  /**
    * @return the Module position (Turn angle and Drive position)
    */
   public SwerveModulePosition getPosition() {
@@ -214,10 +221,7 @@ public class Module {
     // Turn Speed m/s into Vel rad/s
     double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
 
-    // Run drive controller
-    // m_io.setDriveVoltage(
-    //     m_driveFeedforward.calculate(velocityRadPerSec)
-    //         + m_drivePID.calculate(m_inputs.driveVelocityRadPerSec, velocityRadPerSec));
+    // Runs the Drive motor through the TalonFX closed loop controller
     m_io.setDriveVelocity(velocityRadPerSec);
   }
 
@@ -253,7 +257,13 @@ public class Module {
     m_steerPID.setPID(kP, kI, kD);
   }
 
-  // public void updateRelativePosition() {
-  //   m_io.updateRelativePosition();
-  // }
+  /**
+   * Locks module orientation at 0 degrees and runs drive motor at specified voltage
+   *
+   * @param output Voltage
+   */
+  public void runCharacterization(double output) {
+    m_io.setDriveVoltage(output);
+    m_io.setTurnVoltage(m_steerPID.calculate(getAngle().getRadians(), 0)); // Setpoint at 0 degrees
+  }
 }

@@ -52,9 +52,9 @@ public class GyroIOPigeon2 implements GyroIO {
     inputs.connected = BaseStatusSignal.refreshAll(m_yawDeg, m_yawVelocityDegPerSec).isOK();
     inputs.yawPositionRad =
         Rotation2d.fromRadians(
-            Units.degreesToRadians(
-                MathUtil.inputModulus(
-                    m_yawDeg.getValueAsDouble() + GyroConstants.HEADING_OFFSET_RAD, 0, 360)));
+            MathUtil.angleModulus(
+                Units.degreesToRadians(m_yawDeg.getValueAsDouble())
+                    + GyroConstants.HEADING_OFFSET_RAD));
     inputs.yawVelocityRadPerSec =
         Units.degreesToRadians(m_gyro.getAngularVelocityZWorld().getValueAsDouble());
     inputs.rawYawPositionRad =
