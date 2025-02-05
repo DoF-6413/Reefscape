@@ -31,7 +31,7 @@ public class RobotContainer {
 
   // Utils
   private final PoseEstimator m_poseEstimator;
-  private final PathPlanner m_PathPlanner;
+  private final PathPlanner m_pathPlanner;
 
   // Controllers
   private final CommandXboxController m_driverController =
@@ -81,7 +81,7 @@ public class RobotContainer {
 
     // Utils
     m_poseEstimator = new PoseEstimator(m_driveSubsystem);
-    m_PathPlanner = new PathPlanner(m_driveSubsystem, m_poseEstimator);
+    m_pathPlanner = new PathPlanner(m_driveSubsystem, m_poseEstimator);
     // Adds an "Auto" tab on ShuffleBoard
 
     m_autoChooser.addOption("Do Nothing", new InstantCommand());
