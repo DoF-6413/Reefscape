@@ -39,6 +39,8 @@ public class Module {
 
     m_driveFeedforward =
         new SimpleMotorFeedforward(DriveConstants.DRIVE_KS_KRAKEN, DriveConstants.DRIVE_KV_KRAKEN);
+
+    m_steerPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   /**

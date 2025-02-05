@@ -10,15 +10,16 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.PathPlannerConstants;
+import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
 
 public class PathPlanner {
-  private Drive m_drive;
-  private PoseEstimator m_pose;
+  private final Drive m_drive;
+  private final PoseEstimator m_pose;
 
-  private RobotConfig m_robotConfig;
-  private ModuleConfig m_moduleConfig;
+  private final RobotConfig m_robotConfig;
+  private final ModuleConfig m_moduleConfig;
 
   public PathPlanner(Drive drive, PoseEstimator pose) {
     m_drive = drive;
@@ -28,21 +29,28 @@ public class PathPlanner {
         new ModuleConfig(
             DriveConstants.WHEEL_RADIUS_M,
             DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-            1.0,
+            PathPlannerConstants.WHEEL_FRICTION_COEFF,
             DCMotor.getKrakenX60(1),
             DriveConstants.DRIVE_GEAR_RATIO,
             DriveConstants.CUR_LIM_A,
-            1); // TODO: get coefficient of friction between wheel and carpet
+            1);
     m_robotConfig =
         new RobotConfig(
-            125, 1, m_moduleConfig, DriveConstants.TRACK_WIDTH_M); // TODO: Verify MOI and Mass);
+            RobotStateConstants.ROBOT_WEIGHT_KG,
+            1,
+            m_moduleConfig,
+            DriveConstants.TRACK_WIDTH_M); // TODO: Get MOI of entire robot
 
     AutoBuilder.configure(
         pose::getCurrentPose2d,
         pose::resetPose,
         drive::getChassisSpeeds,
         drive::runVelocity,
-        new PPHolonomicDriveController(new PIDConstants(0, 0, 0), new PIDConstants(0, 0, 0)),
+        new PPHolonomicDriveController(
+            new PIDConstants(
+                PathPlannerConstants.TRANSLATION_KP, 0, PathPlannerConstants.TRANSLATION_KD),
+            new PIDConstants(
+                PathPlannerConstants.ROTATION_KP, 0, PathPlannerConstants.ROTATION_KD)),
         m_robotConfig,
         () -> {
           // Boolean supplier that controls when the path will be mirrored for the red
