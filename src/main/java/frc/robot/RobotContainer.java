@@ -84,7 +84,7 @@ public class RobotContainer {
     m_pathPlanner = new PathPlanner(m_driveSubsystem, m_poseEstimator);
     // Adds an "Auto" tab on ShuffleBoard
 
-    m_autoChooser.addOption("Do Nothing", new InstantCommand());
+    m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     m_autoChooser.addOption("Path Planner", new PathPlannerAuto("test1"));
 
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
