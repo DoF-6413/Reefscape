@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -19,6 +20,7 @@ import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
+import frc.robot.Utils.PathPlanner;
 import frc.robot.Utils.PoseEstimator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -30,6 +32,7 @@ public class RobotContainer {
 
   // Utils
   private final PoseEstimator m_poseEstimator;
+  private final PathPlanner m_pathPlanner;
 
   // Controllers
   private final CommandXboxController m_driverController =
@@ -76,8 +79,15 @@ public class RobotContainer {
                 m_gyroSubsystem);
         break;
     }
-    m_poseEstimator = new PoseEstimator(m_driveSubsystem);
 
+    // Utils
+    m_poseEstimator = new PoseEstimator(m_driveSubsystem);
+    m_pathPlanner = new PathPlanner(m_driveSubsystem, m_poseEstimator);
+    // Adds an "Auto" tab on ShuffleBoard
+
+    /** Autonomous Routines */
+    m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
+    m_autoChooser.addOption("Path Planner", new PathPlannerAuto("test1"));
     /* SysId Routines */
     m_autoChooser.addOption(
         "Drive SysId (Quasistatic Forward)",
@@ -94,7 +104,6 @@ public class RobotContainer {
     m_autoChooser.addOption(
         "Drive FeedForward Characterization", m_driveSubsystem.feedforwardCharacterization());
 
-    // Adds an "Auto" tab on ShuffleBoard
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
 
     // Configure the button bindings

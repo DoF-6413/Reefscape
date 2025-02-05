@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -71,6 +72,9 @@ public final class Constants {
 
     /** Max voltage to send to motor */
     public static final double MAX_VOLTAGE = 12;
+
+    /** Weight of the robot with bumpers and battery */
+    public static final double ROBOT_WEIGHT_KG = Units.lbsToKilograms(135);
   }
 
   /** Controller ports */
@@ -101,5 +105,23 @@ public final class Constants {
     // Photon Camera names
     public static final String FRONT_CAMERA_NAME = "Front";
     public static final String BACK_CAMERA_NAME = "Back";
+  }
+
+  public final class PathPlannerConstants {
+    /* Configuration */
+    // PID
+    public static final double TRANSLATION_KP = 1;
+    public static final double TRANSLATION_KD = 0;
+    public static final double ROTATION_KP = 1;
+    public static final double ROTATION_KD = 0;
+    /** Coefficient of friction between wheels and the carpet */
+    public static final double WHEEL_FRICTION_COEFF = 0.7;
+
+    /* PathFinding */
+    /**
+     * Max translational and rotational speed and acceleration used for PathPlanner's PathFinding
+     */
+    public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
+        new PathConstraints(3, 3, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
   }
 }
