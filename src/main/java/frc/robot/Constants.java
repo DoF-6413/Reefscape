@@ -111,10 +111,10 @@ public final class Constants {
   public final class PathPlannerConstants {
     /* Configuration */
     // PID
-    public static final double TRANSLATION_KP = 1;
+    public static final double TRANSLATION_KP = 0;
     public static final double TRANSLATION_KD = 0;
-    public static final double ROTATION_KP = 1;
-    public static final double ROTATION_KD = 0;
+    public static final double ROTATION_KP = 6.4;
+    public static final double ROTATION_KD = 0.05;
     /** Coefficient of friction between wheels and the carpet */
     public static final double WHEEL_FRICTION_COEFF = 0.7;
 

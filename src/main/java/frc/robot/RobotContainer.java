@@ -183,6 +183,13 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
                 .withName("ZeroYaw"));
+
+    m_driverController
+        .x()
+        .onTrue(
+            m_pathPlanner
+                .pathFindToPose(m_poseEstimator.toAprilTag())
+                .until(m_driverController.x()));
   }
 
   /**

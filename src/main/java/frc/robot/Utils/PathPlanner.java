@@ -7,10 +7,11 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.PathPlannerConstants;
-import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
 
@@ -36,7 +37,7 @@ public class PathPlanner {
             1);
     m_robotConfig =
         new RobotConfig(
-            RobotStateConstants.ROBOT_WEIGHT_KG,
+            Units.lbsToKilograms(35),
             1,
             m_moduleConfig,
             DriveConstants.TRACK_WIDTH_M); // TODO: Get MOI of entire robot
@@ -77,6 +78,11 @@ public class PathPlanner {
     // The pose to pathfind to
     // The constraints to use while pathfinding
     // The goal end velocity of the robot when reaching the target pose
-    return AutoBuilder.pathfindToPose(targetPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+    if (targetPose.getX() > 18 || targetPose.getY() > 9) {
+      return new PrintCommand(
+          targetPose.toString()); // Do nothing if target pose is outside the field
+    }
+    return AutoBuilder.pathfindToPose(targetPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0)
+        .alongWith(new PrintCommand(targetPose.toString()));
   }
 }

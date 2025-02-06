@@ -112,7 +112,7 @@ public class DriveCommands {
   private static Translation2d getLinearVelocity(double x, double y) {
     // Apply deadband
     double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DriveConstants.DEADBAND);
-    Rotation2d linearDirection = new Rotation2d(x, y);
+    Rotation2d linearDirection = new Rotation2d(Math.atan2(y, x));
 
     // Square magnitude for more precise control
     // NOTE: The x & y values range from -1 to +1, so their squares are as well

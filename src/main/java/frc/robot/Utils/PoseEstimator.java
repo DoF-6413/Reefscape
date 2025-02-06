@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -39,9 +40,9 @@ public class PoseEstimator extends SubsystemBase {
 
   // Vision Pose Estimation Objects
   private final PhotonPoseEstimator m_visionPoseEstimatorFront;
-  private final PhotonPoseEstimator m_visionPoseEstimatorBack;
+  // private final PhotonPoseEstimator m_visionPoseEstimatorBack;
   private final PhotonCamera m_cameraFront;
-  private final PhotonCamera m_cameraBack;
+  // private final PhotonCamera m_cameraBack;
   public final Vector<N3> m_visionStandardDeviations = VecBuilder.fill(0.1, 0.1, 0.1);
   private boolean m_enableVision = true;
 
@@ -84,18 +85,18 @@ public class PoseEstimator extends SubsystemBase {
             AprilTagFields.k2025Reefscape.loadAprilTagLayoutField().getFieldWidth());
 
     m_cameraFront = new PhotonCamera(VisionConstants.FRONT_CAMERA_NAME);
-    m_cameraBack = new PhotonCamera(VisionConstants.BACK_CAMERA_NAME);
+    // m_cameraBack = new PhotonCamera(VisionConstants.BACK_CAMERA_NAME);
 
     m_visionPoseEstimatorFront =
         new PhotonPoseEstimator(
             m_aprilTagFieldLayout,
             PoseStrategy.LOWEST_AMBIGUITY,
             VisionConstants.FRONT_CAMERA_ROBOT_OFFSET);
-    m_visionPoseEstimatorBack =
-        new PhotonPoseEstimator(
-            m_aprilTagFieldLayout,
-            PoseStrategy.LOWEST_AMBIGUITY,
-            VisionConstants.BACK_CAMERA_ROBOT_OFFSET);
+    // m_visionPoseEstimatorBack =
+    //     new PhotonPoseEstimator(
+    //         m_aprilTagFieldLayout,
+    //         PoseStrategy.LOWEST_AMBIGUITY,
+    //         VisionConstants.BACK_CAMERA_ROBOT_OFFSET);
   }
 
   @Override
@@ -123,54 +124,56 @@ public class PoseEstimator extends SubsystemBase {
       }
 
       // Saves pipeline results from Back camera if present
-      m_tempPipelineResult = m_cameraBack.getLatestResult();
-      m_hasTargetsBack = m_tempPipelineResult.hasTargets();
-      Optional<EstimatedRobotPose> backPose =
-          m_visionPoseEstimatorBack.update(m_tempPipelineResult);
-      if (m_hasTargetsBack) {
-        m_backTarget = m_tempPipelineResult.getBestTarget();
-        m_fiducialIDBack = m_backTarget.getFiducialId();
-        m_poseAmbiguityBack = m_backTarget.getPoseAmbiguity();
-      }
+      // m_tempPipelineResult = m_cameraBack.getLatestResult();
+      // m_hasTargetsBack = m_tempPipelineResult.hasTargets();
+      // Optional<EstimatedRobotPose> backPose =
+      //     m_visionPoseEstimatorBack.update(m_tempPipelineResult);
+      // if (m_hasTargetsBack) {
+      //   m_backTarget = m_tempPipelineResult.getBestTarget();
+      //   m_fiducialIDBack = m_backTarget.getFiducialId();
+      //   m_poseAmbiguityBack = m_backTarget.getPoseAmbiguity();
+      // }
 
       // Log if the cameras see an AprilTag
       Logger.recordOutput("Vision/Front/HasTarget", m_hasTargetsFront);
-      Logger.recordOutput("Vision/Back/HasTarget", m_hasTargetsBack);
+      // Logger.recordOutput("Vision/Back/HasTarget", m_hasTargetsBack);
 
       if (!m_hasTargetsFront && !m_hasTargetsBack) {
         // If no AprilTags are seen, immediently end
         return;
 
-      } else if (m_hasTargetsFront && m_hasTargetsBack) {
-        // If both cameras see an AprilTag, average their estimated positions and add that
-        // measurement to the Swerve Pose Estimator
-        if (m_prevTimestamp != m_timestamp) {
-          m_prevTimestamp = m_timestamp;
+      }
+      // else if (m_hasTargetsFront && m_hasTargetsBack) {
+      //   // If both cameras see an AprilTag, average their estimated positions and add that
+      //   // measurement to the Swerve Pose Estimator
+      //   if (m_prevTimestamp != m_timestamp) {
+      //     m_prevTimestamp = m_timestamp;
 
-          if (frontPose.isPresent()
-              && backPose.isPresent()
-              && m_poseAmbiguityFront < 0.2
-              && m_poseAmbiguityFront >= 0.0
-              && m_poseAmbiguityBack < 0.2
-              && m_poseAmbiguityBack >= 0.0
-              && m_fiducialIDFront >= 1
-              && m_fiducialIDFront <= 22
-              && m_fiducialIDBack >= 1
-              && m_fiducialIDBack <= 22) {
-            Logger.recordOutput(
-                "Vision/Front/EstimatedPose", frontPose.get().estimatedPose.toPose2d());
-            Logger.recordOutput(
-                "Vision/Back/EstimatedPose", backPose.get().estimatedPose.toPose2d());
-            m_swervePoseEstimator.addVisionMeasurement(
-                averageVisionPoses(
-                    frontPose.get().estimatedPose.toPose2d(),
-                    backPose.get().estimatedPose.toPose2d()),
-                m_timestamp,
-                m_visionStandardDeviations);
-          }
-        }
+      //     if (frontPose.isPresent()
+      //         && backPose.isPresent()
+      //         && m_poseAmbiguityFront < 0.2
+      //         && m_poseAmbiguityFront >= 0.0
+      //         && m_poseAmbiguityBack < 0.2
+      //         && m_poseAmbiguityBack >= 0.0
+      //         && m_fiducialIDFront >= 1
+      //         && m_fiducialIDFront <= 22
+      //         && m_fiducialIDBack >= 1
+      //         && m_fiducialIDBack <= 22) {
+      //       Logger.recordOutput(
+      //           "Vision/Front/EstimatedPose", frontPose.get().estimatedPose.toPose2d());
+      //       Logger.recordOutput(
+      //           "Vision/Back/EstimatedPose", backPose.get().estimatedPose.toPose2d());
+      //       m_swervePoseEstimator.addVisionMeasurement(
+      //           averageVisionPoses(
+      //               frontPose.get().estimatedPose.toPose2d(),
+      //               backPose.get().estimatedPose.toPose2d()),
+      //           m_timestamp,
+      //           m_visionStandardDeviations);
+      //     }
+      //   }
 
-      } else if (m_hasTargetsFront) {
+      // }
+      else if (m_hasTargetsFront) {
         // Update Swerve Pose Estimator based on Front camera
         if (m_prevTimestamp != m_timestamp) {
           m_prevTimestamp = m_timestamp;
@@ -187,22 +190,23 @@ public class PoseEstimator extends SubsystemBase {
           }
         }
 
-      } else {
-        // Update Swerve Pose Estimator based on Back camera
-        if (m_prevTimestamp != m_timestamp) {
-          m_prevTimestamp = m_timestamp;
+        // } else {
+        //   // Update Swerve Pose Estimator based on Back camera
+        //   if (m_prevTimestamp != m_timestamp) {
+        //     m_prevTimestamp = m_timestamp;
 
-          if (backPose.isPresent()
-              && m_poseAmbiguityBack < 0.2
-              && m_poseAmbiguityBack >= 0.0
-              && m_fiducialIDBack >= 1
-              && m_fiducialIDBack <= 22) {
-            Logger.recordOutput(
-                "Vision/Back/EstimatedPose", backPose.get().estimatedPose.toPose2d());
-            m_swervePoseEstimator.addVisionMeasurement(
-                backPose.get().estimatedPose.toPose2d(), m_timestamp, m_visionStandardDeviations);
-          }
-        }
+        //     if (backPose.isPresent()
+        //         && m_poseAmbiguityBack < 0.2
+        //         && m_poseAmbiguityBack >= 0.0
+        //         && m_fiducialIDBack >= 1
+        //         && m_fiducialIDBack <= 22) {
+        //       Logger.recordOutput(
+        //           "Vision/Back/EstimatedPose", backPose.get().estimatedPose.toPose2d());
+        //       m_swervePoseEstimator.addVisionMeasurement(
+        //           backPose.get().estimatedPose.toPose2d(), m_timestamp,
+        // m_visionStandardDeviations);
+        //     }
+        //   }
       }
     }
   }
@@ -259,5 +263,43 @@ public class PoseEstimator extends SubsystemBase {
     return new Pose2d(
         new Translation2d(x / estimatedPoses.length, y / estimatedPoses.length),
         new Rotation2d(theta / estimatedPoses.length));
+  }
+
+  public Pose2d toAprilTag() {
+    var frontResult = m_cameraFront.getLatestResult();
+    System.out.println("-==-=-=-==DOING THE THINGY-=-=-=-=-=-=-");
+    if (!frontResult.hasTargets() && !m_hasTargetsBack) {
+      System.out.println("!!!!!!!!!!HAS NO TARGETS!!!!!!!!!!!!!");
+      return new Pose2d(100, 100, new Rotation2d());
+    }
+
+    if (frontResult.hasTargets()) {
+      System.out.println("[][][]HAS FRONT TARGET[][][]");
+      var tagPose2d =
+          m_aprilTagFieldLayout
+              .getTagPose(frontResult.getBestTarget().getFiducialId())
+              .get()
+              .toPose2d();
+      var inFrontOfTag =
+          new Pose2d(
+              tagPose2d.getX() + Units.inchesToMeters(8) * tagPose2d.getRotation().getCos(),
+              tagPose2d.getY() + Units.inchesToMeters(5) * tagPose2d.getRotation().getSin(),
+              tagPose2d.getRotation().plus(Rotation2d.fromDegrees(180)));
+      SmartDashboard.putString("Pose In Front of Tag", inFrontOfTag.toString());
+      Logger.recordOutput("Vision/PoseInFrontOfTag", inFrontOfTag);
+      return inFrontOfTag;
+    } else {
+      System.out.println("()()()HAS BACK TARGET()()())");
+      var tagPose2d =
+          m_aprilTagFieldLayout.getTagPose(m_backTarget.getFiducialId()).get().toPose2d();
+      var inFrontOfTag =
+          new Pose2d(
+              tagPose2d.getX() + Units.inchesToMeters(8) * tagPose2d.getRotation().getCos(),
+              tagPose2d.getY() + Units.inchesToMeters(5) * tagPose2d.getRotation().getSin(),
+              tagPose2d.getRotation().plus(Rotation2d.fromDegrees(180)));
+      SmartDashboard.putString("Pose In Front of Tag", inFrontOfTag.toString());
+      Logger.recordOutput("Vision/PoseInFrontOfTag", inFrontOfTag);
+      return inFrontOfTag;
+    }
   }
 }
