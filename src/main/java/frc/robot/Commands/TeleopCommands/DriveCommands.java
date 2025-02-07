@@ -8,10 +8,12 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.HeadingControllerConstants;
+import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
 import java.text.DecimalFormat;
@@ -39,28 +41,45 @@ public class DriveCommands {
    * and the x-axis is supplied to the y-supplier.
    *
    * @param drive Drivetrain subsytem
-   * @param xSupplier The desired robot x-axis velocity from joystick y-axis input
-   * @param ySupplier The desired robot y-axis velocity from joystick x-axis input
-   * @param omegaSupplier The desired angular velocity from joystick
+   * @param xVelocity Desired robot x-axis velocity from joystick y-axis input, percentage range
+   *     from [-1, 1]
+   * @param yVelocity Desired robot y-axis velocity from joystick x-axis input, percentage range
+   *     from [-1, 1]
+   * @param angularVelocity Desired angular velocity from joystick, percentage range from [-1, 1]
    */
   public static Command fieldRelativeDrive(
       Drive drive,
-      DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
+      DoubleSupplier xVelocity,
+      DoubleSupplier yVelocity,
+      DoubleSupplier angularVelocity) {
     // Run modules based on field orientated Chassis speeds
     return Commands.run(
         () -> {
-          double omega = getOmega(omegaSupplier.getAsDouble());
+          // Calculate linear velocity from left joystick inputs
           Translation2d linearVelocity =
-              getLinearVelocity(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+              getLinearVelocity(xVelocity.getAsDouble(), yVelocity.getAsDouble());
+          // Calculate angular velocity from right joystick input
+          double omega = getOmega(angularVelocity.getAsDouble());
 
-          drive.runVelocity(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
+          // Calculate speed for the entire chassis based on the linear and angular velocities
+          // calculated from the joysticks
+          ChassisSpeeds chassisSpeeds =
+              new ChassisSpeeds(
                   linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
                   linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-                  omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
-                  drive.getRotation()));
+                  omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S);
+
+          // Determine alliance color
+          boolean isRed =
+              RobotStateConstants.getAlliance().isPresent()
+                  && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red;
+
+          // If on the red alliance, rotate speeds by 180 degrees so that straight out from the red
+          // driver station is forward
+          drive.runVelocity(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  chassisSpeeds,
+                  isRed ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation()));
         },
         drive);
   }
@@ -69,22 +88,29 @@ public class DriveCommands {
    * Drives the robot without converting the speeds to the current heading of the robot. Forward
    * will ALWAYS be the front of the robot no matter the robot's heading
    *
-   * @param drive Drivetrain subsystem
-   * @param xSupplier The desired robot x-axis velocity from joystick y-axis input
-   * @param ySupplier The desired robot y-axis velocity from joystick x-axis input
-   * @param omegaSupplier The desired angular velocity from joystick
+   * @param drive Drive subsystem
+   * @param xVelocity Desired robot x-axis velocity from joystick y-axis input, percentage range
+   *     from [-1, 1]
+   * @param yVelocity Desired robot y-axis velocity from joystick x-axis input, percentage range
+   *     from [-1, 1]
+   * @param angularVelocity Desired angular velocity from joystick, percentage range from [-1, 1]
    */
   public static Command robotRelativeDrive(
       Drive drive,
-      DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
+      DoubleSupplier xVelocity,
+      DoubleSupplier yVelocity,
+      DoubleSupplier angularVelocity) {
     // Run modules based on field orientated Chassis speeds
     return Commands.run(
         () -> {
-          double omega = getOmega(omegaSupplier.getAsDouble());
+          // Calculate linear velocity from left joystick inputs
           Translation2d linearVelocity =
-              getLinearVelocity(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+              getLinearVelocity(xVelocity.getAsDouble(), yVelocity.getAsDouble());
+          // Calculate angular velocity from right joystick input
+          double omega = getOmega(angularVelocity.getAsDouble());
+
+          // Calculate speed for the entire chassis based on the linear and angular velocities
+          // calculated from the joysticks
           drive.runVelocity(
               new ChassisSpeeds(
                   linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
@@ -99,16 +125,19 @@ public class DriveCommands {
    * pointed towards the supplied heading
    *
    * @param drive Drive subsystem
-   * @param xSupplier The desired robot x-axis velocity from joystick y-axis input
-   * @param ySupplier The desired robot y-axis velocity from joystick x-axis input
-   * @param rotationSupplier The desired angular velocity from joystick
+   * @param xVelocity The desired robot x-axis velocity from joystick y-axis input, percentage range
+   *     from [-1, 1]
+   * @param yVelocity The desired robot y-axis velocity from joystick x-axis input, percentage range
+   *     from [-1, 1]
+   * @param headingSetpoint The desired heading for the robot
    */
   public static Command fieldRelativeDriveAtAngle(
       Drive drive,
-      DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier,
-      Supplier<Rotation2d> rotationSupplier) {
-    ProfiledPIDController angleController =
+      DoubleSupplier xVelocity,
+      DoubleSupplier yVelocity,
+      Supplier<Rotation2d> headingSetpoint) {
+    // Construct a PID contoller with trapezoidal motion profiling
+    final ProfiledPIDController angleController =
         new ProfiledPIDController(
             HeadingControllerConstants.KP,
             0,
@@ -116,27 +145,50 @@ public class DriveCommands {
             new TrapezoidProfile.Constraints(
                 DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
                 DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S));
+    // Enable position wrapping for the PID controller since the robot rotation is as well
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     return Commands.run(
             () -> {
+              // Calculate linear velocity from left joystick inputs
+              Translation2d linearVelocity =
+                  getLinearVelocity(xVelocity.getAsDouble(), yVelocity.getAsDouble());
+              // Calculate angular velocity from heading setpoint
               double omega =
                   angleController.calculate(
-                      drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
+                      drive.getRotation().getRadians(), headingSetpoint.get().getRadians());
 
-              Translation2d linearVelocity =
-                  getLinearVelocity(xSupplier.getAsDouble(), ySupplier.getAsDouble());
-              drive.runVelocity(
+              // Calculate speed for the entire chassis based on the linear and angular velocities
+              // calculated from the joysticks
+              ChassisSpeeds chassisSpeeds =
                   new ChassisSpeeds(
                       linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
                       linearVelocity.getY() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-                      omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S));
+                      omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S);
+
+              // Determine alliance color
+              boolean isRed =
+                  RobotStateConstants.getAlliance().isPresent()
+                      && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red;
+
+              // If on the red alliance, rotate speeds by 180 degrees so that straight out from the
+              // red driver station is forward
+              drive.runVelocity(
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
+                      chassisSpeeds,
+                      isRed ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation()));
             },
             drive)
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
   }
 
-  /** Measures the velocity feedforward constants for the Drive motors */
+  /**
+   * Measures the static and velocity feedforward constants for the Drive motors
+   *
+   * @param drive Drive subsystem
+   * @return A command that slowly accelerates the Drive motors while collecting data (velocity and
+   *     voltage)
+   */
   public static Command feedforwardCharacterization(Drive drive) {
     List<Double> velocitySamples = new LinkedList<>();
     List<Double> voltageSamples = new LinkedList<>();

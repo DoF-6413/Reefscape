@@ -30,7 +30,6 @@ import frc.robot.Constants.RobotStateConstants;
 
 /** ModuleIO implementation for the real mode of the robot */
 public class ModuleIOSparkMaxTalonFX implements ModuleIO {
-
   // Drive motor
   private final TalonFX m_driveTalonFX;
   private final VelocityVoltage m_driveController = new VelocityVoltage(0);

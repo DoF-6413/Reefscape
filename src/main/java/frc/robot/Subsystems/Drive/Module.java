@@ -2,7 +2,6 @@ package frc.robot.Subsystems.Drive;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -13,14 +12,8 @@ public class Module {
   private final ModuleIOInputsAutoLogged m_inputs = new ModuleIOInputsAutoLogged();
   private final int m_moduleNumber;
 
-  // Closed loop PID controllers
-  private final PIDController m_drivePID;
+  // PID controllers
   private final PIDController m_steerPID;
-
-  private SimpleMotorFeedforward m_driveFeedforward;
-
-  // private double counter = 0;
-  // private final double updateFrequency = 25;
 
   /**
    * Constructs a new Module instance.
@@ -35,14 +28,8 @@ public class Module {
     m_io = io;
     m_moduleNumber = moduleNumber;
 
-    m_drivePID =
-        new PIDController(
-            DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD);
     m_steerPID =
         new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
-
-    m_driveFeedforward =
-        new SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV);
 
     // Considers min and max the same point, needed for our Swerve Modules since we wrap the
     // position from -pi to pi
@@ -56,12 +43,6 @@ public class Module {
   public void periodic() {
     this.updateInputs();
     Logger.processInputs("Drive/Module" + Integer.toString(m_moduleNumber), m_inputs);
-
-    // if (counter % updateFrequency == 0) {
-    //   this.updateRelativePosition();
-    // }
-
-    // counter++;
   }
 
   /**

@@ -12,13 +12,13 @@ public interface GyroIO {
 
   @AutoLog
   public static class GyroIOInputs {
-    // Whether or not the signals from the Gyro are being recieved
+    /** Whether or not the signals from the Pigeon are being recieved */
     public boolean connected = false;
-    // Current yaw angle
+    /** Current yaw angle as a Rotation2d object */
     public Rotation2d yawPositionRad = new Rotation2d();
-    // Unadjusted yaw angle (no applied offset or modulus)
+    /** Unadjusted yaw angle (no applied offset or modulus) as a Rotation2d object */
     public Rotation2d rawYawPositionRad = new Rotation2d();
-    // The angular velocity of the yaw
+    /** The angular velocity of the yaw in rad per sec */
     public double yawVelocityRadPerSec = 0.0;
   }
 

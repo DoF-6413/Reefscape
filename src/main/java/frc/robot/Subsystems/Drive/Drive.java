@@ -17,22 +17,18 @@ import frc.robot.Subsystems.Gyro.Gyro;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
-
+  // Chassis objects
   private final Module[] m_modules = new Module[4];
   private final Gyro m_gyro;
+  public final SwerveDriveKinematics m_swerveDriveKinematics;
+
+  // Robot rotation
   private Twist2d m_twist = new Twist2d();
-
-  // The swerve drive kinematics
-  public SwerveDriveKinematics m_swerveDriveKinematics;
-
-  // Previous yaw angle of the robot
+  private double[] m_lastModulePositionsMeters = new double[4];
   public Rotation2d m_lastRobotYaw = new Rotation2d();
 
-  // Gets previous module positions
-  private double[] m_lastModulePositionsMeters = new double[4];
-
   // System ID
-  private SysIdRoutine m_sysId;
+  private final SysIdRoutine m_sysId;
 
   /**
    * Constructs a new Drive subsystem instance.
@@ -61,7 +57,6 @@ public class Drive extends SubsystemBase {
     m_modules[2] = new Module(BLModuleIO, 2);
     m_modules[3] = new Module(BRModuleIO, 3);
 
-    // Initialize the swerve drive kinematics
     m_swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
 
     m_sysId =
@@ -101,7 +96,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the entire Drive Train to either brake or coast mode
+   * Sets the entire Drivetrain to either brake or coast mode
    *
    * @param enable True for brake, false for coast
    */
@@ -118,19 +113,19 @@ public class Drive extends SubsystemBase {
    * @param speeds the desired chassis speeds
    */
   public void runVelocity(ChassisSpeeds speeds) {
-    // Convert chassis speeds to Swerve Module States, these will be the setpoints for the drive and
-    // turn motors
+    // Convert chassis speeds to Swerve Module States, these will be the setpoints for the Drive and
+    // Turn motors
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates =
         m_swerveDriveKinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         setpointStates, DriveConstants.MAX_LINEAR_SPEED_M_PER_S);
 
-    // Record chassis speed and module states (setpoint)
+    // Record chassis speed and Module states (setpoint)
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveChassisStates/Setpoints", discreteSpeeds);
 
-    // The current velocity and position of each module
+    // The current velocity and position of each Module
     SwerveModuleState[] measuredStates = new SwerveModuleState[4];
 
     for (int i = 0; i < 4; i++) {
@@ -185,7 +180,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Runs the drivetrain with raw values on a scale
+   * Runs the Drivetrain with raw values on a percent scale from [-1, 1]
    *
    * @param x velociy in x direction of Entire Swerve Drive
    * @param y velocity in y direction of Entire Swerve Drive
@@ -196,7 +191,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * @return A list of SwerveModulePositions containing the change in module position and angle
+   * @return A list of SwerveModulePositions containing the change in Module position and angle
    */
   public SwerveModulePosition[] getWheelDeltas() {
     SwerveModulePosition[] wheelDeltas = new SwerveModulePosition[4];
@@ -213,8 +208,8 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Current heading of the robot. Updates based on the Gyro. If gyro is not connected, uses change
-   * in module position instead
+   * Current heading of the robot. Updates based on the Gyro. If the Gyro isn't connected, uses
+   * change in Module position instead
    *
    * @return The current angle of the robot
    */
@@ -235,14 +230,14 @@ public class Drive extends SubsystemBase {
               getWheelDeltas()); // Updates Twist Based on MODULE position
       robotYaw =
           m_lastRobotYaw.minus(
-              new Rotation2d(m_twist.dtheta)); // Updates rotation 2d based on robot module position
+              new Rotation2d(m_twist.dtheta)); // Updates rotation 2d based on robot Module position
     }
     m_lastRobotYaw = robotYaw;
     return robotYaw;
   }
 
   /**
-   * Locks module orientation at 0 degrees and runs drive motors at specified voltage
+   * Locks Module orientation at 0 degrees and runs Drive motors at specified voltage
    *
    * @param output Voltage
    */
@@ -257,7 +252,7 @@ public class Drive extends SubsystemBase {
    * @return A quasistatic test in the specified direction
    */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0)) // Allows module positions to reset
+    return run(() -> runCharacterization(0)) // Allows Module positions to reset
         .withTimeout(1.0)
         .andThen(m_sysId.quasistatic(direction));
   }
@@ -267,13 +262,13 @@ public class Drive extends SubsystemBase {
    * @return A dynamic test in the specified direction
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0)) // Allows module positions to reset
+    return run(() -> runCharacterization(0)) // Allows Module positions to reset
         .withTimeout(1.0)
         .andThen(m_sysId.dynamic(direction));
   }
 
   /**
-   * @return Average velocity of drive motors in rotations per second, for FeedForward
+   * @return Average velocity of Drive motors in rotations per second, for FeedForward
    *     characterization
    */
   public double getAverageDriveVelocity() {
@@ -285,7 +280,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * @return Current linear and angular speed of the robot based on the current state of each module
+   * @return Current linear and angular speed of the robot based on the current state of each Module
    */
   public ChassisSpeeds getChassisSpeeds() {
     return m_swerveDriveKinematics.toChassisSpeeds(
@@ -335,6 +330,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  /** Update PID values for the Drive motors from SmartDashboard inputs */
   private void updateDrivePID() {
     if (DriveConstants.DRIVE_KP
             != SmartDashboard.getNumber("PIDFF/Drive/Drive_kP", DriveConstants.DRIVE_KP)
@@ -352,6 +348,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  /** Update FeedForward values for the Drive motors from SmartDashboard inputs */
   private void updateDriveFF() {
     if (DriveConstants.DRIVE_KS
             != SmartDashboard.getNumber("PIDFF/Drive/Drive_kS", DriveConstants.DRIVE_KS)
@@ -365,6 +362,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  /** Update PID values for the Turn motors from SmartDashboard inputs */
   private void updateTurnPID() {
     if (DriveConstants.TURN_KP
             != SmartDashboard.getNumber("PIDFF/Drive/Turn_kP", DriveConstants.TURN_KP)

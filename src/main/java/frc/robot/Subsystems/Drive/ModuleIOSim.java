@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants.RobotStateConstants;
 
 public class ModuleIOSim implements ModuleIO {
-
   // Sim objects
   private final FlywheelSim m_driveSim;
   private final FlywheelSim m_turnSim;

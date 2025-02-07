@@ -6,6 +6,7 @@ public interface ModuleIO {
 
   @AutoLog
   public static class ModuleIOInputs {
+    // Drive motor
     /** Voltage that drive motor draws */
     public double driveAppliedVoltage = 0.0;
     /** Position of the wheel in radians */
@@ -19,6 +20,7 @@ public interface ModuleIO {
     /** If a singal is being recieved from the Drive motor */
     public boolean driveIsConnected = false;
 
+    // Turn motor
     /** Voltage that turn motor draws */
     public double turnAppliedVoltage = 0.0;
     /** Relative position of the wheel in radians (NEO encoder) */

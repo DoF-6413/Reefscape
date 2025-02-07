@@ -11,7 +11,7 @@ public final class DriveConstants {
   // REAL CONSTANTS
   /** Radius of the wheel in meters */
   public static final double WHEEL_RADIUS_M = Units.inchesToMeters(2);
-  /** Side length of the robot in meters */
+  /** Side length of the robot, w/o bumpers, in meters */
   public static final double TRACK_WIDTH_M = Units.inchesToMeters(29);
   /** Radius of the robot (diagonal) in meters */
   public static final double DRIVETRAIN_RADIUS_M = TRACK_WIDTH_M / 2 * Math.sqrt(2);
@@ -48,48 +48,49 @@ public final class DriveConstants {
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
   public static double TURN_KD = 0.05;
 
-  /** Max Linear Speed of Robot */
+  /** Max linear speed of robot */
   public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger
-  /** Set the inverted for the turn SparkMax */
+  /** Max angular speed of the robot */
   public static final double MAX_ANGULAR_SPEED_RAD_PER_S =
       MAX_LINEAR_SPEED_M_PER_S / DRIVETRAIN_RADIUS_M;
-
+  /** Inversion status for the Turn motor, makes CW the positive direction */
   public static final boolean TURN_IS_INVERTED = true;
-  /** the update frequency */
+  /** Refresh signals of the TalonFX every 0.01 seconds */
   public static final double UPDATE_FREQUENCY_HZ = 100;
   /** Current limiting in amps */
   public static final int CUR_LIM_A = 60;
   /** Enables the current limit */
   public static final boolean ENABLE_CUR_LIM = true;
-  /**
-   * Within 10% of the desired direction, the joystick is considered to be going in that direction
-   */
+  /** Ingnore joystick inputs less than 10% tilted */
   public static final double DEADBAND = 0.1;
 
   // SIM CONSTANTS
   // TODO: Update
-
+  // Moment of inertia for the driving of the Module wheel in kg * m^2
   public static final double DRIVE_MOI_KG_M2 = 0.0003125;
-
+  // Moment of inertia for the turning of the Module wheel in kg * m^2
   public static final double TURN_MOI_KG_M2 = 0.0000158025413;
 
   /**
    * Translation 2d assumes that the robot front facing is in the positive x direction and the robot
    * left is in the positive y direction
    *
-   * <p>Directions of the VECTORS that each module turns in (i.e. Module 0, front right, when the
-   * robot spins ccw, will point towards Quadrant II which is (-,+))
+   * @return A list of the 2d Module translations from the center of the robot
    */
   public static final Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
-      new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
-      new Translation2d(DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
-      new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0),
-      new Translation2d(-DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0),
+      new Translation2d(
+          DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 0
+      new Translation2d(
+          DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 1
+      new Translation2d(
+          -DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 2
+      new Translation2d(
+          -DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 3
     };
   }
 
-  // KrakenX60 CAN IDs
+  /** KrakenX60 CAN IDs */
   public enum DRIVE_MOTOR {
     FRONT_RIGHT(2), // Module 0
     FRONT_LEFT(3), // Module 1
@@ -103,7 +104,7 @@ public final class DriveConstants {
     }
   }
 
-  // NEOs CAN IDs
+  /** NEOs CAN IDs */
   public enum TURN_MOTOR {
     FRONT_RIGHT(6), // Module 0
     FRONT_LEFT(7), // Module 1
@@ -117,7 +118,7 @@ public final class DriveConstants {
     }
   }
 
-  // CANcoders CAN IDs
+  /** CANcoders CAN IDs */
   public enum ABSOLUTE_ENCODER {
     FRONT_RIGHT(10), // Module 0
     FRONT_LEFT(11), // Module 1
@@ -131,6 +132,10 @@ public final class DriveConstants {
     }
   }
 
+  /**
+   * Offset the absolute position of the CANcoders to orientate the wheels to the front of the robot
+   * at 0 degrees
+   */
   public enum ABSOLUTE_ENCODER_OFFSET {
     FRONT_RIGHT(1.88059248437), // Module 0
     FRONT_LEFT(1.16695161013), // Module 1

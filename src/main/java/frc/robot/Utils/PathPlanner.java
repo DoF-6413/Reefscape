@@ -21,6 +21,15 @@ public class PathPlanner {
   private final RobotConfig m_robotConfig;
   private final ModuleConfig m_moduleConfig;
 
+  /**
+   * Constructs a new PathPlanner instance
+   *
+   * <p>This creates a new PathPlanner object that builds the autonomous paths and routines, and
+   * Pathfinding paths for the robot to run
+   *
+   * @param drive Drive subsystem
+   * @param pose Pose Estimator
+   */
   public PathPlanner(Drive drive, PoseEstimator pose) {
     m_drive = drive;
     m_pose = pose;
@@ -65,8 +74,6 @@ public class PathPlanner {
         },
         drive);
   }
-
-  public void periodic() {}
 
   /**
    * Creates a command that drives the robot to the inputed position
