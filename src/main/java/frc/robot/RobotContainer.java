@@ -20,6 +20,10 @@ import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
+import frc.robot.Subsystems.Vision.Vision;
+import frc.robot.Subsystems.Vision.VisionConstants;
+import frc.robot.Subsystems.Vision.VisionIO;
+import frc.robot.Subsystems.Vision.VisionIOPhotonVision;
 import frc.robot.Utils.PathPlanner;
 import frc.robot.Utils.PoseEstimator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -31,6 +35,7 @@ public class RobotContainer {
   private final Gyro m_gyroSubsystem;
 
   // Utils
+  private final Vision m_visionSubsystem;
   private final PoseEstimator m_poseEstimator;
   private final PathPlanner m_pathPlanner;
 
@@ -55,6 +60,10 @@ public class RobotContainer {
                 new ModuleIOSparkMaxTalonFX(2),
                 new ModuleIOSparkMaxTalonFX(3),
                 m_gyroSubsystem);
+        m_visionSubsystem =
+            new Vision(
+                new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_ID),
+                new VisionIOPhotonVision(VisionConstants.CAMERA.BACK.CAMERA_ID));
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -66,6 +75,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 m_gyroSubsystem);
+        m_visionSubsystem = new Vision(new VisionIO() {});
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -77,11 +87,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
+        m_visionSubsystem = new Vision(new VisionIO() {});
         break;
     }
 
     // Utils
-    m_poseEstimator = new PoseEstimator(m_driveSubsystem);
+    m_poseEstimator = new PoseEstimator(m_driveSubsystem, m_visionSubsystem);
     m_pathPlanner = new PathPlanner(m_driveSubsystem, m_poseEstimator);
     // Adds an "Auto" tab on ShuffleBoard
 
@@ -137,6 +148,15 @@ public class RobotContainer {
             () -> -m_driverController.getRightX()));
 
     m_driverController
+        .y()
+        .onTrue(
+            DriveCommands.fieldRelativeDrive(
+                m_driveSubsystem,
+                () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getLeftX(),
+                () -> -m_driverController.getRightX()));
+
+    m_driverController
         .b()
         .onTrue(
             DriveCommands.robotRelativeDrive(
@@ -188,8 +208,8 @@ public class RobotContainer {
         .x()
         .onTrue(
             m_pathPlanner
-                .pathFindToPose(m_poseEstimator.toAprilTag())
-                .until(m_driverController.x()));
+                .pathFindToPose(() -> PoseEstimator.toAprilTag())
+                .until(() -> !m_driverController.x().getAsBoolean()));
   }
 
   /**

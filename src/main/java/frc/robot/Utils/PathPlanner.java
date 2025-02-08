@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
+import java.util.function.Supplier;
 
 public class PathPlanner {
   private final Drive m_drive;
@@ -74,15 +75,16 @@ public class PathPlanner {
    *
    * @param targetPose Pose2d of where the robot should end up
    */
-  public Command pathFindToPose(Pose2d targetPose) {
+  public Command pathFindToPose(Supplier<Pose2d> targetPose) {
     // The pose to pathfind to
     // The constraints to use while pathfinding
     // The goal end velocity of the robot when reaching the target pose
-    if (targetPose.getX() > 18 || targetPose.getY() > 9) {
+    if (targetPose.get().getX() > 18 || targetPose.get().getY() > 9) {
       return new PrintCommand(
-          targetPose.toString()); // Do nothing if target pose is outside the field
+          targetPose.get().toString()); // Do nothing if target pose is outside the field
     }
-    return AutoBuilder.pathfindToPose(targetPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0)
-        .alongWith(new PrintCommand(targetPose.toString()));
+    return AutoBuilder.pathfindToPose(
+            targetPose.get(), PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0)
+        .alongWith(new PrintCommand(targetPose.get().toString()));
   }
 }

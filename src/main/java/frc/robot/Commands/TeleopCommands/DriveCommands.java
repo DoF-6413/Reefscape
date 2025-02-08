@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
+import frc.robot.Utils.PathPlanner;
+import frc.robot.Utils.PoseEstimator;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -102,6 +104,10 @@ public class DriveCommands {
             },
             drive)
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+  }
+
+  public static Command pathFindToPose(PathPlanner pathPlanner, PoseEstimator pose) {
+    return pathPlanner.pathFindToPose(() -> pose.toAprilTag());
   }
 
   private static double getOmega(double omega) {
