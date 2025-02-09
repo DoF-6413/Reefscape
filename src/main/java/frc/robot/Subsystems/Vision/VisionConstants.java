@@ -26,16 +26,20 @@ public class VisionConstants {
   }
 
   /** Offsets the back left camera's position to the center of the robot */
-  public static final Transform3d FRONT_CAMERA_ROBOT_OFFSET =
+  private static final Transform3d FRONT_CAMERA_ROBOT_OFFSET =
       new Transform3d(
           new Translation3d(Units.inchesToMeters(13.5), 0, Units.inchesToMeters(3.5)),
           new Rotation3d(0, 0, 0));
 
   /** Offsets the back right camera's position to the center of the robot */
-  public static final Transform3d BACK_CAMERA_ROBOT_OFFSET =
+  private static final Transform3d BACK_CAMERA_ROBOT_OFFSET =
       new Transform3d(
           new Translation3d(Units.inchesToMeters(-13.5), 0, Units.inchesToMeters(3.5)),
           new Rotation3d(0, Units.degreesToRadians(35), Math.PI));
+
+  public static final Transform3d[] CAMERA_ROBOT_OFFSETS = {
+    FRONT_CAMERA_ROBOT_OFFSET, BACK_CAMERA_ROBOT_OFFSET
+  };
 
   public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
       new AprilTagFieldLayout(

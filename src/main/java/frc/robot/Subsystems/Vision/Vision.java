@@ -4,17 +4,16 @@
 
 package frc.robot.Subsystems.Vision;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Subsystems.Drive.DriveConstants;
+import java.util.LinkedList;
+import java.util.List;
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class Vision extends SubsystemBase {
@@ -22,6 +21,8 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] m_io;
   private final VisionIOInputsAutoLogged[] m_inputs;
   private final VisionConsumer m_consumer;
+  private final PhotonPoseEstimator[] m_photonPoseEstimators;
+  List<Pose2d> estimatedPoses = new LinkedList<>();
 
   /**
    * Constructs a new Vision subsystem instance.
@@ -37,8 +38,14 @@ public class Vision extends SubsystemBase {
     System.out.println("[Init] Creating Vision");
     m_io = io;
     m_inputs = new VisionIOInputsAutoLogged[m_io.length];
+    m_photonPoseEstimators = new PhotonPoseEstimator[m_io.length];
     for (int i = 0; i < m_inputs.length; i++) {
       m_inputs[i] = new VisionIOInputsAutoLogged();
+      m_photonPoseEstimators[i] =
+          new PhotonPoseEstimator(
+              VisionConstants.APRILTAG_FIELD_LAYOUT,
+              PoseStrategy.LOWEST_AMBIGUITY,
+              VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
     }
     m_consumer = consumer;
   }
@@ -47,59 +54,38 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     for (int i = 0; i < m_inputs.length; i++) {
+      // Update and log inputs
       m_io[i].updateInputs(m_inputs[i]);
       Logger.processInputs("Vision/" + VisionConstants.CAMERA_NAMES[i], m_inputs[i]);
+
+      // Check results and add possible Vision measurements
+      var result = getPipelineResult(i);
+      if (!result.hasTargets()) continue;
+      var target = result.getBestTarget();
+      if (target.getFiducialId() >= 1
+          && target.getFiducialId() <= 22
+          && target.getPoseAmbiguity() >= 0.0
+          && target.getPoseAmbiguity() <= 0.2) {
+        var estimatedPose = m_photonPoseEstimators[i].update(result);
+        if (estimatedPose.isEmpty()) continue;
+        estimatedPoses.add(estimatedPose.get().estimatedPose.toPose2d());
+      }
     }
 
-    var resultFront = this.getPipelineResult(VisionConstants.CAMERA.FRONT.CAMERA_INDEX);
-    var resultBack = this.getPipelineResult(VisionConstants.CAMERA.BACK.CAMERA_INDEX);
-    boolean hasTargetFront = resultFront.hasTargets();
-    boolean hasTargetBack = resultBack.hasTargets();
-
-    if (!hasTargetFront && !hasTargetBack) {
-      // No targets
+    if (estimatedPoses.size() == 0) {
+      estimatedPoses.clear();
       return;
-
-    } else if (hasTargetFront && hasTargetBack) {
-      // Both see target
-      var targetFront = resultFront.getBestTarget();
-      var targetBack = resultBack.getBestTarget();
-
-      if (targetFront.getPoseAmbiguity() < 0.2
-          && targetFront.getPoseAmbiguity() >= 0.0
-          && targetBack.getPoseAmbiguity() < 0.2
-          && targetBack.getPoseAmbiguity() >= 0.0
-          && targetFront.getFiducialId() >= 1
-          && targetFront.getFiducialId() <= 22
-          && targetBack.getFiducialId() >= 1
-          && targetBack.getFiducialId() <= 22) {
-        var poseFront = this.getEstimatedPose(VisionConstants.CAMERA.FRONT.CAMERA_INDEX);
-        var poseBack = this.getEstimatedPose(VisionConstants.CAMERA.BACK.CAMERA_INDEX);
-        m_consumer.accept(
-            this.averageVisionPoses(poseFront, poseBack), resultFront.getTimestampSeconds());
-      }
-    } else if (hasTargetFront) {
-      // Only Front sees target
-      var targetFront = resultFront.getBestTarget();
-
-      if (targetFront.getPoseAmbiguity() < 0.2
-          && targetFront.getPoseAmbiguity() >= 0.0
-          && targetFront.getFiducialId() >= 1
-          && targetFront.getFiducialId() <= 22) {
-        var poseFront = this.getEstimatedPose(VisionConstants.CAMERA.FRONT.CAMERA_INDEX);
-        m_consumer.accept(poseFront, resultFront.getTimestampSeconds());
-      } else if (hasTargetBack) {
-        // Only Back sees target
-        var targetBack = resultBack.getBestTarget();
-
-        if (targetBack.getPoseAmbiguity() < 0.2
-            && targetBack.getPoseAmbiguity() >= 0.0
-            && targetBack.getFiducialId() >= 1
-            && targetBack.getFiducialId() <= 22) {
-          var poseBack = this.getEstimatedPose(VisionConstants.CAMERA.BACK.CAMERA_INDEX);
-          m_consumer.accept(poseBack, resultBack.getTimestampSeconds());
-        }
-      }
+    }
+    Logger.recordOutput(
+        "Vision/EstimatedPoses", estimatedPoses.toArray(new Pose2d[estimatedPoses.size()]));
+    if (estimatedPoses.size() > 1) {
+      var averagePose =
+          averageVisionPoses(estimatedPoses.toArray(new Pose2d[estimatedPoses.size()]));
+      m_consumer.accept(averagePose, Timer.getFPGATimestamp());
+      estimatedPoses.clear();
+    } else {
+      m_consumer.accept(estimatedPoses.get(0), Timer.getFPGATimestamp());
+      estimatedPoses.clear();
     }
   }
 
@@ -107,61 +93,10 @@ public class Vision extends SubsystemBase {
     return m_inputs[index].pipelineResult;
   }
 
-  public Pose2d getEstimatedPose(int index) {
-    return m_inputs[index].estimatedPose;
-  }
-
-  public static Pose2d toAprilTag() {
-    var nwtInstance = NetworkTableInstance.getDefault();
-    boolean hasTargetFront =
-        nwtInstance.getEntry("/photonvision/Front/hasTarget").getBoolean(false);
-    int frontID =
-        (int)
-            nwtInstance
-                .getEntry("/photonvision/Front/rawBytes/targets/fiducialId")
-                .getInteger((long) 18.0);
-    var atFields =
-        new AprilTagFieldLayout(
-            AprilTagFields.k2025Reefscape.loadAprilTagLayoutField().getTags(),
-            AprilTagFields.k2025Reefscape.loadAprilTagLayoutField().getFieldLength(),
-            AprilTagFields.k2025Reefscape.loadAprilTagLayoutField().getFieldWidth());
-    // var frontResults = m_cameraFront.getAllUnreadResults();
-    // var frontResult = frontResults.get(frontResults.size() - 1);
-    System.out.println("-==-=-=-==DOING THE THINGY-=-=-=-=-=-=-");
-    if (!hasTargetFront) {
-      System.out.println("!!!!!!!!!!HAS NO TARGETS!!!!!!!!!!!!!");
-      return new Pose2d(100, 100, new Rotation2d());
-    }
-
-    // if (hasTargetFront) {
-    System.out.println("[][][]HAS FRONT TARGET[][][]");
-    var tagPose2d = atFields.getTagPose(frontID).get().toPose2d();
-    var inFrontOfTag =
-        new Pose2d(
-            tagPose2d.getX()
-                + (DriveConstants.TRACK_WIDTH_M + Units.inchesToMeters(8))
-                    * tagPose2d.getRotation().getCos(),
-            tagPose2d.getY()
-                + (DriveConstants.TRACK_WIDTH_M + Units.inchesToMeters(8))
-                    * tagPose2d.getRotation().getSin(),
-            tagPose2d.getRotation().plus(Rotation2d.fromDegrees(180)));
-    SmartDashboard.putString("Pose In Front of Tag", inFrontOfTag.toString());
-    Logger.recordOutput("Vision/PoseInFrontOfTag", inFrontOfTag);
-    return inFrontOfTag;
-    // }
-    //  else {
-    //   System.out.println("()()()HAS BACK TARGET()()())");
-    //   var tagPose2d =
-    //   atFields.getTagPose(m_backTarget.getFiducialId()).get().toPose2d();
-    //   var inFrontOfTag =
-    //       new Pose2d(
-    //           tagPose2d.getX() + Units.inchesToMeters(24) * tagPose2d.getRotation().getCos(),
-    //           tagPose2d.getY() + Units.inchesToMeters(24) * tagPose2d.getRotation().getSin(),
-    //           tagPose2d.getRotation().plus(Rotation2d.fromDegrees(180)));
-    //   SmartDashboard.putString("Pose In Front of Tag", inFrontOfTag.toString());
-    //   Logger.recordOutput("Vision/PoseInFrontOfTag", inFrontOfTag);
-    //   return inFrontOfTag;
-    // }
+  public int getTagID() {
+    var result = this.getPipelineResult(0);
+    if (!result.hasTargets()) return -1;
+    return result.getBestTarget().getFiducialId();
   }
 
   /**

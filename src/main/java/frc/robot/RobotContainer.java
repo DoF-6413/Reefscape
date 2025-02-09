@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.TeleopCommands.DriveCommands;
+import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
@@ -62,8 +63,9 @@ public class RobotContainer {
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurment,
-                new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_INDEX),
-                new VisionIOPhotonVision(VisionConstants.CAMERA.BACK.CAMERA_INDEX));
+                new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_INDEX)
+                // new VisionIOPhotonVision(VisionConstants.CAMERA.BACK.CAMERA_INDEX)
+                );
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -98,8 +100,7 @@ public class RobotContainer {
     }
 
     // Utils
-    m_pathPlanner = new PathPlanner(m_driveSubsystem);
-    // Adds an "Auto" tab on ShuffleBoard
+    m_pathPlanner = new PathPlanner(m_driveSubsystem, m_visionSubsystem);
 
     /** Autonomous Routines */
     m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
@@ -120,6 +121,7 @@ public class RobotContainer {
     m_autoChooser.addOption(
         "Drive FeedForward Characterization", m_driveSubsystem.feedforwardCharacterization());
 
+    // Adds an "Auto" tab on ShuffleBoard
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
 
     // Configure the button bindings
@@ -212,8 +214,7 @@ public class RobotContainer {
     m_driverController
         .x()
         .onTrue(
-            m_pathPlanner
-                .pathFindToPose(() -> m_visionSubsystem.toAprilTag())
+            PathfindingCommands.toAprilTag(m_pathPlanner, () -> m_visionSubsystem.getTagID())
                 .until(() -> !m_driverController.x().getAsBoolean()));
   }
 

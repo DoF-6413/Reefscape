@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Subsystems.Gyro.Gyro;
-import frc.robot.Subsystems.Vision.VisionConstants;
 import frc.robot.Utils.HeadingController;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -86,7 +85,7 @@ public class Drive extends SubsystemBase {
         new SwerveDrivePoseEstimator(
             m_swerveDriveKinematics, this.getRotation(), this.getModulePositions(), new Pose2d());
     m_field = new Field2d();
-    SmartDashboard.putData("Field/Main", m_field);
+    SmartDashboard.putData("Field", m_field);
 
     m_sysId =
         new SysIdRoutine(

@@ -5,8 +5,6 @@ package frc.robot.Subsystems.Vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.util.function.Supplier;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
@@ -30,8 +28,7 @@ public class VisionIOSim extends VisionIOPhotonVision {
 
     m_sim = new VisionSystemSim(VisionConstants.CAMERA_NAMES[index]);
     m_sim.addAprilTags(VisionConstants.APRILTAG_FIELD_LAYOUT);
-    m_sim.addCamera(m_cameraSim, super.m_cameraOffset);
-    SmartDashboard.putData("Field/Sim/" + VisionConstants.CAMERA_NAMES[index], m_sim.getDebugField());
+    m_sim.addCamera(m_cameraSim, VisionConstants.CAMERA_ROBOT_OFFSETS[index]);
 
     m_currentPose = currentPose;
 
