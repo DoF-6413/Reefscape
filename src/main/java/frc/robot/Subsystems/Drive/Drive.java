@@ -2,6 +2,8 @@ package frc.robot.Subsystems.Drive;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -10,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -24,7 +27,6 @@ import java.util.List;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
-
   private final Module[] m_modules = new Module[4];
   private final Gyro m_gyro;
   private final HeadingController m_headingController = new HeadingController();
@@ -43,6 +45,12 @@ public class Drive extends SubsystemBase {
   private SysIdRoutine m_sysId;
 
   private Rotation2d headingSetpoint = new Rotation2d(-Math.PI / 2);
+
+  // Swerve Pose Estimator Objects
+  private final SwerveDrivePoseEstimator m_swervePoseEstimator;
+  private Field2d m_field;
+  private double m_timestamp;
+
   /**
    * Constructs a new Drive subsystem instance.
    *
@@ -73,6 +81,11 @@ public class Drive extends SubsystemBase {
     // Initialize the swerve drive kinematics
     m_swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
 
+    m_swervePoseEstimator =
+        new SwerveDrivePoseEstimator(
+            m_swerveDriveKinematics, this.getRotation(), this.getModulePositions(), new Pose2d());
+    m_field = new Field2d();
+
     m_sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -101,6 +114,10 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       m_modules[i].periodic();
     }
+
+    m_timestamp = Timer.getFPGATimestamp();
+    m_swervePoseEstimator.updateWithTime(
+        m_timestamp, this.getRotation(), this.getModulePositions());
 
     if (SmartDashboard.getBoolean("PIDFF/Drive/EnableTuning", false)) {
       this.updateDrivePID();
@@ -352,6 +369,26 @@ public class Drive extends SubsystemBase {
                   System.out.println("\tkS: " + formatter.format(kS));
                   System.out.println("\tkV: " + formatter.format(kV));
                 }));
+  }
+
+  /**
+   * @return The current 2D position of the robot on the field
+   */
+  public Pose2d getCurrentPose2d() {
+    return m_swervePoseEstimator.getEstimatedPosition();
+  }
+
+  /**
+   * Resets the current position of the robot
+   *
+   * @param pose 2D position to set robot to
+   */
+  public void resetPose(Pose2d pose) {
+    m_swervePoseEstimator.resetPosition(this.getRotation(), this.getModulePositions(), pose);
+  }
+
+  public void addVisionMeasurment(Pose2d estimatedPose, double timestamp) {
+    m_swervePoseEstimator.addVisionMeasurement(estimatedPose, timestamp);
   }
 
   /**

@@ -10,25 +10,24 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class VisionIOPhotonVision implements VisionIO {
 
-  private final PhotonCamera m_camera;
+  protected final PhotonCamera m_camera;
   private final PhotonPoseEstimator m_photonPoseEstimator;
-  private final Transform3d m_cameraOffset;
+  protected final Transform3d m_cameraOffset;
 
   public VisionIOPhotonVision(int index) {
     switch (index) {
       case 0:
-        m_camera = new PhotonCamera(VisionConstants.FRONT_CAMERA_NAME);
         m_cameraOffset = VisionConstants.FRONT_CAMERA_ROBOT_OFFSET;
         break;
 
       case 1:
-        m_camera = new PhotonCamera(VisionConstants.BACK_CAMERA_NAME);
         m_cameraOffset = VisionConstants.BACK_CAMERA_ROBOT_OFFSET;
         break;
 
       default:
         throw new RuntimeException("Invalid Camera for VisionIOPhotonVision");
     }
+    m_camera = new PhotonCamera(VisionConstants.CAMERA_NAMES[index]);
     m_photonPoseEstimator =
         new PhotonPoseEstimator(
             VisionConstants.APRILTAG_FIELD_LAYOUT, PoseStrategy.LOWEST_AMBIGUITY, m_cameraOffset);
@@ -38,9 +37,12 @@ public class VisionIOPhotonVision implements VisionIO {
   public void updateInputs(VisionIOInputs inputs) {
     var allResults = m_camera.getAllUnreadResults();
     inputs.pipelineResult =
-        allResults.size() > 0
-            ? allResults.get(allResults.size() - 1)
-            : allResults.get(allResults.size());
+        allResults.isEmpty()
+            ? null
+            : allResults.get(
+                allResults.size()
+                    - 1); // Doesnt make sense actually bc if size == 0, it'll crash either way
+    // bc index == size?
     inputs.hasTargets = inputs.pipelineResult.hasTargets();
     if (inputs.hasTargets) {
       inputs.target = inputs.pipelineResult.getBestTarget();

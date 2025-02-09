@@ -24,8 +24,8 @@ import frc.robot.Subsystems.Vision.Vision;
 import frc.robot.Subsystems.Vision.VisionConstants;
 import frc.robot.Subsystems.Vision.VisionIO;
 import frc.robot.Subsystems.Vision.VisionIOPhotonVision;
+import frc.robot.Subsystems.Vision.VisionIOSim;
 import frc.robot.Utils.PathPlanner;
-import frc.robot.Utils.PoseEstimator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -36,7 +36,6 @@ public class RobotContainer {
 
   // Utils
   private final Vision m_visionSubsystem;
-  private final PoseEstimator m_poseEstimator;
   private final PathPlanner m_pathPlanner;
 
   // Controllers
@@ -62,8 +61,9 @@ public class RobotContainer {
                 m_gyroSubsystem);
         m_visionSubsystem =
             new Vision(
-                new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_ID),
-                new VisionIOPhotonVision(VisionConstants.CAMERA.BACK.CAMERA_ID));
+                m_driveSubsystem::addVisionMeasurment,
+                new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_INDEX),
+                new VisionIOPhotonVision(VisionConstants.CAMERA.BACK.CAMERA_INDEX));
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -75,7 +75,13 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 m_gyroSubsystem);
-        m_visionSubsystem = new Vision(new VisionIO() {});
+        m_visionSubsystem =
+            new Vision(
+                m_driveSubsystem::addVisionMeasurment,
+                new VisionIOSim(
+                    VisionConstants.CAMERA.FRONT.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d),
+                new VisionIOSim(
+                    VisionConstants.CAMERA.BACK.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d));
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -87,13 +93,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
-        m_visionSubsystem = new Vision(new VisionIO() {});
+        m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurment, new VisionIO() {});
         break;
     }
 
     // Utils
-    m_poseEstimator = new PoseEstimator(m_driveSubsystem, m_visionSubsystem);
-    m_pathPlanner = new PathPlanner(m_driveSubsystem, m_poseEstimator);
+    m_pathPlanner = new PathPlanner(m_driveSubsystem);
     // Adds an "Auto" tab on ShuffleBoard
 
     /** Autonomous Routines */
@@ -208,7 +213,7 @@ public class RobotContainer {
         .x()
         .onTrue(
             m_pathPlanner
-                .pathFindToPose(() -> PoseEstimator.toAprilTag())
+                .pathFindToPose(() -> m_visionSubsystem.toAprilTag())
                 .until(() -> !m_driverController.x().getAsBoolean()));
   }
 

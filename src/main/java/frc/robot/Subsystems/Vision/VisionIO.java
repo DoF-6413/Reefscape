@@ -13,11 +13,11 @@ public interface VisionIO {
   @AutoLog
   public static class VisionIOInputs {
     // PhotonVision result objects
-    public PhotonPipelineResult pipelineResult = new PhotonPipelineResult();
-    public PhotonTrackedTarget target = new PhotonTrackedTarget();
+    public PhotonPipelineResult pipelineResult = null;
+    public PhotonTrackedTarget target = null;
     public boolean hasTargets = false;
     public int fiducialID = 0;
-    public double poseAmbiguity = 0;
+    public double poseAmbiguity = 0.0;
     public Pose2d estimatedPose = new Pose2d();
   }
 

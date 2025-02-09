@@ -11,16 +11,20 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
+  // Photon Camera names
+  public static final String[] CAMERA_NAMES = {"Front", "Back"};
+
   public enum CAMERA {
     FRONT(0),
     BACK(1);
 
-    public final int CAMERA_ID;
+    public final int CAMERA_INDEX;
 
     CAMERA(int value) {
-      CAMERA_ID = value;
+      CAMERA_INDEX = value;
     }
   }
+
   /** Offsets the back left camera's position to the center of the robot */
   public static final Transform3d FRONT_CAMERA_ROBOT_OFFSET =
       new Transform3d(
@@ -32,10 +36,6 @@ public class VisionConstants {
       new Transform3d(
           new Translation3d(Units.inchesToMeters(-13.5), 0, Units.inchesToMeters(3.5)),
           new Rotation3d(0, Units.degreesToRadians(35), Math.PI));
-
-  // Photon Camera names
-  public static final String FRONT_CAMERA_NAME = "Front";
-  public static final String BACK_CAMERA_NAME = "Back";
 
   public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
       new AprilTagFieldLayout(

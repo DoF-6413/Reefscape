@@ -18,14 +18,12 @@ import java.util.function.Supplier;
 
 public class PathPlanner {
   private final Drive m_drive;
-  private final PoseEstimator m_pose;
 
   private final RobotConfig m_robotConfig;
   private final ModuleConfig m_moduleConfig;
 
-  public PathPlanner(Drive drive, PoseEstimator pose) {
+  public PathPlanner(Drive drive) {
     m_drive = drive;
-    m_pose = pose;
 
     m_moduleConfig =
         new ModuleConfig(
@@ -44,8 +42,8 @@ public class PathPlanner {
             DriveConstants.TRACK_WIDTH_M); // TODO: Get MOI of entire robot
 
     AutoBuilder.configure(
-        pose::getCurrentPose2d,
-        pose::resetPose,
+        drive::getCurrentPose2d,
+        drive::resetPose,
         drive::getChassisSpeeds,
         drive::runVelocity,
         new PPHolonomicDriveController(
