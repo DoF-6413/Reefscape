@@ -1,16 +1,23 @@
 package frc.robot.Subsystems.Periscoper;
 
+import org.littletonrobotics.junction.AutoLog;
+
 public interface PeriscoperIO {
 
-    public static class PeriscoperInputs {
-        public double[] periscoperAppliedVolts = {0.0, 0.0};
-        public double[] periscoperCurrentDraw = {0.0, 0.0};
-        public double[] periscoperTempCelcius = {0.0, 0.0};
-        public double periscoperHeightMeters = 0.0;
-        public double periscoperVelocityRadPerSec = 0.0;
-        public boolean[] periscoperIsConnected = 
+    @AutoLog
+    public static class PeriscoperIOInputs {
+        public double[] appliedVolts = {0.0, 0.0};
+        public double[] currentDraw = {0.0, 0.0};
+        public double[] tempCelsius = {0.0, 0.0};
+        public double heightMeters = 0.0;
+        public double velocityRadPerSec = 0.0;
+        public boolean[] isConnected = {false, false};
 
     }
 
-    public default void updateInputs(PeriscoperInputs inputs) {}
+    public default void updateInputs(PeriscoperIOInputs inputs) {}
+
+    public default void setVoltage(double volts) {}
+
+    public default void setVelocity
 } 
