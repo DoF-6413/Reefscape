@@ -48,17 +48,7 @@ public class Vision extends SubsystemBase {
     // This method will be called once per scheduler run
     for (int i = 0; i < m_inputs.length; i++) {
       m_io[i].updateInputs(m_inputs[i]);
-      var cam = VisionConstants.CAMERA.values()[i].toString().toLowerCase();
-      cam =
-          cam.replace(
-              cam.charAt(0),
-              Character.toUpperCase(
-                  cam.charAt(
-                      0))); // Now you may be wondering, is all of this really necessary? Can't you
-      // just make the names into an array and use the camera index to
-      // retrieve the correct name? To that I say that is the coward's way of
-      // doing things... TODO: decide if this is necessary :l
-      Logger.processInputs("Vision/" + cam, m_inputs[i]);
+      Logger.processInputs("Vision/" + VisionConstants.CAMERA_NAMES[i], m_inputs[i]);
     }
 
     var resultFront = this.getPipelineResult(VisionConstants.CAMERA.FRONT.CAMERA_INDEX);
@@ -85,8 +75,6 @@ public class Vision extends SubsystemBase {
           && targetBack.getFiducialId() <= 22) {
         var poseFront = this.getEstimatedPose(VisionConstants.CAMERA.FRONT.CAMERA_INDEX);
         var poseBack = this.getEstimatedPose(VisionConstants.CAMERA.BACK.CAMERA_INDEX);
-        Logger.recordOutput("Vision/Front/EstimatedPose", poseFront);
-        Logger.recordOutput("Vision/Back/EstimatedPose", poseBack);
         m_consumer.accept(
             this.averageVisionPoses(poseFront, poseBack), resultFront.getTimestampSeconds());
       }
@@ -99,7 +87,6 @@ public class Vision extends SubsystemBase {
           && targetFront.getFiducialId() >= 1
           && targetFront.getFiducialId() <= 22) {
         var poseFront = this.getEstimatedPose(VisionConstants.CAMERA.FRONT.CAMERA_INDEX);
-        Logger.recordOutput("Vision/Front/EstimatedPose", poseFront);
         m_consumer.accept(poseFront, resultFront.getTimestampSeconds());
       } else if (hasTargetBack) {
         // Only Back sees target
@@ -110,7 +97,6 @@ public class Vision extends SubsystemBase {
             && targetBack.getFiducialId() >= 1
             && targetBack.getFiducialId() <= 22) {
           var poseBack = this.getEstimatedPose(VisionConstants.CAMERA.BACK.CAMERA_INDEX);
-          Logger.recordOutput("Vision/Back/EstimatedPose", poseBack);
           m_consumer.accept(poseBack, resultBack.getTimestampSeconds());
         }
       }

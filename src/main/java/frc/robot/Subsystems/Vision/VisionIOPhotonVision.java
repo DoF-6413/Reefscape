@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 public class VisionIOPhotonVision implements VisionIO {
 
@@ -15,6 +16,8 @@ public class VisionIOPhotonVision implements VisionIO {
   protected final Transform3d m_cameraOffset;
 
   public VisionIOPhotonVision(int index) {
+    System.out.println("[Init] Creating VisionIOPhotonVision " + VisionConstants.CAMERA_NAMES[index]);
+
     switch (index) {
       case 0:
         m_cameraOffset = VisionConstants.FRONT_CAMERA_ROBOT_OFFSET;
@@ -37,12 +40,7 @@ public class VisionIOPhotonVision implements VisionIO {
   public void updateInputs(VisionIOInputs inputs) {
     var allResults = m_camera.getAllUnreadResults();
     inputs.pipelineResult =
-        allResults.isEmpty()
-            ? null
-            : allResults.get(
-                allResults.size()
-                    - 1); // Doesnt make sense actually bc if size == 0, it'll crash either way
-    // bc index == size?
+        allResults.isEmpty() ? new PhotonPipelineResult() : allResults.get(allResults.size() - 1);
     inputs.hasTargets = inputs.pipelineResult.hasTargets();
     if (inputs.hasTargets) {
       inputs.target = inputs.pipelineResult.getBestTarget();

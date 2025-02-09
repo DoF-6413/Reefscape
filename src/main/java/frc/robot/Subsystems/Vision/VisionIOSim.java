@@ -5,6 +5,8 @@ package frc.robot.Subsystems.Vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.function.Supplier;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
@@ -17,18 +19,24 @@ public class VisionIOSim extends VisionIOPhotonVision {
 
   public VisionIOSim(int index, Supplier<Pose2d> currentPose) {
     super(index);
+    System.out.println("[Init] Creating VisionIOSim " + VisionConstants.CAMERA_NAMES[index]);
 
     var camProp = new SimCameraProperties();
     camProp.setAvgLatencyMs(20);
     camProp.setCalibration(1280, 720, Rotation2d.fromDegrees(90));
     camProp.setFPS(40);
-    m_cameraSim = new PhotonCameraSim(m_camera, camProp);
+    camProp.setCalibError(0, 0); // TODO: update w/ real values from real robot
+    m_cameraSim = new PhotonCameraSim(super.m_camera, camProp);
 
     m_sim = new VisionSystemSim(VisionConstants.CAMERA_NAMES[index]);
     m_sim.addAprilTags(VisionConstants.APRILTAG_FIELD_LAYOUT);
-    m_sim.addCamera(m_cameraSim, m_cameraOffset);
+    m_sim.addCamera(m_cameraSim, super.m_cameraOffset);
+    SmartDashboard.putData("Field/Sim/" + VisionConstants.CAMERA_NAMES[index], m_sim.getDebugField());
 
     m_currentPose = currentPose;
+
+    m_cameraSim.enableProcessedStream(true);
+    m_cameraSim.enableDrawWireframe(true);
   }
 
   @Override

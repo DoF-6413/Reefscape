@@ -29,7 +29,7 @@ public class VisionConstants {
   public static final Transform3d FRONT_CAMERA_ROBOT_OFFSET =
       new Transform3d(
           new Translation3d(Units.inchesToMeters(13.5), 0, Units.inchesToMeters(3.5)),
-          new Rotation3d(0, 0, 0)); // TODO: Measure out offsets for both cameras
+          new Rotation3d(0, 0, 0));
 
   /** Offsets the back right camera's position to the center of the robot */
   public static final Transform3d BACK_CAMERA_ROBOT_OFFSET =
@@ -39,7 +39,7 @@ public class VisionConstants {
 
   public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
       new AprilTagFieldLayout(
-          AprilTagFields.k2025Reefscape.loadAprilTagLayoutField().getTags(),
-          AprilTagFields.k2025Reefscape.loadAprilTagLayoutField().getFieldLength(),
-          AprilTagFields.k2025Reefscape.loadAprilTagLayoutField().getFieldWidth());
+          AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getTags(),
+          AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getFieldLength(),
+          AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getFieldWidth());
 }
