@@ -5,13 +5,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.TeleopCommands.DriveCommands;
-import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
@@ -123,6 +123,7 @@ public class RobotContainer {
 
     // Adds an "Auto" tab on ShuffleBoard
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
+    SmartDashboard.putNumber("Heading", 0);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -179,7 +180,7 @@ public class RobotContainer {
                 m_driveSubsystem,
                 () -> -m_driverController.getLeftY(),
                 () -> -m_driverController.getLeftX(),
-                () -> Rotation2d.fromRadians(0)));
+                () -> Rotation2d.fromRadians(SmartDashboard.getNumber("Heading", 0))));
     m_driverController
         .povLeft()
         .onTrue(
@@ -206,16 +207,21 @@ public class RobotContainer {
                 () -> Rotation2d.fromRadians(-Math.PI / 2)));
 
     m_driverController
+        .rightBumper()
+        .whileTrue(
+            // PathfindingCommands.toAprilTag(m_pathPlanner, () -> m_visionSubsystem.getTagID())
+            DriveCommands.alignToPose(
+                    m_driveSubsystem,
+                    () ->
+                        VisionConstants.APRILTAG_FIELD_LAYOUT.getTagPose(
+                            (int) SmartDashboard.getNumber("AprilTagID", 18)))
+                .until(() -> !m_driverController.rightBumper().getAsBoolean()));
+
+    m_driverController
         .a()
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
                 .withName("ZeroYaw"));
-
-    m_driverController
-        .x()
-        .onTrue(
-            PathfindingCommands.toAprilTag(m_pathPlanner, () -> m_visionSubsystem.getTagID())
-                .until(() -> !m_driverController.x().getAsBoolean()));
   }
 
   /**

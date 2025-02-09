@@ -7,8 +7,11 @@ package frc.robot.Subsystems.Vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Subsystems.Drive.DriveConstants;
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -62,6 +65,7 @@ public class Vision extends SubsystemBase {
       var result = getPipelineResult(i);
       if (!result.hasTargets()) continue;
       var target = result.getBestTarget();
+      SmartDashboard.putNumber("AprilTagID", target.getFiducialId());
       if (target.getFiducialId() >= 1
           && target.getFiducialId() <= 22
           && target.getPoseAmbiguity() >= 0.0
@@ -97,6 +101,25 @@ public class Vision extends SubsystemBase {
     var result = this.getPipelineResult(0);
     if (!result.hasTargets()) return -1;
     return result.getBestTarget().getFiducialId();
+  }
+
+  public Pose2d toAprilTag() {
+    var id = this.getTagID();
+    if (id < 1 || id > 22) {
+      return new Pose2d(-1, -1, new Rotation2d());
+    }
+
+    var tagPose2d = VisionConstants.APRILTAG_FIELD_LAYOUT.getTagPose(id).get().toPose2d();
+    var inFrontOfTag =
+        new Pose2d(
+            tagPose2d.getX()
+                + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
+                    * tagPose2d.getRotation().getCos(),
+            tagPose2d.getY()
+                + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
+                    * tagPose2d.getRotation().getSin(),
+            tagPose2d.getRotation().plus(Rotation2d.fromDegrees(180)));
+    return inFrontOfTag;
   }
 
   /**

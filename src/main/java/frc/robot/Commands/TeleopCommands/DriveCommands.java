@@ -3,15 +3,19 @@ package frc.robot.Commands.TeleopCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -102,6 +106,59 @@ public class DriveCommands {
             },
             drive)
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+  }
+
+  public static Command alignToPose(Drive drive, Supplier<Optional<Pose3d>> goalPose) {
+    if (goalPose.get().isEmpty()) return new PrintCommand("Invalid Tag ID");
+    if (goalPose.get().get().toPose2d().getX() < 0
+        || goalPose.get().get().toPose2d().getX() > 18
+        || goalPose.get().get().toPose2d().getY() < 0
+        || goalPose.get().get().toPose2d().getY() > 9) {
+      return new PrintCommand("Invalid Pose: " + goalPose.get().toString());
+    }
+    ProfiledPIDController linearController =
+        new ProfiledPIDController(
+            1,
+            0,
+            0,
+            new TrapezoidProfile.Constraints(
+                DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
+                DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S));
+    ProfiledPIDController angleController =
+        new ProfiledPIDController(
+            1,
+            0,
+            0,
+            new TrapezoidProfile.Constraints(
+                DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
+                DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S));
+
+    return Commands.run(
+        () -> {
+          Pose2d targetPose = goalPose.get().get().toPose2d();
+          targetPose =
+              new Pose2d(
+                  targetPose.getX()
+                      + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
+                          * targetPose.getRotation().getCos(),
+                  targetPose.getY()
+                      + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
+                          * targetPose.getRotation().getSin(),
+                  targetPose.getRotation().plus(Rotation2d.fromDegrees(180)));
+
+          double x = linearController.calculate(drive.getCurrentPose2d().getX(), targetPose.getX());
+          double y = linearController.calculate(drive.getCurrentPose2d().getY(), targetPose.getY());
+          double omega =
+              angleController.calculate(
+                  drive.getRotation().getRadians(), targetPose.getRotation().getRadians());
+
+          drive.runVelocity(
+              new ChassisSpeeds(
+                  x * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
+                  y * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
+                  omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S));
+        },
+        drive);
   }
 
   private static double getOmega(double omega) {
