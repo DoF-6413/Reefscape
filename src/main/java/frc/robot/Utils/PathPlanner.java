@@ -39,9 +39,9 @@ public class PathPlanner {
     m_robotConfig =
         new RobotConfig(
             Units.lbsToKilograms(35),
-            1,
+            1.43564109968,
             m_moduleConfig,
-            DriveConstants.TRACK_WIDTH_M); // TODO: Get MOI of entire robot
+            DriveConstants.getModuleTranslations()); // TODO: Get MOI of entire robot
 
     AutoBuilder.configure(
         drive::getCurrentPose2d,
@@ -67,8 +67,6 @@ public class PathPlanner {
         },
         drive);
   }
-
-  public void periodic() {}
 
   /**
    * Creates a command that drives the robot to the inputed position

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.TeleopCommands.DriveCommands;
+import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
@@ -169,8 +170,8 @@ public class RobotContainer {
         .onTrue(
             DriveCommands.robotRelativeDrive(
                 m_driveSubsystem,
-                () -> -m_driverController.getLeftX(),
                 () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getLeftX(),
                 () -> -m_driverController.getRightX()));
 
     m_driverController
@@ -208,13 +209,13 @@ public class RobotContainer {
 
     m_driverController
         .rightBumper()
-        .whileTrue(
-            // PathfindingCommands.toAprilTag(m_pathPlanner, () -> m_visionSubsystem.getTagID())
-            DriveCommands.alignToPose(
-                    m_driveSubsystem,
-                    () ->
-                        VisionConstants.APRILTAG_FIELD_LAYOUT.getTagPose(
-                            (int) SmartDashboard.getNumber("AprilTagID", 18)))
+        .onTrue(
+            PathfindingCommands.toAprilTag(m_pathPlanner, () -> (int) SmartDashboard.getNumber("AprilTagID", 18))
+            // DriveCommands.alignToPose(
+            //         m_driveSubsystem,
+            //         () ->
+            //             VisionConstants.APRILTAG_FIELD_LAYOUT.getTagPose(
+            //                 (int) SmartDashboard.getNumber("AprilTagID", 18)))
                 .until(() -> !m_driverController.rightBumper().getAsBoolean()));
 
     m_driverController
