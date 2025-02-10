@@ -23,7 +23,7 @@ public interface GyroIO {
   }
 
   /**
-   * Peridocially updates the logged inputs for the Gyro.
+   * Updates the logged inputs for the Gyro. Must be called periodically
    *
    * @param inputs Inputs from the auto logger
    */

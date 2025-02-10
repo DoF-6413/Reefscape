@@ -38,7 +38,7 @@ public interface ModuleIO {
   }
 
   /**
-   * Peridocially updates the logged inputs for the Module.
+   * Updates the logged inputs for the Module. Must be called periodically
    *
    * @param inputs Inputs from the auto logger
    */

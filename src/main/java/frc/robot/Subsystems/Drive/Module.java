@@ -31,14 +31,16 @@ public class Module {
     m_steerPID =
         new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
 
-    // Considers min and max the same point, needed for our Swerve Modules since we wrap the
+    // Considers min and max the same point, required for the Swerve Modules since we wrap the
     // position from -pi to pi
     m_steerPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   /**
-   * Put Values that Should Be Called Periodically for EACH individual Module Here. Module.periodic
-   * NEEDS to be in Drive periodic OR it wont run
+   * Update and log IO inputs from logger
+   * 
+   * <p>Put values that should be called periodically for EACH individual Module here. Module.periodic()
+   * NEEDS to be called in Drive.periodic() OR ELSE it wont run
    */
   public void periodic() {
     this.updateInputs();
@@ -46,7 +48,7 @@ public class Module {
   }
 
   /**
-   * Peridocially updates the logged inputs for the Module.
+   * Updates the logged inputs for the Module. Must be called periodically
    *
    * @param inputs Inputs from the auto logger
    */
@@ -61,29 +63,29 @@ public class Module {
   }
 
   /**
-   * Manually sets voltage of the Drive motor
+   * Sets voltage of the Drive motor
    *
-   * @param volts A value between -12 (full reverse) to 12 (full forward)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public void setDriveVoltage(double volts) {
     m_io.setDriveVoltage(volts);
   }
 
   /**
-   * Manually sets voltage of the Turn motor
+   * Sets voltage of the Turn motor
    *
-   * @param volts A value between -12 (full reverse) to 12 (full forward)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public void setTurnVoltage(double volts) {
     m_io.setTurnVoltage(volts);
   }
 
   /**
-   * Set the speed of the Drive motor based on a percent scale
+   * Sets the speed of the Drive motor based on a percent scale
    *
    * <p>On a -1 to 1 Scale. -1 representing -100%, 1 representing 100%
    *
-   * @param percent -1 (full reverse) to 1 (full forward)
+   * @param percent -1 (full reverse speed) to 1 (full forward speed)
    */
   public void setDrivePercentSpeed(double percent) {
     m_io.setDriveVoltage(percent * 12);
@@ -94,7 +96,7 @@ public class Module {
    *
    * <p>On a -1 to 1 Scale. -1 representing -100%, 1 representing 100%
    *
-   * @param percent -1 (full reverse) to 1 (full forward)
+   * @param percent -1 (full reverse speed) to 1 (full forward speed)
    */
   public void setTurnPercentSpeed(double percent) {
     m_io.setTurnVoltage(percent * 12);
