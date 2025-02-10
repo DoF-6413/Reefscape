@@ -123,8 +123,7 @@ public class DriveCommands {
             0,
             0,
             new TrapezoidProfile.Constraints(
-                DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-                DriveConstants.MAX_LINEAR_SPEED_M_PER_S));
+                DriveConstants.MAX_LINEAR_SPEED_M_PER_S, DriveConstants.MAX_LINEAR_SPEED_M_PER_S));
     ProfiledPIDController angleController =
         new ProfiledPIDController(
             0.1,
@@ -136,34 +135,38 @@ public class DriveCommands {
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     return Commands.run(
-        () -> {
-          var goalPose2d = goalPose.get().get().toPose2d();
-          var targetPose =
-              new Pose2d(
-                goalPose2d.getX()
-                      + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
-                          * goalPose2d.getRotation().getCos(),
-                          goalPose2d.getY()
-                      + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
-                          * goalPose2d.getRotation().getSin(),
-                          goalPose2d.getRotation());
+            () -> {
+              var goalPose2d = goalPose.get().get().toPose2d();
+              var targetPose =
+                  new Pose2d(
+                      goalPose2d.getX()
+                          + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
+                              * goalPose2d.getRotation().getCos(),
+                      goalPose2d.getY()
+                          + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
+                              * goalPose2d.getRotation().getSin(),
+                      goalPose2d.getRotation());
 
-          double x = linearController.calculate(drive.getCurrentPose2d().getX(), targetPose.getX());
-          double y = linearController.calculate(drive.getCurrentPose2d().getY(), targetPose.getY());
-          double omega =
-              angleController.calculate(
-                  drive.getRotation().getRadians(), targetPose.getRotation().getRadians());
-          SmartDashboard.putNumber("Pathfind/x_value", x);
-          SmartDashboard.putNumber("Pathfind/y_value", y);
-          SmartDashboard.putNumber("Pathfind/omega_value", omega);
+              double x =
+                  linearController.calculate(drive.getCurrentPose2d().getX(), targetPose.getX());
+              double y =
+                  linearController.calculate(drive.getCurrentPose2d().getY(), targetPose.getY());
+              double omega =
+                  angleController.calculate(
+                      drive.getRotation().getRadians(), targetPose.getRotation().getRadians());
+              SmartDashboard.putNumber("Pathfind/x_value", x);
+              SmartDashboard.putNumber("Pathfind/y_value", y);
+              SmartDashboard.putNumber("Pathfind/omega_value", omega);
 
-          drive.runVelocity(
-              new ChassisSpeeds(
-                  x * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-                  y * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-                  omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S));
-        },
-        drive).alongWith(new PrintCommand(goalPose.get().get().toPose2d().toString())).beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+              drive.runVelocity(
+                  new ChassisSpeeds(
+                      x * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
+                      y * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
+                      omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S));
+            },
+            drive)
+        .alongWith(new PrintCommand(goalPose.get().get().toPose2d().toString()))
+        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
   }
 
   private static double getOmega(double omega) {
