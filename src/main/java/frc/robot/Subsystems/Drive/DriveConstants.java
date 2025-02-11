@@ -11,43 +11,14 @@ public final class DriveConstants {
   // REAL CONSTANTS
   /** Radius of the wheel in meters */
   public static final double WHEEL_RADIUS_M = Units.inchesToMeters(2);
-  /** Side length of the robot, w/o bumpers, in meters */
+  /** Side length of the robot, without bumpers, in meters */
   public static final double TRACK_WIDTH_M = Units.inchesToMeters(29);
   /** Radius of the robot (diagonal) in meters */
   public static final double DRIVETRAIN_RADIUS_M = TRACK_WIDTH_M / 2 * Math.sqrt(2);
-  /** Gear Ratio for MK4i L3 Krakens */
+  /** Gear Ratio for MK4i L3 Drive motors */
   public static final double DRIVE_GEAR_RATIO = 6.12;
-  /** Gear Ratio for MK4i Neos */
+  /** Gear Ratio for MK4i Turn motors */
   public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
-
-  /**
-   * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
-   */
-  public static double DRIVE_KP = 0;
-  /**
-   * KI represents the constant multiplied by the integral of the error from setpoint (Integral
-   * Error)
-   */
-  public static double DRIVE_KI = 0;
-  /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
-  public static double DRIVE_KD = 0;
-  /** KS represents the voltage required to overcome static friction */
-  public static double DRIVE_KS = 0.12289;
-  /** KV represents the voltage used every second per meter */
-  public static double DRIVE_KV = 0.17161;
-
-  /**
-   * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
-   */
-  public static double TURN_KP = 6.4;
-  /**
-   * KI represents the constant multiplied by the integral of the error from setpoint (Integral
-   * Error)
-   */
-  public static double TURN_KI = 0.0;
-  /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
-  public static double TURN_KD = 0.05;
-
   /** Max linear speed of robot */
   public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger
   /** Max angular speed of the robot */
@@ -63,13 +34,6 @@ public final class DriveConstants {
   public static final boolean ENABLE_CUR_LIM = true;
   /** Ingnore joystick inputs less than 10% tilted */
   public static final double DEADBAND = 0.1;
-
-  // SIM CONSTANTS
-  // TODO: Update
-  // Moment of inertia for the driving of the Module wheel in kg * m^2
-  public static final double DRIVE_MOI_KG_M2 = 0.0003125;
-  // Moment of inertia for the turning of the Module wheel in kg * m^2
-  public static final double TURN_MOI_KG_M2 = 0.0000158025413;
 
   /**
    * Translation 2d assumes that the robot front facing is in the positive x direction and the robot
@@ -148,4 +112,40 @@ public final class DriveConstants {
       OFFSET = value;
     }
   }
+  
+  // PID & FEEDFORWARD CONSTANTS
+  /**
+   * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
+   */
+  public static double DRIVE_KP = 0;
+  /**
+   * KI represents the constant multiplied by the integral of the error from setpoint (Integral
+   * Error)
+   */
+  public static double DRIVE_KI = 0;
+  /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
+  public static double DRIVE_KD = 0;
+  /** KS represents the voltage required to overcome static friction */
+  public static double DRIVE_KS = 0.12289;
+  /** KV represents the voltage used every second per meter */
+  public static double DRIVE_KV = 0.17161;
+
+  /**
+   * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
+   */
+  public static double TURN_KP = 6.4;
+  /**
+   * KI represents the constant multiplied by the integral of the error from setpoint (Integral
+   * Error)
+   */
+  public static double TURN_KI = 0.0;
+  /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
+  public static double TURN_KD = 0.05;
+
+  // SIM CONSTANTS
+  // TODO: Update?
+  // Moment of inertia for the driving of the Module wheel in kg * m^2
+  public static final double DRIVE_MOI_KG_M2 = 0.0003125;
+  // Moment of inertia for the turning of the Module wheel in kg * m^2
+  public static final double TURN_MOI_KG_M2 = 0.0000158025413;
 }

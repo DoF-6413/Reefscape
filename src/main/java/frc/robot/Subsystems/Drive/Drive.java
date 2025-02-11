@@ -1,3 +1,6 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 package frc.robot.Subsystems.Drive;
 
 import static edu.wpi.first.units.Units.Volts;
@@ -64,11 +67,11 @@ public class Drive extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("/SysId/Drive/SysId State", state.toString())),
+                (state) -> Logger.recordOutput("/SysId/Drive/SysId State", state.toString())), // Log SysId to AdvantageScope rather than the WPI Logger
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
 
-    // Tunable PIDFF values
+    // Tunable PID & Feedforward values
     SmartDashboard.putBoolean("PIDFF/Drive/EnableTuning", false);
     SmartDashboard.putNumber("PIDFF/Drive/Drive_kP", DriveConstants.DRIVE_KP);
     SmartDashboard.putNumber("PIDFF/Drive/Drive_kI", DriveConstants.DRIVE_KI);
@@ -314,7 +317,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the FF values for all Drive motors' built in closed loop controller
+   * Sets the Feedforward values for all Drive motors' built in closed loop controller
    *
    * @param kS Static gain value
    * @param kV Velocity gain value

@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-/** This Runs the Gyro for all Modes of the Robot */
 public class Gyro extends SubsystemBase {
   private final GyroIO m_io;
   private final GyroIOInputsAutoLogged m_inputs = new GyroIOInputsAutoLogged();

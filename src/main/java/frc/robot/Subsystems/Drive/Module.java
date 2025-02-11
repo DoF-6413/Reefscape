@@ -18,19 +18,19 @@ public class Module {
   /**
    * Constructs a new Module instance.
    *
-   * <p>This creates a new Module object used to run the Drive and Turn motors of each module.
+   * <p>This creates a new Module object used to run the Drive and Turn motors of each Module.
    *
    * @param io ModuleIO implementation of the current robot mode
    * @param index Module number
    */
   public Module(ModuleIO io, int moduleNumber) {
     System.out.println("[Init] Creating Module");
+
     m_io = io;
     m_moduleNumber = moduleNumber;
 
     m_steerPID =
         new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
-
     // Considers min and max the same point, required for the Swerve Modules since we wrap the
     // position from -pi to pi
     m_steerPID.enableContinuousInput(-Math.PI, Math.PI);
@@ -116,7 +116,7 @@ public class Module {
    * The current absolute Turn angle of the Module in radians, normalized to a range of negative pi
    * to pi.
    *
-   * @return The current Turn angle of the Module in radians.
+   * @return The current Turn angle of the Module in radians
    */
   public Rotation2d getAngle() {
     return new Rotation2d(MathUtil.angleModulus(m_inputs.turnAbsolutePositionRad));
@@ -126,7 +126,7 @@ public class Module {
    * Calculates the Drive linear displacement of the Module based on the encoder readings (angular position) and the wheel
    * radius.
    *
-   * @return The current Drive position of the Module in meters.
+   * @return The current Drive position of the Module in meters
    */
   public double getPositionMeters() {
     return m_inputs.drivePositionRad * DriveConstants.WHEEL_RADIUS_M;
@@ -136,14 +136,14 @@ public class Module {
    * Calculates the current linear velocity of the Module based on the encoder readings (angular velocity) and the
    * wheel radius.
    *
-   * @return The current Drive velocity of the Module in meters per second.
+   * @return The current Drive velocity of the Module in meters per second
    */
   public double getVelocityMetersPerSec() {
     return m_inputs.driveVelocityRadPerSec * DriveConstants.WHEEL_RADIUS_M;
   }
 
   /**
-   * @return The current velocity of the Drive motor in rad per sec
+   * @return The current velocity of the Drive motor in radians per second
    */
   public double getVelocityRadPerSec() {
     return m_inputs.driveVelocityRadPerSec;
@@ -166,7 +166,7 @@ public class Module {
   /**
    * Sets the idle mode for Turn and Drive motors
    *
-   * @param enable Sets break mode on true, coast on false
+   * @param enable Sets brake mode on true, coast on false
    */
   public void setBrakeMode(boolean enable) {
     m_io.setDriveBrakeMode(enable);
@@ -190,7 +190,7 @@ public class Module {
     // Update velocity based on Turn error
     // state.speedMetersPerSecond *= Math.cos(m_steerPID.getError()); // TODO: test and verify is needed
 
-    // Turn Speed m/s into Vel rad/s
+    // Turn speed m/s into velocity rad/s
     double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
 
     // Runs the Drive motor through the TalonFX closed loop controller
@@ -209,7 +209,7 @@ public class Module {
   }
 
   /**
-   * Sets the FF values for the Drive motor's built in closed loop controller
+   * Sets the Feedforward values for the Drive motor's built in closed loop controller
    *
    * @param kS Static gain value
    * @param kV Velocity gain value

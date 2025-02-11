@@ -2,38 +2,37 @@ package frc.robot.Subsystems.Drive;
 
 import org.littletonrobotics.junction.AutoLog;
 
+/** IO Interface to log the inputs of and create the default methods for the Swerve Modules */
 public interface ModuleIO {
 
   @AutoLog
   public static class ModuleIOInputs {
     // Drive motor
-    /** Voltage that drive motor draws */
+    /** Voltage applied to the Drive motor */
     public double driveAppliedVoltage = 0.0;
-    /** Position of the wheel in radians */
+    /** Distance driven by the Module wheel in radians */
     public double drivePositionRad = 0.0;
-    /** Velocity of the wheel in radians per sec */
+    /** Velocity of the Module wheel driven by the Drive motor in radians per sec */
     public double driveVelocityRadPerSec = 0.0;
-    /** Current drawn by the motor in amps */
+    /** Current drawn by the Drive motor in amps */
     public double driveCurrentAmps = 0.0;
-    /** Temperature of the motor in celsius */
+    /** Temperature of the Drive motor in celsius */
     public double driveTempCelsius = 0.0;
-    /** If a singal is being recieved from the Drive motor */
+    /** Whether a singal is being recieved by the Drive motor or not */
     public boolean driveIsConnected = false;
 
     // Turn motor
-    /** Voltage that turn motor draws */
+    /** Voltage applied to the Turn motor */
     public double turnAppliedVoltage = 0.0;
-    /** Relative position of the wheel in radians (NEO encoder) */
-    public double turnPositionRad = 0.0;
-    /** Absolute position of the wheel in radians (CANcoder) */
+    /** Absolute position of the wheel angle in radians (CANcoder) */
     public double turnAbsolutePositionRad = 0.0;
-    /** Turn velocity of the wheel in radians per sec (CANcoder) */
+    /** Velocity of the Module wheel driven by the Turn motor in radians per sec (CANcoder) */
     public double turnVelocityRadPerSec = 0.0;
-    /** Current drawn by the motor in amps */
+    /** Current drawn by the Turn motor in amps */
     public double turnCurrentAmps = 0.0;
-    /** Temperature of the motor in celsius */
+    /** Temperature of the Turn motor in celsius */
     public double turnTempCelsius = 0.0;
-    /** If a singal is being recieved from the CANcoder */
+    /** Whether a singal is being recieved by the CANcoder or not */
     public boolean absoluteEncoderIsConnected = false;
   }
 
@@ -45,30 +44,30 @@ public interface ModuleIO {
   public default void updateInputs(ModuleIOInputs inputs) {}
 
   /**
-   * Manually sets voltage of the Drive motor
+   * Sets voltage of the Drive motor
    *
-   * @param volts A value between -12 (full reverse) to 12 (full forward)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public default void setDriveVoltage(double volts) {}
 
   /**
-   * Manually sets voltage of the Turn motor
+   * Sets voltage of the Turn motor
    *
-   * @param volts A value between -12 (full reverse) to 12 (full forward)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public default void setTurnVoltage(double volts) {}
 
   /**
    * Sets the idle mode for the Drive motor
    *
-   * @param enable Sets break mode on true, coast on false
+   * @param enable Sets brake mode on true, coast on false
    */
   public default void setDriveBrakeMode(boolean enable) {}
 
   /**
    * Sets the idle mode for the Turn motor
    *
-   * @param enable Sets break mode on true, coast on false
+   * @param enable Sets brake mode on true, coast on false
    */
   public default void setTurnBrakeMode(boolean enable) {}
 
@@ -83,17 +82,17 @@ public interface ModuleIO {
   /**
    * Sets the PID values for the Drive motor's built in closed loop controller
    *
-   * @param kP P gain value
-   * @param kI I gain value
-   * @param kD D gain value
+   * @param kP Proportional gain value
+   * @param kI Integral gain value
+   * @param kD Derivative gain value
    */
   public default void setDrivePID(double kP, double kI, double kD) {}
 
   /**
-   * Sets the FF values for the Drive motor's built in closed loop controller
+   * Sets the Feedforward values for the Drive motor's built in closed loop controller
    *
-   * @param kS S gain value
-   * @param kV V gain value
+   * @param kS Static gain value
+   * @param kV Velocity gain value
    */
   public default void setDriveFF(double kS, double kV) {}
 }
