@@ -113,30 +113,30 @@ public class Module {
   }
 
   /**
-   * The current absolute turn angle of the module in radians, normalized to a range of negative pi
+   * The current absolute Turn angle of the Module in radians, normalized to a range of negative pi
    * to pi.
    *
-   * @return The current turn angle of the module in radians.
+   * @return The current Turn angle of the Module in radians.
    */
   public Rotation2d getAngle() {
     return new Rotation2d(MathUtil.angleModulus(m_inputs.turnAbsolutePositionRad));
   }
 
   /**
-   * Calculates the current drive position of the module based on the encoder readings and the wheel
+   * Calculates the Drive linear displacement of the Module based on the encoder readings (angular position) and the wheel
    * radius.
    *
-   * @return The current drive position of the module in meters.
+   * @return The current Drive position of the Module in meters.
    */
   public double getPositionMeters() {
     return m_inputs.drivePositionRad * DriveConstants.WHEEL_RADIUS_M;
   }
 
   /**
-   * Calculates the current linear velocity of the module based on the encoder readings and the
+   * Calculates the current linear velocity of the Module based on the encoder readings (angular velocity) and the
    * wheel radius.
    *
-   * @return The current drive velocity of the module in meters per second.
+   * @return The current Drive velocity of the Module in meters per second.
    */
   public double getVelocityMetersPerSec() {
     return m_inputs.driveVelocityRadPerSec * DriveConstants.WHEEL_RADIUS_M;
@@ -150,14 +150,14 @@ public class Module {
   }
 
   /**
-   * @return the Module position (Turn angle and Drive position)
+   * @return the current SwerveModulePosition (Turn angle and Drive position)
    */
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(getPositionMeters(), getAngle());
   }
 
   /**
-   * @return the Module state (Turn angle and Drive velocity).
+   * @return the current SwerveModuleState (Turn angle and Drive velocity).
    */
   public SwerveModuleState getState() {
     return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
@@ -177,19 +177,18 @@ public class Module {
    * Using a PID controller, calculates the voltage of the Drive and Turn motors based on the
    * current inputed setpoint.
    *
-   * @param state Desired Swerve Module State (Desired velocity and angle)
+   * @param state Desired SwerveModuleState (Desired linear speed and wheel angle)
    */
   public void runSetpoint(SwerveModuleState state) {
-
     // Optimize state based on current angle, aka take the shortest path for wheel to reach desired
     // angle in rad (-pi,pi))
     state.optimize(getAngle());
 
-    // Run turn controller
+    // Run Turn motor through a PID loop
     m_io.setTurnVoltage(m_steerPID.calculate(getAngle().getRadians(), state.angle.getRadians()));
 
-    // Update velocity based on turn error
-    // state.speedMetersPerSecond *= Math.cos(m_steerPID.getError());
+    // Update velocity based on Turn error
+    // state.speedMetersPerSecond *= Math.cos(m_steerPID.getError()); // TODO: test and verify is needed
 
     // Turn Speed m/s into Vel rad/s
     double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
@@ -201,9 +200,9 @@ public class Module {
   /**
    * Sets the PID values for the Drive motor's built in closed loop controller
    *
-   * @param kP P gain value
-   * @param kI I gain value
-   * @param kD D gain value
+   * @param kP Proportional gain value
+   * @param kI Integral gain value
+   * @param kD Derivative gain value
    */
   public void setDrivePID(double kP, double kI, double kD) {
     m_io.setDrivePID(kP, kI, kD);
@@ -212,8 +211,8 @@ public class Module {
   /**
    * Sets the FF values for the Drive motor's built in closed loop controller
    *
-   * @param kS S gain value
-   * @param kV V gain value
+   * @param kS Static gain value
+   * @param kV Velocity gain value
    */
   public void setDriveFF(double kS, double kV) {
     m_io.setDriveFF(kS, kV);
@@ -222,16 +221,16 @@ public class Module {
   /**
    * Sets the PID values for the Turn motor's built in closed loop controller
    *
-   * @param kP P gain value
-   * @param kI I gain value
-   * @param kD D gain value
+   * @param kP Proportional gain value
+   * @param kI Integral gain value
+   * @param kD Derivative gain value
    */
   public void setTurnPID(double kP, double kI, double kD) {
     m_steerPID.setPID(kP, kI, kD);
   }
 
   /**
-   * Locks module orientation at 0 degrees and runs drive motor at specified voltage
+   * Locks Module orientation at 0 degrees and runs Drive motor at specified voltage
    *
    * @param output Voltage
    */
