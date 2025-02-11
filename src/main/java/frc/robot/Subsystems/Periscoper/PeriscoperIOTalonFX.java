@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -23,15 +24,17 @@ public class PeriscoperIOTalonFX implements PeriscoperIO {
     private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
 
     // Periscoper motor inputs
-    private StatusSignal<Angle>[] m_positionRot = new StatusSignal[2]; // Rotations
-    private StatusSignal<AngularVelocity>[] m_velocityRotPerSec = new StatusSignal[2]; // Rotations per second
-    private StatusSignal<Voltage>[] m_appliedVolts = new StatusSignal[2];
-    private StatusSignal<Current>[] m_currentAmps = new StatusSignal[2];
-    private StatusSignal<Temperature>[] m_tempCelsius = new StatusSignal[2];
+    private StatusSignal<Angle>[] m_positionRot; // Rotations
+    private StatusSignal<AngularVelocity>[] m_velocityRotPerSec ; // Rotations per second
+    private StatusSignal<Voltage>[] m_appliedVolts;
+    private StatusSignal<Current>[] m_currentAmps;
+    private StatusSignal<Temperature>[] m_tempCelsius;
 
     public PeriscoperIOTalonFX() {
-        m_periscoperMotors[0] = new TalonFX(PeriscoperConstants.CANID_1);
-        m_periscoperMotors[1] = new TalonFX(PeriscoperConstants.CANID_2);
+        System.out.println("[Init] PeriscoperIOTalonFX ");
+
+        m_periscoperMotors[0] = new TalonFX(PeriscoperConstants.CANID_1, "Periscoper");
+        m_periscoperMotors[1] = new TalonFX(PeriscoperConstants.CANID_2, "Periscoper");
 
         m_motorControllers[0] = new VelocityVoltage(0);
         m_motorControllers[1] = new VelocityVoltage(0);
@@ -44,9 +47,9 @@ public class PeriscoperIOTalonFX implements PeriscoperIO {
         m_motorConfig
             .CurrentLimits
             .withSupplyCurrentLimit(PeriscoperConstants.CUR_LIM_A)
-            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(PeriscoperConstants.ENABLE_CUR_LIM)
             .withStatorCurrentLimit(PeriscoperConstants.CUR_LIM_A)
-            .withStatorCurrentLimitEnable(true);
+            .withStatorCurrentLimitEnable(PeriscoperConstants.ENABLE_CUR_LIM);
 
         m_motorConfig
             .Slot0
@@ -92,4 +95,18 @@ public class PeriscoperIOTalonFX implements PeriscoperIO {
     }
 
     
+    @Override
+    public void setVoltage(double volts) {
+        for (int i = 0; i < 2; i++) {
+            m_periscoperMotors[i].setVoltage(
+                MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+        }
+  }
+
+    @Override
+    public void setVelocity(double velocityRadPerSec) {
+        for (int i = 0; i < 2; i++) {
+            m_periscoperMotors[i].setControl(m_motorControllers[i].withVelocity(velocityRadPerSec));
+        }
+  }
 }  
