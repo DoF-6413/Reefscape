@@ -16,9 +16,9 @@ public interface GyroIO {
     public boolean connected = false;
     /** Current yaw angle as a Rotation2d object */
     public Rotation2d yawPositionRad = new Rotation2d();
-    /** Unadjusted yaw angle (no applied offset or modulus) as a Rotation2d object */
+    /** Unadjusted yaw angle (no applied offset or normalization) as a Rotation2d object */
     public Rotation2d rawYawPositionRad = new Rotation2d();
-    /** The angular velocity of the yaw in rad per sec */
+    /** Angular velocity about the z-axis (yaw) in radians per second */
     public double yawVelocityRadPerSec = 0.0;
   }
 
@@ -29,9 +29,6 @@ public interface GyroIO {
    */
   public default void updateInputs(GyroIOInputs inputs) {}
 
-  /**
-   * Resets the heading to be whereever the front of the robot is facing (front being the opposite
-   * side to the battery)
-   */
+  /** Resets the robot heading to the direction the Gyro is facing (aka the front of the robot) */
   public default void zeroHeading() {}
 }
