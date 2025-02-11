@@ -109,37 +109,15 @@ public class DriveCommands {
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
   }
 
-  public static Command alignToPose(PathPlanner pathPlanner, Vision vision) {
-    ProfiledPIDController linearController =
-        new ProfiledPIDController(
-            0.1,
-            0,
-            0,
-            new TrapezoidProfile.Constraints(
-                DriveConstants.MAX_LINEAR_SPEED_M_PER_S, DriveConstants.MAX_LINEAR_SPEED_M_PER_S));
-    ProfiledPIDController angleController =
-        new ProfiledPIDController(
-            0.1,
-            0,
-            0,
-            new TrapezoidProfile.Constraints(
-                DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
-                DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S));
-    angleController.enableContinuousInput(-Math.PI, Math.PI);
-
+  public static Command alignToPose(Drive drive, PathPlanner pathPlanner, Vision vision) {
     return Commands.run(
         () -> {
           var goalPose = VisionConstants.APRILTAG_FIELD_LAYOUT.getTagPose(vision.getTagID());
+
           if (goalPose.isEmpty()) {
-            new PrintCommand("Invalid Tag ID").schedule();
-          }
-          // if (goalPose.get().toPose2d().getX() < 0
-          //     || goalPose.get().toPose2d().getX() > 18
-          //     || goalPose.get().toPose2d().getY() < 0
-          //     || goalPose.get().toPose2d().getY() > 9) {
-          //   new PrintCommand("Invalid Pose: " + goalPose.get().toString()).schedule();
-          // }
-          else {
+            new PrintCommand("Invalid Tag ID \nSwitch Drive mode to drive (press Y)").schedule();
+
+          } else {
             var goalPose2d = goalPose.get().toPose2d();
             var targetPose =
                 new Pose2d(
@@ -149,30 +127,12 @@ public class DriveCommands {
                     goalPose2d.getY()
                         + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
                             * goalPose2d.getRotation().getSin(),
-                    goalPose2d.getRotation());
+                    goalPose2d.getRotation().plus(Rotation2d.k180deg));
 
             pathPlanner.pathFindToPose(targetPose).schedule();
-
-            // double x =
-            //     linearController.calculate(drive.getCurrentPose2d().getX(), targetPose.getX());
-            // double y =
-            //     linearController.calculate(drive.getCurrentPose2d().getY(), targetPose.getY());
-            // double omega =
-            //     angleController.calculate(
-            //         drive.getRotation().getRadians(), targetPose.getRotation().getRadians());
-            // SmartDashboard.putNumber("Pathfind/x_value", x);
-            // SmartDashboard.putNumber("Pathfind/y_value", y);
-            // SmartDashboard.putNumber("Pathfind/omega_value", omega);
-
-            // drive.runVelocity(
-            //     new ChassisSpeeds(
-            //         x * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-            //         y * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
-            //         omega * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S));
           }
         },
-        vision);
-    // .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+        drive);
   }
 
   private static double getOmega(double omega) {

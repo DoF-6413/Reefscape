@@ -23,18 +23,18 @@ public final class DriveConstants {
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */
-  public static double DRIVE_KP = 0;
+  public static double DRIVE_KP = 0.3;
   /**
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
    */
   public static double DRIVE_KI = 0;
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
-  public static double DRIVE_KD = 0;
+  public static double DRIVE_KD = 0.001;
   /** KS represents the voltage required to overcome static friction */
-  public static double DRIVE_KS = 0.12289;
+  public static double DRIVE_KS = 0.123;
   /** KV represents the voltage used every second per meter */
-  public static double DRIVE_KV = 0.17161;
+  public static double DRIVE_KV = 0.1;
 
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
