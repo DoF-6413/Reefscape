@@ -29,6 +29,7 @@ public class PathfindingCommands {
                 + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
                     * tagPose2d.getRotation().getSin(),
             tagPose2d.getRotation().plus(Rotation2d.fromDegrees(180)));
+
     return pathPlanner.pathFindToPose(inFrontOfTag);
   }
 }

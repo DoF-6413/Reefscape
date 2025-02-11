@@ -210,12 +210,13 @@ public class RobotContainer {
         .rightBumper()
         .onTrue(
             // PathfindingCommands.toAprilTag(
-            //         m_pathPlanner, () -> (int) SmartDashboard.getNumber("AprilTagID", 18))
-            DriveCommands.alignToPose(
-                    m_driveSubsystem,
-                    () ->
-                        VisionConstants.APRILTAG_FIELD_LAYOUT.getTagPose(
-                            (int) SmartDashboard.getNumber("AprilTagID", -1)))
+            //         m_pathPlanner, () -> m_visionSubsystem.getTagID())
+            DriveCommands.alignToPose(m_pathPlanner, m_visionSubsystem)
+                // DriveCommands.alignToPose(
+                //         m_driveSubsystem,
+                //         () ->
+                //             VisionConstants.APRILTAG_FIELD_LAYOUT.getTagPose(
+                //                 (int) SmartDashboard.getNumber("AprilTagID", 18)))
                 .until(() -> !m_driverController.rightBumper().getAsBoolean()));
 
     m_driverController
