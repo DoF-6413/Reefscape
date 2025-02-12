@@ -38,9 +38,9 @@ public class Module {
 
   /**
    * Update and log IO inputs from logger
-   * 
-   * <p>Put values that should be called periodically for EACH individual Module here. Module.periodic()
-   * NEEDS to be called in Drive.periodic() OR ELSE it wont run
+   *
+   * <p>Put values that should be called periodically for EACH individual Module here.
+   * Module.periodic() NEEDS to be called in Drive.periodic() OR ELSE it wont run
    */
   public void periodic() {
     this.updateInputs();
@@ -123,8 +123,8 @@ public class Module {
   }
 
   /**
-   * Calculates the Drive linear displacement of the Module based on the encoder readings (angular position) and the wheel
-   * radius.
+   * Calculates the Drive linear displacement of the Module based on the encoder readings (angular
+   * position) and the wheel radius.
    *
    * @return The current Drive position of the Module in meters
    */
@@ -133,8 +133,8 @@ public class Module {
   }
 
   /**
-   * Calculates the current linear velocity of the Module based on the encoder readings (angular velocity) and the
-   * wheel radius.
+   * Calculates the current linear velocity of the Module based on the encoder readings (angular
+   * velocity) and the wheel radius.
    *
    * @return The current Drive velocity of the Module in meters per second
    */
@@ -188,7 +188,8 @@ public class Module {
     m_io.setTurnVoltage(m_steerPID.calculate(getAngle().getRadians(), state.angle.getRadians()));
 
     // Update velocity based on Turn error
-    // state.speedMetersPerSecond *= Math.cos(m_steerPID.getError()); // TODO: test and verify is needed
+    // state.speedMetersPerSecond *= Math.cos(m_steerPID.getError()); // TODO: test and verify is
+    // needed
 
     // Turn speed m/s into velocity rad/s
     double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;

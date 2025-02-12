@@ -86,8 +86,7 @@ public class ModuleIOSim implements ModuleIO {
     inputs.turnAbsolutePositionRad =
         MathUtil.angleModulus(
             inputs.turnAbsolutePositionRad
-                + (inputs.turnVelocityRadPerSec
-                    * RobotStateConstants.LOOP_PERIODIC_SEC));
+                + (inputs.turnVelocityRadPerSec * RobotStateConstants.LOOP_PERIODIC_SEC));
     inputs.turnAppliedVoltage = m_turnAppliedVolts;
     inputs.turnCurrentAmps = Math.abs(m_turnSim.getCurrentDrawAmps());
   }

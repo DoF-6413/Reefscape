@@ -67,7 +67,11 @@ public class Drive extends SubsystemBase {
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("/SysId/Drive/SysId State", state.toString())), // Log SysId to AdvantageScope rather than the WPI Logger
+                (state) ->
+                    Logger.recordOutput(
+                        "/SysId/Drive/SysId State",
+                        state
+                            .toString())), // Log SysId to AdvantageScope rather than the WPI Logger
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
 
@@ -146,8 +150,8 @@ public class Drive extends SubsystemBase {
   /**
    * Run each Module at a specified linear speed and angle.
    *
-   * @param setpointStates An array of SwerveModuleStates (Module speed in m/s, and the Module
-   *     angle in radians).
+   * @param setpointStates An array of SwerveModuleStates (Module speed in m/s, and the Module angle
+   *     in radians).
    */
   public void runSwerveModules(SwerveModuleState[] setpointStates) {
     // Record initial Module States setpoint
@@ -195,7 +199,9 @@ public class Drive extends SubsystemBase {
    * @param rot Angular velocity (rad/s) of Entire Swerve Drive
    */
   public void setRaw(double xVelcoity, double yVelcoity, double angularVelocity) {
-    runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(xVelcoity, yVelcoity, angularVelocity, this.getRotation()));
+    runVelocity(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            xVelcoity, yVelcoity, angularVelocity, this.getRotation()));
   }
 
   /**
@@ -227,7 +233,7 @@ public class Drive extends SubsystemBase {
     /*
      * Twist2d is a change in distance along an arc
      * x is the forward distance driven
-     * y is the distance driven to the side (left positive), 
+     * y is the distance driven to the side (left positive),
      * and the component is the change in heading.
      */
     if (m_gyro.isConnected()) {
@@ -235,12 +241,8 @@ public class Drive extends SubsystemBase {
       robotYaw = m_gyro.getYaw();
     } else {
       // Updates heading based on change in Module Position
-      m_twist =
-          m_swerveDriveKinematics.toTwist2d(
-              getWheelDeltas()); 
-      robotYaw =
-          m_lastRobotYaw.minus(
-              new Rotation2d(m_twist.dtheta));
+      m_twist = m_swerveDriveKinematics.toTwist2d(getWheelDeltas());
+      robotYaw = m_lastRobotYaw.minus(new Rotation2d(m_twist.dtheta));
     }
     // Save heading for next call
     m_lastRobotYaw = robotYaw;

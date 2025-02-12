@@ -40,7 +40,7 @@ public class DriveCommands {
    * matches with the field +y. Due to this, the y-axis of the joystick is supplied to the xsupplier
    * and the x-axis is supplied to the y-supplier.
    *
-   * @param drive Drivetrain subsytem
+   * @param drive Drivetrain subsystem
    * @param xVelocity Desired robot x-axis velocity from joystick y-axis input, percentage range
    *     from [-1, 1]
    * @param yVelocity Desired robot y-axis velocity from joystick x-axis input, percentage range

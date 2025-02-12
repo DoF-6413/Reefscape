@@ -62,7 +62,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
    */
   public ModuleIOSparkMaxTalonFX(int moduleNumber) {
     System.out.println("[Init] Creating ModuleIOSparkMaxTalonFX " + moduleNumber);
-    
+
     // Initialize Drive motors, Turn motors, Turn encoders and their offsets based on the Module
     // number
     switch (moduleNumber) {
@@ -132,7 +132,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     m_driveConfig.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(
         1.0 / DriveConstants.UPDATE_FREQUENCY_HZ);
     m_driveController.withUpdateFreqHz(DriveConstants.UPDATE_FREQUENCY_HZ);
-    
+
     // Initilize Drive encoder position
     m_driveTalonFX.setPosition(0.0);
 
@@ -157,7 +157,8 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     m_turnSparkMax.configure(
         m_turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    // Initialize Drive motor signals and set their update frequency (how many times to refresh per second)
+    // Initialize Drive motor signals and set their update frequency (how many times to refresh per
+    // second)
     m_drivePositionRot = m_driveTalonFX.getPosition();
     m_drivePositionRot.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     m_driveVelocityRotPerSec = m_driveTalonFX.getVelocity();
@@ -200,7 +201,8 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
     // Update Absolute Encoder signals and check if they are recieved
     inputs.absoluteEncoderIsConnected =
-        BaseStatusSignal.refreshAll(m_absoluteEncoderPositionRot, m_absoluteEncoderVelocityRotPerSec)
+        BaseStatusSignal.refreshAll(
+                m_absoluteEncoderPositionRot, m_absoluteEncoderVelocityRotPerSec)
             .isOK();
     // Update Turn motor and Absolute Encoder logged inputs
     inputs.turnAbsolutePositionRad =

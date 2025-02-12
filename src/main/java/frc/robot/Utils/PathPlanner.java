@@ -76,10 +76,10 @@ public class PathPlanner {
   }
 
   /**
-   * Creates a command that has the robot follow a path to a 2D pose.
-   * Uses default path constraints which sets the max linear velocity and acceleration to 3 m/s,
-   * the angular velocity to 515.65 deg/s and angular acceleration to 262.82 deg/s^2. Also sets
-   * the goal end velocity (the linear velocity of the robot at the end of the path) to 0 m/s
+   * Creates a command that has the robot follow a path to a 2D pose. Uses default path constraints
+   * which sets the max linear velocity and acceleration to 3 m/s, the angular velocity to 515.65
+   * deg/s and angular acceleration to 262.82 deg/s^2. Also sets the goal end velocity (the linear
+   * velocity of the robot at the end of the path) to 0 m/s
    *
    * @param targetPose Pose2d of where the center of the robot should end up
    */

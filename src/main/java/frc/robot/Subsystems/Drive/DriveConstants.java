@@ -112,7 +112,7 @@ public final class DriveConstants {
       OFFSET = value;
     }
   }
-  
+
   // PID & FEEDFORWARD CONSTANTS
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
