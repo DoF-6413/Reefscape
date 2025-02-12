@@ -17,6 +17,9 @@ import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
 import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
+import frc.robot.Subsystems.Funnel.Funnel;
+import frc.robot.Subsystems.Funnel.FunnelIO;
+import frc.robot.Subsystems.Funnel.FunnelIOSparkMax;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
@@ -29,7 +32,7 @@ public class RobotContainer {
   // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
-
+  private final Funnel m_funnelSubsystem;
   // Utils
   private final PoseEstimator m_poseEstimator;
   private final PathPlanner m_pathPlanner;
@@ -55,6 +58,7 @@ public class RobotContainer {
                 new ModuleIOSparkMaxTalonFX(2),
                 new ModuleIOSparkMaxTalonFX(3),
                 m_gyroSubsystem);
+        m_funnelSubsystem = new Funnel( new FunnelIOSparkMax());
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -66,6 +70,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 m_gyroSubsystem);
+        m_funnelSubsystem = new Funnel( new FunnelIOSparkMax());
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -77,6 +82,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
+        m_funnelSubsystem = new Funnel( new FunnelIO() {});
         break;
     }
 
