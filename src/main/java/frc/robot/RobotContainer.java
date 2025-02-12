@@ -13,6 +13,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.TeleopCommands.DriveCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotStateConstants;
+import frc.robot.Subsystems.CoralEndEffector.CEE;
+import frc.robot.Subsystems.CoralEndEffector.CEEIO;
+import frc.robot.Subsystems.CoralEndEffector.CEEIOSim;
+import frc.robot.Subsystems.CoralEndEffector.CEEIOSparkMax;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
@@ -29,6 +33,7 @@ public class RobotContainer {
   // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
+  private final CEE m_CEESubsystem;
 
   // Utils
   private final PoseEstimator m_poseEstimator;
@@ -55,6 +60,7 @@ public class RobotContainer {
                 new ModuleIOSparkMaxTalonFX(2),
                 new ModuleIOSparkMaxTalonFX(3),
                 m_gyroSubsystem);
+        m_CEESubsystem = new CEE(new CEEIOSparkMax());
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -66,6 +72,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 m_gyroSubsystem);
+        m_CEESubsystem = new CEE(new CEEIOSparkMax());
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -77,6 +84,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
+        m_CEESubsystem = new CEE(new CEEIO(){});
         break;
     }
 
