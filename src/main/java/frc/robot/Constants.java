@@ -89,7 +89,7 @@ public final class Constants {
   public final class PathPlannerConstants {
     /* Configuration */
     // PID
-    public static final double TRANSLATION_KP = 0.0;
+    public static final double TRANSLATION_KP = 5.0;
     public static final double TRANSLATION_KD = 0.0;
     public static final double ROTATION_KP = 0.125;
     public static final double ROTATION_KD = 0.0;

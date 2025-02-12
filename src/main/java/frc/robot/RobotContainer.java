@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.TeleopCommands.DriveCommands;
+import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
@@ -105,6 +106,15 @@ public class RobotContainer {
     /** Autonomous Routines */
     m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     m_autoChooser.addOption("Path Planner", new PathPlannerAuto("test1"));
+    /** Test Routines */
+    m_autoChooser.addOption("Forward", new PathPlannerAuto("Forward"));
+    m_autoChooser.addOption("Forward 180", new PathPlannerAuto("Forward 180"));
+    m_autoChooser.addOption("Reverse", new PathPlannerAuto("Reverse"));
+    m_autoChooser.addOption("Reverse 180", new PathPlannerAuto("Reverse 180"));
+    m_autoChooser.addOption("Diagonal", new PathPlannerAuto("Diagonal"));
+    m_autoChooser.addOption("Diagonal 180", new PathPlannerAuto("Diagonal 180"));
+    m_autoChooser.addOption("Curve", new PathPlannerAuto("Curve"));
+    m_autoChooser.addOption("Curve 180", new PathPlannerAuto("Curve 180"));
     /* SysId Routines */
     m_autoChooser.addOption(
         "Drive SysId (Quasistatic Forward)",
@@ -208,7 +218,9 @@ public class RobotContainer {
 
     m_driverController
         .rightBumper()
-        .onTrue(DriveCommands.alignToPose(m_driveSubsystem, m_pathPlanner, m_visionSubsystem));
+        .onTrue(
+            PathfindingCommands.pathfindToAprilTag(
+                m_driveSubsystem, m_pathPlanner, m_visionSubsystem));
 
     m_driverController
         .a()

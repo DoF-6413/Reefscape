@@ -53,6 +53,7 @@ public class Vision extends SubsystemBase {
     m_consumer = consumer;
   }
 
+  // TOOO: Take ambiguity of last 3 frames and average it to avoid false 0.0 ambiguity reports
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

@@ -16,7 +16,7 @@ public final class DriveConstants {
   /** Radius of the robot (diagonal) in meters */
   public static final double DRIVETRAIN_RADIUS_M = TRACK_WIDTH_M / 2 * Math.sqrt(2);
   /** Gear Ratio for MK4i L3 Krakens */
-  public static final double DRIVE_GEAR_RATIO = 6.12;
+  public static final double DRIVE_GEAR_RATIO = 6.12 * 1.050793;
   /** Gear Ratio for MK4i Neos */
   public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
 
