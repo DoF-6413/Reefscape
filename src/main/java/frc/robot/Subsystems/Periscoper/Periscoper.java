@@ -17,7 +17,7 @@ public class Periscoper extends SubsystemBase {
   /** Creates a new Periscoper. */
   public Periscoper(PeriscoperIO periscoperIO) {
     //initialize the Periscoper subsystem
-    System.out.println("[Init] Creating Drive");
+    System.out.println("[Init] Creating Periscoper");
     this.io = periscoperIO;
 
     m_Periscoper = new Periscoper(periscoperIO);
