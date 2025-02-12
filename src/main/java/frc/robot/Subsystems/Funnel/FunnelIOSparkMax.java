@@ -40,7 +40,7 @@ public class FunnelIOSparkMax implements FunnelIO {
         inputs.positionRad = Units.rotationsToRadians(Units.rotationsToRadians(m_relativeEncoder.getPosition()))
         / FunnelConstants.GEAR_RATIO;
         inputs.velocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
-        / FunnelConstants.GEAR_RATIO;;
+        / FunnelConstants.GEAR_RATIO;
         inputs.currentAmps = m_sparkMax.getOutputCurrent();
         inputs.tempCelsius = m_sparkMax.getMotorTemperature();
     }

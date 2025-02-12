@@ -12,7 +12,7 @@ public class Funnel extends SubsystemBase{
     /** Creates a new funnel. */
     public Funnel(FunnelIO funnelIO) {
       //initialize the funnel subsystem
-      System.out.println("[Init] Creating Drive");
+      System.out.println("[Init] Creating Funnel");
       this.io = funnelIO;
   
   
