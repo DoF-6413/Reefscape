@@ -20,6 +20,9 @@ import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
+import frc.robot.Subsystems.Periscoper.Periscoper;
+import frc.robot.Subsystems.Periscoper.PeriscoperIO;
+import frc.robot.Subsystems.Periscoper.PeriscoperIOTalonFX;
 import frc.robot.Utils.PathPlanner;
 import frc.robot.Utils.PoseEstimator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -29,6 +32,7 @@ public class RobotContainer {
   // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
+  private final Periscoper m_periscoperSubsystem;
 
   // Utils
   private final PoseEstimator m_poseEstimator;
@@ -55,6 +59,7 @@ public class RobotContainer {
                 new ModuleIOSparkMaxTalonFX(2),
                 new ModuleIOSparkMaxTalonFX(3),
                 m_gyroSubsystem);
+        m_periscoperSubsystem = new Periscoper(new PeriscoperIOTalonFX());
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -66,6 +71,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 m_gyroSubsystem);
+        m_periscoperSubsystem = new Periscoper(new PeriscoperIOTalonFX());
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -77,6 +83,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
+        m_periscoperSubsystem = new Periscoper(new PeriscoperIO(){});
         break;
     }
 

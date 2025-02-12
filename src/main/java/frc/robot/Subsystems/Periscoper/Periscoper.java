@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Periscoper extends SubsystemBase {
 
-  private final Periscoper m_Periscoper;
   private final PeriscoperIO io;
   private final PeriscoperIOInputsAutoLogged inputs = new PeriscoperIOInputsAutoLogged();
 
@@ -20,19 +19,15 @@ public class Periscoper extends SubsystemBase {
     System.out.println("[Init] Creating Periscoper");
     this.io = periscoperIO;
 
-    m_Periscoper = new Periscoper(periscoperIO);
 
   }
 
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
-    m_Periscoper.periodic();
-    Logger.processInputs("Periscoper", inputs);
-  }
-
-  public void updateInputs(){
     io.updateInputs(inputs);
+    Logger.processInputs("Periscoper", inputs);
+ 
   }
 
   public void setVoltage(double volts){
