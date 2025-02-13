@@ -13,10 +13,16 @@ import frc.robot.Subsystems.Vision.VisionConstants;
 import frc.robot.Utils.PathPlanner;
 import java.util.function.IntSupplier;
 
+/** The commands for on-the-fly trajectory following using PathPlanner's Pathfinding feature */
 public class PathfindingCommands {
-  public PathfindingCommands() {}
-
-  public static Command pathfindToCurrentTag(Drive drive, PathPlanner pathPlanner, Vision vision) {
+  /**
+   * Generates a trajectory for the robot to follow to the best AprilTag seen. If no AprilTag is seen, a message will be printed repeatedly to the console advising to change the robot mode to move again.
+   * 
+   * @param drive Drivetrain subsystem
+   * @param pathplanner PathPlanner for its Pathfinding utility to generate a trajectory and run robot to follow it
+   * @param vision Vision subsystem
+   */
+  public static Command pathfindToCurrentTag(Drive drive, Vision vision, PathPlanner pathplanner) {
     return Commands.run(
         () -> {
           var goalPose = VisionConstants.APRILTAG_FIELD_LAYOUT.getTagPose(vision.getTagID());
@@ -36,14 +42,21 @@ public class PathfindingCommands {
                             * goalPose2d.getRotation().getSin(),
                     goalPose2d.getRotation().plus(Rotation2d.k180deg));
 
-            pathPlanner.pathFindToPose(targetPose).schedule();
+            pathplanner.pathFindToPose(targetPose).schedule();
           }
         },
         drive);
   }
 
+  /**
+   * 
+   * 
+   * @param drive Drivetrain subsystem
+   * @param pathplanner PathPlanner for its Pathfinding utility to generate a trajectory and run robot to follow it
+   * @param tagID AprilTag ID of the desired AprilTag to align to
+   */
   public static Command pathfindToAprilTag(
-      Drive drive, PathPlanner pathPlanner, IntSupplier tagID) {
+      Drive drive, PathPlanner pathplanner, IntSupplier tagID, DoubleSupplier distanceFromTagMeters) {
     return Commands.run(
         () -> {
           var goalPose =
@@ -52,14 +65,14 @@ public class PathfindingCommands {
           var targetPose =
               new Pose2d(
                   goalPose.getX()
-                      + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
+                      + ((DriveConstants.TRACK_WIDTH_M / 2) + distanceFromTagMeters.getAsDouble())
                           * goalPose.getRotation().getCos(),
                   goalPose.getY()
-                      + ((DriveConstants.TRACK_WIDTH_M / 2) + Units.inchesToMeters(8))
+                      + ((DriveConstants.TRACK_WIDTH_M / 2) + distanceFromTagMeters.getAsDouble())
                           * goalPose.getRotation().getSin(),
                   goalPose.getRotation().plus(Rotation2d.k180deg));
 
-          pathPlanner.pathFindToPose(targetPose).schedule();
+          pathplanner.pathFindToPose(targetPose).schedule();
         },
         drive);
   }

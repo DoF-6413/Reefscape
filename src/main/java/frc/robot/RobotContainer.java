@@ -226,23 +226,23 @@ public class RobotContainer {
         .x()
         .onTrue(
             PathfindingCommands.pathfindToCurrentTag(
-                m_driveSubsystem, m_pathPlanner, m_visionSubsystem));
+                m_driveSubsystem, m_visionSubsystem, m_pathPlanner));
 
     m_driverController
         .leftTrigger()
-        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 18));
+        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 18, ()-> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M));
 
     m_driverController
         .leftBumper()
-        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 17));
+        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 17, ()-> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M));
 
     m_driverController
         .rightTrigger()
-        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 19));
+        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 19, ()-> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M));
 
     m_driverController
         .rightBumper()
-        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 14));
+        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 14, ()-> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M));
   }
 
   /**
