@@ -23,7 +23,7 @@ public interface ModuleIO {
     /** Voltage that turn motor draws */
     public double turnAppliedVoltage = 0.0;
     /** Relative position of the wheel in radians (NEO encoder) */
-    public double turnPositionRad = 0.0; 
+    public double turnPositionRad = 0.0;
     /** Absolute position of the wheel in radians (CANcoder) */
     public double turnAbsolutePositionRad = 0.0;
     /** Turn velocity of the wheel in radians per sec (CANcoder) */

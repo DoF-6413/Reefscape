@@ -22,6 +22,7 @@ import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
 import frc.robot.Subsystems.Periscoper.Periscoper;
 import frc.robot.Subsystems.Periscoper.PeriscoperIO;
+import frc.robot.Subsystems.Periscoper.PeriscoperIOSim;
 import frc.robot.Subsystems.Periscoper.PeriscoperIOTalonFX;
 import frc.robot.Utils.PathPlanner;
 import frc.robot.Utils.PoseEstimator;
@@ -41,6 +42,9 @@ public class RobotContainer {
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
+  // Controllers
+  private final CommandXboxController m_auxController =
+      new CommandXboxController(OperatorConstants.AUX_CONTROLLER);
 
   // Autos
   private final LoggedDashboardChooser<Command> m_autoChooser =
@@ -71,7 +75,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 m_gyroSubsystem);
-        m_periscoperSubsystem = new Periscoper(new PeriscoperIOTalonFX());
+        m_periscoperSubsystem = new Periscoper(new PeriscoperIOSim());
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -83,7 +87,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
-        m_periscoperSubsystem = new Periscoper(new PeriscoperIO(){});
+        m_periscoperSubsystem = new Periscoper(new PeriscoperIO() {});
         break;
     }
 
@@ -131,6 +135,7 @@ public class RobotContainer {
 
     /** Driver Controls */
     this.driverControllerBindings();
+    this.auxControllerBindings();
   }
 
   // Driver Controls
@@ -190,6 +195,11 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
                 .withName("ZeroYaw"));
+  }
+
+  private void auxControllerBindings() {
+    m_periscoperSubsystem.setDefaultCommand(new InstantCommand(()->
+    m_periscoperSubsystem.setVoltage(m_auxController.getLeftY() * 12), m_periscoperSubsystem));
   }
 
   /**

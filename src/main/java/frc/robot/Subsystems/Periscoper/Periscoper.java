@@ -4,9 +4,8 @@
 
 package frc.robot.Subsystems.Periscoper;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Periscoper extends SubsystemBase {
 
@@ -15,11 +14,9 @@ public class Periscoper extends SubsystemBase {
 
   /** Creates a new Periscoper. */
   public Periscoper(PeriscoperIO periscoperIO) {
-    //initialize the Periscoper subsystem
+    // initialize the Periscoper subsystem
     System.out.println("[Init] Creating Periscoper");
     this.io = periscoperIO;
-
-
   }
 
   @Override
@@ -27,13 +24,16 @@ public class Periscoper extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Periscoper", inputs);
- 
   }
 
-  public void setVoltage(double volts){
+  public void setVoltage(double volts) {
     io.setVoltage(volts);
   }
-  public void setVelocity(double velocity){
+
+  public void setVelocity(double velocity) {
     io.setVelocity(velocity);
-}
+  }
+  public void setPosition(double pose) {
+    io.setPosition(pose);
+  }
 }
