@@ -35,19 +35,17 @@ public class PeriscoperIOSim implements PeriscoperIO {
 
   @Override
   public void updateInputs(PeriscoperIOInputs inputs) {
-
-    inputs.isConnected = new boolean[] {true, true};
-
-    // double voltage = m_PIDController.calculate(inputs.velocityRadPerSec, m_periscoperSP);
-
-    // this.setVoltage(voltage);
+    
+    double voltage = m_PIDController.calculate(inputs.heightMeters, m_periscoperSP);
+    this.setVoltage(voltage);
 
     m_periscoperSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
-
-    inputs.heightMeters = m_periscoperSim.getPositionMeters(); // add a +=
+    
+    inputs.isConnected = new boolean[] {true, true};
+    inputs.heightMeters = m_periscoperSim.getPositionMeters();
     inputs.velocityRadPerSec =
         m_periscoperSim.getVelocityMetersPerSecond() / PeriscoperConstants.DRUM_RADIUS_M;
-    // inputs.appliedVolts = new double[] {voltage, voltage};
+    inputs.appliedVolts = new double[] {voltage, voltage};
     inputs.currentDraw =
         new double[] {
           Math.abs(m_periscoperSim.getCurrentDrawAmps()),
@@ -62,12 +60,7 @@ public class PeriscoperIOSim implements PeriscoperIO {
   }
 
   @Override
-  public void setVelocity(double velocity) {
-    m_periscoperSP = velocity;
-  }
-  @Override
-  public void setPosition(double Pose) { 
-    m_PIDController.setSetpoint(Pose);
-    m_PIDController.atSetpoint();
+  public void setPosition(double heightMeters) {
+    m_periscoperSP = heightMeters;
   }
 }

@@ -198,8 +198,12 @@ public class RobotContainer {
   }
 
   private void auxControllerBindings() {
-    m_periscoperSubsystem.setDefaultCommand(new InstantCommand(()->
-    m_periscoperSubsystem.setVoltage(m_auxController.getLeftY() * 12), m_periscoperSubsystem));
+    m_periscoperSubsystem.setDefaultCommand(
+        new InstantCommand(
+            () -> m_periscoperSubsystem.setVoltage(m_auxController.getLeftY() * 12),
+            m_periscoperSubsystem));
+    m_auxController.a().onTrue(new InstantCommand(() -> m_periscoperSubsystem.setPosition(6)));
+    m_auxController.b().onTrue(new InstantCommand(() -> m_periscoperSubsystem.setPosition(12)));
   }
 
   /**

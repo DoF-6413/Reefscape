@@ -30,10 +30,7 @@ public class Periscoper extends SubsystemBase {
     io.setVoltage(volts);
   }
 
-  public void setVelocity(double velocity) {
-    io.setVelocity(velocity);
-  }
-  public void setPosition(double pose) {
-    io.setPosition(pose);
+  public void setPosition(double heightMeters) {
+    io.setPosition(heightMeters);
   }
 }

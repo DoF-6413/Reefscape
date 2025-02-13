@@ -3,6 +3,7 @@ package frc.robot.Subsystems.Periscoper;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -19,7 +20,7 @@ import frc.robot.Constants.RobotStateConstants;
 public class PeriscoperIOTalonFX implements PeriscoperIO {
   // Motor objects
   private final TalonFX[] m_periscoperMotors = new TalonFX[2];
-  private final VelocityVoltage[] m_motorControllers = new VelocityVoltage[2];
+  private final PositionVoltage[] m_motorControllers = new PositionVoltage[2];
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
 
   // Periscoper motor inputs
@@ -35,8 +36,8 @@ public class PeriscoperIOTalonFX implements PeriscoperIO {
     m_periscoperMotors[0] = new TalonFX(PeriscoperConstants.CANID_1, "Periscoper");
     m_periscoperMotors[1] = new TalonFX(PeriscoperConstants.CANID_2, "Periscoper");
 
-    m_motorControllers[0] = new VelocityVoltage(0);
-    m_motorControllers[1] = new VelocityVoltage(0);
+    m_motorControllers[0] = new PositionVoltage(0);
+    m_motorControllers[1] = new PositionVoltage(0);
 
     m_motorConfig
         .MotorOutput
@@ -120,14 +121,10 @@ public class PeriscoperIOTalonFX implements PeriscoperIO {
   }
 
   @Override
-  public void setVelocity(double velocityRadPerSec) {
+  public void setPosition(double heightMeters) {
+    var positionRotations = Units.radiansToRotations(heightMeters / PeriscoperConstants.DRUM_RADIUS_M);
     for (int i = 0; i < 2; i++) {
-      m_periscoperMotors[i].setControl(m_motorControllers[i].withVelocity(velocityRadPerSec));
+      m_periscoperMotors[i].setControl(m_motorControllers[i].withPosition(positionRotations));
     }
   }
-  @Override
-  public void setPosition(double Pose){
-    
-  }
-
 }
