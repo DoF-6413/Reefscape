@@ -217,16 +217,32 @@ public class RobotContainer {
                 () -> Rotation2d.fromRadians(-Math.PI / 2)));
 
     m_driverController
-        .rightBumper()
-        .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                m_driveSubsystem, m_pathPlanner, m_visionSubsystem));
-
-    m_driverController
         .a()
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
                 .withName("ZeroYaw"));
+
+    m_driverController
+        .x()
+        .onTrue(
+            PathfindingCommands.pathfindToCurrentTag(
+                m_driveSubsystem, m_pathPlanner, m_visionSubsystem));
+
+    m_driverController
+        .leftTrigger()
+        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 18));
+
+    m_driverController
+        .leftBumper()
+        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 17));
+
+    m_driverController
+        .rightTrigger()
+        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 19));
+
+    m_driverController
+        .rightBumper()
+        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 14));
   }
 
   /**

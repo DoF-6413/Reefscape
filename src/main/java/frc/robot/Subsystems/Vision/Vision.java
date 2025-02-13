@@ -69,7 +69,7 @@ public class Vision extends SubsystemBase {
       SmartDashboard.putNumber("AprilTagID", target.getFiducialId());
       if (target.getFiducialId() >= 1
           && target.getFiducialId() <= 22
-          && target.getPoseAmbiguity() >= 0.0
+          && target.getPoseAmbiguity() >= 1e-6
           && target.getPoseAmbiguity() <= 0.2) {
         var estimatedPose = m_photonPoseEstimators[i].update(result);
         if (estimatedPose.isEmpty()) continue;

@@ -9,14 +9,19 @@ import edu.wpi.first.math.util.Units;
 
 public final class DriveConstants {
   // REAL CONSTANTS
+  /**
+   * Proportion of error from Drive relative encoder readings to actual distance travelled by the
+   * wheel due to the bolts holding down the tread
+   */
+  public static final double WHEEL_RADIUS_ERROR_COEFF = 1 - 0.050793;
   /** Radius of the wheel in meters */
-  public static final double WHEEL_RADIUS_M = Units.inchesToMeters(2);
+  public static final double WHEEL_RADIUS_M = Units.inchesToMeters(2) * WHEEL_RADIUS_ERROR_COEFF;
   /** Side length of the robot in meters */
   public static final double TRACK_WIDTH_M = Units.inchesToMeters(29);
   /** Radius of the robot (diagonal) in meters */
   public static final double DRIVETRAIN_RADIUS_M = TRACK_WIDTH_M / 2 * Math.sqrt(2);
   /** Gear Ratio for MK4i L3 Krakens */
-  public static final double DRIVE_GEAR_RATIO = 6.12 * 1.050793;
+  public static final double DRIVE_GEAR_RATIO = 6.12;
   /** Gear Ratio for MK4i Neos */
   public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
 
