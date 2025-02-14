@@ -79,6 +79,7 @@ public final class Constants {
     public static final int DRIVER_CONTROLLER = 0;
     public static final int AUX_CONTROLLER = 1;
   }
+  
   /** Heading Controller */
   public static class HeadingControllerConstants {
     public static final double KP = 0.1;
@@ -102,5 +103,7 @@ public final class Constants {
      */
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
         new PathConstraints(3, 3, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
+    /** Default distnace away from an AprilTag the robot should be when Pathfinding to it */
+    public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(8);
   }
 }
