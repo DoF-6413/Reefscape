@@ -20,15 +20,33 @@ public class VisionIOPhotonVision implements VisionIO {
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
-    var allResults = m_camera.getAllUnreadResults();
-    inputs.pipelineResult =
-        allResults.isEmpty() ? m_prevResult : allResults.get(allResults.size() - 1);
-    m_prevResult = inputs.pipelineResult;
-    inputs.hasTargets = inputs.pipelineResult.hasTargets();
-    if (inputs.pipelineResult.hasTargets()) {
-      inputs.target = inputs.pipelineResult.getBestTarget();
-      inputs.fiducialID = inputs.target.getFiducialId();
-      inputs.poseAmbiguity = inputs.target.getPoseAmbiguity();
+    // var allResults = m_camera.getAllUnreadResults();
+    // inputs.pipelineResult =
+    //     allResults.isEmpty() ? m_prevResult : allResults.get(allResults.size() - 1);
+    // m_prevResult = inputs.pipelineResult;
+    // inputs.hasTargets = inputs.pipelineResult.hasTargets();
+    // if (inputs.pipelineResult.hasTargets()) {
+    //   inputs.target = inputs.pipelineResult.getBestTarget();
+    //   inputs.fiducialID = inputs.target.getFiducialId();
+    //   inputs.poseAmbiguity = inputs.target.getPoseAmbiguity();
+    // }
+
+    // Update logger with ALL unread results rather than just the latest (one as seen above) // TODO: Test (can be done in sim :D)
+    for (var result : m_camera.getAllUnreadResults()) {
+      if (!result.hasTargets()) continue; // Go to next iteration if no AprilTag seen
+      inputs.pipelineResult = result;
+      inputs.hasTargets = inputs.pipelineResult.hasTargets();
+      if (inputs.hasTargets) {
+        // Update values with best target seen
+        inputs.target = inputs.pipelineResult.getBestTarget();
+        inputs.fiducialID = inputs.target.getFiducialId();
+        inputs.poseAmbiguity = inputs.target.getPoseAmbiguity();
+      } else {
+        // Update values to default if no AprilTag is seen
+        inputs.target = null;
+        inputs.fiducialID = 0;
+        inputs.poseAmbiguity = 0.0;
+      }
     }
   }
 }

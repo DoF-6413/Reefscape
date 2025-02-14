@@ -19,25 +19,30 @@ public class VisionIOSim extends VisionIOPhotonVision {
     super(index);
     System.out.println("[Init] Creating VisionIOSim " + VisionConstants.CAMERA_NAMES[index]);
 
+    // Initilize simulated camera
     var camProp = new SimCameraProperties();
-    camProp.setAvgLatencyMs(20);
-    camProp.setCalibration(1280, 720, Rotation2d.fromDegrees(90));
-    camProp.setFPS(40);
-    camProp.setCalibError(0, 0); // TODO: update w/ real values from real robot
+    camProp.setAvgLatencyMs(VisionConstants.AVERAGE_LATENCY_MS);
+    camProp.setCalibration(VisionConstants.CAMERA_RESOLUTION_WIDTH_PX, VisionConstants.CAMERA_RESOLUTION_HEIGHT_PX, VisionConstant.CAMERA_FOV);
+    camProp.setFPS(VisionConstants.AVERAGE_FPS);
+    camProp.setCalibError(VisionConstants.AVERAGE_ERROR_PX, VisionConstants.ERROR_STDDEV_PX);
     m_cameraSim = new PhotonCameraSim(super.m_camera, camProp);
 
+    // Initilze Vision system simulation
     m_sim = new VisionSystemSim(VisionConstants.CAMERA_NAMES[index]);
     m_sim.addAprilTags(VisionConstants.APRILTAG_FIELD_LAYOUT);
     m_sim.addCamera(m_cameraSim, VisionConstants.CAMERA_ROBOT_OFFSETS[index]);
 
+    // Get current position from Pose Estimator
     m_currentPose = currentPose;
 
-    m_cameraSim.enableProcessedStream(true);
-    m_cameraSim.enableDrawWireframe(true);
+    // Enable simulated camera video streams on NetworkTables. Can be accessed through SmarthDashboard
+    m_cameraSim.enableProcessedStream(VisionConstants.ENABLE_SIM_CAMERA_STREAM);
+    m_cameraSim.enableDrawWireframe(VisionConstants.ENABLE_SIM_CAMERA_STREAM);
   }
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
+    // Update simulated Vision system with current robot pose and update logged inputs
     m_sim.update(m_currentPose.get());
     super.updateInputs(inputs);
   }

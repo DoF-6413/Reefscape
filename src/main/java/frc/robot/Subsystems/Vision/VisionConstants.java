@@ -5,6 +5,7 @@ package frc.robot.Subsystems.Vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -52,4 +53,15 @@ public class VisionConstants {
           AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getTags(),
           AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getFieldLength(),
           AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getFieldWidth());
+
+  // SIM CONSTANTS
+  // TODO: add comments
+  public static final int CAMERA_RESOLUTION_WIDTH_PX = 1280;
+  public static final int CAMERA_RESOLUTION_HEIGHT_PX = 720;
+  public static final Rotation2d CAMERA_FOV = Rotation2d.fromDegrees(90);
+  public static final int AVERAGE_FPS = 40;
+  public static final int AVERAGE_LATENCY_MS = 20;
+  public static final double AVERAGE_ERROR_PX = 0.0; // TODO: Update with real value from camera calibration
+  public static final double ERROR_STDDEV_PX = 0.0; // TODO: Update with real value from camera calibration
+  public static final boolean ENABLE_SIM_CAMERA_STREAM = true;
 }
