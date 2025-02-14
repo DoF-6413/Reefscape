@@ -26,33 +26,30 @@ public class VisionConstants {
     }
   }
 
-  // Photon Camera names
+  /** Names of cameras on PhotonVision and NetworkTables */
   public static final String[] CAMERA_NAMES = {"Front", "Back"};
 
-  /** Offsets the back left camera's position to the center of the robot */
+  /** 3d offset of the center of the robot to the Front camera */
   private static final Transform3d FRONT_CAMERA_ROBOT_OFFSET =
       new Transform3d(
           new Translation3d(Units.inchesToMeters(13.5), 0, Units.inchesToMeters(3.5)),
           new Rotation3d(0, 0, 0));
 
-  /** Offsets the back right camera's position to the center of the robot */
+  /** 3d offset of the center of the robot to the Back camera */
   private static final Transform3d BACK_CAMERA_ROBOT_OFFSET =
       new Transform3d(
           new Translation3d(Units.inchesToMeters(-13.5), 0, Units.inchesToMeters(3.5)),
           new Rotation3d(0, Units.degreesToRadians(35), Math.PI));
 
-  /** Transformation of both camera locations from the center of the robot. */
+  /** Array of 3d transformations from the center of the robot to each camera location */
   public static final Transform3d[] CAMERA_ROBOT_OFFSETS = {
     FRONT_CAMERA_ROBOT_OFFSET, BACK_CAMERA_ROBOT_OFFSET
   };
 
-  /** Field setup with the locations of the AprilTags loaded from WPILib JSON files */
+  /** 3d field setup with the locations of the AprilTags loaded from WPILib JSON files */
   public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
       new AprilTagFieldLayout(
           AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getTags(),
           AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getFieldLength(),
           AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getFieldWidth());
-
-  /** Default distnace away from an AprilTag the robot should be when Pathfinding to it */
-  public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(8);
 }
