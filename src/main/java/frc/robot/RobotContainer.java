@@ -15,6 +15,7 @@ import frc.robot.Commands.TeleopCommands.DriveCommands;
 import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotStateConstants;
+import frc.robot.Constants.PathfindingConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
@@ -235,7 +236,7 @@ public class RobotContainer {
                 m_driveSubsystem,
                 m_pathPlanner,
                 () -> 18,
-                () -> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                () -> PathfindingConstants.DEFAULT_APRILTAG_DISTANCE_M,
                 () -> !m_driverController.leftTrigger().getAsBoolean()));
 
     m_driverController
@@ -245,7 +246,7 @@ public class RobotContainer {
                 m_driveSubsystem,
                 m_pathPlanner,
                 () -> 17,
-                () -> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                () -> PathfindingConstants.DEFAULT_APRILTAG_DISTANCE_M,
                 () -> !m_driverController.leftBumper().getAsBoolean()));
 
     m_driverController
@@ -255,7 +256,7 @@ public class RobotContainer {
                 m_driveSubsystem,
                 m_pathPlanner,
                 () -> 19,
-                () -> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                () -> PathfindingConstants.DEFAULT_APRILTAG_DISTANCE_M,
                 () -> !m_driverController.rightTrigger().getAsBoolean()));
 
     m_driverController
@@ -265,7 +266,7 @@ public class RobotContainer {
                 m_driveSubsystem,
                 m_pathPlanner,
                 () -> 14,
-                () -> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                () -> PathfindingConstants.DEFAULT_APRILTAG_DISTANCE_M,
                 () -> !m_driverController.rightBumper().getAsBoolean()));
   }
 
