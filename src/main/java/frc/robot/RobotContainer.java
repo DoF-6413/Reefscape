@@ -230,19 +230,43 @@ public class RobotContainer {
 
     m_driverController
         .leftTrigger()
-        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 18, ()-> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M));
+        .onTrue(
+            PathfindingCommands.pathfindToAprilTag(
+                m_driveSubsystem,
+                m_pathPlanner,
+                () -> 18,
+                () -> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                () -> !m_driverController.leftTrigger().getAsBoolean()));
 
     m_driverController
         .leftBumper()
-        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 17, ()-> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M));
+        .onTrue(
+            PathfindingCommands.pathfindToAprilTag(
+                m_driveSubsystem,
+                m_pathPlanner,
+                () -> 17,
+                () -> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                () -> !m_driverController.leftBumper().getAsBoolean()));
 
     m_driverController
         .rightTrigger()
-        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 19, ()-> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M));
+        .onTrue(
+            PathfindingCommands.pathfindToAprilTag(
+                m_driveSubsystem,
+                m_pathPlanner,
+                () -> 19,
+                () -> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                () -> !m_driverController.rightTrigger().getAsBoolean()));
 
     m_driverController
         .rightBumper()
-        .onTrue(PathfindingCommands.pathfindToAprilTag(m_driveSubsystem, m_pathPlanner, () -> 14, ()-> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M));
+        .onTrue(
+            PathfindingCommands.pathfindToAprilTag(
+                m_driveSubsystem,
+                m_pathPlanner,
+                () -> 14,
+                () -> VisionConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                () -> !m_driverController.rightBumper().getAsBoolean()));
   }
 
   /**

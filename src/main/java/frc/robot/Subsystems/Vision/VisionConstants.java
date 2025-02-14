@@ -10,7 +10,10 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
-/** Constant values for the Vision subsystem. Index 0 refers to the Front camera (scoring side) and index 1 refers to the Back camera (intake side) */
+/**
+ * Constant values for the Vision subsystem. Index 0 refers to the Front camera (scoring side) and
+ * index 1 refers to the Back camera (intake side)
+ */
 public class VisionConstants {
   public enum CAMERA {
     FRONT(0),

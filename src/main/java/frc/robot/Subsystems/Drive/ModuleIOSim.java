@@ -55,9 +55,9 @@ public class ModuleIOSim implements ModuleIO {
     // Initilize PID FF controllers
     m_driveController =
         new PIDController(
-            DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD);
+            DriveConstants.DRIVE_KP_SIM, DriveConstants.DRIVE_KI_SIM, DriveConstants.DRIVE_KD_SIM);
     m_driveFeedForward =
-        new SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV);
+        new SimpleMotorFeedforward(DriveConstants.DRIVE_KS_SIM, DriveConstants.DRIVE_KV_SIM);
   }
 
   @Override

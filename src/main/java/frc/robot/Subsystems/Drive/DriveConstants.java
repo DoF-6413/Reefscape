@@ -19,7 +19,7 @@ public final class DriveConstants {
   /** Side length of the robot in meters */
   public static final double TRACK_WIDTH_M = Units.inchesToMeters(29);
   /** Radius of the robot (diagonal) in meters */
-  public static final double DRIVETRAIN_RADIUS_M = TRACK_WIDTH_M / 2 * Math.sqrt(2);
+  public static final double DRIVETRAIN_RADIUS_M = Math.hypot(TRACK_WIDTH_M / 2, TRACK_WIDTH_M / 2);
   /** Gear Ratio for MK4i L3 Krakens */
   public static final double DRIVE_GEAR_RATIO = 6.12;
   /** Gear Ratio for MK4i Neos */
@@ -40,7 +40,6 @@ public final class DriveConstants {
   public static double DRIVE_KS = 0.123;
   /** KV represents the voltage used every second per meter */
   public static double DRIVE_KV = 0.1;
-
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */
@@ -72,11 +71,20 @@ public final class DriveConstants {
   public static final double DEADBAND = 0.1;
 
   // SIM CONSTANTS
-  // TODO: Update
-
+  /** Moment of Inertia value for Drive motor - Module wheel system in kilograms * meters squared */
   public static final double DRIVE_MOI_KG_M2 = 0.0003125;
-
+  /** Moment of Inertia value for Turn motor - Module wheel system in kilograms * meters squared */
   public static final double TURN_MOI_KG_M2 = 0.0000158025413;
+  /** KP value for the simulated Drive motor as the simulation conditions are ideal and static */
+  public static double DRIVE_KP_SIM = 0.01;
+  /** KI value for the simulated Drive motor as the simulation conditions are ideal and static */
+  public static double DRIVE_KI_SIM = 0.0;
+  /** KD value for the simulated Drive motor as the simulation conditions are ideal and static */
+  public static double DRIVE_KD_SIM = 0.0001;
+  /** KS value for the simulated Drive motor as the simulation conditions are ideal and static */
+  public static double DRIVE_KS_SIM = 0.123;
+  /** KV value for the simulated Drive motor as the simulation conditions are ideal and static */
+  public static double DRIVE_KV_SIM = 0.1;
 
   /**
    * Translation 2d assumes that the robot front facing is in the positive x direction and the robot

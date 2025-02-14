@@ -85,7 +85,7 @@ public final class Constants {
     public static final double KD = 0.1;
   }
 
-  /** Constants for PathPlanner configurations and PathFinding */
+  /** Constants for PathPlanner configurations and Pathfinding */
   public final class PathPlannerConstants {
     /* Configuration */
     // PID
@@ -96,9 +96,9 @@ public final class Constants {
     /** Coefficient of friction between wheels and the carpet */
     public static final double WHEEL_FRICTION_COEFF = 0.7;
 
-    /* PathFinding */
+    /* Pathfinding */
     /**
-     * Max translational and rotational speed and acceleration used for PathPlanner's PathFinding
+     * Max translational and rotational speed and acceleration used for PathPlanner's Pathfinding
      */
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
         new PathConstraints(3, 3, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
