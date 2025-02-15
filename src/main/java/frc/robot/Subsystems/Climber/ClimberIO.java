@@ -12,17 +12,17 @@ public interface ClimberIO {
     @AutoLog
     public static class ClimberIOInputs {
         //Voltage that climb motor draws
-        public double climberAppliedVoltage = 0.0;
+        public double appliedVoltage = 0.0;
         //Position of the wheel in radians
-        public double climberPositionRad = 0.0;
+        public double positionRad = 0.0;
         //Velocity of the wheel in radians per sec
-        public double climberVelocityRadPerSec = 0.0;
+        public double velocityRadPerSec = 0.0;
         //Current drawn by the motor in amps
-        public double climberCurrentAmps = 0.0;
+        public double currentAmps = 0.0;
         //Temperature of the motor in celsius
-        public double climberTempCelsius = 0.0;
+        public double tempCelsius = 0.0;
         //If a signal is being recieved from the Climb motor
-        public boolean climberIsConnected = false;
+        public boolean isConnected = false;
     }
 
    /**
@@ -37,14 +37,14 @@ public interface ClimberIO {
    *
    * @param volts A value between -12 (full reverse) to 12 (full forward)
    */
-  public default void setClimberVoltage(double volts) {}
+  public default void setVoltage(double volts) {}
 
   /**
    * Sets the idle mode for the Climb motor
    *
    * @param enable Sets break mode on true, coast on false
    */
-  public default void setClimberBrakeMode(boolean enable) {}
+  public default void setBrakeMode(boolean enable) {}
 
    /**
    * Sets the velocity of the Climb motor using the closed loop controller built into the TalonFX
@@ -52,8 +52,17 @@ public interface ClimberIO {
    *
    * @param velocityRadPerSec Velocity to set Climb motor to in radians per second
    */
-  public default void setClimberVelocity(double velocityRadPerSec) {}
+  public default void setVelocity(double velocityRadPerSec) {}
 
+     /**
+   * Sets the position of the Climb motor using the closed loop controller built into the TalonFX
+   * speed controller
+   *
+   * @param Position to set Climb motor to in radians per second
+   */
+  public default void setPosition(double Position) {}
+
+  public default void setPID(double kP, double kI, double kD) {}
   
 }
     

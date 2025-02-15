@@ -45,12 +45,9 @@ public class ClimberIOTalonFX implements ClimberIO {
 
         m_climbConfig
             .Slot0
-            .withKP(ClimberConstants.CLIMB_KP)
-            .withKI(ClimberConstants.CLIMB_KI)
-            .withKD(ClimberConstants.CLIMB_KD)
-            .withKS(ClimberConstants.CLIMB_KS)
-            .withKV(ClimberConstants.CLIMB_KV)
-            .withKG(ClimberConstants.CLIMB_KG);
+            .withKP(ClimberConstants.KP)
+            .withKI(ClimberConstants.KI)
+            .withKD(ClimberConstants.KD);
 
         m_climbConfig.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(1.0 / ClimberConstants.UPDATE_FREQUENCY_HZ);
 
@@ -74,20 +71,20 @@ public class ClimberIOTalonFX implements ClimberIO {
 
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
-        inputs.climberIsConnected = BaseStatusSignal.refreshAll(m_climbPosRot, m_climbVelocityRotPerSec, m_climbAppliedVolts, m_climbCurrentAmps, m_climbTempCelsius).isOK();
-        inputs.climberAppliedVoltage = m_climbAppliedVolts.getValueAsDouble();
-        inputs.climberCurrentAmps = m_climbCurrentAmps.getValueAsDouble();
-        inputs.climberTempCelsius = m_climbTempCelsius.getValueAsDouble();
-        inputs.climberVelocityRadPerSec = Units.rotationsToRadians(m_climbVelocityRotPerSec.getValueAsDouble()) * ClimberConstants.GEAR_RATIO;
+        inputs.isConnected = BaseStatusSignal.refreshAll(m_climbPosRot, m_climbVelocityRotPerSec, m_climbAppliedVolts, m_climbCurrentAmps, m_climbTempCelsius).isOK();
+        inputs.appliedVoltage = m_climbAppliedVolts.getValueAsDouble();
+        inputs.currentAmps = m_climbCurrentAmps.getValueAsDouble();
+        inputs.tempCelsius = m_climbTempCelsius.getValueAsDouble();
+        inputs.velocityRadPerSec = Units.rotationsToRadians(m_climbVelocityRotPerSec.getValueAsDouble()) * ClimberConstants.GEAR_RATIO;
     }
 
     @Override
-    public void setClimberVoltage(double volts) {
+    public void setVoltage(double volts) {
         m_climbTalonFX.setVoltage(MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
     }
 
     @Override
-    public void setClimberVelocity(double velocityRadPerSec) {
+    public void setVelocity(double velocityRadPerSec) {
         m_climbTalonFX.setControl(m_climbController.withVelocity(velocityRadPerSec));
     }
 }
