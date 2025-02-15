@@ -19,16 +19,14 @@ public class ClimberIOSim implements ClimberIO {
     m_climberSim =
         new SingleJointedArmSim(
             LinearSystemId.createSingleJointedArmSystem(
-                DCMotor.getKrakenX60(1),
-                ClimberConstants.MOI_KG_M2,
-                ClimberConstants.GEAR_RATIO),
+                DCMotor.getKrakenX60(1), ClimberConstants.MOI_KG_M2, ClimberConstants.GEAR_RATIO),
             DCMotor.getKrakenX60(1),
             ClimberConstants.GEAR_RATIO,
             ClimberConstants.LENGHT_M,
             ClimberConstants.CLIMBER_MIN_ANGLE_RAD,
             ClimberConstants.CLIMBER_MAX_ANGLE_RAD,
             false,
-            ClimberConstants.CLIMBER_MIN_ANGLE_RAD);
+            0);
 
     m_PIDController =
         new PIDController(ClimberConstants.KP, ClimberConstants.KI, ClimberConstants.KD);
@@ -59,6 +57,7 @@ public class ClimberIOSim implements ClimberIO {
   public void setPosition(double position) {
     m_setPoint = position;
   }
+
   @Override
   public void setPID(double kP, double kI, double kD) {
     m_PIDController.setPID(kP, kI, kD);

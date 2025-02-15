@@ -15,6 +15,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Climber.Climber;
 import frc.robot.Subsystems.Climber.ClimberIO;
+import frc.robot.Subsystems.Climber.ClimberIOSim;
 import frc.robot.Subsystems.Climber.ClimberIOTalonFX;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.ModuleIO;
@@ -25,9 +26,6 @@ import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
 import frc.robot.Utils.PathPlanner;
 import frc.robot.Utils.PoseEstimator;
-
-import java.net.FileNameMap;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -74,7 +72,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 m_gyroSubsystem);
-        m_climberSubsystem = new Climber(new ClimberIOTalonFX());
+        m_climberSubsystem = new Climber(new ClimberIOSim());
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -86,7 +84,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
-        m_climberSubsystem = new Climber(new ClimberIO(){});
+        m_climberSubsystem = new Climber(new ClimberIO() {});
         break;
     }
 
@@ -193,6 +191,10 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
                 .withName("ZeroYaw"));
+
+    m_driverController
+        .y()
+        .onTrue(new InstantCommand(() -> m_climberSubsystem.setPosition(.5), m_climberSubsystem));
   }
 
   /**

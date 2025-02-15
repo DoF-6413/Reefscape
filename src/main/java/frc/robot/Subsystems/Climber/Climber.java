@@ -1,9 +1,8 @@
 package frc.robot.Subsystems.Climber;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
@@ -12,7 +11,7 @@ public class Climber extends SubsystemBase {
 
   /** Creates a new Climber. */
   public Climber(ClimberIO ClimberIO) {
-    //initialize the Climber subsystem
+    // initialize the Climber subsystem
     System.out.println("[Init] Creating Climber");
     this.io = ClimberIO;
 
@@ -20,7 +19,6 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber("PIDFF/climber/KP", ClimberConstants.KP);
     SmartDashboard.putNumber("PIDFF/climber/KI", ClimberConstants.KI);
     SmartDashboard.putNumber("PIDFF/climber/KD", ClimberConstants.KD);
-
   }
 
   @Override
@@ -33,13 +31,15 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public void setVoltage(double volts){
+  public void setVoltage(double volts) {
     io.setVoltage(volts);
   }
-  public void setVelocity(double velocity){
+
+  public void setVelocity(double velocity) {
     io.setVelocity(velocity);
   }
-  public void setPosition(double position){
+
+  public void setPosition(double position) {
     io.setPosition(position);
   }
 
@@ -49,20 +49,14 @@ public class Climber extends SubsystemBase {
   }
 
   private void updateClimberPID() {
-    if (ClimberConstants.KP
-            != SmartDashboard.getNumber("PIDFF/Climber/KP", ClimberConstants.KP)
-        || ClimberConstants.KI
-            != SmartDashboard.getNumber("PIDFF/Climber/KI", ClimberConstants.KI)
+    if (ClimberConstants.KP != SmartDashboard.getNumber("PIDFF/Climber/KP", ClimberConstants.KP)
+        || ClimberConstants.KI != SmartDashboard.getNumber("PIDFF/Climber/KI", ClimberConstants.KI)
         || ClimberConstants.KD
             != SmartDashboard.getNumber("PIDFF/Climber/KD", ClimberConstants.KD)) {
-      ClimberConstants.KP =
-          SmartDashboard.getNumber("PIDFF/Climber/KP", ClimberConstants.KP);
-      ClimberConstants.KI =
-          SmartDashboard.getNumber("PIDFF/Climber/KI", ClimberConstants.KI);
-      ClimberConstants.KD =
-          SmartDashboard.getNumber("PIDFF/Climber/KD", ClimberConstants.KD);
+      ClimberConstants.KP = SmartDashboard.getNumber("PIDFF/Climber/KP", ClimberConstants.KP);
+      ClimberConstants.KI = SmartDashboard.getNumber("PIDFF/Climber/KI", ClimberConstants.KI);
+      ClimberConstants.KD = SmartDashboard.getNumber("PIDFF/Climber/KD", ClimberConstants.KD);
       this.setPID(ClimberConstants.KP, ClimberConstants.KI, ClimberConstants.KD);
     }
   }
-
 }

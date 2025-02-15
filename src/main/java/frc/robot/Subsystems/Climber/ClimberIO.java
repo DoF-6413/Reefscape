@@ -9,23 +9,23 @@ import org.littletonrobotics.junction.AutoLog;
 /** Add your docs here. */
 public interface ClimberIO {
 
-    @AutoLog
-    public static class ClimberIOInputs {
-        //Voltage that climb motor draws
-        public double appliedVoltage = 0.0;
-        //Position of the wheel in radians
-        public double positionRad = 0.0;
-        //Velocity of the wheel in radians per sec
-        public double velocityRadPerSec = 0.0;
-        //Current drawn by the motor in amps
-        public double currentAmps = 0.0;
-        //Temperature of the motor in celsius
-        public double tempCelsius = 0.0;
-        //If a signal is being recieved from the Climb motor
-        public boolean isConnected = false;
-    }
+  @AutoLog
+  public static class ClimberIOInputs {
+    // Voltage that climb motor draws
+    public double appliedVoltage = 0.0;
+    // Position of the wheel in radians
+    public double positionRad = 0.0;
+    // Velocity of the wheel in radians per sec
+    public double velocityRadPerSec = 0.0;
+    // Current drawn by the motor in amps
+    public double currentAmps = 0.0;
+    // Temperature of the motor in celsius
+    public double tempCelsius = 0.0;
+    // If a signal is being recieved from the Climb motor
+    public boolean isConnected = false;
+  }
 
-   /**
+  /**
    * Peridocially updates the logged inputs for the climb motor.
    *
    * @param inputs Inputs from the auto logger
@@ -46,7 +46,7 @@ public interface ClimberIO {
    */
   public default void setBrakeMode(boolean enable) {}
 
-   /**
+  /**
    * Sets the velocity of the Climb motor using the closed loop controller built into the TalonFX
    * speed controller
    *
@@ -54,7 +54,7 @@ public interface ClimberIO {
    */
   public default void setVelocity(double velocityRadPerSec) {}
 
-     /**
+  /**
    * Sets the position of the Climb motor using the closed loop controller built into the TalonFX
    * speed controller
    *
@@ -63,6 +63,4 @@ public interface ClimberIO {
   public default void setPosition(double Position) {}
 
   public default void setPID(double kP, double kI, double kD) {}
-  
 }
-    
