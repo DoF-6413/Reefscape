@@ -12,6 +12,16 @@ public class VisionIOSim extends VisionIOPhotonVision {
   private final PhotonCameraSim m_cameraSim;
   private Supplier<Pose2d> m_currentPose;
 
+  /**
+   * Constructs a new VisionIOSim instance
+   *
+   * <p>This creates a new VisionIO object that extends VisionIOPhotonVision. This is done
+   * because the simulated cameras also use the PhotonCamera objects, so by making this a child
+   * class the code for the PhotonCameras can be reused without needing to be redefined
+   *
+   * @param index Camera index
+   * @param currentPose Pose2d supplier of the robot's current position from Pose Estimator
+   */
   public VisionIOSim(int index, Supplier<Pose2d> currentPose) {
     super(index);
     System.out.println("[Init] Creating VisionIOSim " + VisionConstants.CAMERA_NAMES[index]);
