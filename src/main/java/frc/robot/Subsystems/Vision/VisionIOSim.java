@@ -1,10 +1,7 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 package frc.robot.Subsystems.Vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.Constants.FieldConstants;
 import java.util.function.Supplier;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
@@ -22,20 +19,24 @@ public class VisionIOSim extends VisionIOPhotonVision {
     // Initilize simulated camera
     var camProp = new SimCameraProperties();
     camProp.setAvgLatencyMs(VisionConstants.AVERAGE_LATENCY_MS);
-    camProp.setCalibration(VisionConstants.CAMERA_RESOLUTION_WIDTH_PX, VisionConstants.CAMERA_RESOLUTION_HEIGHT_PX, VisionConstant.CAMERA_FOV);
+    camProp.setCalibration(
+        VisionConstants.CAMERA_RESOLUTION_WIDTH_PX,
+        VisionConstants.CAMERA_RESOLUTION_HEIGHT_PX,
+        VisionConstants.CAMERA_FOV);
     camProp.setFPS(VisionConstants.AVERAGE_FPS);
     camProp.setCalibError(VisionConstants.AVERAGE_ERROR_PX, VisionConstants.ERROR_STDDEV_PX);
     m_cameraSim = new PhotonCameraSim(super.m_camera, camProp);
 
     // Initilze Vision system simulation
     m_sim = new VisionSystemSim(VisionConstants.CAMERA_NAMES[index]);
-    m_sim.addAprilTags(VisionConstants.APRILTAG_FIELD_LAYOUT);
+    m_sim.addAprilTags(FieldConstants.APRILTAG_FIELD_LAYOUT);
     m_sim.addCamera(m_cameraSim, VisionConstants.CAMERA_ROBOT_OFFSETS[index]);
 
     // Get current position from Pose Estimator
     m_currentPose = currentPose;
 
-    // Enable simulated camera video streams on NetworkTables. Can be accessed through SmarthDashboard
+    // Enable simulated camera video streams on NetworkTables. Can be accessed through
+    // SmartDashboard
     m_cameraSim.enableProcessedStream(VisionConstants.ENABLE_SIM_CAMERA_STREAM);
     m_cameraSim.enableDrawWireframe(VisionConstants.ENABLE_SIM_CAMERA_STREAM);
   }

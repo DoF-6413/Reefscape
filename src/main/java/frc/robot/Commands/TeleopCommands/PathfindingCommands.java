@@ -6,6 +6,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
 import frc.robot.Subsystems.Vision.Vision;
@@ -23,15 +24,17 @@ public class PathfindingCommands {
    * move again.
    *
    * @param drive Drivetrain subsystem
+   * @param vision Vision subsystem
    * @param pathplanner PathPlanner for its Pathfinding utility to generate a trajectory and run
    *     robot to follow it
-   * @param vision Vision subsystem
+   * @param stopTrigger Boolean Supplier to stop the scheduled Pathfinding command
    */
-  public static Command pathfindToCurrentTag(Drive drive, Vision vision, PathPlanner pathplanner) {
+  public static Command pathfindToCurrentTag(
+      Drive drive, Vision vision, PathPlanner pathplanner, BooleanSupplier stopTrigger) {
     return Commands.run(
         () -> {
           var goalPose =
-              VisionConstants.APRILTAG_FIELD_LAYOUT.getTagPose(
+              FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(
                   vision.getTagID(VisionConstants.CAMERA.FRONT.CAMERA_INDEX));
 
           if (goalPose.isEmpty()) {
@@ -49,7 +52,7 @@ public class PathfindingCommands {
                             * goalPose2d.getRotation().getSin(),
                     goalPose2d.getRotation().plus(Rotation2d.k180deg));
 
-            pathplanner.pathFindToPose(targetPose).schedule();
+            pathplanner.pathfindToPose(targetPose).until(stopTrigger).schedule();
           }
         },
         drive);
@@ -57,10 +60,13 @@ public class PathfindingCommands {
 
   /**
    * Generates a trajectory for the robot to follow to the AprilTag corresponding to the ID inputed
+   * with an additional distance translation
    *
    * @param drive Drivetrain subsystem
    * @param pathplanner PathPlanner for its Pathfinding utility
    * @param tagID AprilTag ID of the desired AprilTag to align to
+   * @param distanceFromTagMeters Distance in front of the AprilTag for the robot to end up
+   * @param stopTrigger Boolean Supplier to stop the scheduled Pathfinding command
    */
   public static Command pathfindToAprilTag(
       Drive drive,
@@ -71,7 +77,7 @@ public class PathfindingCommands {
     return Commands.run(
         () -> {
           var goalPose =
-              VisionConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tagID.getAsInt()).get().toPose2d();
+              FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tagID.getAsInt()).get().toPose2d();
 
           var targetPose =
               new Pose2d(
@@ -83,7 +89,7 @@ public class PathfindingCommands {
                           * goalPose.getRotation().getSin(),
                   goalPose.getRotation().plus(Rotation2d.k180deg));
 
-          pathplanner.pathFindToPose(targetPose).until(stopTrigger).schedule();
+          pathplanner.pathfindToPose(targetPose).until(stopTrigger).schedule();
         },
         drive);
   }

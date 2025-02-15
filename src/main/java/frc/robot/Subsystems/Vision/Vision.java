@@ -4,11 +4,15 @@
 
 package frc.robot.Subsystems.Vision;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.FieldConstants;
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -22,7 +26,9 @@ public class Vision extends SubsystemBase {
   private final VisionIOInputsAutoLogged[] m_inputs;
   private final VisionConsumer m_consumer;
   private final PhotonPoseEstimator[] m_photonPoseEstimators;
-  List<Pose2d> estimatedPoses = new LinkedList<>();
+  private List<Pose2d> estimatedPoses = new LinkedList<>();
+  private Matrix<N3, N1> stdDevs = VecBuilder.fill(0, 0, 0);
+  private double stdDevCoeff = 0.0;
 
   /**
    * Constructs a new Vision subsystem instance.
@@ -43,18 +49,17 @@ public class Vision extends SubsystemBase {
     m_inputs = new VisionIOInputsAutoLogged[m_io.length];
     m_photonPoseEstimators = new PhotonPoseEstimator[m_io.length];
 
-    // Initilize loggers and Vision pose estimators based on number of cameras
+    // Initilize loggers and Vision Pose Estimators based on number of cameras
     for (int i = 0; i < m_io.length; i++) {
       m_inputs[i] = new VisionIOInputsAutoLogged();
       m_photonPoseEstimators[i] =
           new PhotonPoseEstimator(
-              VisionConstants.APRILTAG_FIELD_LAYOUT,
+              FieldConstants.APRILTAG_FIELD_LAYOUT,
               PoseStrategy.LOWEST_AMBIGUITY,
               VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
     }
   }
 
-  // TODO: Take ambiguity of last 3 frames and average it to avoid false 0.0 ambiguity reports
   @Override
   public void periodic() {
     for (int i = 0; i < m_inputs.length; i++) {
@@ -62,36 +67,68 @@ public class Vision extends SubsystemBase {
       m_io[i].updateInputs(m_inputs[i]);
       Logger.processInputs("Vision/" + VisionConstants.CAMERA_NAMES[i], m_inputs[i]);
 
-      // Check results and add possible Vision measurements
-      var result = getPipelineResult(i);
-      if (!result.hasTargets()) continue; // Go to next iteration if no AprilTags seen
-      var target = result.getBestTarget();
+      // Check results and add available and unambiguous Vision measurements to list
+      var currentResult = getPipelineResult(i);
+      if (!currentResult.hasTargets())
+        continue; // Move to next camera update iteration if no AprilTags seen
+      var target = currentResult.getBestTarget();
       if (target.getFiducialId() >= 1
           && target.getFiducialId() <= 22
           && target.getPoseAmbiguity() >= 1e-6
           && target.getPoseAmbiguity() <= 0.2) {
-        var estimatedPose = m_photonPoseEstimators[i].update(result);
-        if (estimatedPose.isEmpty()) continue; // Go to next iteration if no position is estimated
+        var estimatedPose = m_photonPoseEstimators[i].update(currentResult);
+        if (estimatedPose.isEmpty())
+          continue; // Move to next camera update iteration if no position is estimated
         estimatedPoses.add(estimatedPose.get().estimatedPose.toPose2d());
+
+        // Calculate standard deviations for current pipeline results
+        double averageTagDistance = 0.0;
+        var allResults = m_io[i].getAllPipelineResults();
+        int tagCount = allResults.size();
+        if (allResults.size() == 0)
+          continue; // Move to next camera update iteration if no results present
+        for (PhotonPipelineResult result : allResults) {
+          if (!result.hasTargets()) continue; // Move to next result iteration if no AprilTags seen
+          averageTagDistance +=
+              Math.hypot(
+                  result.getBestTarget().getBestCameraToTarget().getX(),
+                  result.getBestTarget().getBestCameraToTarget().getY());
+        }
+        stdDevCoeff += (Math.pow(averageTagDistance, 2) / tagCount);
       }
     }
 
-    /* Add Vision measurments to Swerve Pose Estimator in Drive through the VisionConsumer */
-    if (estimatedPoses.size() == 0) return; // Stop here if no poses estimated
+    if (estimatedPoses.size() == 0) return; // Move to next periodic iteration if no poses estimated
 
-    // Log estimated poses, under "RealOutputs" tab rather than "AdvantageKit" for some reason
+    // Log estimated poses, under "RealOutputs" tab rather than "AdvantageKit" tab
     Logger.recordOutput(
         "Vision/EstimatedPoses", estimatedPoses.toArray(new Pose2d[estimatedPoses.size()]));
 
+    /* Add Vision measurments to Swerve Pose Estimator in Drive through the VisionConsumer */
     if (estimatedPoses.size() > 1) {
+      // Create standard deviation matrix with averaged coefficient and reset cooefficient for next
+      // periodic iteration
+      stdDevs =
+          VecBuilder.fill(
+              VisionConstants.LINEAR_STD_DEV_M * stdDevCoeff / m_inputs.length,
+              VisionConstants.LINEAR_STD_DEV_M * stdDevCoeff / m_inputs.length,
+              VisionConstants.ANGULAR_STD_DEV_RAD * stdDevCoeff / m_inputs.length);
+      stdDevCoeff = 0.0;
       // Average poses is both cameras see an AprilTag and clear pose list
       var averagePose =
           averageVisionPoses(estimatedPoses.toArray(new Pose2d[estimatedPoses.size()]));
-      m_consumer.accept(averagePose, Timer.getFPGATimestamp());
+      m_consumer.accept(averagePose, m_inputs[0].timestampSec, stdDevs);
       estimatedPoses.clear();
     } else {
+      // Create standard deviation matrix and reset cooefficient for next periodic iteration
+      stdDevs =
+          VecBuilder.fill(
+              VisionConstants.LINEAR_STD_DEV_M * stdDevCoeff,
+              VisionConstants.LINEAR_STD_DEV_M * stdDevCoeff,
+              VisionConstants.ANGULAR_STD_DEV_RAD * stdDevCoeff);
+      stdDevCoeff = 0.0;
       // Use pose generated from the camera that saw an AprilTag and clear pose list
-      m_consumer.accept(estimatedPoses.get(0), Timer.getFPGATimestamp());
+      m_consumer.accept(estimatedPoses.get(0), m_inputs[0].timestampSec, stdDevs);
       estimatedPoses.clear();
     }
   }
@@ -145,7 +182,8 @@ public class Vision extends SubsystemBase {
      *
      * @param visionRobotPose 2d pose calculated from AprilTag
      * @param timestampSec Timestamp when position was calculated in seconds
+     * @param visionStdDevs Standard deviation from the average calculation (distance & angle)
      */
-    public void accept(Pose2d visionRobotPose, double timestampSec);
+    public void accept(Pose2d visionRobotPose, double timestampSec, Matrix<N3, N1> visionStdDevs);
   }
 }

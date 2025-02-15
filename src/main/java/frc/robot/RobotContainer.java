@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -14,8 +13,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.TeleopCommands.DriveCommands;
 import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
-import frc.robot.Constants.PathfindingConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
@@ -134,7 +133,6 @@ public class RobotContainer {
 
     // Adds an "Auto" tab on ShuffleBoard
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
-    SmartDashboard.putNumber("Heading", 0);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -191,7 +189,7 @@ public class RobotContainer {
                 m_driveSubsystem,
                 () -> -m_driverController.getLeftY(),
                 () -> -m_driverController.getLeftX(),
-                () -> Rotation2d.fromRadians(SmartDashboard.getNumber("Heading", 0))));
+                () -> Rotation2d.fromRadians(0)));
     m_driverController
         .povLeft()
         .onTrue(
@@ -222,13 +220,17 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
                 .withName("ZeroYaw"));
-
+    /* Pathfinding */
+    // AprilTag currently seen
     m_driverController
         .x()
         .onTrue(
             PathfindingCommands.pathfindToCurrentTag(
-                m_driveSubsystem, m_visionSubsystem, m_pathPlanner));
-
+                m_driveSubsystem,
+                m_visionSubsystem,
+                m_pathPlanner,
+                m_driverController.x().negate()));
+    // AprilTag 18 - REEF
     m_driverController
         .leftTrigger()
         .onTrue(
@@ -236,9 +238,9 @@ public class RobotContainer {
                 m_driveSubsystem,
                 m_pathPlanner,
                 () -> 18,
-                () -> PathfindingConstants.DEFAULT_APRILTAG_DISTANCE_M,
-                () -> !m_driverController.leftTrigger().getAsBoolean()));
-
+                () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                m_driverController.leftTrigger().negate()));
+    // AprilTag 17 - REEF
     m_driverController
         .leftBumper()
         .onTrue(
@@ -246,9 +248,9 @@ public class RobotContainer {
                 m_driveSubsystem,
                 m_pathPlanner,
                 () -> 17,
-                () -> PathfindingConstants.DEFAULT_APRILTAG_DISTANCE_M,
-                () -> !m_driverController.leftBumper().getAsBoolean()));
-
+                () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                m_driverController.leftBumper().negate()));
+    // AprilTag 19 - REEF
     m_driverController
         .rightTrigger()
         .onTrue(
@@ -256,9 +258,9 @@ public class RobotContainer {
                 m_driveSubsystem,
                 m_pathPlanner,
                 () -> 19,
-                () -> PathfindingConstants.DEFAULT_APRILTAG_DISTANCE_M,
-                () -> !m_driverController.rightTrigger().getAsBoolean()));
-
+                () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                m_driverController.rightTrigger().negate()));
+    // AprilTag 14 - BARGE Net
     m_driverController
         .rightBumper()
         .onTrue(
@@ -266,8 +268,8 @@ public class RobotContainer {
                 m_driveSubsystem,
                 m_pathPlanner,
                 () -> 14,
-                () -> PathfindingConstants.DEFAULT_APRILTAG_DISTANCE_M,
-                () -> !m_driverController.rightBumper().getAsBoolean()));
+                () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                m_driverController.rightBumper().negate()));
   }
 
   /**

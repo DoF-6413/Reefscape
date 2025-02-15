@@ -1,7 +1,12 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.Subsystems.Drive;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,6 +15,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -112,15 +119,18 @@ public class Drive extends SubsystemBase {
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
+    // Update inputs of each Module
     for (int i = 0; i < 4; i++) {
       m_modules[i].periodic();
     }
 
+    // Update Pose Estimation based on Moduel Positions and robot rotation
     m_timestamp = Timer.getFPGATimestamp();
     m_swervePoseEstimator.updateWithTime(
         m_timestamp, this.getRotation(), this.getModulePositions());
     m_field.setRobotPose(this.getCurrentPose2d());
 
+    // Update PID and Feedforward gains through SmartDashboard
     if (SmartDashboard.getBoolean("PIDFF/Drive/EnableTuning", false)) {
       this.updateDrivePID();
       this.updateDriveFF();
@@ -129,7 +139,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the entire Drive Train to either brake or coast mode
+   * Sets the entire Drivetrain to either brake or coast mode
    *
    * @param enable True for brake, false for coast
    */
@@ -389,8 +399,9 @@ public class Drive extends SubsystemBase {
     m_swervePoseEstimator.resetPosition(this.getRotation(), this.getModulePositions(), pose);
   }
 
-  public void addVisionMeasurment(Pose2d estimatedPose, double timestamp) {
-    m_swervePoseEstimator.addVisionMeasurement(estimatedPose, timestamp);
+  public void addVisionMeasurment(
+      Pose2d estimatedPose, double timestamp, Matrix<N3, N1> visionStdDevs) {
+    m_swervePoseEstimator.addVisionMeasurement(estimatedPose, timestamp, visionStdDevs);
   }
 
   /**

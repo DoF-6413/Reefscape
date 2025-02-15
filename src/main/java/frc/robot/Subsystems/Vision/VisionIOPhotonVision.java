@@ -1,16 +1,21 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 package frc.robot.Subsystems.Vision;
 
+import java.util.List;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class VisionIOPhotonVision implements VisionIO {
-
   protected final PhotonCamera m_camera;
-  private PhotonPipelineResult m_prevResult = new PhotonPipelineResult();
 
+  /**
+   * Constructs a new VisionIOPhotonVision instance
+   *
+   * <p>This creates a new VisionIO object that uses a real Spinel OV9281 camera connected to a
+   * Raspberry Pi 5 running PhotonVision (2025.1.1). Index 0 corresponds to the Front camera and
+   * index 1 corresponds to the Back camera
+   *
+   * @param index Number corresponding to camera that is to be initilized (0 - Front, 1 - Back)
+   */
   public VisionIOPhotonVision(int index) {
     System.out.println(
         "[Init] Creating VisionIOPhotonVision " + VisionConstants.CAMERA_NAMES[index]);
@@ -20,27 +25,16 @@ public class VisionIOPhotonVision implements VisionIO {
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
-    // var allResults = m_camera.getAllUnreadResults();
-    // inputs.pipelineResult =
-    //     allResults.isEmpty() ? m_prevResult : allResults.get(allResults.size() - 1);
-    // m_prevResult = inputs.pipelineResult;
-    // inputs.hasTargets = inputs.pipelineResult.hasTargets();
-    // if (inputs.pipelineResult.hasTargets()) {
-    //   inputs.target = inputs.pipelineResult.getBestTarget();
-    //   inputs.fiducialID = inputs.target.getFiducialId();
-    //   inputs.poseAmbiguity = inputs.target.getPoseAmbiguity();
-    // }
-
-    // Update logger with ALL unread results rather than just the latest (one as seen above) // TODO: Test (can be done in sim :D)
+    // Update inputs with every results in queue
     for (var result : m_camera.getAllUnreadResults()) {
-      if (!result.hasTargets()) continue; // Go to next iteration if no AprilTag seen
       inputs.pipelineResult = result;
-      inputs.hasTargets = inputs.pipelineResult.hasTargets();
+      inputs.hasTargets = result.hasTargets();
+      inputs.timestampSec = result.getTimestampSeconds();
       if (inputs.hasTargets) {
         // Update values with best target seen
-        inputs.target = inputs.pipelineResult.getBestTarget();
-        inputs.fiducialID = inputs.target.getFiducialId();
-        inputs.poseAmbiguity = inputs.target.getPoseAmbiguity();
+        inputs.target = result.getBestTarget();
+        inputs.fiducialID = result.getBestTarget().getFiducialId();
+        inputs.poseAmbiguity = result.getBestTarget().getPoseAmbiguity();
       } else {
         // Update values to default if no AprilTag is seen
         inputs.target = null;
@@ -48,5 +42,10 @@ public class VisionIOPhotonVision implements VisionIO {
         inputs.poseAmbiguity = 0.0;
       }
     }
+  }
+
+  @Override
+  public List<PhotonPipelineResult> getAllPipelineResults() {
+    return m_camera.getAllUnreadResults();
   }
 }
