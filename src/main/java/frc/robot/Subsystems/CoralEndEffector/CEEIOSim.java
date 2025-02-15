@@ -4,7 +4,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants.RobotStateConstants;
 
@@ -33,9 +32,9 @@ public class CEEIOSim implements CEEIO {
     m_CEESim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
     inputs.isConnected = true;
-    inputs.positionRad = m_CEESim.getAngularVelocityRadPerSec() * RobotStateConstants.LOOP_PERIODIC_SEC; 
-    inputs.velocityRadPerSec =
-        m_CEESim.getAngularVelocityRadPerSec(); 
+    inputs.positionRad =
+        m_CEESim.getAngularVelocityRadPerSec() * RobotStateConstants.LOOP_PERIODIC_SEC;
+    inputs.velocityRadPerSec = m_CEESim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = m_CEESim.getInputVoltage();
     inputs.currentAmps = Math.abs(m_CEESim.getCurrentDrawAmps());
   }

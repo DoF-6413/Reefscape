@@ -72,7 +72,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 m_gyroSubsystem);
-        m_CEESubsystem = new CEE(new CEEIOSparkMax());
+        m_CEESubsystem = new CEE(new CEEIOSim());
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -84,7 +84,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
-        m_CEESubsystem = new CEE(new CEEIO(){});
+        m_CEESubsystem = new CEE(new CEEIO() {});
         break;
     }
 
@@ -191,6 +191,9 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
                 .withName("ZeroYaw"));
+    m_driverController
+        .y()
+        .onTrue(new InstantCommand(() -> m_CEESubsystem.setVoltage(12), m_CEESubsystem));
   }
 
   /**

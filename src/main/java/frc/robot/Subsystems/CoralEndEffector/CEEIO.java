@@ -8,8 +8,8 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface CEEIO {
 
-@AutoLog
-public static class CEEIOInputs {
+  @AutoLog
+  public static class CEEIOInputs {
     /** Voltage that CEE motor draws */
     public double appliedVoltage = 0.0;
     /** Position of the wheel in radians */
