@@ -18,7 +18,7 @@ public interface PeriscoperIO {
 
   public default void setVoltage(double volts) {}
 
-  public default void setPercentVelocity(double percent) {}
-
   public default void setPosition(double heightMeters) {}
+
+  public default void setPID(double kP, double kI, double kD) {}
 }

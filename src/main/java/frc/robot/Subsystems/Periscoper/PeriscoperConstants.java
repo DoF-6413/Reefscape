@@ -18,10 +18,10 @@ public class PeriscoperConstants {
   public static final int CANID_1 = 15;
   public static final int CANID_2 = 16;
   public static final int UPDATE_FREQUENCY_HZ = 50;
-  public static final double DRUM_RADIUS_M = Units.inchesToMeters(1);
-  public static final double KP = 1.0;
-  public static final double KI = 0.0;
-  public static final double KD = 0.0;
+  public static final double DRUM_RADIUS_M = Units.inchesToMeters(1.0);
+  public static double KP = 1.0;
+  public static double KI = 0.0;
+  public static double KD = 0.0;
   public static final double KS = 0.0;
   public static final double KV = 0.0;
   public static final double KG = 0.0;

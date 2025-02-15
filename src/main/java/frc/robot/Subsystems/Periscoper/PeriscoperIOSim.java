@@ -26,7 +26,7 @@ public class PeriscoperIOSim implements PeriscoperIO {
             DCMotor.getKrakenX60(2),
             PeriscoperConstants.MIN_HEIGHT_M,
             PeriscoperConstants.MAX_HEIGHT_M,
-            false,
+            true,
             0.0);
 
     m_PIDController =
@@ -42,9 +42,9 @@ public class PeriscoperIOSim implements PeriscoperIO {
     m_periscoperSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
     inputs.isConnected = new boolean[] {true, true};
-    inputs.heightMeters = m_periscoperSim.getPositionMeters();
-    inputs.velocityRadPerSec =
-        m_periscoperSim.getVelocityMetersPerSecond() / PeriscoperConstants.DRUM_RADIUS_M;
+    inputs.heightMeters = m_periscoperSim.getPositionMeters() / PeriscoperConstants.DRUM_RADIUS_M;
+    ;
+    inputs.velocityRadPerSec = m_periscoperSim.getVelocityMetersPerSecond();
     inputs.appliedVolts = new double[] {voltage, voltage};
     inputs.currentDraw =
         new double[] {
@@ -65,7 +65,7 @@ public class PeriscoperIOSim implements PeriscoperIO {
   }
 
   @Override
-  public void setPercentVelocity(double percent) {
-    m_periscoperSim.setInputVoltage(percent * RobotStateConstants.MAX_VOLTAGE);
+  public void setPID(double kP, double kI, double kD) {
+    m_PIDController.setPID(kP, kI, kD);
   }
 }
