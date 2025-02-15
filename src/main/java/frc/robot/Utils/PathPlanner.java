@@ -71,7 +71,7 @@ public class PathPlanner {
     // The goal end velocity of the robot when reaching the target pose
     if (targetPose.getX() > FieldConstants.FIELD_LENGTH
         || targetPose.getY() > FieldConstants.FIELD_WIDTH
-        || targetPose.getX() < 0  
+        || targetPose.getX() < 0
         || targetPose.getY() < 0) {
       return new PrintCommand(
           "Invalid Pose: "

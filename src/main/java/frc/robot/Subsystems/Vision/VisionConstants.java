@@ -62,9 +62,6 @@ public class VisionConstants {
   /** Standard deviations of pixel error */
   public static final double ERROR_STDDEV_PX =
       0.0; // TODO: Update with real value from camera calibration
-  /**
-   * Display simulated camera feed. Tanks performance a fair bit on STEM center laptops (TODO:
-   * verify and set to false if needed)
-   */
+  /** Display simulated camera feed. */
   public static final boolean ENABLE_SIM_CAMERA_STREAM = true;
 }

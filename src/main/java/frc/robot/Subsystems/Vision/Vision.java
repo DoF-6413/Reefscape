@@ -98,7 +98,8 @@ public class Vision extends SubsystemBase {
       }
     }
 
-    if (m_estimatedPoses.size() == 0) return; // Move to next periodic iteration if no poses estimated
+    if (m_estimatedPoses.size() == 0)
+      return; // Move to next periodic iteration if no poses estimated
 
     // Log estimated poses, under "RealOutputs" tab rather than "AdvantageKit" tab
     Logger.recordOutput(

@@ -59,8 +59,7 @@ public class DriveCommands {
           // Calculate angular velocity from right joystick input
           double omega = getOmega(angularVelocity.getAsDouble());
 
-          // Calculate speed for the entire chassis based on the linear and angular velocities
-          // calculated from the joysticks
+          /* Calculate speed for the entire chassis based on the linear and angular velocities calculated from the joysticks */
           ChassisSpeeds chassisSpeeds =
               new ChassisSpeeds(
                   linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
@@ -72,8 +71,7 @@ public class DriveCommands {
               RobotStateConstants.getAlliance().isPresent()
                   && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red;
 
-          // If on the red alliance, rotate speeds by 180 degrees so that straight out from the red
-          // driver station is forward
+          /* If on the red alliance, rotate speeds by 180 degrees so that straight out from the red driver station is forward */
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   chassisSpeeds,
@@ -107,8 +105,9 @@ public class DriveCommands {
           // Calculate angular velocity from right joystick input
           double omega = getOmega(angularVelocity.getAsDouble());
 
-          // Calculate speed for the entire chassis based on the linear and angular velocities
-          // calculated from the joysticks
+          /*
+           * Calculate speed for the entire chassis based on the linear and angular velocities calculated from the joysticks
+           */
           drive.runVelocity(
               new ChassisSpeeds(
                   linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
@@ -156,8 +155,9 @@ public class DriveCommands {
                   angleController.calculate(
                       drive.getRotation().getRadians(), headingSetpoint.get().getRadians());
 
-              // Calculate speed for the entire chassis based on the linear and angular velocities
-              // calculated from the joysticks
+              /*
+               * Calculate speed for the entire chassis based on the linear and angular velocities calculated from the joysticks
+               */
               ChassisSpeeds chassisSpeeds =
                   new ChassisSpeeds(
                       linearVelocity.getX() * DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
@@ -169,8 +169,7 @@ public class DriveCommands {
                   RobotStateConstants.getAlliance().isPresent()
                       && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red;
 
-              // If on the red alliance, rotate speeds by 180 degrees so that straight out from the
-              // red driver station is forward
+              /* If on the red alliance, rotate speeds by 180 degrees so that straight out from the red driver station is forward */
               drive.runVelocity(
                   ChassisSpeeds.fromFieldRelativeSpeeds(
                       chassisSpeeds,
