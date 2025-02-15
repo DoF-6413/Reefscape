@@ -15,9 +15,9 @@ public class VisionIOSim extends VisionIOPhotonVision {
   /**
    * Constructs a new VisionIOSim instance
    *
-   * <p>This creates a new VisionIO object that extends VisionIOPhotonVision. This is done
-   * because the simulated cameras also use the PhotonCamera objects, so by making this a child
-   * class the code for the PhotonCameras can be reused without needing to be redefined
+   * <p>This creates a new VisionIO object that extends VisionIOPhotonVision. This is done because
+   * the simulated cameras also use the PhotonCamera objects, so by making this a child class the
+   * code for the PhotonCameras can be reused without needing to be redefined
    *
    * @param index Camera index
    * @param currentPose Pose2d supplier of the robot's current position from Pose Estimator
