@@ -317,6 +317,17 @@ public class Drive extends SubsystemBase {
   }
 
   /**
+   * @return A double array containing the positions of the Drive motors in radians
+   */
+  public double[] getDrivePositionRad() {
+    double[] positions = new double[4];
+    for (int i = 0; i < 4; i++) {
+      positions[i] = m_modules[i].getPositionRad();
+    }
+    return positions;
+  }
+
+  /**
    * @return The current 2D position of the robot on the field
    */
   public Pose2d getCurrentPose2d() {

@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Commands.TeleopCommands.DriveCommands;
 import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
@@ -115,22 +114,13 @@ public class RobotContainer {
     m_autoChooser.addOption("Diagonal 180", new PathPlannerAuto("Diagonal 180"));
     m_autoChooser.addOption("Curve", new PathPlannerAuto("Curve"));
     m_autoChooser.addOption("Curve 180", new PathPlannerAuto("Curve 180"));
-    /* SysId Routines */
-    m_autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    m_autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    m_autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)",
-        m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    m_autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)",
-        m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    /* Characterization Routines */
     m_autoChooser.addOption(
         "Drive FeedForward Characterization",
         DriveCommands.feedforwardCharacterization(m_driveSubsystem));
+    m_autoChooser.addOption(
+        "Drive Wheel Radius Characterization",
+        DriveCommands.wheelRadiusCharacterization(m_driveSubsystem));
 
     // Adds an "Auto" tab on ShuffleBoard
     Shuffleboard.getTab("Auto").add(m_autoChooser.getSendableChooser());
