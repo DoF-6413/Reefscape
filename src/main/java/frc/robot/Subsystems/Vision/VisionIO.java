@@ -9,7 +9,7 @@ public interface VisionIO {
 
   @AutoLog
   public static class VisionIOInputs {
-    /** Measurments and other data from AprilTags if one is seen */
+    /** Measurements and other data from AprilTags if one is seen */
     public PhotonPipelineResult pipelineResult = new PhotonPipelineResult();
     /** If the camera sees an AprilTag */
     public boolean hasTargets = false;

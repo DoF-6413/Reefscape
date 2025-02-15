@@ -26,9 +26,9 @@ public class Vision extends SubsystemBase {
   private final VisionIOInputsAutoLogged[] m_inputs;
   private final VisionConsumer m_consumer;
   private final PhotonPoseEstimator[] m_photonPoseEstimators;
-  private List<Pose2d> estimatedPoses = new LinkedList<>();
-  private Matrix<N3, N1> stdDevs = VecBuilder.fill(0, 0, 0);
-  private double stdDevCoeff = 0.0;
+  private List<Pose2d> m_estimatedPoses = new LinkedList<>();
+  private Matrix<N3, N1> m_stdDevs = VecBuilder.fill(0, 0, 0);
+  private double m_stdDevCoeff = 0.0;
 
   /**
    * Constructs a new Vision subsystem instance.
@@ -74,12 +74,12 @@ public class Vision extends SubsystemBase {
       var target = currentResult.getBestTarget();
       if (target.getFiducialId() >= 1
           && target.getFiducialId() <= 22
-          && target.getPoseAmbiguity() >= 1e-6
+          && target.getPoseAmbiguity() > 0.0
           && target.getPoseAmbiguity() <= 0.2) {
         var estimatedPose = m_photonPoseEstimators[i].update(currentResult);
         if (estimatedPose.isEmpty())
           continue; // Move to next camera update iteration if no position is estimated
-        estimatedPoses.add(estimatedPose.get().estimatedPose.toPose2d());
+        m_estimatedPoses.add(estimatedPose.get().estimatedPose.toPose2d());
 
         // Calculate standard deviations for current pipeline results
         double averageTagDistance = 0.0;
@@ -94,42 +94,42 @@ public class Vision extends SubsystemBase {
                   result.getBestTarget().getBestCameraToTarget().getX(),
                   result.getBestTarget().getBestCameraToTarget().getY());
         }
-        stdDevCoeff += (Math.pow(averageTagDistance, 2) / tagCount);
+        m_stdDevCoeff += (Math.pow(averageTagDistance, 2) / tagCount);
       }
     }
 
-    if (estimatedPoses.size() == 0) return; // Move to next periodic iteration if no poses estimated
+    if (m_estimatedPoses.size() == 0) return; // Move to next periodic iteration if no poses estimated
 
     // Log estimated poses, under "RealOutputs" tab rather than "AdvantageKit" tab
     Logger.recordOutput(
-        "Vision/EstimatedPoses", estimatedPoses.toArray(new Pose2d[estimatedPoses.size()]));
+        "Vision/EstimatedPoses", m_estimatedPoses.toArray(new Pose2d[m_estimatedPoses.size()]));
 
-    /* Add Vision measurments to Swerve Pose Estimator in Drive through the VisionConsumer */
-    if (estimatedPoses.size() > 1) {
+    /* Add Vision measurements to Swerve Pose Estimator in Drive through the VisionConsumer */
+    if (m_estimatedPoses.size() > 1) {
       // Create standard deviation matrix with averaged coefficient and reset cooefficient for next
       // periodic iteration
-      stdDevs =
+      m_stdDevs =
           VecBuilder.fill(
-              VisionConstants.LINEAR_STD_DEV_M * stdDevCoeff / m_inputs.length,
-              VisionConstants.LINEAR_STD_DEV_M * stdDevCoeff / m_inputs.length,
-              VisionConstants.ANGULAR_STD_DEV_RAD * stdDevCoeff / m_inputs.length);
-      stdDevCoeff = 0.0;
+              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff / m_inputs.length,
+              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff / m_inputs.length,
+              VisionConstants.ANGULAR_STD_DEV_RAD * m_stdDevCoeff / m_inputs.length);
+      m_stdDevCoeff = 0.0;
       // Average poses is both cameras see an AprilTag and clear pose list
       var averagePose =
-          averageVisionPoses(estimatedPoses.toArray(new Pose2d[estimatedPoses.size()]));
-      m_consumer.accept(averagePose, m_inputs[0].timestampSec, stdDevs);
-      estimatedPoses.clear();
+          averageVisionPoses(m_estimatedPoses.toArray(new Pose2d[m_estimatedPoses.size()]));
+      m_consumer.accept(averagePose, m_inputs[0].timestampSec, m_stdDevs);
+      m_estimatedPoses.clear();
     } else {
       // Create standard deviation matrix and reset cooefficient for next periodic iteration
-      stdDevs =
+      m_stdDevs =
           VecBuilder.fill(
-              VisionConstants.LINEAR_STD_DEV_M * stdDevCoeff,
-              VisionConstants.LINEAR_STD_DEV_M * stdDevCoeff,
-              VisionConstants.ANGULAR_STD_DEV_RAD * stdDevCoeff);
-      stdDevCoeff = 0.0;
+              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff,
+              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff,
+              VisionConstants.ANGULAR_STD_DEV_RAD * m_stdDevCoeff);
+      m_stdDevCoeff = 0.0;
       // Use pose generated from the camera that saw an AprilTag and clear pose list
-      m_consumer.accept(estimatedPoses.get(0), m_inputs[0].timestampSec, stdDevs);
-      estimatedPoses.clear();
+      m_consumer.accept(m_estimatedPoses.get(0), m_inputs[0].timestampSec, m_stdDevs);
+      m_estimatedPoses.clear();
     }
   }
 

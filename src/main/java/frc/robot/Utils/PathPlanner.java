@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Vision.Vision;
@@ -68,9 +69,9 @@ public class PathPlanner {
     // The pose to pathfind to
     // The constraints to use while pathfinding
     // The goal end velocity of the robot when reaching the target pose
-    if (targetPose.getX() > 18
-        || targetPose.getY() > 9
-        || targetPose.getX() < 0
+    if (targetPose.getX() > FieldConstants.FIELD_LENGTH
+        || targetPose.getY() > FieldConstants.FIELD_WIDTH
+        || targetPose.getX() < 0  
         || targetPose.getY() < 0) {
       return new PrintCommand(
           "Invalid Pose: "

@@ -107,7 +107,7 @@ public final class Constants {
     public static final double KD = 0.0;
   }
 
-  /** Field measurments */
+  /** Field measurements */
   public final class FieldConstants {
     /** 3d field setup with the locations of the AprilTags loaded from WPILib JSON files */
     public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =

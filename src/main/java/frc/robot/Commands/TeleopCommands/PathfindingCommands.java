@@ -38,7 +38,7 @@ public class PathfindingCommands {
                   vision.getTagID(VisionConstants.CAMERA.FRONT.CAMERA_INDEX));
 
           if (goalPose.isEmpty()) {
-            new PrintCommand("Invalid Tag ID \nSwitch Drive mode to drive (press Y)").schedule();
+            new PrintCommand("Invalid Tag ID").until(stopTrigger).schedule();
 
           } else {
             var goalPose2d = goalPose.get().toPose2d();

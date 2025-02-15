@@ -332,7 +332,14 @@ public class Drive extends SubsystemBase {
     m_swervePoseEstimator.resetPosition(this.getRotation(), this.getModulePositions(), pose);
   }
 
-  public void addVisionMeasurment(
+  /**
+     * Adds Vision measurements to  to Swerve Pose Estimator
+     *
+     * @param visionRobotPose 2d pose calculated from AprilTag
+     * @param timestampSec Timestamp when position was calculated in seconds
+     * @param visionStdDevs Standard deviation from the average calculation (distance & angle)
+     */
+  public void addVisionMeasurement(
       Pose2d estimatedPose, double timestamp, Matrix<N3, N1> visionStdDevs) {
     m_swervePoseEstimator.addVisionMeasurement(estimatedPose, timestamp, visionStdDevs);
   }

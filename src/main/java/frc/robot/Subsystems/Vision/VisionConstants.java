@@ -41,9 +41,9 @@ public class VisionConstants {
   };
 
   /** Baseline standard deviation for proccessed AprilTag translation in meters */
-  public static final double LINEAR_STD_DEV_M = 0.1; // TODO: Test and update
+  public static final double LINEAR_STD_DEV_M = 0.1;
   /** Baseline standard deviation for proccessed AprilTag rotation in radians */
-  public static final double ANGULAR_STD_DEV_RAD = 0.1; // TODO: Test and update
+  public static final double ANGULAR_STD_DEV_RAD = 0.1;
 
   // SIM CONSTANTS
   /** Pixel width of resolution real cameras are set to */

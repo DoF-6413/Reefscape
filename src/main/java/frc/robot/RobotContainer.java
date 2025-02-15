@@ -63,7 +63,7 @@ public class RobotContainer {
                 m_gyroSubsystem);
         m_visionSubsystem =
             new Vision(
-                m_driveSubsystem::addVisionMeasurment,
+                m_driveSubsystem::addVisionMeasurement,
                 new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_INDEX)
                 // new VisionIOPhotonVision(VisionConstants.CAMERA.BACK.CAMERA_INDEX)
                 );
@@ -80,7 +80,7 @@ public class RobotContainer {
                 m_gyroSubsystem);
         m_visionSubsystem =
             new Vision(
-                m_driveSubsystem::addVisionMeasurment,
+                m_driveSubsystem::addVisionMeasurement,
                 new VisionIOSim(
                     VisionConstants.CAMERA.FRONT.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d),
                 new VisionIOSim(
@@ -96,7 +96,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
-        m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurment, new VisionIO() {});
+        m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
         break;
     }
 
