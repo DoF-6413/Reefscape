@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.Subsystems.Drive;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -9,13 +5,18 @@ import edu.wpi.first.math.util.Units;
 
 public final class DriveConstants {
   // REAL CONSTANTS
+  /**
+   * Proportion of error from Drive relative encoder readings to actual distance travelled by the
+   * wheel due to the bolts holding down the tread
+   */
+  public static final double WHEEL_RADIUS_ERROR_COEFF = 1 - 0.050793;
   /** Radius of the wheel in meters */
-  public static final double WHEEL_RADIUS_M = Units.inchesToMeters(2);
-  /** Side length of the robot, without bumpers, in meters */
+  public static final double WHEEL_RADIUS_M = Units.inchesToMeters(2) * WHEEL_RADIUS_ERROR_COEFF;
+  /** Side length of the robot in meters */
   public static final double TRACK_WIDTH_M = Units.inchesToMeters(29);
   /** Radius of the robot (diagonal) in meters */
-  public static final double DRIVETRAIN_RADIUS_M = TRACK_WIDTH_M / 2 * Math.sqrt(2);
-  /** Gear Ratio for MK4i L3 Drive motors */
+  public static final double DRIVETRAIN_RADIUS_M = Math.hypot(TRACK_WIDTH_M / 2, TRACK_WIDTH_M / 2);
+  /** Gear Ratio for MK4i L3 Krakens */
   public static final double DRIVE_GEAR_RATIO = 6.12;
   /** Gear Ratio for MK4i Turn motors */
   public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
@@ -117,19 +118,18 @@ public final class DriveConstants {
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */
-  public static double DRIVE_KP = 0;
+  public static double DRIVE_KP = 0.3;
   /**
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
    */
   public static double DRIVE_KI = 0;
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
-  public static double DRIVE_KD = 0;
+  public static double DRIVE_KD = 0.001;
   /** KS represents the voltage required to overcome static friction */
-  public static double DRIVE_KS = 0.12289;
+  public static double DRIVE_KS = 0.123;
   /** KV represents the voltage used every second per meter */
-  public static double DRIVE_KV = 0.17161;
-
+  public static double DRIVE_KV = 0.1;
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */
@@ -143,9 +143,18 @@ public final class DriveConstants {
   public static double TURN_KD = 0.05;
 
   // SIM CONSTANTS
-  // TODO: Update?
-  // Moment of inertia for the driving of the Module wheel in kg * m^2
+  /** Moment of Inertia value for Drive motor - Module wheel system in kilograms * meters squared */
   public static final double DRIVE_MOI_KG_M2 = 0.0003125;
-  // Moment of inertia for the turning of the Module wheel in kg * m^2
+  /** Moment of Inertia value for Turn motor - Module wheel system in kilograms * meters squared */
   public static final double TURN_MOI_KG_M2 = 0.0000158025413;
+  /** KP value for the simulated Drive motor as the simulation conditions are ideal and static */
+  public static double DRIVE_KP_SIM = 0.01;
+  /** KI value for the simulated Drive motor as the simulation conditions are ideal and static */
+  public static double DRIVE_KI_SIM = 0.0;
+  /** KD value for the simulated Drive motor as the simulation conditions are ideal and static */
+  public static double DRIVE_KD_SIM = 0.0001;
+  /** KS value for the simulated Drive motor as the simulation conditions are ideal and static */
+  public static double DRIVE_KS_SIM = 0.123;
+  /** KV value for the simulated Drive motor as the simulation conditions are ideal and static */
+  public static double DRIVE_KV_SIM = 0.1;
 }

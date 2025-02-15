@@ -5,13 +5,20 @@ package frc.robot.Subsystems.Drive;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,6 +39,11 @@ public class Drive extends SubsystemBase {
 
   // System ID
   private final SysIdRoutine m_sysId;
+
+  // Swerve Pose Estimator Objects
+  private final SwerveDrivePoseEstimator m_swervePoseEstimator;
+  private Field2d m_field;
+  private double m_timestamp;
 
   /**
    * Constructs a new Drive subsystem instance.
@@ -60,6 +72,12 @@ public class Drive extends SubsystemBase {
     m_modules[3] = new Module(BRModuleIO, 3); // Index 3 corresponds to back right Module
 
     m_swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
+
+    m_swervePoseEstimator =
+        new SwerveDrivePoseEstimator(
+            m_swerveDriveKinematics, this.getRotation(), this.getModulePositions(), new Pose2d());
+    m_field = new Field2d();
+    SmartDashboard.putData("Field", m_field);
 
     m_sysId =
         new SysIdRoutine(
@@ -94,6 +112,12 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       m_modules[i].periodic();
     }
+
+    // Update Pose Estimation based on Moduel Positions and robot rotation
+    m_timestamp = Timer.getFPGATimestamp();
+    m_swervePoseEstimator.updateWithTime(
+        m_timestamp, this.getRotation(), this.getModulePositions());
+    m_field.setRobotPose(this.getCurrentPose2d());
 
     // Enable and update tunable PID values through SmartDashboard
     if (SmartDashboard.getBoolean("PIDFF/Drive/EnableTuning", false)) {
@@ -290,6 +314,27 @@ public class Drive extends SubsystemBase {
       velocity += Units.radiansToRotations(m_modules[i].getVelocityRadPerSec());
     }
     return velocity;
+  }
+
+  /**
+   * @return The current 2D position of the robot on the field
+   */
+  public Pose2d getCurrentPose2d() {
+    return m_swervePoseEstimator.getEstimatedPosition();
+  }
+
+  /**
+   * Resets the current position of the robot
+   *
+   * @param pose 2D position to set robot to
+   */
+  public void resetPose(Pose2d pose) {
+    m_swervePoseEstimator.resetPosition(this.getRotation(), this.getModulePositions(), pose);
+  }
+
+  public void addVisionMeasurment(
+      Pose2d estimatedPose, double timestamp, Matrix<N3, N1> visionStdDevs) {
+    m_swervePoseEstimator.addVisionMeasurement(estimatedPose, timestamp, visionStdDevs);
   }
 
   /**

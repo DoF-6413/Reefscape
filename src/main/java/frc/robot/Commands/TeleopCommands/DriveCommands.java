@@ -23,10 +23,8 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+/** The commands to run the different driving modes and characterization routines of the robot */
 public class DriveCommands {
-
-  public DriveCommands() {}
-
   /**
    * Drives the robot with a 10% joystick deadband applied. This means joystick values between 0-0.1
    * (or 0-10%) will be ignored and not more the robot for both axises and rotation.

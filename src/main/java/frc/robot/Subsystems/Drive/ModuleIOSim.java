@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.Subsystems.Drive;
 
 import edu.wpi.first.math.MathUtil;
@@ -55,9 +51,9 @@ public class ModuleIOSim implements ModuleIO {
     // Initilize PID & Feedforward controllers
     m_driveController =
         new PIDController(
-            DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD);
+            DriveConstants.DRIVE_KP_SIM, DriveConstants.DRIVE_KI_SIM, DriveConstants.DRIVE_KD_SIM);
     m_driveFeedForward =
-        new SimpleMotorFeedforward(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV);
+        new SimpleMotorFeedforward(DriveConstants.DRIVE_KS_SIM, DriveConstants.DRIVE_KV_SIM);
   }
 
   @Override
@@ -86,7 +82,9 @@ public class ModuleIOSim implements ModuleIO {
     inputs.turnAbsolutePositionRad =
         MathUtil.angleModulus(
             inputs.turnAbsolutePositionRad
-                + (inputs.turnVelocityRadPerSec * RobotStateConstants.LOOP_PERIODIC_SEC));
+                + (m_turnSim.getAngularVelocityRadPerSec()
+                    * RobotStateConstants.LOOP_PERIODIC_SEC));
+    inputs.turnVelocityRadPerSec = m_turnSim.getAngularVelocityRadPerSec();
     inputs.turnAppliedVoltage = m_turnAppliedVolts;
     inputs.turnCurrentAmps = Math.abs(m_turnSim.getCurrentDrawAmps());
   }
