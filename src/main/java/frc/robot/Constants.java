@@ -112,9 +112,9 @@ public final class Constants {
     /** 3d field setup with the locations of the AprilTags loaded from WPILib JSON files */
     public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
         new AprilTagFieldLayout(
-            AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getTags(),
-            AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getFieldLength(),
-            AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape).getFieldWidth());
+            AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded).getTags(),
+            AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded).getFieldLength(),
+            AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded).getFieldWidth());
 
     public static final double FIELD_LENGTH = APRILTAG_FIELD_LAYOUT.getFieldLength();
     public static final double FIELD_WIDTH = APRILTAG_FIELD_LAYOUT.getFieldWidth();
