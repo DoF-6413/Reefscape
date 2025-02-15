@@ -8,8 +8,8 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface FunnelIO {
 
-@AutoLog
-public static class FunnelIOInputs {
+  @AutoLog
+  public static class FunnelIOInputs {
     /** Voltage that Funnel motor draws */
     public double appliedVoltage = 0.0;
     /** Position of the wheel in radians */
@@ -20,6 +20,8 @@ public static class FunnelIOInputs {
     public double currentAmps = 0.0;
     /** Temperature of the motor in celsius */
     public double tempCelsius = 0.0;
+
+    public boolean isConnected = false;
   }
 
   /**

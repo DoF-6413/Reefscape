@@ -19,6 +19,7 @@ import frc.robot.Subsystems.Drive.ModuleIOSim;
 import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
 import frc.robot.Subsystems.Funnel.Funnel;
 import frc.robot.Subsystems.Funnel.FunnelIO;
+import frc.robot.Subsystems.Funnel.FunnelIOSim;
 import frc.robot.Subsystems.Funnel.FunnelIOSparkMax;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
@@ -58,7 +59,7 @@ public class RobotContainer {
                 new ModuleIOSparkMaxTalonFX(2),
                 new ModuleIOSparkMaxTalonFX(3),
                 m_gyroSubsystem);
-        m_funnelSubsystem = new Funnel( new FunnelIOSparkMax());
+        m_funnelSubsystem = new Funnel(new FunnelIOSparkMax());
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -70,7 +71,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 m_gyroSubsystem);
-        m_funnelSubsystem = new Funnel( new FunnelIOSparkMax());
+        m_funnelSubsystem = new Funnel(new FunnelIOSim());
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -82,7 +83,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
-        m_funnelSubsystem = new Funnel( new FunnelIO() {});
+        m_funnelSubsystem = new Funnel(new FunnelIO() {});
         break;
     }
 
@@ -189,6 +190,11 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
                 .withName("ZeroYaw"));
+
+    m_driverController
+        .y()
+        .onTrue(
+        new InstantCommand(() -> m_funnelSubsystem.setVoltage(12), m_funnelSubsystem));
   }
 
   /**
