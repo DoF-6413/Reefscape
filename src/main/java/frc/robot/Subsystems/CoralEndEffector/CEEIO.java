@@ -20,6 +20,8 @@ public static class CEEIOInputs {
     public double currentAmps = 0.0;
     /** Temperature of the motor in celsius */
     public double tempCelsius = 0.0;
+
+    public boolean isConnected = false;
   }
 
   /**
