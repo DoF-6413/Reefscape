@@ -21,7 +21,7 @@ public class FunnelIOSim implements FunnelIO {
         new FlywheelSim(
             LinearSystemId.createFlywheelSystem(
                 DCMotor.getNEO(1), FunnelConstants.MOI_KG_M2, FunnelConstants.GEAR_RATIO),
-            DCMotor.getKrakenX60(1),
+            DCMotor.getNeo550(1),
             FunnelConstants.GEAR_RATIO);
 
     m_PIDController = new PIDController(FunnelConstants.KP, FunnelConstants.KI, FunnelConstants.KD);
