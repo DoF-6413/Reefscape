@@ -10,5 +10,5 @@ public class FunnelConstants {
   public static double KI = 0.0;
   public static double KD = 0.0;
 
-  public static double MOI_KG_M2 = 0.000001;
+  public static double MOI_KG_M2 = 0.0025;
 }
