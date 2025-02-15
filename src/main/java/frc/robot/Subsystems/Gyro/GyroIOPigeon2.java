@@ -14,13 +14,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
-/** GyroIO implementation for the real mode of the robot */
+/** GyroIO implementation for the real mode of the robot running a Pigeon 2.0 */
 public class GyroIOPigeon2 implements GyroIO {
-
   // Gyroscope
   private final Pigeon2 m_gyro;
 
-  // Pigeon inputs
+  // Pigeon logged signals
   private StatusSignal<Angle> m_yawDeg;
   private StatusSignal<AngularVelocity> m_yawVelocityDegPerSec;
 
@@ -49,7 +48,9 @@ public class GyroIOPigeon2 implements GyroIO {
 
   @Override
   public void updateInputs(GyroIOInputs inputs) {
+    // Update Gyro signals and check if they are recieved
     inputs.connected = BaseStatusSignal.refreshAll(m_yawDeg, m_yawVelocityDegPerSec).isOK();
+    // Update Gyro logged inputs
     inputs.yawPositionRad =
         Rotation2d.fromRadians(
             MathUtil.angleModulus(
@@ -57,8 +58,6 @@ public class GyroIOPigeon2 implements GyroIO {
                     + GyroConstants.HEADING_OFFSET_RAD));
     inputs.yawVelocityRadPerSec =
         Units.degreesToRadians(m_gyro.getAngularVelocityZWorld().getValueAsDouble());
-    inputs.rawYawPositionRad =
-        Rotation2d.fromRadians(Units.degreesToRadians(m_yawDeg.getValueAsDouble()));
   }
 
   @Override

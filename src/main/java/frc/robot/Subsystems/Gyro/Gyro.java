@@ -18,7 +18,7 @@ public class Gyro extends SubsystemBase {
    * <p>This constructor creates a new Gyro object that updates the heading of the robot based on an
    * IMU sensor
    *
-   * @param io GyroIO implementation of the current robot mode (only real or blank)
+   * @param io GyroIO implementation of the current robot mode (no simulation mode)
    */
   public Gyro(GyroIO io) {
     System.out.println("[Init] Creating Gyro");
@@ -42,26 +42,19 @@ public class Gyro extends SubsystemBase {
   }
 
   /**
-   * @return Yaw angle, about the z-axis, in radians without any offset or normalization
-   */
-  public Rotation2d getRawYaw() {
-    return m_inputs.rawYawPositionRad;
-  }
-
-  /**
-   * @return Angular velocity, about the z-axis, of the robot in radians per second
+   * @return Angular velocity (about the z-axis) of the robot in radians per second
    */
   public double getYawAngularVelocity() {
     return m_inputs.yawVelocityRadPerSec;
   }
 
-  /** Resets the robot heading to the direction the Gyro is facing (aka the front of the robot) */
+  /** Resets the robot heading to the front side of the robot, making it the new 0 degree angle */
   public void zeroYaw() {
     m_io.zeroHeading();
   }
 
   /**
-   * @return Whether or not the Gyro is connected
+   * @return Whether or not the Gyro is connected and signals are recieved
    */
   public boolean isConnected() {
     return m_inputs.connected;

@@ -7,7 +7,7 @@ package frc.robot.Subsystems.Gyro;
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
-/** All the Loggable Inputs and Outputs of the Gyro in Every Mode */
+/** IO Interface to log the inputs of and create the default methods for the IMU sensor */
 public interface GyroIO {
 
   @AutoLog
@@ -16,8 +16,6 @@ public interface GyroIO {
     public boolean connected = false;
     /** Current yaw angle as a Rotation2d object */
     public Rotation2d yawPositionRad = new Rotation2d();
-    /** Unadjusted yaw angle (no applied offset or normalization) as a Rotation2d object */
-    public Rotation2d rawYawPositionRad = new Rotation2d();
     /** Angular velocity about the z-axis (yaw) in radians per second */
     public double yawVelocityRadPerSec = 0.0;
   }
@@ -29,6 +27,6 @@ public interface GyroIO {
    */
   public default void updateInputs(GyroIOInputs inputs) {}
 
-  /** Resets the robot heading to the direction the Gyro is facing (aka the front of the robot) */
+  /** Resets the robot heading to the front side of the robot, making it the new 0 degree angle */
   public default void zeroHeading() {}
 }

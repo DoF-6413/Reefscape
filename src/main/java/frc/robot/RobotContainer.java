@@ -194,7 +194,7 @@ public class RobotContainer {
                 () -> -m_driverController.getLeftX(),
                 () -> Rotation2d.fromRadians(-Math.PI / 2)));
 
-    // Reset Gyro heading, making the current heading of the robot 0 degrees
+    // Reset Gyro heading, making the front side of the robot the new 0 degree angle
     m_driverController
         .a()
         .onTrue(

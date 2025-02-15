@@ -41,16 +41,16 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   private final CANcoder m_turnAbsoluteEncoder;
   private final double m_absoluteEncoderOffsetRad;
 
-  // Drive motor inputs
+  // Drive motor logged signals
   private StatusSignal<Angle> m_drivePositionRot; // Rotations
   private StatusSignal<AngularVelocity> m_driveVelocityRotPerSec; // Rotations per second
   private StatusSignal<Voltage> m_driveAppliedVolts;
   private StatusSignal<Current> m_driveCurrentAmps;
   private StatusSignal<Temperature> m_driveTempCelsius;
 
-  // CANcoder inputs
-  private StatusSignal<Angle> m_absoluteEncoderPositionRot;
-  private StatusSignal<AngularVelocity> m_absoluteEncoderVelocityRotPerSec;
+  // CANcoder logged signals
+  private StatusSignal<Angle> m_absoluteEncoderPositionRot; // Rotations
+  private StatusSignal<AngularVelocity> m_absoluteEncoderVelocityRotPerSec; // Rotations per second
 
   /**
    * Constructs a new ModuleIOSparkMaxTalonFX instance
