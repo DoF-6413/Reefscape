@@ -202,8 +202,14 @@ public class RobotContainer {
         new InstantCommand(
             () -> m_periscoperSubsystem.setVoltage(m_auxController.getLeftY() * 12),
             m_periscoperSubsystem));
-    m_auxController.a().onTrue(new InstantCommand(() -> m_periscoperSubsystem.setPosition(6)));
-    m_auxController.b().onTrue(new InstantCommand(() -> m_periscoperSubsystem.setPosition(12)));
+    m_auxController
+        .a()
+        .onTrue(
+            new InstantCommand(() -> m_periscoperSubsystem.setPosition(1), m_periscoperSubsystem));
+    m_auxController
+        .b()
+        .onTrue(
+            new InstantCommand(() -> m_periscoperSubsystem.setPosition(.5), m_periscoperSubsystem));
   }
 
   /**

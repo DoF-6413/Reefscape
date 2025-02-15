@@ -1,6 +1,5 @@
 package frc.robot.Subsystems.Periscoper;
 
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -27,7 +26,7 @@ public class PeriscoperIOSim implements PeriscoperIO {
             DCMotor.getKrakenX60(2),
             PeriscoperConstants.MIN_HEIGHT_M,
             PeriscoperConstants.MAX_HEIGHT_M,
-            true,
+            false,
             0.0);
 
     m_PIDController =
@@ -36,11 +35,12 @@ public class PeriscoperIOSim implements PeriscoperIO {
 
   @Override
   public void updateInputs(PeriscoperIOInputs inputs) {
-    
+
     double voltage = m_PIDController.calculate(inputs.heightMeters, m_periscoperSP);
-    this.setPercentVelocity(voltage / RobotStateConstants.MAX_VOLTAGE);
+    this.setVoltage(voltage);
+
     m_periscoperSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
-    
+
     inputs.isConnected = new boolean[] {true, true};
     inputs.heightMeters = m_periscoperSim.getPositionMeters();
     inputs.velocityRadPerSec =
@@ -63,6 +63,7 @@ public class PeriscoperIOSim implements PeriscoperIO {
   public void setPosition(double heightMeters) {
     m_periscoperSP = heightMeters;
   }
+
   @Override
   public void setPercentVelocity(double percent) {
     m_periscoperSim.setInputVoltage(percent * RobotStateConstants.MAX_VOLTAGE);

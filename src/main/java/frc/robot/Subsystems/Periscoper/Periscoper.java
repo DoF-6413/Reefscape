@@ -29,6 +29,7 @@ public class Periscoper extends SubsystemBase {
   public void setVoltage(double volts) {
     io.setVoltage(volts);
   }
+
   public void setPercentVelocity(double percent) {
     io.setPercentVelocity(percent);
   }
