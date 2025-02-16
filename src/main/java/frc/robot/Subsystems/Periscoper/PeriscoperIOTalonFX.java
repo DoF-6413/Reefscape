@@ -32,8 +32,8 @@ public class PeriscoperIOTalonFX implements PeriscoperIO {
   public PeriscoperIOTalonFX() {
     System.out.println("[Init] PeriscoperIOTalonFX ");
 
-    m_periscoperMotors[0] = new TalonFX(PeriscoperConstants.CANID_1, "Periscoper");
-    m_periscoperMotors[1] = new TalonFX(PeriscoperConstants.CANID_2, "Periscoper");
+    m_periscoperMotors[0] = new TalonFX(PeriscoperConstants.CANID_1);
+    m_periscoperMotors[1] = new TalonFX(PeriscoperConstants.CANID_2);
 
     m_motorControllers[0] = new PositionVoltage(0);
     m_motorControllers[1] = new PositionVoltage(0);

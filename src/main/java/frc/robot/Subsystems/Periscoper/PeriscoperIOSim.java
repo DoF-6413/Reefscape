@@ -43,7 +43,6 @@ public class PeriscoperIOSim implements PeriscoperIO {
 
     inputs.isConnected = new boolean[] {true, true};
     inputs.heightMeters = m_periscoperSim.getPositionMeters() / PeriscoperConstants.DRUM_RADIUS_M;
-    ;
     inputs.velocityRadPerSec = m_periscoperSim.getVelocityMetersPerSecond();
     inputs.appliedVolts = new double[] {voltage, voltage};
     inputs.currentDraw =
