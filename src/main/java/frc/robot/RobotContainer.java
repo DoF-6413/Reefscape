@@ -14,6 +14,10 @@ import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
+import frc.robot.Subsystems.AlgaeEndEffector.AEE;
+import frc.robot.Subsystems.AlgaeEndEffector.AEEIO;
+import frc.robot.Subsystems.AlgaeEndEffector.AEEIOSim;
+import frc.robot.Subsystems.AlgaeEndEffector.AEEIOSparkMax;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
@@ -33,6 +37,7 @@ public class RobotContainer {
   // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
+  private final AEE m_AEESubsystem;
 
   // Utils
   private final Vision m_visionSubsystem;
@@ -64,6 +69,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_INDEX)
                 // new VisionIOPhotonVision(VisionConstants.CAMERA.BACK.CAMERA_INDEX)
                 );
+        m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -82,6 +88,7 @@ public class RobotContainer {
                     VisionConstants.CAMERA.FRONT.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d),
                 new VisionIOSim(
                     VisionConstants.CAMERA.BACK.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d));
+        m_AEESubsystem = new AEE(new AEEIOSim() {});
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -94,6 +101,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 m_gyroSubsystem);
         m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
+        m_AEESubsystem = new AEE(new AEEIO() {});
         break;
     }
 
@@ -247,6 +255,11 @@ public class RobotContainer {
             PathfindingCommands.pathfindToAprilTag(
                     () -> 14, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
                 .until(m_driverController.rightBumper().negate()));
+
+    // AEE testing binding
+    m_driverController
+        .y()
+        .onTrue(new InstantCommand(() -> m_AEESubsystem.setVoltage(12), m_AEESubsystem));
   }
 
   /**
