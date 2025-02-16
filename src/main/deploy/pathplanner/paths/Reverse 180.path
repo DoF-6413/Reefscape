@@ -3,7 +3,7 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
+        "x": 4.0,
         "y": 7.0
       },
       "prevControl": null,
@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.4348734737355513,
-        "y": 4.876462402497455
+        "x": 2.0,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 1.4348734737355513,
-        "y": 4.876462402497455
+        "x": 3.0,
+        "y": 7.0
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "PID Testing",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
