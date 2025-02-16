@@ -19,7 +19,7 @@ public class CEE extends SubsystemBase {
   /**
    * Creates a new Coral End Effector Subsystem instances.
    *
-   * <p>This constructor creates a new CEE subsystem object with given IO implementation._sim
+   * <p>This constructor creates a new CEE subsystem object with given IO implementation
    *
    * @param io CEEIO implementation of the current mode of the robot
    */
@@ -67,7 +67,7 @@ public class CEE extends SubsystemBase {
   }
 
   /**
-   * Sets the PID values for the Turn motor's built in closed loop controller
+   * Sets the PID values for the CEE motor's PID controller in code
    *
    * @param kP Proportional gain value
    * @param kI Integral gain value
