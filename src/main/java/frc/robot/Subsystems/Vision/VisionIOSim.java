@@ -26,7 +26,7 @@ public class VisionIOSim extends VisionIOPhotonVision {
     super(index);
     System.out.println("[Init] Creating VisionIOSim " + VisionConstants.CAMERA_NAMES[index]);
 
-    // Initilize simulated camera
+    // Initialize simulated camera
     var camProp = new SimCameraProperties();
     camProp.setAvgLatencyMs(VisionConstants.AVERAGE_LATENCY_MS);
     camProp.setCalibration(

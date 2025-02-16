@@ -37,6 +37,8 @@ public class RobotContainer {
   // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
+
+  // Mechanisms
   private final AEE m_AEESubsystem;
 
   // Utils
@@ -45,6 +47,8 @@ public class RobotContainer {
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
+  private final CommandXboxController m_auxController =
+      new CommandXboxController(OperatorConstants.AUX_CONTROLLER);
 
   // Autos
   private final LoggedDashboardChooser<Command> m_autoChooser =
@@ -145,6 +149,7 @@ public class RobotContainer {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
     this.driverControllerBindings();
+    this.auxControllerBindings();
   }
 
   /** Driver Controls */
@@ -255,11 +260,15 @@ public class RobotContainer {
             PathfindingCommands.pathfindToAprilTag(
                     () -> 14, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
                 .until(m_driverController.rightBumper().negate()));
+  }
 
+  /** Aux Controls */
+  public void auxControllerBindings() {
     // AEE testing binding
-    m_driverController
-        .y()
-        .onTrue(new InstantCommand(() -> m_AEESubsystem.setVoltage(12), m_AEESubsystem));
+    m_AEESubsystem.setDefaultCommand(
+        new InstantCommand(
+            () -> m_AEESubsystem.setVoltage(m_auxController.getLeftTriggerAxis() * 12),
+            m_AEESubsystem));
   }
 
   /**

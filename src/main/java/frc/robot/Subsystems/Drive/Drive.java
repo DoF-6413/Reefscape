@@ -73,14 +73,14 @@ public class Drive extends SubsystemBase {
       Gyro gyro) {
     System.out.println("[Init] Creating Drive");
 
-    // Initilize Drivetrain and Gyro
+    // Initialize Drivetrain and Gyro
     m_gyro = gyro;
     m_modules[0] = new Module(FRModuleIO, 0); // Index 0 corresponds to front right Module
     m_modules[1] = new Module(FLModuleIO, 1); // Index 1 corresponds to front left Module
     m_modules[2] = new Module(BLModuleIO, 2); // Index 2 corresponds to back left Module
     m_modules[3] = new Module(BRModuleIO, 3); // Index 3 corresponds to back right Module
 
-    // Initilize utilities
+    // Initialize utilities
     m_swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
     m_sysId =
         new SysIdRoutine(
@@ -117,7 +117,7 @@ public class Drive extends SubsystemBase {
     // Pathfinder
     Pathfinding.setPathfinder(new LocalADStarAK());
 
-    // Initilize Pose Estimator
+    // Initialize Pose Estimator
     m_swervePoseEstimator =
         new SwerveDrivePoseEstimator(
             m_swerveDriveKinematics, this.getRotation(), this.getModulePositions(), new Pose2d());

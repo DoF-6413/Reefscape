@@ -129,7 +129,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         1.0 / DriveConstants.UPDATE_FREQUENCY_HZ);
     m_driveController.withUpdateFreqHz(DriveConstants.UPDATE_FREQUENCY_HZ);
 
-    // Initilize Drive encoder position
+    // Initialize Drive encoder position
     m_driveTalonFX.setPosition(0.0);
 
     // SPARK MAX configurations

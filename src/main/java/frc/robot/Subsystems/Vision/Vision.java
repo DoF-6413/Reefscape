@@ -49,7 +49,7 @@ public class Vision extends SubsystemBase {
     m_inputs = new VisionIOInputsAutoLogged[m_io.length];
     m_photonPoseEstimators = new PhotonPoseEstimator[m_io.length];
 
-    // Initilize loggers and Vision Pose Estimators based on number of cameras
+    // Initialize loggers and Vision Pose Estimators based on number of cameras
     for (int i = 0; i < m_io.length; i++) {
       m_inputs[i] = new VisionIOInputsAutoLogged();
       m_photonPoseEstimators[i] =

@@ -32,7 +32,7 @@ public class ModuleIOSim implements ModuleIO {
   public ModuleIOSim() {
     System.out.println("[Init] Creating ModuleIOSim");
 
-    // Initilize simulated motors
+    // Initialize simulated motors
     m_driveSim =
         new FlywheelSim(
             LinearSystemId.createFlywheelSystem(
@@ -48,7 +48,7 @@ public class ModuleIOSim implements ModuleIO {
             DCMotor.getNEO(1),
             0);
 
-    // Initilize PID & Feedforward controllers
+    // Initialize PID & Feedforward controllers
     m_driveController =
         new PIDController(
             DriveConstants.DRIVE_KP_SIM, DriveConstants.DRIVE_KI_SIM, DriveConstants.DRIVE_KD_SIM);
