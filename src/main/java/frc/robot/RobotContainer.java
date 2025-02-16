@@ -41,6 +41,8 @@ public class RobotContainer {
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
+  private final CommandXboxController m_auxController =
+      new CommandXboxController(OperatorConstants.AUX_CONTROLLER);
 
   // Autos
   private final LoggedDashboardChooser<Command> m_autoChooser =
@@ -131,6 +133,7 @@ public class RobotContainer {
 
     /** Driver Controls */
     this.driverControllerBindings();
+    this.auxControllerBindings();
   }
 
   // Driver Controls
@@ -190,11 +193,14 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
                 .withName("ZeroYaw"));
+  }
 
-    m_driverController
-        .y()
-        .onTrue(
-        new InstantCommand(() -> m_funnelSubsystem.setVoltage(12), m_funnelSubsystem));
+  // Driver Controls
+  private void auxControllerBindings() {
+    m_auxController
+        .x()
+        .onTrue(new InstantCommand(() -> m_funnelSubsystem.setVoltage(12), m_funnelSubsystem))
+        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
   }
 
   /**

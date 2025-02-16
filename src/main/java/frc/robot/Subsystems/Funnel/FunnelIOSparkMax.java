@@ -12,41 +12,49 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.RobotStateConstants;
 
 public class FunnelIOSparkMax implements FunnelIO {
-
-  // funnel motor
-  private final SparkMax m_sparkMax;
+  // Funnel motor
+  private final SparkMax m_sparkmax;
   private final RelativeEncoder m_relativeEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
 
+  /**
+   * This constructs a new FunnelIOSparkMax instance.
+   *
+   * <p>This creates a new FunnelIO object that uses the real NEO motor to run the real Funnel
+   * mechanism
+   */
   public FunnelIOSparkMax() {
-    m_sparkMax = new SparkMax(FunnelConstants.FUNNEL_MOTOR_ID, MotorType.kBrushless);
+    m_sparkmax = new SparkMax(FunnelConstants.CAN_ID, MotorType.kBrushless);
 
+    // SPARK MAX configurations
     m_config
-        .inverted(FunnelConstants.FUNNEL_IS_INVERTED)
+        .inverted(FunnelConstants.IS_INVERTED)
         .idleMode(IdleMode.kCoast)
         .smartCurrentLimit(FunnelConstants.CUR_LIM_A);
-    m_sparkMax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
-    m_sparkMax.configure(
-        m_config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-    m_relativeEncoder = m_sparkMax.getEncoder();
+    m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
+
+    // Initialize relative encoder from SPARK MAX
+    m_relativeEncoder = m_sparkmax.getEncoder();
+
+    // Apply configuration
+    m_sparkmax.configure(m_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
   public void updateInputs(FunnelIOInputs inputs) {
-    inputs.appliedVoltage = m_sparkMax.getAppliedOutput();
+    inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
     inputs.positionRad =
-        Units.rotationsToRadians(Units.rotationsToRadians(m_relativeEncoder.getPosition()))
-            / FunnelConstants.GEAR_RATIO;
+        Units.rotationsToRadians(m_relativeEncoder.getPosition()) / FunnelConstants.GEAR_RATIO;
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / FunnelConstants.GEAR_RATIO;
-    inputs.currentAmps = m_sparkMax.getOutputCurrent();
-    inputs.tempCelsius = m_sparkMax.getMotorTemperature();
+    inputs.currentAmps = m_sparkmax.getOutputCurrent();
+    inputs.tempCelsius = m_sparkmax.getMotorTemperature();
   }
 
   @Override
   public void setVoltage(double volts) {
-    m_sparkMax.setVoltage(
+    m_sparkmax.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
 }
