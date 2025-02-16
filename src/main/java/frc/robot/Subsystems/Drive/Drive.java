@@ -5,6 +5,10 @@ package frc.robot.Subsystems.Drive;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,13 +21,17 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.PathPlannerConstants;
+import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Gyro.Gyro;
+import frc.robot.Utils.LocalADStarAK;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
@@ -65,20 +73,15 @@ public class Drive extends SubsystemBase {
       Gyro gyro) {
     System.out.println("[Init] Creating Drive");
 
+    // Initilize Drivetrain and Gyro
     m_gyro = gyro;
     m_modules[0] = new Module(FRModuleIO, 0); // Index 0 corresponds to front right Module
     m_modules[1] = new Module(FLModuleIO, 1); // Index 1 corresponds to front left Module
     m_modules[2] = new Module(BLModuleIO, 2); // Index 2 corresponds to back left Module
     m_modules[3] = new Module(BRModuleIO, 3); // Index 3 corresponds to back right Module
 
+    // Initilize utilities
     m_swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
-
-    m_swervePoseEstimator =
-        new SwerveDrivePoseEstimator(
-            m_swerveDriveKinematics, this.getRotation(), this.getModulePositions(), new Pose2d());
-    m_field = new Field2d();
-    SmartDashboard.putData("Field", m_field);
-
     m_sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -92,6 +95,34 @@ public class Drive extends SubsystemBase {
                             .toString())), // Log SysId to AdvantageScope rather than the WPI Logger
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+
+    // Configure PathPlanner
+    AutoBuilder.configure(
+        this::getCurrentPose2d,
+        this::resetPose,
+        this::getChassisSpeeds,
+        (speeds, feedforwards) -> runVelocity(speeds),
+        new PPHolonomicDriveController(
+            new PIDConstants(
+                PathPlannerConstants.TRANSLATION_KP, 0, PathPlannerConstants.TRANSLATION_KD),
+            new PIDConstants(
+                PathPlannerConstants.ROTATION_KP, 0, PathPlannerConstants.ROTATION_KD)),
+        PathPlannerConstants.ROBOT_CONFIG,
+        // Mirror the paths to the red side of the field if true
+        () ->
+            DriverStation.getAlliance().isPresent()
+                && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red,
+        this);
+    // Pathfinder by FRC 6328 that adds AdvantageKit logging functionality to PathPlanner's
+    // Pathfinder
+    Pathfinding.setPathfinder(new LocalADStarAK());
+
+    // Initilize Pose Estimator
+    m_swervePoseEstimator =
+        new SwerveDrivePoseEstimator(
+            m_swerveDriveKinematics, this.getRotation(), this.getModulePositions(), new Pose2d());
+    m_field = new Field2d();
+    SmartDashboard.putData("Field", m_field);
 
     // Tunable PID & Feedforward values
     SmartDashboard.putBoolean("PIDFF/Drive/EnableTuning", false);
@@ -246,6 +277,19 @@ public class Drive extends SubsystemBase {
   }
 
   /**
+   * @return Current linear and angular speed of the robot based on the current State of each Module
+   */
+  public ChassisSpeeds getChassisSpeeds() {
+    return m_swerveDriveKinematics.toChassisSpeeds(
+        new SwerveModuleState[] {
+          m_modules[0].getState(),
+          m_modules[1].getState(),
+          m_modules[2].getState(),
+          m_modules[3].getState(),
+        });
+  }
+
+  /**
    * Current heading of the robot. Updates based on the Gyro. If the Gyro isn't connected, uses
    * change in Module Position instead
    *
@@ -353,19 +397,6 @@ public class Drive extends SubsystemBase {
   public void addVisionMeasurement(
       Pose2d estimatedPose, double timestamp, Matrix<N3, N1> visionStdDevs) {
     m_swervePoseEstimator.addVisionMeasurement(estimatedPose, timestamp, visionStdDevs);
-  }
-
-  /**
-   * @return Current linear and angular speed of the robot based on the current State of each Module
-   */
-  public ChassisSpeeds getChassisSpeeds() {
-    return m_swerveDriveKinematics.toChassisSpeeds(
-        new SwerveModuleState[] {
-          m_modules[0].getState(),
-          m_modules[1].getState(),
-          m_modules[2].getState(),
-          m_modules[3].getState(),
-        });
   }
 
   /**

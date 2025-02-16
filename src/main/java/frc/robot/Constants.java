@@ -115,10 +115,17 @@ public final class Constants {
             AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded).getTags(),
             AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded).getFieldLength(),
             AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded).getFieldWidth());
-
+    /** Field length of the Welded Reefscape field */
     public static final double FIELD_LENGTH = APRILTAG_FIELD_LAYOUT.getFieldLength();
+    /** Field width of the Welded Reefscape field */
     public static final double FIELD_WIDTH = APRILTAG_FIELD_LAYOUT.getFieldWidth();
-
+    /**
+     * The 3d pose is an optinal. If an ID outside of the range of [1, 22] then the Optional value
+     * returned will be null
+     *
+     * @param ID Number corresponding to the ID of the desired AprilTag
+     * @return An optional value containing the 3d pose of an AprilTag
+     */
     public static Optional<Pose3d> getAprilTagPose(int ID) {
       return APRILTAG_FIELD_LAYOUT.getTagPose(ID);
     }

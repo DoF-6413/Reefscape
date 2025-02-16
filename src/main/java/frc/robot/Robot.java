@@ -81,7 +81,7 @@ public class Robot extends LoggedRobot {
 
     // Version Number (# of Pushes to Dev, Issue #, Commit #, Functionality 0 = working, 1 = WIP, 2
     // = doesn't work)
-    SmartDashboard.putString("Version Number", "17.32.18.1");
+    SmartDashboard.putString("Version Number", "17.32.19.1");
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
     PathfindingCommand.warmupCommand();
@@ -101,8 +101,7 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.allMechanismsBrakeMode(
-        true); // TODO: Update true for comps; easier to test in coast mode
+    m_robotContainer.allMechanismsBrakeMode(true);
   }
 
   /** This function is called periodically when disabled. */

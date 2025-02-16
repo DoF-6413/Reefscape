@@ -193,8 +193,8 @@ public class DriveCommands {
     List<Double> velocitySamples = new LinkedList<>();
     List<Double> voltageSamples = new LinkedList<>();
     Timer timer = new Timer();
-    double rampRateVoltPerSec = 0.1;
-    double startDelay = 2;
+    final double RAMP_RATE_VOLTS_PER_SEC = 0.1;
+    final double START_DELAY = 2;
 
     return Commands.sequence(
         // Reset data
@@ -210,7 +210,7 @@ public class DriveCommands {
                   drive.runCharacterization(0.0);
                 },
                 drive)
-            .withTimeout(startDelay),
+            .withTimeout(START_DELAY),
 
         // Start timer
         Commands.runOnce(timer::restart),
@@ -218,7 +218,7 @@ public class DriveCommands {
         // Accelerate and gather data
         Commands.run(
                 () -> {
-                  double voltage = timer.get() * rampRateVoltPerSec;
+                  double voltage = timer.get() * RAMP_RATE_VOLTS_PER_SEC;
                   drive.runCharacterization(voltage);
                   velocitySamples.add(drive.getAverageDriveVelocity());
                   voltageSamples.add(voltage);
