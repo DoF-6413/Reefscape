@@ -10,47 +10,74 @@ import org.littletonrobotics.junction.Logger;
 
 public class Periscoper extends SubsystemBase {
 
-  private final PeriscoperIO io;
-  private final PeriscoperIOInputsAutoLogged inputs = new PeriscoperIOInputsAutoLogged();
+  private final PeriscoperIO m_io;
+  private final PeriscoperIOInputsAutoLogged m_inputs = new PeriscoperIOInputsAutoLogged();
 
-  /** Creates a new Periscoper. */
-  public Periscoper(PeriscoperIO periscoperIO) {
+  /**
+   * Constructs a new Periscope subsystem instance.
+   * 
+   * <p>This constructor creates a new Periscope subsystem object with given IO implementation
+   * 
+   * @param io PeriscoperIO implementation of the current robot mode
+   */
+  public Periscoper(PeriscoperIO io) {
     // initialize the Periscoper subsystem
     System.out.println("[Init] Creating Periscoper");
-    this.io = periscoperIO;
+    this.m_io = io;
 
+    // Tunable PID & Feedforward values
     SmartDashboard.putBoolean("PIDFF/Periscoper/EnableTuning", false);
     SmartDashboard.putNumber("PIDFF/Periscoper/KP", PeriscoperConstants.KP);
     SmartDashboard.putNumber("PIDFF/Periscoper/KI", PeriscoperConstants.KI);
     SmartDashboard.putNumber("PIDFF/Periscoper/KD", PeriscoperConstants.KD);
+    SmartDashboard.putNumber("PIDFF/Periscoper/KS", PeriscoperConstants.KS);
+    SmartDashboard.putNumber("PIDFF/Periscoper/KV", PeriscoperConstants.KV);
+    SmartDashboard.putNumber("PIDFF/Periscoper/KG", PeriscoperConstants.KG);
   }
 
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Periscoper", inputs);
+    m_io.updateInputs(m_inputs);
+    Logger.processInputs("Periscoper", m_inputs);
 
     if (SmartDashboard.getBoolean("PIDFF/Periscoper/EnableTuning", false)) {
-      this.updatePeriscoperPID();
-      ;
+      this.updatePID();
+      this.updateFF();
     }
   }
 
+  /**
+   * Sets voltage of the Periscoper motors
+   *
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
+   */
   public void setVoltage(double volts) {
-    io.setVoltage(volts);
+    m_io.setVoltage(volts);
   }
 
+  /**
+   * Sets the position of the Periscoper
+   * 
+   * @param heightMeters Height of the Periscoper in meters
+   */
   public void setPosition(double heightMeters) {
-    io.setPosition(heightMeters);
+    m_io.setPosition(heightMeters);
   }
 
+  /**
+   * Sets the PID gains of the Periscoper motors' built in closed loop controllers
+   * 
+   * @param kP Proportional gain value
+   * @param kI Integral gain value
+   * @param kD Derivative gain value
+   */
   public void setPID(double kP, double kI, double kD) {
-
-    io.setPID(kP, kI, kD);
+    m_io.setPID(kP, kI, kD);
   }
 
-  private void updatePeriscoperPID() {
+  /** Update PID gains for the Periscoper motors from SmartDashboard inputs */
+  private void updatePID() {
     if (PeriscoperConstants.KP
             != SmartDashboard.getNumber("PIDFF/Periscoper/KP", PeriscoperConstants.KP)
         || PeriscoperConstants.KI
@@ -64,6 +91,24 @@ public class Periscoper extends SubsystemBase {
       PeriscoperConstants.KD =
           SmartDashboard.getNumber("PIDFF/Periscoper/KD", PeriscoperConstants.KD);
       this.setPID(PeriscoperConstants.KP, PeriscoperConstants.KI, PeriscoperConstants.KD);
+    }
+  }
+
+  /** Update FeedForward gains for the Periscoper motors from SmartDashboard inputs */
+  private void updateFF() {
+    if (PeriscoperConstants.KS
+            != SmartDashboard.getNumber("PIDFF/Periscoper/KS", PeriscoperConstants.KS)
+        || PeriscoperConstants.KV
+            != SmartDashboard.getNumber("PIDFF/Periscoper/KV", PeriscoperConstants.KV)
+        || PeriscoperConstants.KG
+            != SmartDashboard.getNumber("PIDFF/Periscoper/KG", PeriscoperConstants.KG)) {
+      PeriscoperConstants.KS =
+          SmartDashboard.getNumber("PIDFF/Periscoper/KS", PeriscoperConstants.KS);
+      PeriscoperConstants.KV =
+          SmartDashboard.getNumber("PIDFF/Periscoper/KV", PeriscoperConstants.KV);
+      PeriscoperConstants.KG =
+          SmartDashboard.getNumber("PIDFF/Periscoper/KG", PeriscoperConstants.KG);
+      this.setPID(PeriscoperConstants.KS, PeriscoperConstants.KV, PeriscoperConstants.KG);
     }
   }
 }
