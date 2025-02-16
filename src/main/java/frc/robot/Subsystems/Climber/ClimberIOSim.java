@@ -22,7 +22,7 @@ public class ClimberIOSim implements ClimberIO {
                 DCMotor.getKrakenX60(1), ClimberConstants.MOI_KG_M2, ClimberConstants.GEAR_RATIO),
             DCMotor.getKrakenX60(1),
             ClimberConstants.GEAR_RATIO,
-            ClimberConstants.LENGHT_M,
+            ClimberConstants.LENGTH_M,
             ClimberConstants.CLIMBER_MIN_ANGLE_RAD,
             ClimberConstants.CLIMBER_MAX_ANGLE_RAD,
             false,
