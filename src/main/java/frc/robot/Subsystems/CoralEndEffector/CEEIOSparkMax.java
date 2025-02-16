@@ -17,25 +17,34 @@ public class CEEIOSparkMax implements CEEIO {
   private final RelativeEncoder m_relativeEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
 
+  /**
+   * This constructs a new CEEIOSparkMax instance
+   *
+   * <p>This creates a new CEEIO object that uses the real NEO 550 motor to run the real CEE
+   * mechanism
+   */
   public CEEIOSparkMax() {
     m_sparkmax = new SparkMax(CEEConstants.CAN_ID, MotorType.kBrushless);
 
+    // SPARK MAX configurations
     m_config
         .inverted(CEEConstants.IS_INVERTED)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(CEEConstants.CUR_LIM_A);
     m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
-    m_sparkmax.configure(
-        m_config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+    // Initialize relative encoder from SPARK MAX
     m_relativeEncoder = m_sparkmax.getEncoder();
+
+    // Apply configurations
+    m_sparkmax.configure(m_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
   public void updateInputs(CEEIOInputs inputs) {
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
     inputs.positionRad =
-        Units.rotationsToRadians(m_relativeEncoder.getPosition())
-            / CEEConstants.GEAR_RATIO;
+        Units.rotationsToRadians(m_relativeEncoder.getPosition()) / CEEConstants.GEAR_RATIO;
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / CEEConstants.GEAR_RATIO;

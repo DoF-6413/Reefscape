@@ -6,29 +6,29 @@ public interface CEEIO {
 
   @AutoLog
   public static class CEEIOInputs {
-    /** Voltage that CEE motor draws */
+    /** Voltage applied to the CEE motor */
     public double appliedVoltage = 0.0;
-    /** Position of the wheel in radians */
+    /** Position of the CEE in radians */
     public double positionRad = 0.0;
-    /** Velocity of the wheel in radians per sec */
+    /** Velocity of the CEE in radians per sec */
     public double velocityRadPerSec = 0.0;
-    /** Current drawn by the motor in amps */
+    /** Current drawn by the CEE motor in amps */
     public double currentAmps = 0.0;
-    /** Temperature of the motor in celsius */
+    /** Temperature of the CEE motor in celsius */
     public double tempCelsius = 0.0;
   }
 
   /**
-   * Peridocially updates the logged inputs for the Module.
+   * Updates the logged inputs for the CEE. Must be called periodically
    *
    * @param inputs Inputs from the auto logger
    */
   public default void updateInputs(CEEIOInputs inputs) {}
 
   /**
-   * Manually sets voltage of the CEE motor
+   * Sets voltage of the CEE motor
    *
-   * @param volts A value between -12 (full reverse) to 12 (full forward)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public default void setVoltage(double volts) {}
 }

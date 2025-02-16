@@ -33,6 +33,8 @@ public class RobotContainer {
   // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
+
+  // Mechanisms
   private final CEE m_CEESubsystem;
 
   // Utils
@@ -42,6 +44,8 @@ public class RobotContainer {
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
+  private final CommandXboxController m_auxController =
+      new CommandXboxController(OperatorConstants.AUX_CONTROLLER);
 
   // Autos
   private final LoggedDashboardChooser<Command> m_autoChooser =
@@ -132,6 +136,7 @@ public class RobotContainer {
 
     /** Driver Controls */
     this.driverControllerBindings();
+    this.auxControllerBindings();
   }
 
   // Driver Controls
@@ -196,6 +201,15 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> m_CEESubsystem.setVoltage(12), m_CEESubsystem));
   }
 
+  /** Aux Controls */
+  public void auxControllerBindings () {
+    // CEE testing binding
+    m_CEESubsystem.setDefaultCommand(
+        new InstantCommand (
+            () -> m_CEESubsystem.setVoltage (m_auxController.getLeftTriggerAxis() *12),
+            m_CEESubsystem));
+  }
+  
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
