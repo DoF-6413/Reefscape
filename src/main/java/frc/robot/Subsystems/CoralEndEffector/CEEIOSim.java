@@ -21,7 +21,7 @@ public class CEEIOSim implements CEEIO {
             LinearSystemId.createFlywheelSystem(
                 DCMotor.getNeo550(1), CEEConstants.MOI_KG_M2, CEEConstants.GEAR_RATIO),
             DCMotor.getNeo550(1),
-            CEEConstants.GEAR_RATIO);
+            0);
 
     m_PIDController = new PIDController(CEEConstants.KP, CEEConstants.KI, CEEConstants.KD);
   }
@@ -31,7 +31,6 @@ public class CEEIOSim implements CEEIO {
 
     m_CEESim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
-    inputs.isConnected = true;
     inputs.positionRad =
         m_CEESim.getAngularVelocityRadPerSec() * RobotStateConstants.LOOP_PERIODIC_SEC;
     inputs.velocityRadPerSec = m_CEESim.getAngularVelocityRadPerSec();
