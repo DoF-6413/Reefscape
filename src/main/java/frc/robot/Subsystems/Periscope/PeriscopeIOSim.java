@@ -16,13 +16,13 @@ public class PeriscopeIOSim implements PeriscopeIO {
   // Controllers
   private final ProfiledPIDController m_profiledPIDController;
   private ElevatorFeedforward m_elevatorFeedforward;
-  private double m_setpointHeightMeters = 0.0;
+  private double m_setpointMeters = 0.0;
 
   /**
-   * This constructs a new PeriscopeIOSim instance
+   * This constructs a new {@link PeriscopeIOSim} instance.
    *
-   * <p>This creates a new PeriscopeIO object that uses two simulated KrakenX60 motors to drive the
-   * simulated Periscope (elevator) mechanism
+   * <p>This creates a new {@link PeriscopeIO} object that uses two simulated KrakenX60 motors to
+   * drive the simulated Periscope (elevator) mechanism
    */
   public PeriscopeIOSim() {
     System.out.println("[Init] Creating PeriscopeIOSim");
@@ -62,7 +62,7 @@ public class PeriscopeIOSim implements PeriscopeIO {
   public void updateInputs(PeriscopeIOInputs inputs) {
     // Calculate next output voltage from Profiled PID and Feedforward controllers
     double voltage =
-        m_profiledPIDController.calculate(inputs.heightMeters, m_setpointHeightMeters)
+        m_profiledPIDController.calculate(inputs.heightMeters, m_setpointMeters)
             + m_elevatorFeedforward.calculate(m_profiledPIDController.getGoal().velocity);
     this.setVoltage(voltage);
 
@@ -72,7 +72,8 @@ public class PeriscopeIOSim implements PeriscopeIO {
     // Update inputs
     inputs.isConnected = new boolean[] {true, true};
     inputs.heightMeters = m_elevatorSim.getPositionMeters();
-    inputs.velocityMetersPerSec =
+    inputs.velocityMetersPerSec = m_elevatorSim.getVelocityMetersPerSecond();
+    inputs.velocityRadPerSec =
         m_elevatorSim.getVelocityMetersPerSecond() / PeriscopeConstants.DRUM_RADIUS_M;
     inputs.appliedVolts = new double[] {voltage, voltage};
     inputs.currentDraw =
@@ -89,7 +90,7 @@ public class PeriscopeIOSim implements PeriscopeIO {
 
   @Override
   public void setPosition(double heightMeters) {
-    m_setpointHeightMeters = heightMeters;
+    m_setpointMeters = heightMeters;
   }
 
   @Override

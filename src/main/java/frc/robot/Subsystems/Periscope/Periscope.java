@@ -13,26 +13,28 @@ public class Periscope extends SubsystemBase {
   private final PeriscopeIOInputsAutoLogged m_inputs = new PeriscopeIOInputsAutoLogged();
 
   /**
-   * Constructs a new Periscope subsystem instance.
+   * This constructs a new {@link Periscope} instance.
    *
-   * <p>This constructor creates a new Periscope subsystem object with given IO implementation
+   * <p>This creates a new Periscope {@link SubsystemBase} object with given IO implementation which
+   * determines whether the methods and inputs are initailized with the real, sim, or replay code
    *
-   * @param io PeriscopeIO implementation of the current robot mode
+   * @param io {@link PeriscopeIO} implementation of the current robot mode
    */
   public Periscope(PeriscopeIO io) {
     System.out.println("[Init] Creating Periscope");
 
+    // Initailize the IO implementation
     m_io = io;
 
     // Tunable PID & Feedforward values
-    SmartDashboard.putBoolean("PIDFF/Periscope/EnableTuning", false);
-    SmartDashboard.putNumber("PIDFF/Periscope/KP", PeriscopeConstants.KP);
-    SmartDashboard.putNumber("PIDFF/Periscope/KI", PeriscopeConstants.KI);
-    SmartDashboard.putNumber("PIDFF/Periscope/KD", PeriscopeConstants.KD);
-    SmartDashboard.putNumber("PIDFF/Periscope/KS", PeriscopeConstants.KS);
-    SmartDashboard.putNumber("PIDFF/Periscope/KG", PeriscopeConstants.KG);
-    SmartDashboard.putNumber("PIDFF/Periscope/KV", PeriscopeConstants.KV);
-    SmartDashboard.putNumber("PIDFF/Periscope/KA", PeriscopeConstants.KA);
+    SmartDashboard.putBoolean("PIDFF_Tuning/Periscope/EnableTuning", false);
+    SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KP", PeriscopeConstants.KP);
+    SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KI", PeriscopeConstants.KI);
+    SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KD", PeriscopeConstants.KD);
+    SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KS", PeriscopeConstants.KS);
+    SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KG", PeriscopeConstants.KG);
+    SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KV", PeriscopeConstants.KV);
+    SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KA", PeriscopeConstants.KA);
   }
 
   @Override
@@ -42,14 +44,14 @@ public class Periscope extends SubsystemBase {
     Logger.processInputs("Periscope", m_inputs);
 
     // Enable and update tunable PID values through SmartDashboard
-    if (SmartDashboard.getBoolean("PIDFF/Periscope/EnableTuning", false)) {
+    if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
       this.updatePID();
       this.updateFF();
     }
   }
 
   /**
-   * Sets voltage of the Periscope motors
+   * Sets voltage of the Periscope motors. The value inputed is clamped between values of -12 to 12
    *
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
@@ -58,16 +60,16 @@ public class Periscope extends SubsystemBase {
   }
 
   /**
-   * Sets the position of the Periscope
+   * Sets the position of the Periscope using a motion profiled PID controller
    *
-   * @param heightMeters Height of the Periscope in meters
+   * @param heightMeters Position of the Periscope in meters
    */
   public void setPosition(double heightMeters) {
     m_io.setPosition(heightMeters);
   }
 
   /**
-   * Sets the PID gains of the Periscope motors' built in closed loop controllers
+   * Sets the PID gains of the Periscope motors' Profiled PID controller
    *
    * @param kP Proportional gain value
    * @param kI Integral gain value
@@ -77,34 +79,61 @@ public class Periscope extends SubsystemBase {
     m_io.setPID(kP, kI, kD);
   }
 
+  /**
+   * Sets the Feedforward values for the Periscope motors' Feedforward controller
+   *
+   * @param kS Static gain value
+   * @param kG Gravity gain value
+   * @param kV Velocity gain value
+   * @param kA Acceleration gain value
+   */
+  public void setFF(double kS, double kG, double kV, double kA) {
+    m_io.setFF(kS, kG, kV, kA);
+  }
+
   /** Update PID gains for the Periscope motors from SmartDashboard inputs */
   private void updatePID() {
+    // If any value on SmartDashboard changes, update the gains
     if (PeriscopeConstants.KP
-            != SmartDashboard.getNumber("PIDFF/Periscope/KP", PeriscopeConstants.KP)
+            != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KP", PeriscopeConstants.KP)
         || PeriscopeConstants.KI
-            != SmartDashboard.getNumber("PIDFF/Periscope/KI", PeriscopeConstants.KI)
+            != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KI", PeriscopeConstants.KI)
         || PeriscopeConstants.KD
-            != SmartDashboard.getNumber("PIDFF/Periscope/KD", PeriscopeConstants.KD)) {
-      PeriscopeConstants.KP = SmartDashboard.getNumber("PIDFF/Periscope/KP", PeriscopeConstants.KP);
-      PeriscopeConstants.KI = SmartDashboard.getNumber("PIDFF/Periscope/KI", PeriscopeConstants.KI);
-      PeriscopeConstants.KD = SmartDashboard.getNumber("PIDFF/Periscope/KD", PeriscopeConstants.KD);
+            != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KD", PeriscopeConstants.KD)) {
+      PeriscopeConstants.KP =
+          SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KP", PeriscopeConstants.KP);
+      PeriscopeConstants.KI =
+          SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KI", PeriscopeConstants.KI);
+      PeriscopeConstants.KD =
+          SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KD", PeriscopeConstants.KD);
+      // Sets the new gains
       this.setPID(PeriscopeConstants.KP, PeriscopeConstants.KI, PeriscopeConstants.KD);
     }
   }
 
-  /** Update FeedForward gains for the Periscope motors from SmartDashboard inputs */
+  /** Update Feedforward gains for the Periscope motors from SmartDashboard inputs */
   private void updateFF() {
+    // If any value on SmartDashboard changes, update the gains
     if (PeriscopeConstants.KS
-            != SmartDashboard.getNumber("PIDFF/Periscope/KS", PeriscopeConstants.KS)
+            != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KS", PeriscopeConstants.KS)
         || PeriscopeConstants.KV
-            != SmartDashboard.getNumber("PIDFF/Periscope/KV", PeriscopeConstants.KV)
+            != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KV", PeriscopeConstants.KV)
         || PeriscopeConstants.KG
-            != SmartDashboard.getNumber("PIDFF/Periscope/KG", PeriscopeConstants.KG)) {
-      PeriscopeConstants.KS = SmartDashboard.getNumber("PIDFF/Periscope/KS", PeriscopeConstants.KS);
-      PeriscopeConstants.KG = SmartDashboard.getNumber("PIDFF/Periscope/KG", PeriscopeConstants.KG);
-      PeriscopeConstants.KV = SmartDashboard.getNumber("PIDFF/Periscope/KV", PeriscopeConstants.KV);
-      PeriscopeConstants.KV = SmartDashboard.getNumber("PIDFF/Periscope/KA", PeriscopeConstants.KA);
-      this.setPID(PeriscopeConstants.KS, PeriscopeConstants.KV, PeriscopeConstants.KG);
+            != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KG", PeriscopeConstants.KG)) {
+      PeriscopeConstants.KS =
+          SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KS", PeriscopeConstants.KS);
+      PeriscopeConstants.KG =
+          SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KG", PeriscopeConstants.KG);
+      PeriscopeConstants.KV =
+          SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KV", PeriscopeConstants.KV);
+      PeriscopeConstants.KV =
+          SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KA", PeriscopeConstants.KA);
+      // Sets the new gains
+      this.setFF(
+          PeriscopeConstants.KS,
+          PeriscopeConstants.KG,
+          PeriscopeConstants.KV,
+          PeriscopeConstants.KA);
     }
   }
 }

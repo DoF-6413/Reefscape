@@ -125,15 +125,15 @@ public class Drive extends SubsystemBase {
     SmartDashboard.putData("Field", m_field);
 
     // Tunable PID & Feedforward values
-    SmartDashboard.putBoolean("PIDFF/Drive/EnableTuning", false);
-    SmartDashboard.putNumber("PIDFF/Drive/Drive_kP", DriveConstants.DRIVE_KP);
-    SmartDashboard.putNumber("PIDFF/Drive/Drive_kI", DriveConstants.DRIVE_KI);
-    SmartDashboard.putNumber("PIDFF/Drive/Drive_kD", DriveConstants.DRIVE_KD);
-    SmartDashboard.putNumber("PIDFF/Drive/Drive_kS", DriveConstants.DRIVE_KS);
-    SmartDashboard.putNumber("PIDFF/Drive/Drive_kV", DriveConstants.DRIVE_KV);
-    SmartDashboard.putNumber("PIDFF/Drive/Turn_kP", DriveConstants.TURN_KP);
-    SmartDashboard.putNumber("PIDFF/Drive/Turn_kI", DriveConstants.TURN_KI);
-    SmartDashboard.putNumber("PIDFF/Drive/Turn_kD", DriveConstants.TURN_KD);
+    SmartDashboard.putBoolean("PIDFF_Tuning/Drive/EnableTuning", false);
+    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Drive_kP", DriveConstants.DRIVE_KP);
+    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Drive_kI", DriveConstants.DRIVE_KI);
+    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Drive_kD", DriveConstants.DRIVE_KD);
+    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Drive_kS", DriveConstants.DRIVE_KS);
+    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Drive_kV", DriveConstants.DRIVE_KV);
+    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Turn_kP", DriveConstants.TURN_KP);
+    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Turn_kI", DriveConstants.TURN_KI);
+    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Turn_kD", DriveConstants.TURN_KD);
   }
 
   @Override
@@ -151,7 +151,7 @@ public class Drive extends SubsystemBase {
     m_field.setRobotPose(this.getCurrentPose2d());
 
     // Enable and update tunable PID values through SmartDashboard
-    if (SmartDashboard.getBoolean("PIDFF/Drive/EnableTuning", false)) {
+    if (SmartDashboard.getBoolean("PIDFF_Tuning/Drive/EnableTuning", false)) {
       this.updateDrivePID();
       this.updateDriveFF();
       this.updateTurnPID();
@@ -349,7 +349,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * @return Average velocity of Drive motors in rotations per second, for FeedForward
+   * @return Average velocity of Drive motors in rotations per second, for Feedforward
    *     characterization
    */
   public double getAverageDriveVelocity() {
@@ -440,31 +440,31 @@ public class Drive extends SubsystemBase {
   /** Update PID values for the Drive motors from SmartDashboard inputs */
   private void updateDrivePID() {
     if (DriveConstants.DRIVE_KP
-            != SmartDashboard.getNumber("PIDFF/Drive/Drive_kP", DriveConstants.DRIVE_KP)
+            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kP", DriveConstants.DRIVE_KP)
         || DriveConstants.DRIVE_KI
-            != SmartDashboard.getNumber("PIDFF/Drive/Drive_kI", DriveConstants.DRIVE_KI)
+            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kI", DriveConstants.DRIVE_KI)
         || DriveConstants.DRIVE_KD
-            != SmartDashboard.getNumber("PIDFF/Drive/Drive_kD", DriveConstants.DRIVE_KD)) {
+            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kD", DriveConstants.DRIVE_KD)) {
       DriveConstants.DRIVE_KP =
-          SmartDashboard.getNumber("PIDFF/Drive/Drive_kP", DriveConstants.DRIVE_KP);
+          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kP", DriveConstants.DRIVE_KP);
       DriveConstants.DRIVE_KI =
-          SmartDashboard.getNumber("PIDFF/Drive/Drive_kI", DriveConstants.DRIVE_KI);
+          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kI", DriveConstants.DRIVE_KI);
       DriveConstants.DRIVE_KD =
-          SmartDashboard.getNumber("PIDFF/Drive/Drive_kD", DriveConstants.DRIVE_KD);
+          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kD", DriveConstants.DRIVE_KD);
       this.setDrivePID(DriveConstants.DRIVE_KP, DriveConstants.DRIVE_KI, DriveConstants.DRIVE_KD);
     }
   }
 
-  /** Update FeedForward values for the Drive motors from SmartDashboard inputs */
+  /** Update Feedforward values for the Drive motors from SmartDashboard inputs */
   private void updateDriveFF() {
     if (DriveConstants.DRIVE_KS
-            != SmartDashboard.getNumber("PIDFF/Drive/Drive_kS", DriveConstants.DRIVE_KS)
+            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kS", DriveConstants.DRIVE_KS)
         || DriveConstants.DRIVE_KV
-            != SmartDashboard.getNumber("PIDFF/Drive/Drive_kV", DriveConstants.DRIVE_KV)) {
+            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kV", DriveConstants.DRIVE_KV)) {
       DriveConstants.DRIVE_KS =
-          SmartDashboard.getNumber("PIDFF/Drive/Drive_kS", DriveConstants.DRIVE_KS);
+          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kS", DriveConstants.DRIVE_KS);
       DriveConstants.DRIVE_KV =
-          SmartDashboard.getNumber("PIDFF/Drive/Drive_kV", DriveConstants.DRIVE_KV);
+          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kV", DriveConstants.DRIVE_KV);
       this.setDriveFF(DriveConstants.DRIVE_KS, DriveConstants.DRIVE_KV);
     }
   }
@@ -472,17 +472,17 @@ public class Drive extends SubsystemBase {
   /** Update PID values for the Turn motors from SmartDashboard inputs */
   private void updateTurnPID() {
     if (DriveConstants.TURN_KP
-            != SmartDashboard.getNumber("PIDFF/Drive/Turn_kP", DriveConstants.TURN_KP)
+            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kP", DriveConstants.TURN_KP)
         || DriveConstants.TURN_KI
-            != SmartDashboard.getNumber("PIDFF/Drive/Turn_kI", DriveConstants.TURN_KI)
+            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kI", DriveConstants.TURN_KI)
         || DriveConstants.TURN_KD
-            != SmartDashboard.getNumber("PIDFF/Drive/Turn_kD", DriveConstants.TURN_KD)) {
+            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kD", DriveConstants.TURN_KD)) {
       DriveConstants.TURN_KP =
-          SmartDashboard.getNumber("PIDFF/Drive/Turn_kP", DriveConstants.TURN_KP);
+          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kP", DriveConstants.TURN_KP);
       DriveConstants.TURN_KI =
-          SmartDashboard.getNumber("PIDFF/Drive/Turn_kI", DriveConstants.TURN_KI);
+          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kI", DriveConstants.TURN_KI);
       DriveConstants.TURN_KD =
-          SmartDashboard.getNumber("PIDFF/Drive/Turn_kD", DriveConstants.TURN_KD);
+          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kD", DriveConstants.TURN_KD);
       Logger.recordOutput("/Drive/PIDFF/Turn_kP", DriveConstants.TURN_KP);
       Logger.recordOutput("/Drive/PIDFF/Turn_kI", DriveConstants.TURN_KI);
       Logger.recordOutput("/Drive/PIDFF/Turn_kD", DriveConstants.TURN_KD);

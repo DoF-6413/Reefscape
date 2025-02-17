@@ -122,7 +122,7 @@ public class RobotContainer {
     m_autoChooser.addOption("Curve 180", new PathPlannerAuto("Curve 180"));
     /* Characterization Routines */
     m_autoChooser.addOption(
-        "Drive FeedForward Characterization",
+        "Drive Feedforward Characterization",
         DriveCommands.feedforwardCharacterization(m_driveSubsystem));
     m_autoChooser.addOption(
         "Drive Wheel Radius Characterization",

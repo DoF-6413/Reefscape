@@ -14,8 +14,10 @@ public interface PeriscopeIO {
     public double[] tempCelsius = {0.0, 0.0};
     /** Height of the Periscope in meters */
     public double heightMeters = 0.0;
-    /** Linear velocity of the Periscope in meters */
+    /** Linear velocity of the Periscope in meters per second */
     public double velocityMetersPerSec = 0.0;
+    /** Rotational velocity of the Periscope drum in radians per second */
+    public double velocityRadPerSec = 0.0;
     /** Whether a singal is being recieved by the Periscope motors or not */
     public boolean[] isConnected = {false, false};
   }
@@ -28,22 +30,21 @@ public interface PeriscopeIO {
   public default void updateInputs(PeriscopeIOInputs inputs) {}
 
   /**
-   * Sets voltage of the Periscope motors
+   * Sets voltage of the Periscope motors. The value inputed is clamped between values of -12 to 12
    *
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public default void setVoltage(double volts) {}
 
   /**
-   * Sets the position of the Periscope using the motors' closed loop controller built into the
-   * TalonFX speed controller
+   * Sets the position of the Periscope using a motion profiled PID controller
    *
    * @param heightMeters Position of the Periscope in meters
    */
   public default void setPosition(double heightMeters) {}
 
   /**
-   * Sets the PID gains of the Periscope motors' built in closed loop controller
+   * Sets the PID gains of the Periscope motors' Profiled PID controller
    *
    * @param kP Proportional gain value
    * @param kI Integral gain value
@@ -52,7 +53,7 @@ public interface PeriscopeIO {
   public default void setPID(double kP, double kI, double kD) {}
 
   /**
-   * Sets the Feedforward values for the Periscope motors' built in closed loop controller
+   * Sets the Feedforward values for the Periscope motors' Feedforward controller
    *
    * @param kS Static gain value
    * @param kG Gravity gain value

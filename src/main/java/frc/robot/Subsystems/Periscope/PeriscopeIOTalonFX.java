@@ -30,10 +30,10 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
   private StatusSignal<Temperature>[] m_tempCelsius;
 
   /**
-   * This constructs a new PeriscopeIOTalonFX instance
+   * This constructs a new {@link PeriscopeIOTalonFX} instance.
    *
-   * <p>This creates a new PeriscopeIO object that uses two real KrakenX60 motors to drive the
-   * Periscope (elevator) mechanism
+   * <p>This creates a new {@link PeriscopeIO} object that uses two real KrakenX60 motors to drive
+   * the Periscope (elevator) mechanism
    */
   public PeriscopeIOTalonFX() {
     System.out.println("[Init] PeriscopeIOTalonFX");
@@ -61,7 +61,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
         .withStatorCurrentLimit(PeriscopeConstants.CUR_LIM_A)
         .withStatorCurrentLimitEnable(PeriscopeConstants.ENABLE_CUR_LIM);
 
-    // PID and FeedForward gains configuration
+    // PID and Feedforward gains configuration
     m_motorConfig
         .Slot0
         .withKP(PeriscopeConstants.KP)
@@ -133,13 +133,13 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
                 (m_positionRot[0].getValueAsDouble() + m_positionRot[1].getValueAsDouble()) / 2)
             / PeriscopeConstants.GEAR_RATIO
             * PeriscopeConstants.DRUM_RADIUS_M;
-    inputs.velocityMetersPerSec =
+    inputs.velocityRadPerSec =
         (Units.rotationsToRadians(
                 (m_velocityRotPerSec[0].getValueAsDouble()
                         + m_velocityRotPerSec[1].getValueAsDouble())
                     / 2))
-            / PeriscopeConstants.GEAR_RATIO
-            * PeriscopeConstants.DRUM_RADIUS_M;
+            / PeriscopeConstants.GEAR_RATIO;
+    inputs.velocityMetersPerSec = inputs.velocityRadPerSec * PeriscopeConstants.DRUM_RADIUS_M;
   }
 
   @Override
@@ -150,6 +150,12 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     }
   }
 
+  /**
+   * Sets the position of the Periscope using the motors' closed loop controller built into the
+   * TalonFX speed controller
+   *
+   * @param heightMeters Position of the Periscope in meters
+   */
   @Override
   public void setPosition(double heightMeters) {
     var positionRotations =
@@ -159,11 +165,26 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     }
   }
 
+  /**
+   * Sets the PID gains of the Periscope motors' built in closed loop controller
+   *
+   * @param kP Proportional gain value
+   * @param kI Integral gain value
+   * @param kD Derivative gain value
+   */
   @Override
   public void setPID(double kP, double kI, double kD) {
     m_motorConfig.Slot0.withKP(kP).withKI(kI).withKD(kD);
   }
 
+  /**
+   * Sets the Feedforward values for the Periscope motors' built in closed loop controller
+   *
+   * @param kS Static gain value
+   * @param kG Gravity gain value
+   * @param kV Velocity gain value
+   * @param kA Acceleration gain value
+   */
   @Override
   public void setFF(double kS, double kG, double kV, double kA) {
     m_motorConfig.Slot0.withKS(kS).withKG(kG).withKV(kV).withKA(kA);
