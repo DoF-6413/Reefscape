@@ -6,61 +6,58 @@ package frc.robot.Subsystems.Climber;
 
 import org.littletonrobotics.junction.AutoLog;
 
-/** Add your docs here. */
 public interface ClimberIO {
 
   @AutoLog
   public static class ClimberIOInputs {
-    // Voltage that climb motor draws
+    /** Voltage applied to the Climber motor in volts */
     public double appliedVoltage = 0.0;
-    // Position of the wheel in radians
-    public double positionRad = 0.0;
-    // Velocity of the wheel in radians per sec
-    public double velocityRadPerSec = 0.0;
-    // Current drawn by the motor in amps
+    /** Current draw of the Climber motor in amps */
     public double currentAmps = 0.0;
-    // Temperature of the motor in celsius
+    /** Tempature of the Climber motor in celsius */
     public double tempCelsius = 0.0;
-    // If a signal is being recieved from the Climb motor
+    /** Angular position of the Climber in radians */
+    public double positionRad = 0.0;
+    /** Velocity of the Climber in radians per second */
+    public double velocityRadPerSec = 0.0;
+    /** Whether a singal is being recieved by the Climber motor or not */
     public boolean isConnected = false;
   }
 
   /**
-   * Peridocially updates the logged inputs for the climb motor.
+   * Peridocially updates the logged inputs for the Climber motor.
    *
    * @param inputs Inputs from the auto logger
    */
   public default void updateInputs(ClimberIOInputs inputs) {}
 
   /**
-   * Manually sets voltage of the Climb motor
+   * Sets voltage of the Climber motor. The value inputed is clamped between values of -12 to 12
    *
-   * @param volts A value between -12 (full reverse) to 12 (full forward)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public default void setVoltage(double volts) {}
 
   /**
-   * Sets the idle mode for the Climb motor
+   * Sets the idle mode for the Climber motor
    *
-   * @param enable Sets break mode on true, coast on false
+   * @param enable Sets brake mode on true, coast on false
    */
   public default void setBrakeMode(boolean enable) {}
 
   /**
-   * Sets the velocity of the Climb motor using the closed loop controller built into the TalonFX
-   * speed controller
+   * Sets the position of the Climber using a PID controller
    *
-   * @param velocityRadPerSec Velocity to set Climb motor to in radians per second
+   * @param positionRad Angular position of the Climber in radians
    */
-  public default void setVelocity(double velocityRadPerSec) {}
+  public default void setPosition(double positionRad) {}
 
   /**
-   * Sets the position of the Climb motor using the closed loop controller built into the TalonFX
-   * speed controller
+   * Sets the PID gains of the Climber motor's PID controller
    *
-   * @param Position to set Climb motor to in radians per second
+   * @param kP Proportional gain value
+   * @param kI Integral gain value
+   * @param kD Derivative gain value
    */
-  public default void setPosition(double Position) {}
-
   public default void setPID(double kP, double kI, double kD) {}
 }

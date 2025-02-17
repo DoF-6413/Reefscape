@@ -8,14 +8,23 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants.RobotStateConstants;
 
 public class ClimberIOSim implements ClimberIO {
-
+  // Arm system simulation
   private final SingleJointedArmSim m_climberSim;
-  private final PIDController m_PIDController;
-  private double m_setPoint = 0.0; // setpoint
 
+  // PID controller
+  private final PIDController m_PIDController;
+  private double m_setpointRad = 0.0; // setpoint
+
+  /**
+   * This constructs a new {@link ClimberIOSim} instance.
+   *
+   * <p>This creates a new {@link ClimberIO} object that uses a simulated KrakenX60 motor to drive
+   * the simulated Climber (arm) mechanism
+   */
   public ClimberIOSim() {
     System.out.println("[Init] Creating ClimberIOSim");
 
+    // Initialize the simulated Climber arm with a KrakenX60 motor
     m_climberSim =
         new SingleJointedArmSim(
             LinearSystemId.createSingleJointedArmSystem(
@@ -25,21 +34,24 @@ public class ClimberIOSim implements ClimberIO {
             ClimberConstants.LENGTH_M,
             ClimberConstants.CLIMBER_MIN_ANGLE_RAD,
             ClimberConstants.CLIMBER_MAX_ANGLE_RAD,
-            false,
-            0);
+            ClimberConstants.SIMULATE_GRAVITY,
+            ClimberConstants.CLIMBER_MAX_ANGLE_RAD); // Starting height
 
+    // Initailize PID controller
     m_PIDController =
         new PIDController(ClimberConstants.KP, ClimberConstants.KI, ClimberConstants.KD);
   }
 
   @Override
   public void updateInputs(ClimberIOInputs inputs) {
-
-    double voltage = m_PIDController.calculate(inputs.positionRad, m_setPoint);
+    // Calculate next output voltage from the PID controller
+    double voltage = m_PIDController.calculate(inputs.positionRad, m_setpointRad);
     this.setVoltage(voltage);
 
+    // Update arm sim
     m_climberSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
+    // Update logged inputs
     inputs.isConnected = true;
     inputs.positionRad = m_climberSim.getAngleRads();
     inputs.velocityRadPerSec = m_climberSim.getVelocityRadPerSec();
@@ -54,8 +66,8 @@ public class ClimberIOSim implements ClimberIO {
   }
 
   @Override
-  public void setPosition(double position) {
-    m_setPoint = position;
+  public void setPosition(double positionRad) {
+    m_setpointRad = positionRad;
   }
 
   @Override

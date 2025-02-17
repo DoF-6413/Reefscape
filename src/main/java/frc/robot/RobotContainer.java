@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -47,6 +48,8 @@ public class RobotContainer {
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
+  private final CommandXboxController m_auxController =
+      new CommandXboxController(OperatorConstants.AUX_CONTROLLER);
 
   // Autos
   private final LoggedDashboardChooser<Command> m_autoChooser =
@@ -147,6 +150,7 @@ public class RobotContainer {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
     this.driverControllerBindings();
+    this.auxControllerBindings();
   }
 
   /** Driver Controls */
@@ -258,10 +262,22 @@ public class RobotContainer {
             PathfindingCommands.pathfindToAprilTag(
                     () -> 14, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
                 .until(m_driverController.rightBumper().negate()));
+  }
 
-    m_driverController
+  /** Aux Controls */
+  public void auxControllerBindings() {
+    m_auxController
         .y()
-        .onTrue(new InstantCommand(() -> m_climberSubsystem.setPosition(.5), m_climberSubsystem));
+        .onTrue(
+            new InstantCommand(
+                () -> m_climberSubsystem.setPosition(Units.degreesToRadians(90)),
+                m_climberSubsystem));
+    m_auxController
+        .x()
+        .onTrue(
+            new InstantCommand(
+                () -> m_climberSubsystem.setPosition(Units.degreesToRadians(10)),
+                m_climberSubsystem));
   }
 
   /**

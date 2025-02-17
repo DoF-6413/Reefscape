@@ -5,56 +5,87 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
-  private final ClimberIO io;
-  private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
+  private final ClimberIO m_io;
+  private final ClimberIOInputsAutoLogged m_inputs = new ClimberIOInputsAutoLogged();
 
-  /** Creates a new Climber. */
-  public Climber(ClimberIO ClimberIO) {
-    // initialize the Climber subsystem
+  /**
+   * This constructs a new {@link Climber} instance.
+   *
+   * <p>This creates a new Climber {@link SubsystemBase} object with given IO implementation which
+   * determines whether the methods and inputs are initailized with the real, sim, or replay code
+   *
+   * @param io {@link ClimberIO} implementation of the current robot mode
+   */
+  public Climber(ClimberIO io) {
+    // Initialize the Climber subsystem
     System.out.println("[Init] Creating Climber");
-    this.io = ClimberIO;
 
-    SmartDashboard.putBoolean("PIDFF/climber/EnableTuning", false);
-    SmartDashboard.putNumber("PIDFF/climber/KP", ClimberConstants.KP);
-    SmartDashboard.putNumber("PIDFF/climber/KI", ClimberConstants.KI);
-    SmartDashboard.putNumber("PIDFF/climber/KD", ClimberConstants.KD);
+    // Initialize the IO implementation
+    m_io = io;
+
+    // Tunable PID values
+    SmartDashboard.putBoolean("PIDFF_Tuning_Tuning/Climber/EnableTuning", false);
+    SmartDashboard.putNumber("PIDFF_Tuning_Tuning/Climber/KP", ClimberConstants.KP);
+    SmartDashboard.putNumber("PIDFF_Tuning_Tuning/Climber/KI", ClimberConstants.KI);
+    SmartDashboard.putNumber("PIDFF_Tuning_Tuning/Climber/KD", ClimberConstants.KD);
   }
 
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
-    Logger.processInputs("Climber", inputs);
-    io.updateInputs(inputs);
-    if (SmartDashboard.getBoolean("PIDFF/Periscoper/EnableTuning", false)) {
-      this.updateClimberPID();
+    // Update inputs and log them
+    m_io.updateInputs(m_inputs);
+    Logger.processInputs("Climber", m_inputs);
+
+    // Enable and update tunable PID values through SmartDashboard
+    if (SmartDashboard.getBoolean("PIDFF_Tuning/Climber/EnableTuning", false)) {
+      this.updatePID();
     }
   }
 
+  /**
+   * Sets voltage of the Climber motor. The value inputed is clamped between values of -12 to 12
+   *
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
+   */
   public void setVoltage(double volts) {
-    io.setVoltage(volts);
+    m_io.setVoltage(volts);
   }
 
-  public void setVelocity(double velocity) {
-    io.setVelocity(velocity);
+  /**
+   * Sets the position of the Climber using a PID controller
+   *
+   * @param positionRad Angular position of the Climber in radians
+   */
+  public void setPosition(double positionRad) {
+    m_io.setPosition(positionRad);
   }
 
-  public void setPosition(double position) {
-    io.setPosition(position);
-  }
-
+  /**
+   * Sets the PID gains of the Climber motor's PID controller
+   *
+   * @param kP Proportional gain value
+   * @param kI Integral gain value
+   * @param kD Derivative gain value
+   */
   public void setPID(double kP, double kI, double kD) {
-
-    io.setPID(kP, kI, kD);
+    m_io.setPID(kP, kI, kD);
   }
 
-  private void updateClimberPID() {
-    if (ClimberConstants.KP != SmartDashboard.getNumber("PIDFF/Climber/KP", ClimberConstants.KP)
-        || ClimberConstants.KI != SmartDashboard.getNumber("PIDFF/Climber/KI", ClimberConstants.KI)
+  /** Update PID gains for the Climber motor from SmartDashboard inputs */
+  private void updatePID() {
+    if (ClimberConstants.KP
+            != SmartDashboard.getNumber("PIDFF_Tuning/Climber/KP", ClimberConstants.KP)
+        || ClimberConstants.KI
+            != SmartDashboard.getNumber("PIDFF_Tuning/Climber/KI", ClimberConstants.KI)
         || ClimberConstants.KD
-            != SmartDashboard.getNumber("PIDFF/Climber/KD", ClimberConstants.KD)) {
-      ClimberConstants.KP = SmartDashboard.getNumber("PIDFF/Climber/KP", ClimberConstants.KP);
-      ClimberConstants.KI = SmartDashboard.getNumber("PIDFF/Climber/KI", ClimberConstants.KI);
-      ClimberConstants.KD = SmartDashboard.getNumber("PIDFF/Climber/KD", ClimberConstants.KD);
+            != SmartDashboard.getNumber("PIDFF_Tuning/Climber/KD", ClimberConstants.KD)) {
+      ClimberConstants.KP =
+          SmartDashboard.getNumber("PIDFF_Tuning/Climber/KP", ClimberConstants.KP);
+      ClimberConstants.KI =
+          SmartDashboard.getNumber("PIDFF_Tuning/Climber/KI", ClimberConstants.KI);
+      ClimberConstants.KD =
+          SmartDashboard.getNumber("PIDFF_Tuning/Climber/KD", ClimberConstants.KD);
       this.setPID(ClimberConstants.KP, ClimberConstants.KI, ClimberConstants.KD);
     }
   }
