@@ -1,4 +1,4 @@
-package frc.robot.Subsystems.AlgaeEndEffector;
+package frc.robot.Subsystems.Algae.EndEffector;
 
 public class AEEConstants {
   // REAL CONSTANTS

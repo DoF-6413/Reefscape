@@ -1,4 +1,4 @@
-package frc.robot.Subsystems.AlgaeEndEffector;
+package frc.robot.Subsystems.Algae.EndEffector;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -42,8 +42,6 @@ public class AEEIOSparkMax implements AEEIO {
   @Override
   public void updateInputs(AEEIOInputs inputs) {
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
-    inputs.positionRad =
-        Units.rotationsToRadians(m_relativeEncoder.getPosition()) / AEEConstants.GEAR_RATIO;
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / AEEConstants.GEAR_RATIO;

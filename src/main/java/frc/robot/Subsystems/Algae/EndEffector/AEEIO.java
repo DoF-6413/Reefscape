@@ -1,4 +1,4 @@
-package frc.robot.Subsystems.AlgaeEndEffector;
+package frc.robot.Subsystems.Algae.EndEffector;
 
 import org.littletonrobotics.junction.AutoLog;
 
@@ -8,8 +8,6 @@ public interface AEEIO {
   public static class AEEIOInputs {
     /** Voltage applied to the AEE motor */
     public double appliedVoltage = 0.0;
-    /** Position of the AEE in radians */
-    public double positionRad = 0.0;
     /** Velocity of the AEE in radians per sec */
     public double velocityRadPerSec = 0.0;
     /** Current drawn by the AEE motor in amps */

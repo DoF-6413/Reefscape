@@ -1,4 +1,4 @@
-package frc.robot.Subsystems.AlgaeEndEffector;
+package frc.robot.Subsystems.Algae.EndEffector;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -33,8 +33,6 @@ public class AEEIOSim implements AEEIO {
     m_sim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
     // Update inputs
-    inputs.positionRad =
-        m_sim.getAngularVelocityRadPerSec() * RobotStateConstants.LOOP_PERIODIC_SEC;
     inputs.velocityRadPerSec = m_sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = m_sim.getInputVoltage();
     inputs.currentAmps = Math.abs(m_sim.getCurrentDrawAmps());
