@@ -13,14 +13,18 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.Subsystems.Drive.DriveConstants;
 import java.util.Optional;
 
 /**
@@ -75,6 +79,20 @@ public final class Constants {
 
     /** Weight of the robot with bumpers and battery */
     public static final double ROBOT_WEIGHT_KG = Units.lbsToKilograms(135);
+    /** Weight of the Proto-Bot with battery */
+    public static final double PROTOBOT_WEIGHT_KG = Units.lbsToKilograms(35);
+    /** Rough moment of inertia calculation of the robot in kilograms * meters squared */
+    public static final double ROBOT_MOI_KG_M2 =
+        (1.0 / 12.0)
+            * ROBOT_WEIGHT_KG
+            * ((DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M)
+                + (DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M));
+    /** Rough moment of inertia calculation of the robot in kilograms * meters squared */
+    public static final double PROTOBOT_MOI_KG_M2 =
+        (1.0 / 12.0)
+            * PROTOBOT_WEIGHT_KG
+            * ((DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M)
+                + (DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M));
   }
 
   /** Controller ports */
@@ -82,47 +100,70 @@ public final class Constants {
     public static final int DRIVER_CONTROLLER = 0;
     public static final int AUX_CONTROLLER = 1;
   }
+
   /** Heading Controller */
   public static class HeadingControllerConstants {
-    public static final double KP = 0.1;
-    public static final double KD = 0.1;
+    public static final double KP = 1.0;
+    public static final double KD = 0.0;
   }
 
-  /** Constants for all Vision systems */
-  public final class VisionConstants {
-    /** Offsets the back left camera's position to the center of the robot */
-    public static final Transform3d FRONT_CAMERA_ROBOT_OFFSET =
-        new Transform3d(
-            new Translation3d(Units.inchesToMeters(13.5), 0, Units.inchesToMeters(3.5)),
-            new Rotation3d(0, 0, 0)); // TODO: Measure out offsets for both cameras
-
-    /** Offsets the back right camera's position to the center of the robot */
-    public static final Transform3d BACK_CAMERA_ROBOT_OFFSET =
-        new Transform3d(
-            new Translation3d(Units.inchesToMeters(-13.5), 0, Units.inchesToMeters(3.5)),
-            new Rotation3d(0, Units.degreesToRadians(35), Math.PI));
-
-    // Photon Camera names
-    public static final String FRONT_CAMERA_NAME = "Front";
-    public static final String BACK_CAMERA_NAME = "Back";
+  /** Field measurements */
+  public final class FieldConstants {
+    /** 3d field setup with the locations of the AprilTags loaded from WPILib JSON files */
+    public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
+        new AprilTagFieldLayout(
+            AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded).getTags(),
+            AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded).getFieldLength(),
+            AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded).getFieldWidth());
+    /** Field length of the Welded Reefscape field */
+    public static final double FIELD_LENGTH = APRILTAG_FIELD_LAYOUT.getFieldLength();
+    /** Field width of the Welded Reefscape field */
+    public static final double FIELD_WIDTH = APRILTAG_FIELD_LAYOUT.getFieldWidth();
+    /**
+     * The 3d pose is an optinal. If an ID outside of the range of [1, 22] then the Optional value
+     * returned will be null
+     *
+     * @param ID Number corresponding to the ID of the desired AprilTag
+     * @return An optional value containing the 3d pose of an AprilTag
+     */
+    public static Optional<Pose3d> getAprilTagPose(int ID) {
+      return APRILTAG_FIELD_LAYOUT.getTagPose(ID);
+    }
   }
 
-  /** Constants for PathPlanner configurations and PathFinding */
+  /** Constants for PathPlanner configurations and Pathfinding */
   public final class PathPlannerConstants {
     /* Configuration */
     // PID
-    public static final double TRANSLATION_KP = 1;
-    public static final double TRANSLATION_KD = 0;
-    public static final double ROTATION_KP = 1;
-    public static final double ROTATION_KD = 0;
+    public static final double TRANSLATION_KP = 5.0;
+    public static final double TRANSLATION_KD = 0.0;
+    public static final double ROTATION_KP = 5.0;
+    public static final double ROTATION_KD = 0.0;
     /** Coefficient of friction between wheels and the carpet */
     public static final double WHEEL_FRICTION_COEFF = 0.7;
+    /** Swerve Module configuartion for PathPlanner */
+    public static final ModuleConfig MODULE_CONFIG =
+        new ModuleConfig(
+            DriveConstants.WHEEL_RADIUS_M,
+            DriveConstants.MAX_LINEAR_SPEED_M_PER_S,
+            PathPlannerConstants.WHEEL_FRICTION_COEFF,
+            DCMotor.getKrakenX60(1),
+            DriveConstants.DRIVE_GEAR_RATIO,
+            DriveConstants.CUR_LIM_A,
+            1);
+    /** Robot configuarion for PathPlanner */
+    public static final RobotConfig ROBOT_CONFIG =
+        new RobotConfig(
+            RobotStateConstants.PROTOBOT_WEIGHT_KG,
+            RobotStateConstants.PROTOBOT_MOI_KG_M2,
+            MODULE_CONFIG,
+            DriveConstants.getModuleTranslations());
 
-    /* PathFinding */
-    /**
-     * Max translational and rotational speed and acceleration used for PathPlanner's PathFinding
-     */
+    /* Pathfinding */
+    /** Max translational and rotational velocity and acceleration used for Pathfinding */
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
         new PathConstraints(3, 3, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
+    /** Default distnace away from an AprilTag the robot should be when Pathfinding to it */
+    public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(8);
   }
 }
