@@ -18,6 +18,10 @@ import frc.robot.Subsystems.Algae.EndEffector.AEE;
 import frc.robot.Subsystems.Algae.EndEffector.AEEIO;
 import frc.robot.Subsystems.Algae.EndEffector.AEEIOSim;
 import frc.robot.Subsystems.Algae.EndEffector.AEEIOSparkMax;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivot;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIO;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSim;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSparkMax;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
@@ -40,6 +44,7 @@ public class RobotContainer {
 
   // Mechanisms
   private final AEE m_AEESubsystem;
+  private final AlgaePivot m_algaePivotSubsystem;
 
   // Utils
   private final Vision m_visionSubsystem;
@@ -74,6 +79,7 @@ public class RobotContainer {
                 // new VisionIOPhotonVision(VisionConstants.CAMERA.BACK.CAMERA_INDEX)
                 );
         m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSparkMax());
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -93,6 +99,7 @@ public class RobotContainer {
                 new VisionIOSim(
                     VisionConstants.CAMERA.BACK.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d));
         m_AEESubsystem = new AEE(new AEEIOSim() {});
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSim());
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -106,6 +113,7 @@ public class RobotContainer {
                 m_gyroSubsystem);
         m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
         m_AEESubsystem = new AEE(new AEEIO() {});
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIO() {});
         break;
     }
 
@@ -269,6 +277,12 @@ public class RobotContainer {
         new InstantCommand(
             () -> m_AEESubsystem.setVoltage(m_auxController.getLeftTriggerAxis() * 12),
             m_AEESubsystem));
+
+    // ALGAE Pivot testing binding
+    m_algaePivotSubsystem.setDefaultCommand(
+        new InstantCommand(
+            () -> m_algaePivotSubsystem.setVoltage(m_auxController.getRightTriggerAxis() * 12),
+            m_algaePivotSubsystem));
   }
 
   /**
