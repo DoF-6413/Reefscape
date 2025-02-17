@@ -80,7 +80,7 @@ public interface ModuleIO {
   public default void setDriveVelocity(double velocityRadPerSec) {}
 
   /**
-   * Sets the PID values for the Drive motor's built in closed loop controller
+   * Sets the PID gains for the Drive motor's built in closed loop controller
    *
    * @param kP Proportional gain value
    * @param kI Integral gain value
@@ -89,7 +89,7 @@ public interface ModuleIO {
   public default void setDrivePID(double kP, double kI, double kD) {}
 
   /**
-   * Sets the Feedforward values for the Drive motor's built in closed loop controller
+   * Sets the Feedforward gains for the Drive motor's built in closed loop controller
    *
    * @param kS Static gain value
    * @param kV Velocity gain value

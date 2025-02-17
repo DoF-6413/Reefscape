@@ -49,7 +49,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     // Motor configuration
     m_motorConfig
         .MotorOutput
-        .withInverted(InvertedValue.Clockwise_Positive)
+        .withInverted(PeriscopeConstants.IS_INVERTED ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive)
         .withNeutralMode(NeutralModeValue.Brake)
         .withControlTimesyncFreqHz(PeriscopeConstants.UPDATE_FREQUENCY_HZ);
 
@@ -75,7 +75,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     m_motorConfig
         .MotionMagic
         .withMotionMagicCruiseVelocity(PeriscopeConstants.MAX_VELOCITY_ROT_PER_SEC)
-        .withMotionMagicAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC_2);
+        .withMotionMagicAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2);
 
     // Closed loop controller configuration
     m_motorConfig.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(
@@ -113,8 +113,9 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
 
   @Override
   public void updateInputs(PeriscopeIOInputs inputs) {
-    // Update inputs for each motor
+    // Update logged inputs from each motor
     for (int i = 0; i < 2; i++) {
+      // Update motor signals and check if they are recieved
       inputs.isConnected[i] =
           BaseStatusSignal.refreshAll(
                   m_positionRot[i],
@@ -123,11 +124,12 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
                   m_currentAmps[i],
                   m_tempCelsius[i])
               .isOK();
+      // Update logged inputs for the motor
       inputs.appliedVolts[i] = m_appliedVolts[i].getValueAsDouble();
       inputs.currentDraw[i] = m_currentAmps[i].getValueAsDouble();
       inputs.tempCelsius[i] = m_tempCelsius[i].getValueAsDouble();
     }
-    // Update inputs for the entire Periscope
+    // Update logged inputs for the entire Periscope
     inputs.heightMeters =
         Units.rotationsToRadians(
                 (m_positionRot[0].getValueAsDouble() + m_positionRot[1].getValueAsDouble()) / 2)
@@ -178,7 +180,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
   }
 
   /**
-   * Sets the Feedforward values for the Periscope motors' built in closed loop controller
+   * Sets the Feedforward gains for the Periscope motors' built in closed loop controller
    *
    * @param kS Static gain value
    * @param kG Gravity gain value

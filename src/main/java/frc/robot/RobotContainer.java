@@ -22,6 +22,7 @@ import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
 import frc.robot.Subsystems.Periscope.Periscope;
+import frc.robot.Subsystems.Periscope.PeriscopeConstants;
 import frc.robot.Subsystems.Periscope.PeriscopeIO;
 import frc.robot.Subsystems.Periscope.PeriscopeIOSim;
 import frc.robot.Subsystems.Periscope.PeriscopeIOTalonFX;
@@ -263,18 +264,14 @@ public class RobotContainer {
 
   /** Aux Controls */
   private void auxControllerBindings() {
-    m_periscopeSubsystem.setDefaultCommand(
-        new InstantCommand(
-            () -> m_periscopeSubsystem.setVoltage(m_auxController.getLeftY() * 12),
-            m_periscopeSubsystem));
     m_auxController
         .a()
         .onTrue(
-            new InstantCommand(() -> m_periscopeSubsystem.setPosition(1), m_periscopeSubsystem));
+            new InstantCommand(() -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MIN_HEIGHT_M), m_periscopeSubsystem));
     m_auxController
         .b()
         .onTrue(
-            new InstantCommand(() -> m_periscopeSubsystem.setPosition(.5), m_periscopeSubsystem));
+            new InstantCommand(() -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MAX_HEIGHT_M), m_periscopeSubsystem));
   }
 
   /**

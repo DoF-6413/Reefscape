@@ -49,7 +49,7 @@ public class PeriscopeIOSim implements PeriscopeIO {
             PeriscopeConstants.KD,
             new TrapezoidProfile.Constraints(
                 PeriscopeConstants.MAX_VELOCITY_ROT_PER_SEC,
-                PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC_2));
+                PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2));
     m_elevatorFeedforward =
         new ElevatorFeedforward(
             PeriscopeConstants.KS,
@@ -74,7 +74,7 @@ public class PeriscopeIOSim implements PeriscopeIO {
     inputs.heightMeters = m_elevatorSim.getPositionMeters();
     inputs.velocityMetersPerSec = m_elevatorSim.getVelocityMetersPerSecond();
     inputs.velocityRadPerSec =
-        m_elevatorSim.getVelocityMetersPerSecond() / PeriscopeConstants.DRUM_RADIUS_M;
+        inputs.velocityMetersPerSec / PeriscopeConstants.DRUM_RADIUS_M;
     inputs.appliedVolts = new double[] {voltage, voltage};
     inputs.currentDraw =
         new double[] {

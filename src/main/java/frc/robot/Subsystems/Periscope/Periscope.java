@@ -26,7 +26,7 @@ public class Periscope extends SubsystemBase {
     // Initailize the IO implementation
     m_io = io;
 
-    // Tunable PID & Feedforward values
+    // Tunable PID & Feedforward gains
     SmartDashboard.putBoolean("PIDFF_Tuning/Periscope/EnableTuning", false);
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KP", PeriscopeConstants.KP);
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KI", PeriscopeConstants.KI);
@@ -40,10 +40,11 @@ public class Periscope extends SubsystemBase {
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
+    // Update and log inputs
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
-    // Enable and update tunable PID values through SmartDashboard
+    // Enable and update tunable PID gains through SmartDashboard
     if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
       this.updatePID();
       this.updateFF();
@@ -80,7 +81,7 @@ public class Periscope extends SubsystemBase {
   }
 
   /**
-   * Sets the Feedforward values for the Periscope motors' Feedforward controller
+   * Sets the Feedforward gains for the Periscope motors' Feedforward controller
    *
    * @param kS Static gain value
    * @param kG Gravity gain value

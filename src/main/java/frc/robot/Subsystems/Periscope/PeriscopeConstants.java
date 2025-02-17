@@ -6,7 +6,7 @@ public class PeriscopeConstants {
   // REAL CONSTANTS
   /** CAN ID for the first Periscope motor. This motor will use index 0 in any array */
   public static final int CAN_ID_0 = 15;
-  /** CAN ID for the first Periscope motor. This motor will use index 1 in any array */
+  /** CAN ID for the second Periscope motor. This motor will use index 1 in any array */
   public static final int CAN_ID_1 = 16;
   /** Gear reduction of 38:12 for the Periscope */
   public static final double GEAR_RATIO = 38.0 / 12.0;
@@ -14,6 +14,8 @@ public class PeriscopeConstants {
   public static final int CUR_LIM_A = 60;
   /** Enable current limiting for the Periscope motors */
   public static final boolean ENABLE_CUR_LIM = true;
+  /** Sets the inversion status of the Periscope motors to false, making CCW positive */
+  public static final boolean IS_INVERTED = false;
   /** Update the signals from the Periscope motors every 0.02 seconds */
   public static final int UPDATE_FREQUENCY_HZ = 50;
   /** Minimum height of the Periscope will be 0 meters */
@@ -52,9 +54,9 @@ public class PeriscopeConstants {
   public static final double MAX_VELOCITY_ROT_PER_SEC =
       Units.radiansToRotations(2.25 / DRUM_RADIUS_M);
   /** Ideal acceleration for trapezoidal motion profiling in rotations per second squared */
-  public static final double IDEAL_ACCELERATION_ROT_PER_SEC_2 = 0.0;
+  public static final double IDEAL_ACCELERATION_ROT_PER_SEC2 = 0.0;
 
   // SIM CONSTANTS
-  /** Simulate the pull of gravity in the arm simulation */ 
+  /** Simulate the pull of gravity in the elevator simulation */
   public static final boolean SIMULATE_GRAVITY = true;
 }

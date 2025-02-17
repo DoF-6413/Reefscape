@@ -53,7 +53,7 @@ public interface PeriscopeIO {
   public default void setPID(double kP, double kI, double kD) {}
 
   /**
-   * Sets the Feedforward values for the Periscope motors' Feedforward controller
+   * Sets the Feedforward gains for the Periscope motors' Feedforward controller
    *
    * @param kS Static gain value
    * @param kG Gravity gain value

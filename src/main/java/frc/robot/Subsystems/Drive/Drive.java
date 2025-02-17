@@ -124,7 +124,7 @@ public class Drive extends SubsystemBase {
     m_field = new Field2d();
     SmartDashboard.putData("Field", m_field);
 
-    // Tunable PID & Feedforward values
+    // Tunable PID & Feedforward gains
     SmartDashboard.putBoolean("PIDFF_Tuning/Drive/EnableTuning", false);
     SmartDashboard.putNumber("PIDFF_Tuning/Drive/Drive_kP", DriveConstants.DRIVE_KP);
     SmartDashboard.putNumber("PIDFF_Tuning/Drive/Drive_kI", DriveConstants.DRIVE_KI);
@@ -150,7 +150,7 @@ public class Drive extends SubsystemBase {
         m_timestamp, this.getRotation(), this.getModulePositions());
     m_field.setRobotPose(this.getCurrentPose2d());
 
-    // Enable and update tunable PID values through SmartDashboard
+    // Enable and update tunable PID gains through SmartDashboard
     if (SmartDashboard.getBoolean("PIDFF_Tuning/Drive/EnableTuning", false)) {
       this.updateDrivePID();
       this.updateDriveFF();
@@ -400,7 +400,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the PID values for all Drive motors' built in closed loop controller
+   * Sets the PID gains for all Drive motors' built in closed loop controller
    *
    * @param kP Proportional gain value
    * @param kI Integral gain value
@@ -413,7 +413,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the Feedforward values for all Drive motors' built in closed loop controller
+   * Sets the Feedforward gains for all Drive motors' built in closed loop controller
    *
    * @param kS Static gain value
    * @param kV Velocity gain value
@@ -425,7 +425,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the PID values for all Turn motors' in-code PID controller
+   * Sets the PID gains for all Turn motors' in-code PID controller
    *
    * @param kP Proportional gain value
    * @param kI Integral gain value
@@ -437,7 +437,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  /** Update PID values for the Drive motors from SmartDashboard inputs */
+  /** Update PID gains for the Drive motors from SmartDashboard inputs */
   private void updateDrivePID() {
     if (DriveConstants.DRIVE_KP
             != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kP", DriveConstants.DRIVE_KP)
@@ -455,7 +455,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  /** Update Feedforward values for the Drive motors from SmartDashboard inputs */
+  /** Update Feedforward gains for the Drive motors from SmartDashboard inputs */
   private void updateDriveFF() {
     if (DriveConstants.DRIVE_KS
             != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Drive_kS", DriveConstants.DRIVE_KS)
@@ -469,7 +469,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  /** Update PID values for the Turn motors from SmartDashboard inputs */
+  /** Update PID gains for the Turn motors from SmartDashboard inputs */
   private void updateTurnPID() {
     if (DriveConstants.TURN_KP
             != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kP", DriveConstants.TURN_KP)
