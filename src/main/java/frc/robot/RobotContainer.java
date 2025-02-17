@@ -268,7 +268,7 @@ public class RobotContainer {
     // CEE testing binding
     m_CEESubsystem.setDefaultCommand(
         new InstantCommand (
-            () -> m_CEESubsystem.setVoltage (m_auxController.getLeftTriggerAxis() *12),
+            () -> m_CEESubsystem.setVoltage(m_auxController.getRightTriggerAxis() * 12),
             m_CEESubsystem));
   }
   

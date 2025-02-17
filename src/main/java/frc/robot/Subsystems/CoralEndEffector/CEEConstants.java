@@ -2,11 +2,11 @@ package frc.robot.Subsystems.CoralEndEffector;
 
 public class CEEConstants {
   // REAL CONSTANTS
-  /** CAN ID of the CEE Spark Max */
+  /** CAN ID of the CEE SPARK MAX */
   public static final int CAN_ID = 19;
-  /** Current limit, in amps for the CEE Spark Max */
+  /** Current limit, in amps for the CEE motor */
   public static final int CUR_LIM_A = 20;
-  /** Set the inversion status of the CEEE to false, making CCW positive */
+  /** Set the inversion status of the CEE to false, making CCW positive */
   public static final boolean IS_INVERTED = false;
   /** Gear ratio of 3:1 for the CEE motor */
   public static final double GEAR_RATIO = 3.0 / 1.0;

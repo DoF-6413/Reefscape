@@ -8,8 +8,6 @@ public interface CEEIO {
   public static class CEEIOInputs {
     /** Voltage applied to the CEE motor */
     public double appliedVoltage = 0.0;
-    /** Position of the CEE in radians */
-    public double positionRad = 0.0;
     /** Velocity of the CEE in radians per sec */
     public double velocityRadPerSec = 0.0;
     /** Current drawn by the CEE motor in amps */
@@ -26,7 +24,7 @@ public interface CEEIO {
   public default void updateInputs(CEEIOInputs inputs) {}
 
   /**
-   * Sets voltage of the CEE motor
+   * Sets voltage of the CEE motor. The value inputed is clamped between values of -12 to 12
    *
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */

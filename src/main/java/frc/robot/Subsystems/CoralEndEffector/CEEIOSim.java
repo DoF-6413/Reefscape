@@ -7,13 +7,12 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants.RobotStateConstants;
 
 public class CEEIOSim implements CEEIO {
-
   private final FlywheelSim m_sim;
 
   /**
-   * This constructs a new CEEIOSim instance.
+   * This constructs a new {@link CEEIOSim} instance.
    *
-   * <p>This creates a new CEEIO object that creates that uses the simulated versions of the NEO
+   * <p>This creates a new {@link CEEIO} object that creates that uses the simulated versions of the NEO 550
    * motor to run the CEE simulated flywheel
    */
   public CEEIOSim() {
@@ -34,8 +33,6 @@ public class CEEIOSim implements CEEIO {
     m_sim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
     // Update inputs
-    inputs.positionRad =
-        m_sim.getAngularVelocityRadPerSec() * RobotStateConstants.LOOP_PERIODIC_SEC;
     inputs.velocityRadPerSec = m_sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = m_sim.getInputVoltage();
     inputs.currentAmps = Math.abs(m_sim.getCurrentDrawAmps());
