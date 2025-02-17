@@ -23,6 +23,9 @@ public class AEEIOSparkMax implements AEEIO {
    * <p>This creates a new AEEIO object that uses the real NEO motor to run the real AEE mechanism
    */
   public AEEIOSparkMax() {
+    System.out.println("[Init] Creating AEEIOSparkMax");
+
+    // Initailize the SPARK MAX with a NEO (brushless) motor
     m_sparkmax = new SparkMax(AEEConstants.CAN_ID, MotorType.kBrushless);
 
     // SPARK MAX configurations
@@ -30,7 +33,8 @@ public class AEEIOSparkMax implements AEEIO {
         .inverted(AEEConstants.IS_INVERTED)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(AEEConstants.CUR_LIM_A);
-    m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
+    // setCANTimeout arguments in miliseconds so multiply by 1000 to convert sec to milisec
+    m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);
 
     // Initialize relative encoder from SPARK MAX
     m_relativeEncoder = m_sparkmax.getEncoder();
@@ -41,6 +45,7 @@ public class AEEIOSparkMax implements AEEIO {
 
   @Override
   public void updateInputs(AEEIOInputs inputs) {
+    // Update inputs for the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())

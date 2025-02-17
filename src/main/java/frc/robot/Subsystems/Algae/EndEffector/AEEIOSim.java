@@ -10,10 +10,10 @@ public class AEEIOSim implements AEEIO {
   private final FlywheelSim m_sim;
 
   /**
-   * This constructs a new AEEIOSim instance.
+   * This constructs a new {@link AEEIOSim} instance.
    *
-   * <p>This creates a new AEEIO object that creates that uses the simulated versions of the NEO
-   * motor to run the AEE simulated flywheel
+   * <p>This creates a new {@link AEEIO} object that creates that uses the simulated versions of the
+   * NEO motor to run the AEE simulated flywheel
    */
   public AEEIOSim() {
     System.out.println("[Init] Creating AEEIOSim");

@@ -24,7 +24,7 @@ public interface AEEIO {
   public default void updateInputs(AEEIOInputs inputs) {}
 
   /**
-   * Sets voltage of the AEE motor
+   * Sets voltage of the AEE motor. The value inputed is clamped between values of -12 to 12
    *
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */

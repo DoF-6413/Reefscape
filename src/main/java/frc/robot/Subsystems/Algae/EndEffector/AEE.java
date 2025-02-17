@@ -13,21 +13,26 @@ public class AEE extends SubsystemBase {
   private final AEEIO m_io;
   private final AEEIOInputsAutoLogged m_inputs = new AEEIOInputsAutoLogged();
 
+  // PID Controller
   private final PIDController m_PIDController;
   private boolean m_enablePID = false;
 
   /**
-   * Constructs a new Algae End Effector subsystem instance.
+   * Constructs a new Algae End Effector (AEE) instance.
    *
-   * <p>This constructor creates a new AEE subsystem object with given IO implementation
+   * <p>This creates a new AEE {@link SubsystemBase} object with given IO implementation which
+   * determines whether the methods and inputs are initailized with the real, sim, or replay code
    *
-   * @param io AEEIO implementation of the current mode of the robot
+   * @param io {@link AEEIO} implementation of the current mode of the robot
    */
   public AEE(AEEIO io) {
     System.out.println("[Init] Creating Algae End Effector");
+
+    // Initailize the IO implementation
     m_io = io;
 
-    m_PIDController = new PIDController(AEEConstants.KP, AEEConstants.KP, AEEConstants.KP);
+    // Initailize the PID controller
+    m_PIDController = new PIDController(AEEConstants.KP, AEEConstants.KI, AEEConstants.KD);
 
     // Tunable PID values
     SmartDashboard.putBoolean("PIDFF/AEE/EnableTuning", false);
@@ -42,13 +47,19 @@ public class AEE extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("AEE", m_inputs);
 
+    // Control the AEE through the PID controller if enabled, open loop voltage control if disabled
     if (m_enablePID) {
       m_PIDController.calculate(m_inputs.velocityRadPerSec);
+    }
+
+    // Enable and update tunable PID values through SmartDashboard
+    if (SmartDashboard.getBoolean("PIDFF_Tuning/AEE/EnableTuning", false)) {
+      this.updatePID();
     }
   }
 
   /**
-   * Sets voltage of the AEE motor
+   * Sets voltage of the AEE motor. The value inputed is clamped between values of -12 to 12
    *
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
@@ -66,7 +77,7 @@ public class AEE extends SubsystemBase {
   }
 
   /**
-   * Sets the PID values for the Turn motor's built in closed loop controller
+   * Sets the PID gains for PID controller
    *
    * @param kP Proportional gain value
    * @param kI Integral gain value
@@ -77,11 +88,25 @@ public class AEE extends SubsystemBase {
   }
 
   /**
-   * Enable PID for the AEE
+   * Enable closed loop PID control for the AEE
    *
    * @param enable True to enable PID, false to disable
    */
   public void enablePID(boolean enable) {
     m_enablePID = enable;
+  }
+
+  /** Update PID gains for the AEE motors from SmartDashboard inputs */
+  private void updatePID() {
+    // If any value on SmartDashboard changes, update the gains
+    if (AEEConstants.KP != SmartDashboard.getNumber("PIDFF_Tuning/AEE/KP", AEEConstants.KP)
+        || AEEConstants.KI != SmartDashboard.getNumber("PIDFF_Tuning/AEE/KI", AEEConstants.KI)
+        || AEEConstants.KD != SmartDashboard.getNumber("PIDFF_Tuning/AEE/KD", AEEConstants.KD)) {
+      AEEConstants.KP = SmartDashboard.getNumber("PIDFF_Tuning/AEE/KP", AEEConstants.KP);
+      AEEConstants.KI = SmartDashboard.getNumber("PIDFF_Tuning/AEE/KI", AEEConstants.KI);
+      AEEConstants.KD = SmartDashboard.getNumber("PIDFF_Tuning/AEE/KD", AEEConstants.KD);
+      // Sets the new gains
+      this.setPID(AEEConstants.KP, AEEConstants.KI, AEEConstants.KD);
+    }
   }
 }
