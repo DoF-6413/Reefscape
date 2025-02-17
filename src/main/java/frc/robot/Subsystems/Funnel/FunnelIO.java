@@ -19,16 +19,16 @@ public interface FunnelIO {
   }
 
   /**
-   * Peridocially updates the logged inputs for the Funnel. Must be called periodically
+   * Updates the logged inputs for the Funnel. Must be called periodically
    *
    * @param inputs Inputs from the auto logger
    */
   public default void updateInputs(FunnelIOInputs inputs) {}
 
   /**
-   * Sets voltage of the Funnel motor
+   * Sets voltage of the Funnel motor. The value inputed is clamped between values of -12 to 12
    *
-   * @param volts A value between -12 (full reverse) to 12 (full forward)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public default void setVoltage(double volts) {}
 }

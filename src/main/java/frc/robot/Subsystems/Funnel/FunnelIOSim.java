@@ -7,18 +7,18 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants.RobotStateConstants;
 
 public class FunnelIOSim implements FunnelIO {
-
   private final FlywheelSim m_sim;
 
   /**
-   * This constructs a new FunnelIOSim instance.
+   * This constructs a new {@link FunnelIOSim} instance.
    *
-   * <p>This creates a new FunnelIO object that creates that uses the simulated versions of the NEO
-   * motor to run the Funnel simulated flywheel
+   * <p>This creates a new {@link FunnelIO} object that creates that uses the simulated versions of
+   * the NEO motor to run the Funnel simulated flywheel
    */
   public FunnelIOSim() {
     System.out.println("[Init] Creating FunnelIOSim");
 
+    // Initialize the flywheel sim with a NEO motor
     m_sim =
         new FlywheelSim(
             LinearSystemId.createFlywheelSystem(

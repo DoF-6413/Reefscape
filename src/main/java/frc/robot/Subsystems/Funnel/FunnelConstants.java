@@ -8,7 +8,7 @@ public class FunnelConstants {
   public static final int CUR_LIM_A = 30;
   /** Set the inversion status of the Funnel to false, making CCW positive */
   public static final boolean IS_INVERTED = false;
-  /** Gear ratio of 3:1 for the Funnel motor */
+  /** Gear reduction of 3:1 for the Funnel motor */
   public static final double GEAR_RATIO = 3.0 / 1.0;
 
   // PID CONSTANTS
@@ -26,5 +26,5 @@ public class FunnelConstants {
 
   // SIM CONSTANTS
   /** Moment of Inertia of the Funnel wheels in kilograms * meters squared */
-  public static double MOI_KG_M2 = 0.0025;
+  public static final double MOI_KG_M2 = 0.0025;
 }

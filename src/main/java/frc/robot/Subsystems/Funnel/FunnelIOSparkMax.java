@@ -12,26 +12,30 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.RobotStateConstants;
 
 public class FunnelIOSparkMax implements FunnelIO {
-  // Funnel motor
+  // Funnel motor, encoder, and configurator
   private final SparkMax m_sparkmax;
   private final RelativeEncoder m_relativeEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
 
   /**
-   * This constructs a new FunnelIOSparkMax instance.
+   * This constructs a new {@link FunnelIOSparkMax} instance.
    *
-   * <p>This creates a new FunnelIO object that uses the real NEO motor to run the real Funnel
-   * mechanism
+   * <p>This creates a new {@link FunnelIO} object that uses the real NEO motor to run the real
+   * Funnel mechanism
    */
   public FunnelIOSparkMax() {
+    System.out.println("[Init] Creating FunnelIOSparkMax");
+
+    // Initailize the SPARK MAX with a NEO (brushless) motor
     m_sparkmax = new SparkMax(FunnelConstants.CAN_ID, MotorType.kBrushless);
 
     // SPARK MAX configurations
     m_config
         .inverted(FunnelConstants.IS_INVERTED)
-        .idleMode(IdleMode.kCoast)
+        .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(FunnelConstants.CUR_LIM_A);
-    m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
+    // setCANTimeout arguments in miliseconds so multiply by 1000 to convert sec to milisec
+    m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);
 
     // Initialize relative encoder from SPARK MAX
     m_relativeEncoder = m_sparkmax.getEncoder();
@@ -42,6 +46,7 @@ public class FunnelIOSparkMax implements FunnelIO {
 
   @Override
   public void updateInputs(FunnelIOInputs inputs) {
+    // Update inputs from the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
     inputs.positionRad =
         Units.rotationsToRadians(m_relativeEncoder.getPosition()) / FunnelConstants.GEAR_RATIO;
