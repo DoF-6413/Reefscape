@@ -1,9 +1,9 @@
-package frc.robot.Subsystems.Periscoper;
+package frc.robot.Subsystems.Periscope;
 
 import edu.wpi.first.math.util.Units;
 
-public class PeriscoperConstants {
-  __
+public class PeriscopeConstants {
+  
   public static final double GEAR_RATIO = 12.0 / 42.0;
   public static final double SPOOL_RADIUS_M = Units.inchesToMeters(0.625);
   public static final double MAX_HEIGHT_M = Units.inchesToMeters(58); // meters

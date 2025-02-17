@@ -1,11 +1,11 @@
-package frc.robot.Subsystems.Periscoper;
+package frc.robot.Subsystems.Periscope;
 
 import org.littletonrobotics.junction.AutoLog;
 
-public interface PeriscoperIO {
+public interface PeriscopeIO {
 
   @AutoLog
-  public static class PeriscoperIOInputs {
+  public static class PeriscopeIOInputs {
     public double[] appliedVolts = {0.0, 0.0};
     public double[] currentDraw = {0.0, 0.0};
     public double[] tempCelsius = {0.0, 0.0};
@@ -14,7 +14,7 @@ public interface PeriscoperIO {
     public boolean[] isConnected = {false, false};
   }
 
-  public default void updateInputs(PeriscoperIOInputs inputs) {}
+  public default void updateInputs(PeriscopeIOInputs inputs) {}
 
   public default void setVoltage(double volts) {}
 

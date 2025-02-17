@@ -20,10 +20,10 @@ import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
-import frc.robot.Subsystems.Periscoper.Periscoper;
-import frc.robot.Subsystems.Periscoper.PeriscoperIO;
-import frc.robot.Subsystems.Periscoper.PeriscoperIOSim;
-import frc.robot.Subsystems.Periscoper.PeriscoperIOTalonFX;
+import frc.robot.Subsystems.Periscope.Periscope;
+import frc.robot.Subsystems.Periscope.PeriscopeIO;
+import frc.robot.Subsystems.Periscope.PeriscopeIOSim;
+import frc.robot.Subsystems.Periscope.PeriscopeIOTalonFX;
 import frc.robot.Utils.PathPlanner;
 import frc.robot.Utils.PoseEstimator;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -33,7 +33,7 @@ public class RobotContainer {
   // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
-  private final Periscoper m_periscoperSubsystem;
+  private final Periscope m_periscopeSubsystem;
 
   // Utils
   private final PoseEstimator m_poseEstimator;
@@ -63,7 +63,7 @@ public class RobotContainer {
                 new ModuleIOSparkMaxTalonFX(2),
                 new ModuleIOSparkMaxTalonFX(3),
                 m_gyroSubsystem);
-        m_periscoperSubsystem = new Periscoper(new PeriscoperIOTalonFX());
+        m_periscopeSubsystem = new Periscope(new PeriscopeIOTalonFX());
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -75,7 +75,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 m_gyroSubsystem);
-        m_periscoperSubsystem = new Periscoper(new PeriscoperIOSim());
+        m_periscopeSubsystem = new Periscope(new PeriscopeIOSim());
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -87,7 +87,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
-        m_periscoperSubsystem = new Periscoper(new PeriscoperIO() {});
+        m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
         break;
     }
 
@@ -198,18 +198,18 @@ public class RobotContainer {
   }
 
   private void auxControllerBindings() {
-    m_periscoperSubsystem.setDefaultCommand(
+    m_periscopeSubsystem.setDefaultCommand(
         new InstantCommand(
-            () -> m_periscoperSubsystem.setVoltage(m_auxController.getLeftY() * 12),
-            m_periscoperSubsystem));
+            () -> m_periscopeSubsystem.setVoltage(m_auxController.getLeftY() * 12),
+            m_periscopeSubsystem));
     m_auxController
         .a()
         .onTrue(
-            new InstantCommand(() -> m_periscoperSubsystem.setPosition(1), m_periscoperSubsystem));
+            new InstantCommand(() -> m_periscopeSubsystem.setPosition(1), m_periscopeSubsystem));
     m_auxController
         .b()
         .onTrue(
-            new InstantCommand(() -> m_periscoperSubsystem.setPosition(.5), m_periscoperSubsystem));
+            new InstantCommand(() -> m_periscopeSubsystem.setPosition(.5), m_periscopeSubsystem));
   }
 
   /**
