@@ -55,5 +55,6 @@ public class PeriscopeConstants {
   public static final double IDEAL_ACCELERATION_ROT_PER_SEC_2 = 0.0;
 
   // SIM CONSTANTS
-  public static final double MOI = 0.0; // TODO: Find MOI
+  /** Simulate the pull of gravity in the arm simulation */ 
+  public static final boolean SIMULATE_GRAVITY = true;
 }

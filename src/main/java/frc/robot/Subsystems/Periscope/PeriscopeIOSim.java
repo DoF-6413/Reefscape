@@ -38,7 +38,7 @@ public class PeriscopeIOSim implements PeriscopeIO {
             DCMotor.getKrakenX60(2),
             PeriscopeConstants.MIN_HEIGHT_M,
             PeriscopeConstants.MAX_HEIGHT_M,
-            true,
+            PeriscopeConstants.SIMULATE_GRAVITY,
             PeriscopeConstants.MIN_HEIGHT_M);
 
     // Initailize controllers with gains
