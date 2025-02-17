@@ -1,48 +1,58 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 package frc.robot.Subsystems.Drive;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.PathPlannerConstants;
+import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Gyro.Gyro;
-import frc.robot.Utils.HeadingController;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.LinkedList;
-import java.util.List;
+import frc.robot.Utils.LocalADStarAK;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
-
+  // Chassis
   private final Module[] m_modules = new Module[4];
   private final Gyro m_gyro;
-  private final HeadingController m_headingController = new HeadingController();
+  public final SwerveDriveKinematics m_swerveDriveKinematics;
+
+  // Robot rotation
   private Twist2d m_twist = new Twist2d();
-
-  // The swerve drive kinematics
-  public SwerveDriveKinematics m_swerveDriveKinematics;
-
-  // Previous yaw angle of the robot
+  private double[] m_lastModulePositionsMeters = new double[4];
   public Rotation2d m_lastRobotYaw = new Rotation2d();
 
-  // Gets previous module positions
-  private double[] m_lastModulePositionsMeters = new double[4];
-
   // System ID
-  private SysIdRoutine m_sysId;
+  private final SysIdRoutine m_sysId;
 
-  private Rotation2d headingSetpoint = new Rotation2d(-Math.PI / 2);
+  // Swerve Pose Estimator Objects
+  private final SwerveDrivePoseEstimator m_swervePoseEstimator;
+  private Field2d m_field;
+  private double m_timestamp;
+
   /**
    * Constructs a new Drive subsystem instance.
    *
@@ -61,29 +71,60 @@ public class Drive extends SubsystemBase {
       ModuleIO BLModuleIO,
       ModuleIO BRModuleIO,
       Gyro gyro) {
-    // Initialize the Drive subsystem
     System.out.println("[Init] Creating Drive");
 
+    // Initilize Drivetrain and Gyro
     m_gyro = gyro;
-    m_modules[0] = new Module(FRModuleIO, 0);
-    m_modules[1] = new Module(FLModuleIO, 1);
-    m_modules[2] = new Module(BLModuleIO, 2);
-    m_modules[3] = new Module(BRModuleIO, 3);
+    m_modules[0] = new Module(FRModuleIO, 0); // Index 0 corresponds to front right Module
+    m_modules[1] = new Module(FLModuleIO, 1); // Index 1 corresponds to front left Module
+    m_modules[2] = new Module(BLModuleIO, 2); // Index 2 corresponds to back left Module
+    m_modules[3] = new Module(BRModuleIO, 3); // Index 3 corresponds to back right Module
 
-    // Initialize the swerve drive kinematics
+    // Initilize utilities
     m_swerveDriveKinematics = new SwerveDriveKinematics(DriveConstants.getModuleTranslations());
-
     m_sysId =
         new SysIdRoutine(
             new SysIdRoutine.Config(
                 null,
                 null,
                 null,
-                (state) -> Logger.recordOutput("/SysId/Drive/SysId State", state.toString())),
+                (state) ->
+                    Logger.recordOutput(
+                        "/SysId/Drive/SysId State",
+                        state
+                            .toString())), // Log SysId to AdvantageScope rather than the WPI Logger
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
 
-    // Tunable PIDFF values
+    // Configure PathPlanner
+    AutoBuilder.configure(
+        this::getCurrentPose2d,
+        this::resetPose,
+        this::getChassisSpeeds,
+        (speeds, feedforwards) -> runVelocity(speeds),
+        new PPHolonomicDriveController(
+            new PIDConstants(
+                PathPlannerConstants.TRANSLATION_KP, 0, PathPlannerConstants.TRANSLATION_KD),
+            new PIDConstants(
+                PathPlannerConstants.ROTATION_KP, 0, PathPlannerConstants.ROTATION_KD)),
+        PathPlannerConstants.ROBOT_CONFIG,
+        // Mirror the paths to the red side of the field if true
+        () ->
+            DriverStation.getAlliance().isPresent()
+                && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red,
+        this);
+    // Pathfinder by FRC 6328 that adds AdvantageKit logging functionality to PathPlanner's
+    // Pathfinder
+    Pathfinding.setPathfinder(new LocalADStarAK());
+
+    // Initilize Pose Estimator
+    m_swervePoseEstimator =
+        new SwerveDrivePoseEstimator(
+            m_swerveDriveKinematics, this.getRotation(), this.getModulePositions(), new Pose2d());
+    m_field = new Field2d();
+    SmartDashboard.putData("Field", m_field);
+
+    // Tunable PID & Feedforward values
     SmartDashboard.putBoolean("PIDFF/Drive/EnableTuning", false);
     SmartDashboard.putNumber("PIDFF/Drive/Drive_kP", DriveConstants.DRIVE_KP);
     SmartDashboard.putNumber("PIDFF/Drive/Drive_kI", DriveConstants.DRIVE_KI);
@@ -98,10 +139,18 @@ public class Drive extends SubsystemBase {
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
+    // Update the periodic for each Module
     for (int i = 0; i < 4; i++) {
       m_modules[i].periodic();
     }
 
+    // Update Pose Estimation based on Moduel Positions and robot rotation
+    m_timestamp = Timer.getFPGATimestamp();
+    m_swervePoseEstimator.updateWithTime(
+        m_timestamp, this.getRotation(), this.getModulePositions());
+    m_field.setRobotPose(this.getCurrentPose2d());
+
+    // Enable and update tunable PID values through SmartDashboard
     if (SmartDashboard.getBoolean("PIDFF/Drive/EnableTuning", false)) {
       this.updateDrivePID();
       this.updateDriveFF();
@@ -110,7 +159,7 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the entire Drive Train to either brake or coast mode
+   * Sets the entire Drivetrain to either brake or coast mode
    *
    * @param enable True for brake, false for coast
    */
@@ -121,55 +170,58 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the Velocity of the Swerve Drive through Passing in a ChassisSpeeds (Can be Field Relative
-   * OR Robot Orientated)
+   * Sets the velocity of the Swerve Drive through passing in a ChassisSpeeds (can be Field Relative
+   * OR Robot Orientated) that contains the desired linear and angular velocities for the robot
    *
-   * @param speeds the desired chassis speeds
+   * @param speeds The desired ChassisSpeeds
    */
   public void runVelocity(ChassisSpeeds speeds) {
-    // Convert chassis speeds to Swerve Module States, these will be the setpoints for the drive and
-    // turn motors
+    // Convert ChassisSpeeds to SwerveModuleStates, these will be the setpoints for the Drive and
+    // Turn motors
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates =
         m_swerveDriveKinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         setpointStates, DriveConstants.MAX_LINEAR_SPEED_M_PER_S);
 
-    // Record chassis speed and module states (setpoint)
+    // Record ChassisSpeeds and initial Module States setpoint
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
     Logger.recordOutput("SwerveChassisStates/Setpoints", discreteSpeeds);
 
-    // The current velocity and position of each module
+    // The current velocity and position of each Module
     SwerveModuleState[] measuredStates = new SwerveModuleState[4];
 
+    // Run the Modules and retrieve their State (velocity and angle)
     for (int i = 0; i < 4; i++) {
       m_modules[i].runSetpoint(setpointStates[i]);
       measuredStates[i] = m_modules[i].getState();
     }
 
-    // Record optimized setpoints and measured states
+    // Record optimized setpoints and measured States
     Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
     Logger.recordOutput("SwerveStates/Measured", measuredStates);
   }
 
   /**
-   * Run each Swerve Module at a specified speed and angle.
+   * Run each Module at a specified linear speed and angle.
    *
-   * @param setpointStates An array of SwerveModuleStates (Module speed in m/s, and the Module
-   *     angle). The index of the array corresponds to that Module number
+   * @param setpointStates An array of SwerveModuleStates (Module speed in m/s, and the Module angle
+   *     in radians).
    */
   public void runSwerveModules(SwerveModuleState[] setpointStates) {
-    // Runs Modules to Run at Specific Setpoints (Linear and Angular Velocity) that
-    // is Quick & Optimized for smoothest movement
+    // Record initial Module States setpoint
+    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
 
     SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
+
+    // Run each Module
     for (int i = 0; i < 4; i++) {
       m_modules[i].runSetpoint(setpointStates[i]);
       optimizedStates[i] = m_modules[i].getState();
     }
 
-    // Updates setpoint logs
-    Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
+    // Record optimized setpoints and measured States
+    Logger.recordOutput("SwerveStates/SetpointsOptimized", setpointStates);
     Logger.recordOutput("SwerveStates/Measured", optimizedStates);
   }
 
@@ -181,11 +233,12 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * @return The position of each Module, distance travelled and wheel angles
+   * @return The position of each Module (distance travelled and wheel angles)
    */
   public SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
 
+    // Retrieve SwerveModulePosition for each Module
     for (int i = 0; i < 4; i++) {
       modulePositions[i] = m_modules[i].getPosition();
     }
@@ -194,18 +247,20 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Runs the drivetrain with raw values on a scale
+   * Runs the Drivetrain with inputed velocities
    *
-   * @param x velociy in x direction of Entire Swerve Drive
-   * @param y velocity in y direction of Entire Swerve Drive
-   * @param rot Angular Velocity of Entire Swerve Drive
+   * @param x Linear velociy (m/s) in x direction of Entire Swerve Drive
+   * @param y Linear velocity (m/s) in y direction of Entire Swerve Drive
+   * @param rot Angular velocity (rad/s) of Entire Swerve Drive
    */
-  public void setRaw(double x, double y, double rot) {
-    runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(x, y, rot, this.getRotation()));
+  public void setRaw(double xVelcoity, double yVelcoity, double angularVelocity) {
+    runVelocity(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            xVelcoity, yVelcoity, angularVelocity, this.getRotation()));
   }
 
   /**
-   * @return A list of SwerveModulePositions containing the change in module position and angle
+   * @return A list of SwerveModulePositions containing the change in Module position and angle
    */
   public SwerveModulePosition[] getWheelDeltas() {
     SwerveModulePosition[] wheelDeltas = new SwerveModulePosition[4];
@@ -222,8 +277,21 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Current heading of the robot. Updates based on the Gyro. If gyro is not connected, uses change
-   * in module position instead
+   * @return Current linear and angular speed of the robot based on the current State of each Module
+   */
+  public ChassisSpeeds getChassisSpeeds() {
+    return m_swerveDriveKinematics.toChassisSpeeds(
+        new SwerveModuleState[] {
+          m_modules[0].getState(),
+          m_modules[1].getState(),
+          m_modules[2].getState(),
+          m_modules[3].getState(),
+        });
+  }
+
+  /**
+   * Current heading of the robot. Updates based on the Gyro. If the Gyro isn't connected, uses
+   * change in Module Position instead
    *
    * @return The current angle of the robot
    */
@@ -232,26 +300,25 @@ public class Drive extends SubsystemBase {
 
     /*
      * Twist2d is a change in distance along an arc
-     * // x is the forward distance driven
-     * // y is the distance driven to the side
-     * // (left positive), and the component is the change in heading.
+     * x is the forward distance driven
+     * y is the distance driven to the side (left positive),
+     * and the component is the change in heading.
      */
     if (m_gyro.isConnected()) {
+      // Updates heading based on Gyro reading
       robotYaw = m_gyro.getYaw();
     } else {
-      m_twist =
-          m_swerveDriveKinematics.toTwist2d(
-              getWheelDeltas()); // Updates Twist Based on MODULE position
-      robotYaw =
-          m_lastRobotYaw.minus(
-              new Rotation2d(m_twist.dtheta)); // Updates rotation 2d based on robot module position
+      // Updates heading based on change in Module Position
+      m_twist = m_swerveDriveKinematics.toTwist2d(getWheelDeltas());
+      robotYaw = m_lastRobotYaw.minus(new Rotation2d(m_twist.dtheta));
     }
+    // Save heading for next call
     m_lastRobotYaw = robotYaw;
     return robotYaw;
   }
 
   /**
-   * Locks module orientation at 0 degrees and runs drive motors at specified voltage
+   * Locks Module orientation at 0 degrees and runs Drive motors at specified voltage
    *
    * @param output Voltage
    */
@@ -266,7 +333,7 @@ public class Drive extends SubsystemBase {
    * @return A quasistatic test in the specified direction
    */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0)) // Allows module positions to reset
+    return run(() -> runCharacterization(0)) // Allows Module positions to reset
         .withTimeout(1.0)
         .andThen(m_sysId.quasistatic(direction));
   }
@@ -276,13 +343,13 @@ public class Drive extends SubsystemBase {
    * @return A dynamic test in the specified direction
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return run(() -> runCharacterization(0)) // Allows module positions to reset
+    return run(() -> runCharacterization(0)) // Allows Module positions to reset
         .withTimeout(1.0)
         .andThen(m_sysId.dynamic(direction));
   }
 
   /**
-   * @return Average velocity of drive motors in rotations per second, for FeedForward
+   * @return Average velocity of Drive motors in rotations per second, for FeedForward
    *     characterization
    */
   public double getAverageDriveVelocity() {
@@ -293,86 +360,51 @@ public class Drive extends SubsystemBase {
     return velocity;
   }
 
-  /** Measures the velocity feedforward constants for the drive motors */
-  public Command feedforwardCharacterization() {
-    List<Double> velocitySamples = new LinkedList<>();
-    List<Double> voltageSamples = new LinkedList<>();
-    Timer timer = new Timer();
-    double rampRateVoltPerSec = 0.1;
-    double startDelay = 2;
-
-    return Commands.sequence(
-        // Reset data
-        Commands.runOnce(
-            () -> {
-              velocitySamples.clear();
-              voltageSamples.clear();
-            }),
-
-        // Allow modules to orient
-        Commands.run(
-                () -> {
-                  this.runCharacterization(0.0);
-                },
-                this)
-            .withTimeout(startDelay),
-
-        // Start timer
-        Commands.runOnce(timer::restart),
-
-        // Accelerate and gather data
-        Commands.run(
-                () -> {
-                  double voltage = timer.get() * rampRateVoltPerSec;
-                  this.runCharacterization(voltage);
-                  velocitySamples.add(this.getAverageDriveVelocity());
-                  voltageSamples.add(voltage);
-                },
-                this)
-
-            // When cancelled, calculate and print results
-            .finallyDo(
-                () -> {
-                  int n = velocitySamples.size();
-                  double sumX = 0.0;
-                  double sumY = 0.0;
-                  double sumXY = 0.0;
-                  double sumX2 = 0.0;
-                  for (int i = 0; i < n; i++) {
-                    sumX += velocitySamples.get(i);
-                    sumY += voltageSamples.get(i);
-                    sumXY += velocitySamples.get(i) * voltageSamples.get(i);
-                    sumX2 += velocitySamples.get(i) * velocitySamples.get(i);
-                  }
-                  double kS = (sumY * sumX2 - sumX * sumXY) / (n * sumX2 - sumX * sumX);
-                  double kV = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-
-                  NumberFormat formatter = new DecimalFormat("#0.00000");
-                  System.out.println("********** Drive FF Characterization Results **********");
-                  System.out.println("\tkS: " + formatter.format(kS));
-                  System.out.println("\tkV: " + formatter.format(kV));
-                }));
+  /**
+   * @return A double array containing the positions of the Drive motors in radians
+   */
+  public double[] getDrivePositionRad() {
+    double[] positions = new double[4];
+    for (int i = 0; i < 4; i++) {
+      positions[i] = m_modules[i].getPositionRad();
+    }
+    return positions;
   }
 
   /**
-   * @return a swereveModuleState of chassis speeds
+   * @return The current 2D position of the robot on the field
    */
-  public ChassisSpeeds getChassisSpeeds() {
-    return m_swerveDriveKinematics.toChassisSpeeds(
-        new SwerveModuleState[] {
-          m_modules[0].getState(),
-          m_modules[1].getState(),
-          m_modules[2].getState(),
-          m_modules[3].getState(),
-        });
+  public Pose2d getCurrentPose2d() {
+    return m_swervePoseEstimator.getEstimatedPosition();
+  }
+
+  /**
+   * Resets the current position of the robot
+   *
+   * @param pose 2D position to set robot to
+   */
+  public void resetPose(Pose2d pose) {
+    m_swervePoseEstimator.resetPosition(this.getRotation(), this.getModulePositions(), pose);
+  }
+
+  /**
+   * Adds Vision measurements to to Swerve Pose Estimator
+   *
+   * @param visionRobotPose 2d pose calculated from AprilTag
+   * @param timestampSec Timestamp when position was calculated in seconds
+   * @param visionStdDevs Standard deviation from the average calculation (distance & angle)
+   */
+  public void addVisionMeasurement(
+      Pose2d estimatedPose, double timestamp, Matrix<N3, N1> visionStdDevs) {
+    m_swervePoseEstimator.addVisionMeasurement(estimatedPose, timestamp, visionStdDevs);
   }
 
   /**
    * Sets the PID values for all Drive motors' built in closed loop controller
    *
-   * @param kP P gain value
-   * @param kI I gain value
-   * @param kD D gain value
+   * @param kP Proportional gain value
+   * @param kI Integral gain value
+   * @param kD Derivative gain value
    */
   public void setDrivePID(double kP, double kI, double kD) {
     for (int i = 0; i < 4; i++) {
@@ -381,10 +413,10 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the FF values for all Drive motors' built in closed loop controller
+   * Sets the Feedforward values for all Drive motors' built in closed loop controller
    *
-   * @param kS S gain value
-   * @param kV V gain value
+   * @param kS Static gain value
+   * @param kV Velocity gain value
    */
   public void setDriveFF(double kS, double kV) {
     for (int i = 0; i < 4; i++) {
@@ -393,11 +425,11 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the PID values for all Turn motors' built in closed loop controller
+   * Sets the PID values for all Turn motors' in-code PID controller
    *
-   * @param kP P gain value
-   * @param kI I gain value
-   * @param kD D gain value
+   * @param kP Proportional gain value
+   * @param kI Integral gain value
+   * @param kD Derivative gain value
    */
   public void setTurnPID(double kP, double kI, double kD) {
     for (int i = 0; i < 4; i++) {
@@ -405,6 +437,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  /** Update PID values for the Drive motors from SmartDashboard inputs */
   private void updateDrivePID() {
     if (DriveConstants.DRIVE_KP
             != SmartDashboard.getNumber("PIDFF/Drive/Drive_kP", DriveConstants.DRIVE_KP)
@@ -422,6 +455,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  /** Update FeedForward values for the Drive motors from SmartDashboard inputs */
   private void updateDriveFF() {
     if (DriveConstants.DRIVE_KS
             != SmartDashboard.getNumber("PIDFF/Drive/Drive_kS", DriveConstants.DRIVE_KS)
@@ -435,6 +469,7 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  /** Update PID values for the Turn motors from SmartDashboard inputs */
   private void updateTurnPID() {
     if (DriveConstants.TURN_KP
             != SmartDashboard.getNumber("PIDFF/Drive/Turn_kP", DriveConstants.TURN_KP)

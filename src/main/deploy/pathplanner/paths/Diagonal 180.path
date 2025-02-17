@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 2.707106781186548,
+        "y": 6.292893218813452
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.4348734737355513,
-        "y": 4.876462402497455
+        "x": 4.0,
+        "y": 5.0
       },
       "prevControl": {
-        "x": 1.4348734737355513,
-        "y": 4.876462402497455
+        "x": 3.292893218813452,
+        "y": 5.707106781186548
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "PID Testing",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

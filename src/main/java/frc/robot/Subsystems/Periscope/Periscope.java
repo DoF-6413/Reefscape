@@ -15,9 +15,9 @@ public class Periscope extends SubsystemBase {
 
   /**
    * Constructs a new Periscope subsystem instance.
-   * 
+   *
    * <p>This constructor creates a new Periscope subsystem object with given IO implementation
-   * 
+   *
    * @param io PeriscopeIO implementation of the current robot mode
    */
   public Periscope(PeriscopeIO io) {
@@ -58,7 +58,7 @@ public class Periscope extends SubsystemBase {
 
   /**
    * Sets the position of the Periscope
-   * 
+   *
    * @param heightMeters Height of the Periscope in meters
    */
   public void setPosition(double heightMeters) {
@@ -67,7 +67,7 @@ public class Periscope extends SubsystemBase {
 
   /**
    * Sets the PID gains of the Periscope motors' built in closed loop controllers
-   * 
+   *
    * @param kP Proportional gain value
    * @param kI Integral gain value
    * @param kD Derivative gain value
@@ -84,12 +84,9 @@ public class Periscope extends SubsystemBase {
             != SmartDashboard.getNumber("PIDFF/Periscope/KI", PeriscopeConstants.KI)
         || PeriscopeConstants.KD
             != SmartDashboard.getNumber("PIDFF/Periscope/KD", PeriscopeConstants.KD)) {
-      PeriscopeConstants.KP =
-          SmartDashboard.getNumber("PIDFF/Periscope/KP", PeriscopeConstants.KP);
-      PeriscopeConstants.KI =
-          SmartDashboard.getNumber("PIDFF/Periscope/KI", PeriscopeConstants.KI);
-      PeriscopeConstants.KD =
-          SmartDashboard.getNumber("PIDFF/Periscope/KD", PeriscopeConstants.KD);
+      PeriscopeConstants.KP = SmartDashboard.getNumber("PIDFF/Periscope/KP", PeriscopeConstants.KP);
+      PeriscopeConstants.KI = SmartDashboard.getNumber("PIDFF/Periscope/KI", PeriscopeConstants.KI);
+      PeriscopeConstants.KD = SmartDashboard.getNumber("PIDFF/Periscope/KD", PeriscopeConstants.KD);
       this.setPID(PeriscopeConstants.KP, PeriscopeConstants.KI, PeriscopeConstants.KD);
     }
   }
@@ -102,12 +99,9 @@ public class Periscope extends SubsystemBase {
             != SmartDashboard.getNumber("PIDFF/Periscope/KV", PeriscopeConstants.KV)
         || PeriscopeConstants.KG
             != SmartDashboard.getNumber("PIDFF/Periscope/KG", PeriscopeConstants.KG)) {
-      PeriscopeConstants.KS =
-          SmartDashboard.getNumber("PIDFF/Periscope/KS", PeriscopeConstants.KS);
-      PeriscopeConstants.KV =
-          SmartDashboard.getNumber("PIDFF/Periscope/KV", PeriscopeConstants.KV);
-      PeriscopeConstants.KG =
-          SmartDashboard.getNumber("PIDFF/Periscope/KG", PeriscopeConstants.KG);
+      PeriscopeConstants.KS = SmartDashboard.getNumber("PIDFF/Periscope/KS", PeriscopeConstants.KS);
+      PeriscopeConstants.KV = SmartDashboard.getNumber("PIDFF/Periscope/KV", PeriscopeConstants.KV);
+      PeriscopeConstants.KG = SmartDashboard.getNumber("PIDFF/Periscope/KG", PeriscopeConstants.KG);
       this.setPID(PeriscopeConstants.KS, PeriscopeConstants.KV, PeriscopeConstants.KG);
     }
   }

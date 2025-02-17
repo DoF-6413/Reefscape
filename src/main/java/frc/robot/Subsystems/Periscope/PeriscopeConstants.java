@@ -3,7 +3,7 @@ package frc.robot.Subsystems.Periscope;
 import edu.wpi.first.math.util.Units;
 
 public class PeriscopeConstants {
-  
+
   public static final double GEAR_RATIO = 12.0 / 42.0;
   public static final double SPOOL_RADIUS_M = Units.inchesToMeters(0.625);
   public static final double MAX_HEIGHT_M = Units.inchesToMeters(58); // meters
@@ -19,7 +19,6 @@ public class PeriscopeConstants {
   public static final int CANID_2 = 16;
   public static final int UPDATE_FREQUENCY_HZ = 50;
   public static final double DRUM_RADIUS_M = Units.inchesToMeters(1.0);
-
 
   // PID & FEEDFORWARD CONSTANTS
   /**

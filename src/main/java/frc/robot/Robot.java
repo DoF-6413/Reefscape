@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -80,8 +81,10 @@ public class Robot extends LoggedRobot {
 
     // Version Number (# of Pushes to Dev, Issue #, Commit #, Functionality 0 = working, 1 = WIP, 2
     // = doesn't work)
-    SmartDashboard.putString("Version Number", "15.25.29.1");
+    SmartDashboard.putString("Version Number", "18.25.30.1");
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
+
+    PathfindingCommand.warmupCommand();
 
     m_robotContainer = new RobotContainer();
   }
@@ -98,8 +101,7 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.allMechanismsBrakeMode(
-        false); // TODO: Update true for comps; easier to test in coast mode
+    m_robotContainer.allMechanismsBrakeMode(true);
   }
 
   /** This function is called periodically when disabled. */
