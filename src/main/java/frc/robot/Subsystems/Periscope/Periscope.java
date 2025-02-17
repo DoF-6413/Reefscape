@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
 public class Periscope extends SubsystemBase {
-
   private final PeriscopeIO m_io;
   private final PeriscopeIOInputsAutoLogged m_inputs = new PeriscopeIOInputsAutoLogged();
 
@@ -21,9 +20,9 @@ public class Periscope extends SubsystemBase {
    * @param io PeriscopeIO implementation of the current robot mode
    */
   public Periscope(PeriscopeIO io) {
-    // initialize the Periscope subsystem
     System.out.println("[Init] Creating Periscope");
-    this.m_io = io;
+
+    m_io = io;
 
     // Tunable PID & Feedforward values
     SmartDashboard.putBoolean("PIDFF/Periscope/EnableTuning", false);
@@ -31,8 +30,9 @@ public class Periscope extends SubsystemBase {
     SmartDashboard.putNumber("PIDFF/Periscope/KI", PeriscopeConstants.KI);
     SmartDashboard.putNumber("PIDFF/Periscope/KD", PeriscopeConstants.KD);
     SmartDashboard.putNumber("PIDFF/Periscope/KS", PeriscopeConstants.KS);
-    SmartDashboard.putNumber("PIDFF/Periscope/KV", PeriscopeConstants.KV);
     SmartDashboard.putNumber("PIDFF/Periscope/KG", PeriscopeConstants.KG);
+    SmartDashboard.putNumber("PIDFF/Periscope/KV", PeriscopeConstants.KV);
+    SmartDashboard.putNumber("PIDFF/Periscope/KA", PeriscopeConstants.KA);
   }
 
   @Override
@@ -41,6 +41,7 @@ public class Periscope extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
+    // Enable and update tunable PID values through SmartDashboard
     if (SmartDashboard.getBoolean("PIDFF/Periscope/EnableTuning", false)) {
       this.updatePID();
       this.updateFF();
@@ -100,8 +101,9 @@ public class Periscope extends SubsystemBase {
         || PeriscopeConstants.KG
             != SmartDashboard.getNumber("PIDFF/Periscope/KG", PeriscopeConstants.KG)) {
       PeriscopeConstants.KS = SmartDashboard.getNumber("PIDFF/Periscope/KS", PeriscopeConstants.KS);
-      PeriscopeConstants.KV = SmartDashboard.getNumber("PIDFF/Periscope/KV", PeriscopeConstants.KV);
       PeriscopeConstants.KG = SmartDashboard.getNumber("PIDFF/Periscope/KG", PeriscopeConstants.KG);
+      PeriscopeConstants.KV = SmartDashboard.getNumber("PIDFF/Periscope/KV", PeriscopeConstants.KV);
+      PeriscopeConstants.KV = SmartDashboard.getNumber("PIDFF/Periscope/KA", PeriscopeConstants.KA);
       this.setPID(PeriscopeConstants.KS, PeriscopeConstants.KV, PeriscopeConstants.KG);
     }
   }
