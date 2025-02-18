@@ -84,6 +84,8 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putString("Version Number", "20.0.20.0");
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
+    // Run a warmup command for the Pathfinder because the first command can potentially have a
+    // higher delay to start compared to subsequent Pathfinding commands
     PathfindingCommand.warmupCommand();
 
     m_robotContainer = new RobotContainer();

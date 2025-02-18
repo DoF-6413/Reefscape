@@ -25,6 +25,11 @@ import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
+import frc.robot.Subsystems.Periscope.Periscope;
+import frc.robot.Subsystems.Periscope.PeriscopeConstants;
+import frc.robot.Subsystems.Periscope.PeriscopeIO;
+import frc.robot.Subsystems.Periscope.PeriscopeIOSim;
+import frc.robot.Subsystems.Periscope.PeriscopeIOTalonFX;
 import frc.robot.Subsystems.Vision.Vision;
 import frc.robot.Subsystems.Vision.VisionConstants;
 import frc.robot.Subsystems.Vision.VisionIO;
@@ -37,6 +42,7 @@ public class RobotContainer {
   // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
+  private final Periscope m_periscopeSubsystem;
 
   // Mechanisms
   private final CEE m_CEESubsystem;
@@ -47,6 +53,7 @@ public class RobotContainer {
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
+  // Controllers
   private final CommandXboxController m_auxController =
       new CommandXboxController(OperatorConstants.AUX_CONTROLLER);
 
@@ -68,6 +75,7 @@ public class RobotContainer {
                 new ModuleIOSparkMaxTalonFX(3),
                 m_gyroSubsystem);
         m_CEESubsystem = new CEE(new CEEIOSparkMax());
+        m_periscopeSubsystem = new Periscope(new PeriscopeIOTalonFX());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
@@ -86,6 +94,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 m_gyroSubsystem);
         m_CEESubsystem = new CEE(new CEEIOSim());
+        m_periscopeSubsystem = new Periscope(new PeriscopeIOSim());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
@@ -105,6 +114,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 m_gyroSubsystem);
         m_CEESubsystem = new CEE(new CEEIO() {});
+        m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
         m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
         break;
     }
@@ -123,7 +133,7 @@ public class RobotContainer {
     m_autoChooser.addOption("Curve 180", new PathPlannerAuto("Curve 180"));
     /* Characterization Routines */
     m_autoChooser.addOption(
-        "Drive FeedForward Characterization",
+        "Drive Feedforward Characterization",
         DriveCommands.feedforwardCharacterization(m_driveSubsystem));
     m_autoChooser.addOption(
         "Drive Wheel Radius Characterization",
@@ -270,8 +280,21 @@ public class RobotContainer {
         new InstantCommand (
             () -> m_CEESubsystem.setVoltage(m_auxController.getRightTriggerAxis() * 12),
             m_CEESubsystem));
+
+    m_auxController
+        .a()
+        .onTrue(
+            new InstantCommand(
+                () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MIN_HEIGHT_M),
+                m_periscopeSubsystem));
+    m_auxController
+        .b()
+        .onTrue(
+            new InstantCommand(
+                () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MAX_HEIGHT_M),
+                m_periscopeSubsystem));
   }
-  
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -288,5 +311,6 @@ public class RobotContainer {
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.setBrakeModeAll(enable);
+    m_periscopeSubsystem.enableBrakeMode(enable);
   }
 }
