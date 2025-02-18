@@ -206,7 +206,7 @@ public class Module {
   }
 
   /**
-   * Sets the PID values for the Drive motor's built in closed loop controller
+   * Sets the PID gains for the Drive motor's built in closed loop controller
    *
    * @param kP Proportional gain value
    * @param kI Integral gain value
@@ -217,7 +217,7 @@ public class Module {
   }
 
   /**
-   * Sets the Feedforward values for the Drive motor's built in closed loop controller
+   * Sets the Feedforward gains for the Drive motor's built in closed loop controller
    *
    * @param kS Static gain value
    * @param kV Velocity gain value
@@ -227,7 +227,7 @@ public class Module {
   }
 
   /**
-   * Sets the PID values for the Turn motor's built in closed loop controller
+   * Sets the PID gains for the Turn motor's built in closed loop controller
    *
    * @param kP Proportional gain value
    * @param kI Integral gain value
