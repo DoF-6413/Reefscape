@@ -79,11 +79,18 @@ public class Robot extends LoggedRobot {
     // Start AdvantageKit logger
     Logger.start();
 
-    // Version Number (# of Pushes to Dev, Issue #, Commit #, Functionality 0 = working, 1 = WIP, 2
-    // = doesn't work)
+    /*
+     * Version Number
+     * 1: Number of pushes (commits) to Dev,
+     * 2: Issue number,
+     * 3: Commit number (of this branch),
+     * 4: Functionality: 0 = working, 1 = WIP, 2 = doesn't work
+     */
     SmartDashboard.putString("Version Number", "23.0.23.0");
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
+    // Run a warmup command for the Pathfinder because the first command can potentially have a
+    // higher delay to start compared to subsequent Pathfinding commands
     PathfindingCommand.warmupCommand();
 
     m_robotContainer = new RobotContainer();

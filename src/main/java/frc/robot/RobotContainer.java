@@ -15,17 +15,38 @@ import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
+import frc.robot.Subsystems.Algae.EndEffector.AEE;
+import frc.robot.Subsystems.Algae.EndEffector.AEEIO;
+import frc.robot.Subsystems.Algae.EndEffector.AEEIOSim;
+import frc.robot.Subsystems.Algae.EndEffector.AEEIOSparkMax;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivot;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIO;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSim;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSparkMax;
 import frc.robot.Subsystems.Climber.Climber;
 import frc.robot.Subsystems.Climber.ClimberIO;
 import frc.robot.Subsystems.Climber.ClimberIOSim;
 import frc.robot.Subsystems.Climber.ClimberIOTalonFX;
+import frc.robot.Subsystems.CoralEndEffector.CEE;
+import frc.robot.Subsystems.CoralEndEffector.CEEIO;
+import frc.robot.Subsystems.CoralEndEffector.CEEIOSim;
+import frc.robot.Subsystems.CoralEndEffector.CEEIOSparkMax;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
 import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
+import frc.robot.Subsystems.Funnel.Funnel;
+import frc.robot.Subsystems.Funnel.FunnelIO;
+import frc.robot.Subsystems.Funnel.FunnelIOSim;
+import frc.robot.Subsystems.Funnel.FunnelIOSparkMax;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
+import frc.robot.Subsystems.Periscope.Periscope;
+import frc.robot.Subsystems.Periscope.PeriscopeConstants;
+import frc.robot.Subsystems.Periscope.PeriscopeIO;
+import frc.robot.Subsystems.Periscope.PeriscopeIOSim;
+import frc.robot.Subsystems.Periscope.PeriscopeIOTalonFX;
 import frc.robot.Subsystems.Vision.Vision;
 import frc.robot.Subsystems.Vision.VisionConstants;
 import frc.robot.Subsystems.Vision.VisionIO;
@@ -41,6 +62,11 @@ public class RobotContainer {
 
   // Mechanisms
   private final Climber m_climberSubsystem;
+  private final Periscope m_periscopeSubsystem;
+  private final CEE m_CEESubsystem;
+  private final Funnel m_funnelSubsystem;
+  private final AEE m_AEESubsystem;
+  private final AlgaePivot m_algaePivotSubsystem;
 
   // Utils
   private final Vision m_visionSubsystem;
@@ -69,12 +95,17 @@ public class RobotContainer {
                 new ModuleIOSparkMaxTalonFX(3),
                 m_gyroSubsystem);
         m_climberSubsystem = new Climber(new ClimberIOTalonFX());
+        m_funnelSubsystem = new Funnel(new FunnelIOSparkMax());
+        m_CEESubsystem = new CEE(new CEEIOSparkMax());
+        m_periscopeSubsystem = new Periscope(new PeriscopeIOTalonFX());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
                 new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_INDEX)
                 // new VisionIOPhotonVision(VisionConstants.CAMERA.BACK.CAMERA_INDEX)
                 );
+        m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSparkMax());
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -87,6 +118,9 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 m_gyroSubsystem);
         m_climberSubsystem = new Climber(new ClimberIOSim());
+        m_funnelSubsystem = new Funnel(new FunnelIOSim());
+        m_CEESubsystem = new CEE(new CEEIOSim());
+        m_periscopeSubsystem = new Periscope(new PeriscopeIOSim());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
@@ -94,6 +128,8 @@ public class RobotContainer {
                     VisionConstants.CAMERA.FRONT.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d),
                 new VisionIOSim(
                     VisionConstants.CAMERA.BACK.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d));
+        m_AEESubsystem = new AEE(new AEEIOSim() {});
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSim());
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -106,7 +142,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 m_gyroSubsystem);
         m_climberSubsystem = new Climber(new ClimberIO() {});
+        m_funnelSubsystem = new Funnel(new FunnelIO() {});
+        m_CEESubsystem = new CEE(new CEEIO() {});
+        m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
         m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
+        m_AEESubsystem = new AEE(new AEEIO() {});
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIO() {});
         break;
     }
 
@@ -124,7 +165,7 @@ public class RobotContainer {
     m_autoChooser.addOption("Curve 180", new PathPlannerAuto("Curve 180"));
     /* Characterization Routines */
     m_autoChooser.addOption(
-        "Drive FeedForward Characterization",
+        "Drive Feedforward Characterization",
         DriveCommands.feedforwardCharacterization(m_driveSubsystem));
     m_autoChooser.addOption(
         "Drive Wheel Radius Characterization",
@@ -266,15 +307,60 @@ public class RobotContainer {
 
   /** Aux Controls */
   public void auxControllerBindings() {
+    // AEE testing binding
+    m_AEESubsystem.setDefaultCommand(
+        new InstantCommand(
+            () ->
+                m_AEESubsystem.setVoltage(
+                    m_auxController.getLeftTriggerAxis() * RobotStateConstants.MAX_VOLTAGE),
+            m_AEESubsystem));
+
+    // CEE testing binding
+    m_CEESubsystem.setDefaultCommand(
+        new InstantCommand(
+            () ->
+                m_CEESubsystem.setVoltage(
+                    m_auxController.getRightTriggerAxis() * RobotStateConstants.MAX_VOLTAGE),
+            m_CEESubsystem));
+
+    // ALGAE Pivot testing binding
+    m_algaePivotSubsystem.setDefaultCommand(
+        new InstantCommand(
+            () ->
+                m_algaePivotSubsystem.setVoltage(
+                    m_auxController.getLeftY() * RobotStateConstants.MAX_VOLTAGE),
+            m_algaePivotSubsystem));
+
+    // Funnel testing binding
+    m_auxController
+        .x()
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    m_funnelSubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(500)),
+                m_funnelSubsystem))
+        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setSetpoint(0), m_funnelSubsystem));
+
+    // Periscope testing binding
+    m_auxController
+        .a()
+        .onTrue(
+            new InstantCommand(
+                () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MIN_HEIGHT_M),
+                m_periscopeSubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MAX_HEIGHT_M),
+                m_periscopeSubsystem));
+
+    // Climber testing binding
     m_auxController
         .y()
         .onTrue(
             new InstantCommand(
                 () -> m_climberSubsystem.setPosition(Units.degreesToRadians(90)),
-                m_climberSubsystem));
-    m_auxController
-        .x()
-        .onTrue(
+                m_climberSubsystem))
+        .onFalse(
             new InstantCommand(
                 () -> m_climberSubsystem.setPosition(Units.degreesToRadians(10)),
                 m_climberSubsystem));
@@ -295,7 +381,11 @@ public class RobotContainer {
    * @param enable - True to set brake mode, False to set coast mode
    */
   public void allMechanismsBrakeMode(boolean enable) {
-    m_driveSubsystem.setBrakeModeAll(enable);
+    m_driveSubsystem.enableBrakeModeAll(enable);
     m_climberSubsystem.enableBrakeMode(enable);
+    m_AEESubsystem.enableBrakeMode(enable);
+    m_algaePivotSubsystem.enableBrakeMode(enable);
+    m_funnelSubsystem.enableBrakeMode(enable);
+    m_periscopeSubsystem.enableBrakeMode(enable);
   }
 }
