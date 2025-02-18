@@ -21,7 +21,7 @@ public class FunnelIOSparkMax implements FunnelIO {
    * Constructs a new {@link FunnelIOSparkMax} instance.
    *
    * <p>This creates a new {@link FunnelIO} object that uses the real NEO motor to run the Funnel
-   * mechanism
+   * mechanism.
    */
   public FunnelIOSparkMax() {
     System.out.println("[Init] Creating FunnelIOSparkMax");
@@ -46,19 +46,13 @@ public class FunnelIOSparkMax implements FunnelIO {
 
   @Override
   public void updateInputs(FunnelIOInputs inputs) {
-    // Update inputs from the motor
+    // Update logged inputs from the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
+    inputs.currentAmps = m_sparkmax.getOutputCurrent();
+    inputs.tempCelsius = m_sparkmax.getMotorTemperature();
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / FunnelConstants.GEAR_RATIO;
-    inputs.currentAmps = m_sparkmax.getOutputCurrent();
-    inputs.tempCelsius = m_sparkmax.getMotorTemperature();
-  }
-
-  @Override
-  public void setVoltage(double volts) {
-    m_sparkmax.setVoltage(
-        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
 
   @Override
@@ -68,5 +62,11 @@ public class FunnelIOSparkMax implements FunnelIO {
     // Apply configuration
     m_sparkmax.configure(
         m_config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+  }
+
+  @Override
+  public void setVoltage(double volts) {
+    m_sparkmax.setVoltage(
+        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
 }
