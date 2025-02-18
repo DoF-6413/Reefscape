@@ -2,9 +2,9 @@ package frc.robot.Subsystems.Funnel;
 
 public class FunnelConstants {
   // REAL CONSTANTS
-  /** CAN ID of the Funnel Spark Max */
+  /** CAN ID of the Funnel SPARK MAX */
   public static final int CAN_ID = 18;
-  /** Current limit, in amps for the Funnel Spark Max */
+  /** Current limit, in amps for the Funnel motor */
   public static final int CUR_LIM_A = 30;
   /** Set the inversion status of the Funnel to false, making CCW positive */
   public static final boolean IS_INVERTED = false;

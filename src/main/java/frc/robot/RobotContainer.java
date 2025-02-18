@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -37,7 +38,10 @@ public class RobotContainer {
   // Chassis
   private final Drive m_driveSubsystem;
   private final Gyro m_gyroSubsystem;
+
+  // Mechanisms
   private final Funnel m_funnelSubsystem;
+
   // Utils
   private final Vision m_visionSubsystem;
 
@@ -265,6 +269,15 @@ public class RobotContainer {
         .x()
         .onTrue(new InstantCommand(() -> m_funnelSubsystem.setVoltage(12), m_funnelSubsystem))
         .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
+
+    m_auxController
+        .y()
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    m_funnelSubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(500)),
+                m_funnelSubsystem))
+        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setSetpoint(0), m_funnelSubsystem));
   }
 
   /**
@@ -283,5 +296,6 @@ public class RobotContainer {
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.setBrakeModeAll(enable);
+    m_funnelSubsystem.enableBrakeMode(enable);
   }
 }

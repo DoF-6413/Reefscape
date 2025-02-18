@@ -6,15 +6,13 @@ public interface FunnelIO {
 
   @AutoLog
   public static class FunnelIOInputs {
-    /** Voltage that Funnel motor draws */
+    /** Voltage applied to the AEE motor */
     public double appliedVoltage = 0.0;
-    /** Position of the wheel in radians */
-    public double positionRad = 0.0;
-    /** Velocity of the wheel in radians per sec */
+    /** Velocity of the Funnel in radians per second */
     public double velocityRadPerSec = 0.0;
-    /** Current drawn by the motor in amps */
+    /** Current drawn by the Funnel motor in amps */
     public double currentAmps = 0.0;
-    /** Temperature of the motor in celsius */
+    /** Temperature of the Funnel motor in celsius */
     public double tempCelsius = 0.0;
   }
 
@@ -31,4 +29,11 @@ public interface FunnelIO {
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public default void setVoltage(double volts) {}
+
+  /**
+   * Sets the idle mode for the Funnel motor
+   *
+   * @param enable Sets brake mode on true, coast on false
+   */
+  public default void enableBrakeMode(boolean enable) {}
 }

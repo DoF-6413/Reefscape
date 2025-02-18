@@ -7,13 +7,14 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants.RobotStateConstants;
 
 public class FunnelIOSim implements FunnelIO {
+  // Flywheel system simulation
   private final FlywheelSim m_sim;
 
   /**
-   * This constructs a new {@link FunnelIOSim} instance.
+   * Constructs a new {@link FunnelIOSim} instance.
    *
-   * <p>This creates a new {@link FunnelIO} object that creates that uses the simulated versions of
-   * the NEO motor to run the Funnel simulated flywheel
+   * <p>This creates a new {@link FunnelIO} object that uses a simulated version of the NEO motor to
+   * run the Funnel simulated flywheel
    */
   public FunnelIOSim() {
     System.out.println("[Init] Creating FunnelIOSim");
@@ -32,9 +33,7 @@ public class FunnelIOSim implements FunnelIO {
     // Update the flywheel sim
     m_sim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
-    // Update inputs
-    inputs.positionRad =
-        m_sim.getAngularVelocityRadPerSec() * RobotStateConstants.LOOP_PERIODIC_SEC;
+    // Update logged inputs
     inputs.velocityRadPerSec = m_sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = m_sim.getInputVoltage();
     inputs.currentAmps = Math.abs(m_sim.getCurrentDrawAmps());

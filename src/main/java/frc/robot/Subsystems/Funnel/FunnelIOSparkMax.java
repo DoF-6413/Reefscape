@@ -18,10 +18,10 @@ public class FunnelIOSparkMax implements FunnelIO {
   private final SparkMaxConfig m_config = new SparkMaxConfig();
 
   /**
-   * This constructs a new {@link FunnelIOSparkMax} instance.
+   * Constructs a new {@link FunnelIOSparkMax} instance.
    *
-   * <p>This creates a new {@link FunnelIO} object that uses the real NEO motor to run the real
-   * Funnel mechanism
+   * <p>This creates a new {@link FunnelIO} object that uses the real NEO motor to run the Funnel
+   * mechanism
    */
   public FunnelIOSparkMax() {
     System.out.println("[Init] Creating FunnelIOSparkMax");
@@ -48,8 +48,6 @@ public class FunnelIOSparkMax implements FunnelIO {
   public void updateInputs(FunnelIOInputs inputs) {
     // Update inputs from the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
-    inputs.positionRad =
-        Units.rotationsToRadians(m_relativeEncoder.getPosition()) / FunnelConstants.GEAR_RATIO;
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / FunnelConstants.GEAR_RATIO;
@@ -61,5 +59,14 @@ public class FunnelIOSparkMax implements FunnelIO {
   public void setVoltage(double volts) {
     m_sparkmax.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+  }
+
+  @Override
+  public void enableBrakeMode(boolean enable) {
+    // Update configuration
+    m_config.idleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
+    // Apply configuration
+    m_sparkmax.configure(
+        m_config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 }
