@@ -29,4 +29,11 @@ public interface CEEIO {
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public default void setVoltage(double volts) {}
+
+  /**
+   * Enables or disables brake mode for the CEE motor
+   *
+   * @param enable true to enable brake mode, false to disable
+   */
+  public default void enableBrakeMode(boolean enable) {}
 }

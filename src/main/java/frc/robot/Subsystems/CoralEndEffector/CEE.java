@@ -60,6 +60,15 @@ public class CEE extends SubsystemBase {
   }
 
   /**
+   * Enables or disables brake mode for the CEE motor
+   * 
+   * @param enable
+   */
+  public void enableBrakeMode(boolean enable) {
+    m_io.enableBrakeMode(enable);
+  }
+
+  /**
    * Sets voltage of the CEE motor. The value inputed is clamped between values of -12 to 12
    *
    * @param volts A value between -12 (full reverse speed) tp 12 (full forward speed)

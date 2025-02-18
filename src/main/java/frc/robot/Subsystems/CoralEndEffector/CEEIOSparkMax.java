@@ -60,4 +60,10 @@ public class CEEIOSparkMax implements CEEIO {
     m_sparkmax.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
+
+  @Override
+  public void enableBrakeMode(boolean enable) {
+    m_config.idleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
+    m_sparkmax.configure(m_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  }
 }
