@@ -176,7 +176,13 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
    */
   @Override
   public void setPID(double kP, double kI, double kD) {
+    //
     m_motorConfig.Slot0.withKP(kP).withKI(kI).withKD(kD);
+
+    // Apply new gains
+    for (var motor : m_periscopeMotors) {
+      motor.getConfigurator().apply(m_motorConfig);
+    }
   }
 
   /**
@@ -190,5 +196,10 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
   @Override
   public void setFF(double kS, double kG, double kV, double kA) {
     m_motorConfig.Slot0.withKS(kS).withKG(kG).withKV(kV).withKA(kA);
+
+    // Apply new gains
+    for (var motor : m_periscopeMotors) {
+      motor.getConfigurator().apply(m_motorConfig);
+    }
   }
 }

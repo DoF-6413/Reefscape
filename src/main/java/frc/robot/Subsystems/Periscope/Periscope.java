@@ -44,7 +44,7 @@ public class Periscope extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
-    // Enable and update tunable PID gains through SmartDashboard
+    // Enable and update tunable PID & Feedforward gains through SmartDashboard
     if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
       this.updatePID();
       this.updateFF();
