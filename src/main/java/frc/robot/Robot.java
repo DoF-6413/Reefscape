@@ -81,7 +81,7 @@ public class Robot extends LoggedRobot {
 
     // Version Number (# of Pushes to Dev, Issue #, Commit #, Functionality 0 = working, 1 = WIP, 2
     // = doesn't work)
-    SmartDashboard.putString("Version Number", "20.0.20.0");
+    SmartDashboard.putString("Version Number", "21.0.21.0");
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
     // Run a warmup command for the Pathfinder because the first command can potentially have a
