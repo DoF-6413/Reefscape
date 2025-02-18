@@ -9,7 +9,7 @@ import frc.robot.Constants.RobotStateConstants;
 
 public class ClimberIOSim implements ClimberIO {
   // Arm system simulation
-  private final SingleJointedArmSim m_climberSim;
+  private final SingleJointedArmSim m_armSim;
   private double m_voltage = 0.0;
 
   // PID controller
@@ -26,17 +26,17 @@ public class ClimberIOSim implements ClimberIO {
     System.out.println("[Init] Creating ClimberIOSim");
 
     // Initialize the simulated Climber arm with a KrakenX60 motor
-    m_climberSim =
+    m_armSim =
         new SingleJointedArmSim(
             LinearSystemId.createSingleJointedArmSystem(
                 DCMotor.getKrakenX60(1), ClimberConstants.MOI_KG_M2, ClimberConstants.GEAR_RATIO),
             DCMotor.getKrakenX60(1),
             ClimberConstants.GEAR_RATIO,
             ClimberConstants.LENGTH_M,
-            ClimberConstants.CLIMBER_MIN_ANGLE_RAD,
-            ClimberConstants.CLIMBER_MAX_ANGLE_RAD,
+            ClimberConstants.MIN_ANGLE_RAD,
+            ClimberConstants.MAX_ANGLE_RAD,
             ClimberConstants.SIMULATE_GRAVITY,
-            ClimberConstants.CLIMBER_MAX_ANGLE_RAD); // Starting height
+            ClimberConstants.MAX_ANGLE_RAD); // Starting height
 
     // Initialize PID controller
     m_PIDController =
@@ -50,21 +50,21 @@ public class ClimberIOSim implements ClimberIO {
     this.setVoltage(m_voltage);
 
     // Update arm sim
-    m_climberSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
+    m_armSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
     // Update logged inputs from simulated arm system
     inputs.isConnected = true;
     inputs.appliedVoltage = m_voltage;
-    inputs.currentAmps = Math.abs(m_climberSim.getCurrentDrawAmps());
-    inputs.positionRad = m_climberSim.getAngleRads();
-    inputs.velocityRadPerSec = m_climberSim.getVelocityRadPerSec();
+    inputs.currentAmps = Math.abs(m_armSim.getCurrentDrawAmps());
+    inputs.positionRad = m_armSim.getAngleRads();
+    inputs.velocityRadPerSec = m_armSim.getVelocityRadPerSec();
   }
 
   @Override
   public void setVoltage(double volts) {
     m_voltage =
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
-    m_climberSim.setInputVoltage(m_voltage);
+    m_armSim.setInputVoltage(m_voltage);
   }
 
   @Override

@@ -22,12 +22,12 @@ public class ClimberIOTalonFX implements ClimberIO {
   private final PositionVoltage m_controller = new PositionVoltage(0);
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
 
-  // Climber motor signals
-  private StatusSignal<Angle> m_positionRot; // Rotations
-  private StatusSignal<AngularVelocity> m_velocityRotPerSec; // Rotations per second
+  // Climber motor's logged signals
   private StatusSignal<Voltage> m_appliedVolts;
   private StatusSignal<Current> m_currentAmps;
   private StatusSignal<Temperature> m_tempCelsius;
+  private StatusSignal<Angle> m_positionRot; // Rotations
+  private StatusSignal<AngularVelocity> m_velocityRotPerSec; // Rotations per second
 
   /**
    * Constructs a new {@link ClimberIOTalonFX} instance.
@@ -46,8 +46,8 @@ public class ClimberIOTalonFX implements ClimberIO {
         .MotorOutput
         .withInverted(
             ClimberConstants.IS_INVERTED
-              ? InvertedValue.CounterClockwise_Positive
-              : InvertedValue.Clockwise_Positive)
+                ? InvertedValue.CounterClockwise_Positive
+                : InvertedValue.Clockwise_Positive)
         .withNeutralMode(NeutralModeValue.Brake)
         .withControlTimesyncFreqHz(ClimberConstants.UPDATE_FREQUENCY_HZ);
 
@@ -145,6 +145,9 @@ public class ClimberIOTalonFX implements ClimberIO {
    */
   @Override
   public void setPID(double kP, double kI, double kD) {
+    // Configure new gains
     m_motorConfig.Slot0.withKP(kP).withKI(kI).withKD(kD);
+    // Apply configuration
+    m_talonFX.getConfigurator().apply(m_motorConfig);
   }
 }

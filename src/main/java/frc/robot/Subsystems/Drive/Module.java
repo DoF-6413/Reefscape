@@ -18,7 +18,8 @@ public class Module {
   /**
    * Constructs a new {@link Module} instance.
    *
-   * <p>This creates a new {@link Module} object used to run the Drive and Turn motors of each Module.
+   * <p>This creates a new {@link Module} object used to run the Drive and Turn motors of each
+   * Module.
    *
    * @param io {@link ModuleIO} implementation of the current robot mode.
    * @param index Module number
@@ -39,7 +40,7 @@ public class Module {
   }
 
   /**
-   * Update and log IO inputs from logger.
+   * Update and log inputs
    *
    * <p>Put values that should be called periodically for EACH individual Module here.
    * Module.periodic() NEEDS to be called in Drive.periodic() OR ELSE it wont run.

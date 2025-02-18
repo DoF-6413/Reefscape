@@ -11,8 +11,9 @@ public class Climber extends SubsystemBase {
   /**
    * Constructs a new {@link Climber} instance.
    *
-   * <p>This creates a new Climber {@link SubsystemBase} object with given IO implementation which
-   * determines whether the methods and inputs are initialized with the real, sim, or replay code.
+   * <p>This creates a new Climber {@link SubsystemBase} object with the given IO implementation
+   * which determines whether the methods and inputs are initialized with the real, sim, or replay
+   * code.
    *
    * @param io {@link ClimberIO} implementation of the current robot mode.
    */

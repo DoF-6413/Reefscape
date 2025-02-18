@@ -8,7 +8,7 @@ import frc.robot.Constants.RobotStateConstants;
 
 public class AEEIOSim implements AEEIO {
   // Flywheel system simulation
-  private final FlywheelSim m_sim;
+  private final FlywheelSim m_flywheelSim;
 
   /**
    * Constructs a new {@link AEEIOSim} instance.
@@ -20,7 +20,7 @@ public class AEEIOSim implements AEEIO {
     System.out.println("[Init] Creating AEEIOSim");
 
     // Initialize flywheel sim with a NEO motor
-    m_sim =
+    m_flywheelSim =
         new FlywheelSim(
             LinearSystemId.createFlywheelSystem(
                 DCMotor.getNEO(1), AEEConstants.MOI_KG_M2, AEEConstants.GEAR_RATIO),
@@ -31,17 +31,17 @@ public class AEEIOSim implements AEEIO {
   @Override
   public void updateInputs(AEEIOInputs inputs) {
     // Update flywheel sim
-    m_sim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
+    m_flywheelSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
     // Update logged inputs from the simulated flywheel system
-    inputs.velocityRadPerSec = m_sim.getAngularVelocityRadPerSec();
-    inputs.appliedVoltage = m_sim.getInputVoltage();
-    inputs.currentAmps = Math.abs(m_sim.getCurrentDrawAmps());
+    inputs.velocityRadPerSec = m_flywheelSim.getAngularVelocityRadPerSec();
+    inputs.appliedVoltage = m_flywheelSim.getInputVoltage();
+    inputs.currentAmps = Math.abs(m_flywheelSim.getCurrentDrawAmps());
   }
 
   @Override
   public void setVoltage(double volts) {
-    m_sim.setInputVoltage(
+    m_flywheelSim.setInputVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
 }

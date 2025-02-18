@@ -6,6 +6,7 @@ package frc.robot.Subsystems.Vision;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -13,6 +14,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Subsystems.Drive.Drive;
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -21,35 +23,37 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class Vision extends SubsystemBase {
-
   private final VisionIO[] m_io;
   private final VisionIOInputsAutoLogged[] m_inputs;
   private final VisionConsumer m_consumer;
+
+  // Vision pose estimation
   private final PhotonPoseEstimator[] m_photonPoseEstimators;
   private List<Pose2d> m_estimatedPoses = new LinkedList<>();
   private Matrix<N3, N1> m_stdDevs = VecBuilder.fill(0, 0, 0);
   private double m_stdDevCoeff = 0.0;
 
   /**
-   * Constructs a new Vision subsystem instance.
+   * Constructs a new {@link Vision} instance.
    *
-   * <p>This constructor creates a new Vision object that updates the pose of the robot based on
-   * camera readings
+   * <p>This creates a new Vision {@link SubsystemBase} object that updates the pose of the robot
+   * based on AprilTag readings from cameras.
    *
-   * @param Consumer Used to pass in Vision estimated Pose into Drive subsystem's Swerve Pose
-   *     Estimator
-   * @param io VisionIO implementation(s) of different cameras for the current robot mode (real or
-   *     sim)
+   * @param Consumer Used to pass in Vision estimated Pose into {@link Drive} subsystem's {@link
+   *     SwerveDrivePoseEstimator}.
+   * @param io {@link VisionIO} implementation(s) of the different cameras which determines whether
+   *     the methods and inputs are initialized with the real, sim, or replay code.
    */
   public Vision(VisionConsumer consumer, VisionIO... io) {
     System.out.println("[Init] Creating Vision");
 
-    m_consumer = consumer;
+    // Initialize IO, and consumer
     m_io = io;
-    m_inputs = new VisionIOInputsAutoLogged[m_io.length];
-    m_photonPoseEstimators = new PhotonPoseEstimator[m_io.length];
+    m_consumer = consumer;
 
     // Initialize loggers and Vision Pose Estimators based on number of cameras
+    m_inputs = new VisionIOInputsAutoLogged[m_io.length];
+    m_photonPoseEstimators = new PhotonPoseEstimator[m_io.length];
     for (int i = 0; i < m_io.length; i++) {
       m_inputs[i] = new VisionIOInputsAutoLogged();
       m_photonPoseEstimators[i] =
@@ -62,6 +66,7 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Update logger and check for any AprilTags for each camera
     for (int i = 0; i < m_inputs.length; i++) {
       // Update and log inputs
       m_io[i].updateInputs(m_inputs[i]);
@@ -135,18 +140,18 @@ public class Vision extends SubsystemBase {
   }
 
   /**
-   * @param index Camera index
-   * @return PhotonPipelineResult containing latest data calculated by PhotonVision
+   * @param index Camera index.
+   * @return PhotonPipelineResult containing latest data calculated by PhotonVision.
    */
   public PhotonPipelineResult getPipelineResult(int index) {
     return m_inputs[index].pipelineResult;
   }
 
   /**
-   * Retrieves the latest pipeline and checks if an AprilTag is seen to determine the ID returned
+   * Retrieves the latest pipeline and checks if an AprilTag is seen to determine the ID returned.
    *
-   * @param index Camera index
-   * @return ID of AprilTag currently seen, -1 if none seen
+   * @param index Camera index.
+   * @return ID of AprilTag currently seen, -1 if none seen.
    */
   public int getTagID(int index) {
     var result = this.getPipelineResult(index);
@@ -155,10 +160,10 @@ public class Vision extends SubsystemBase {
   }
 
   /**
-   * Calculates the average position between the Estimated Poses from the Vision
+   * Calculates the average position between the Estimated Poses from the Vision.
    *
-   * @param estimatedPoses Poses to average
-   * @return Pose2d with the averaged position
+   * @param estimatedPoses Poses to average.
+   * @return Pose2d with the averaged position.
    */
   private Pose2d averageVisionPoses(Pose2d... estimatedPoses) {
     double x = 0;
@@ -179,11 +184,11 @@ public class Vision extends SubsystemBase {
   @FunctionalInterface
   public static interface VisionConsumer {
     /**
-     * Passes in inputed values to Swerve Pose Estimator in Drive
+     * Passes in inputed values to Swerve Pose Estimator in Drive.
      *
-     * @param visionRobotPose 2d pose calculated from AprilTag
-     * @param timestampSec Timestamp when position was calculated in seconds
-     * @param visionStdDevs Standard deviation from the average calculation (distance & angle)
+     * @param visionRobotPose 2d pose calculated from AprilTag.
+     * @param timestampSec Timestamp when position was calculated in seconds.
+     * @param visionStdDevs Standard deviation from the average calculation (distance & angle).
      */
     public void accept(Pose2d visionRobotPose, double timestampSec, Matrix<N3, N1> visionStdDevs);
   }

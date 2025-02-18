@@ -26,8 +26,8 @@ public class ModuleIOSim implements ModuleIO {
   /**
    * Constructs a new {@link ModuleIOSim} instance.
    *
-   * <p>This creates a new {@link ModuleIO} object that uses the simulated versions of the KrakenX60 and NEO
-   * motors to run the Drive and Turn of the simulated Module.
+   * <p>This creates a new {@link ModuleIO} object that uses the simulated versions of the KrakenX60
+   * and NEO motors to run the Drive and Turn of the simulated Module.
    */
   public ModuleIOSim() {
     System.out.println("[Init] Creating ModuleIOSim");
@@ -75,7 +75,7 @@ public class ModuleIOSim implements ModuleIO {
     inputs.driveVelocityRadPerSec = m_driveSim.getAngularVelocityRadPerSec();
     inputs.drivePositionRad +=
         inputs.driveVelocityRadPerSec * RobotStateConstants.LOOP_PERIODIC_SEC;
-    
+
     // Update logged Turn motor inputs from the simulated flywheel system
     inputs.absoluteEncoderIsConnected = true;
     inputs.turnAppliedVoltage = m_turnAppliedVolts;
@@ -84,19 +84,20 @@ public class ModuleIOSim implements ModuleIO {
     inputs.turnAbsolutePositionRad =
         MathUtil.angleModulus(
             inputs.turnAbsolutePositionRad
-                + (inputs.turnVelocityRadPerSec
-                    * RobotStateConstants.LOOP_PERIODIC_SEC));
+                + (inputs.turnVelocityRadPerSec * RobotStateConstants.LOOP_PERIODIC_SEC));
   }
 
   @Override
   public void setDriveVoltage(double volts) {
-    m_driveAppliedVolts = MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
+    m_driveAppliedVolts =
+        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
     m_driveSim.setInputVoltage(m_driveAppliedVolts);
   }
 
   @Override
   public void setTurnVoltage(double volts) {
-    m_turnAppliedVolts = MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
+    m_turnAppliedVolts =
+        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
     m_turnSim.setInputVoltage(m_turnAppliedVolts);
   }
 

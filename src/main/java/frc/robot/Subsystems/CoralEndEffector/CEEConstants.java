@@ -10,7 +10,7 @@ public class CEEConstants {
    * Set the inversion status of the CEE to false, making Counterclockwise the positive direction
    */
   public static final boolean IS_INVERTED = false;
-  /** Gear ratio of 3:1 for the CEE motor */
+  /** Gear reduction of 3:1 for the CEE motor */
   public static final double GEAR_RATIO = 3.0 / 1.0;
 
   // PID CONSTANTS

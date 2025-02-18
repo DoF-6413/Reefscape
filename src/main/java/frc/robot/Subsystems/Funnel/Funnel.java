@@ -16,8 +16,9 @@ public class Funnel extends SubsystemBase {
   /**
    * Constructs a new {@link Funnel} instance.
    *
-   * <p>This creates a new Funnel {@link SubsystemBase} object with given IO implementation which
-   * determines whether the methods and inputs are initialized with the real, sim, or replay code.
+   * <p>This creates a new Funnel {@link SubsystemBase} object with the given IO implementation
+   * which determines whether the methods and inputs are initialized with the real, sim, or replay
+   * code.
    *
    * @param io {@link FunnelIO} implementation of the current mode of the robot
    */
@@ -40,7 +41,7 @@ public class Funnel extends SubsystemBase {
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
-    // Update inputs and logger
+    // Update and log inputs
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Funnel", m_inputs);
 
@@ -74,7 +75,7 @@ public class Funnel extends SubsystemBase {
     m_io.setVoltage(volts);
   }
 
-   /**
+  /**
    * Sets the setpoint of the Funnel PID controller.
    *
    * @param setpoint Velocity in radians per second.

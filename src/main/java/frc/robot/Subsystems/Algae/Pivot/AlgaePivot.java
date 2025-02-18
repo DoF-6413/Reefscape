@@ -15,12 +15,12 @@ public class AlgaePivot extends SubsystemBase {
 
   // PID controller
   private final PIDController m_PIDController;
-  private boolean m_enablePID = false;
+  private boolean m_enablePID = true;
 
   /**
    * Constructs a new {@link AlgaePivot} instance.
    *
-   * <p>This creates a new ALGAE Pivot {@link SubsystemBase} object with given IO implementation
+   * <p>This creates a new ALGAE Pivot {@link SubsystemBase} object with the given IO implementation
    * which determines whether the methods and inputs are initialized with the real, sim, or replay
    * code.
    *
@@ -53,7 +53,7 @@ public class AlgaePivot extends SubsystemBase {
     // Control the ALGAE Pivot through the PID controller if enabled, open loop voltage control if
     // disabled
     if (m_enablePID) {
-      m_PIDController.calculate(m_inputs.velocityRadPerSec);
+      this.setVoltage(m_PIDController.calculate(m_inputs.positionRad));
     }
 
     // Enable and update tunable PID gains through SmartDashboard

@@ -22,12 +22,12 @@ public class PeriscopeIOSim implements PeriscopeIO {
    * This constructs a new {@link PeriscopeIOSim} instance.
    *
    * <p>This creates a new {@link PeriscopeIO} object that uses two simulated KrakenX60 motors to
-   * drive the simulated Periscope (elevator) mechanism
+   * drive the simulated Periscope (elevator) mechanism.
    */
   public PeriscopeIOSim() {
     System.out.println("[Init] Creating PeriscopeIOSim");
 
-    // Initialize elevator simulation
+    // Initialize elevator simulation with two KarkenX60 motors
     m_elevatorSim =
         new ElevatorSim(
             LinearSystemId.createElevatorSystem(
@@ -44,18 +44,18 @@ public class PeriscopeIOSim implements PeriscopeIO {
     // Initialize controllers with gains
     m_profiledPIDController =
         new ProfiledPIDController(
-            PeriscopeConstants.KP,
-            PeriscopeConstants.KI,
-            PeriscopeConstants.KD,
+            PeriscopeConstants.KP_SIM,
+            PeriscopeConstants.KI_SIM,
+            PeriscopeConstants.KD_SIM,
             new TrapezoidProfile.Constraints(
                 PeriscopeConstants.MAX_VELOCITY_ROT_PER_SEC,
                 PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2));
     m_elevatorFeedforward =
         new ElevatorFeedforward(
-            PeriscopeConstants.KS,
-            PeriscopeConstants.KG,
-            PeriscopeConstants.KV,
-            PeriscopeConstants.KA);
+            PeriscopeConstants.KS_SIM,
+            PeriscopeConstants.KG_SIM,
+            PeriscopeConstants.KV_SIM,
+            PeriscopeConstants.KA_SIM);
   }
 
   @Override
@@ -69,16 +69,16 @@ public class PeriscopeIOSim implements PeriscopeIO {
     // Update elevator sim
     m_elevatorSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
-    // Update inputs
+    // Update logged inputs from simulated elevator system
     inputs.isConnected = new boolean[] {true, true};
-    inputs.heightMeters = m_elevatorSim.getPositionMeters();
-    inputs.velocityMetersPerSec = m_elevatorSim.getVelocityMetersPerSecond();
-    inputs.velocityRadPerSec = inputs.velocityMetersPerSec / PeriscopeConstants.DRUM_RADIUS_M;
     inputs.appliedVolts = new double[] {voltage, voltage};
     inputs.currentDraw =
         new double[] {
           Math.abs(m_elevatorSim.getCurrentDrawAmps()), Math.abs(m_elevatorSim.getCurrentDrawAmps())
         };
+    inputs.heightMeters = m_elevatorSim.getPositionMeters();
+    inputs.velocityMetersPerSec = m_elevatorSim.getVelocityMetersPerSecond();
+    inputs.velocityRadPerSec = inputs.velocityMetersPerSec / PeriscopeConstants.DRUM_RADIUS_M;
   }
 
   @Override

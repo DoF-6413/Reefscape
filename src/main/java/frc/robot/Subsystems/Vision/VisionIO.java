@@ -9,7 +9,7 @@ public interface VisionIO {
 
   @AutoLog
   public static class VisionIOInputs {
-    /** Measurements and other data from AprilTags if one is seen */
+    /** Measurements and other data from AprilTags, if one is seen */
     public PhotonPipelineResult pipelineResult = new PhotonPipelineResult();
     /** If the camera sees an AprilTag */
     public boolean hasTargets = false;
@@ -27,14 +27,14 @@ public interface VisionIO {
   }
 
   /**
-   * Updates the logged inputs for a camera in the Vision system. Must be called periodically
+   * Updates the logged inputs for a camera in the Vision system. Must be called periodically.
    *
-   * @param inputs Inputs from the auto logger
+   * @param inputs Inputs from the auto logger.
    */
   public default void updateInputs(VisionIOInputs inputs) {}
 
   /**
-   * @return A list of all PhotonPipelineResults waiting in queue
+   * @return A list of all PhotonPipelineResults waiting in queue.
    */
   public default List<PhotonPipelineResult> getAllPipelineResults() {
     return null;

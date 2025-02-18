@@ -15,8 +15,9 @@ public class Periscope extends SubsystemBase {
   /**
    * This constructs a new {@link Periscope} instance.
    *
-   * <p>This creates a new Periscope {@link SubsystemBase} object with given IO implementation which
-   * determines whether the methods and inputs are initialized with the real, sim, or replay code
+   * <p>This creates a new Periscope {@link SubsystemBase} object with the given IO implementation
+   * which determines whether the methods and inputs are initialized with the real, sim, or replay
+   * code.
    *
    * @param io {@link PeriscopeIO} implementation of the current robot mode
    */
@@ -52,56 +53,56 @@ public class Periscope extends SubsystemBase {
   }
 
   /**
-   * Sets the Periscope motors to brake mode
+   * Sets the idle mode of the Periscope motors.
    *
-   * @param enable True to enable brake mode, false to disable
+   * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public void enableBrakeMode(boolean enable) {
     m_io.enableBrakeMode(enable);
   }
 
   /**
-   * Sets voltage of the Periscope motors. The value inputed is clamped between values of -12 to 12
+   * Sets voltage of the Periscope motors. The value inputed is clamped between values of -12 to 12.
    *
-   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed).
    */
   public void setVoltage(double volts) {
     m_io.setVoltage(volts);
   }
 
   /**
-   * Sets the position of the Periscope using a motion profiled PID controller
+   * Sets the position of the Periscope using a motion profiled PID controller.
    *
-   * @param heightMeters Position of the Periscope in meters
+   * @param heightMeters Position of the Periscope in meters.
    */
   public void setPosition(double heightMeters) {
     m_io.setPosition(heightMeters);
   }
 
   /**
-   * Sets the PID gains of the Periscope motors' Profiled PID controller
+   * Sets the PID gains of the Periscope motors' Profiled PID controller.
    *
-   * @param kP Proportional gain value
-   * @param kI Integral gain value
-   * @param kD Derivative gain value
+   * @param kP Proportional gain value.
+   * @param kI Integral gain value.
+   * @param kD Derivative gain value.
    */
   public void setPID(double kP, double kI, double kD) {
     m_io.setPID(kP, kI, kD);
   }
 
   /**
-   * Sets the Feedforward gains for the Periscope motors' Feedforward controller
+   * Sets the Feedforward gains for the Periscope motors' Feedforward controller.
    *
-   * @param kS Static gain value
-   * @param kG Gravity gain value
-   * @param kV Velocity gain value
-   * @param kA Acceleration gain value
+   * @param kS Static gain value.
+   * @param kG Gravity gain value.
+   * @param kV Velocity gain value.
+   * @param kA Acceleration gain value.
    */
   public void setFF(double kS, double kG, double kV, double kA) {
     m_io.setFF(kS, kG, kV, kA);
   }
 
-  /** Update PID gains for the Periscope motors from SmartDashboard inputs */
+  /** Update PID gains for the Periscope motors from SmartDashboard inputs. */
   private void updatePID() {
     // If any value on SmartDashboard changes, update the gains
     if (PeriscopeConstants.KP
@@ -121,15 +122,17 @@ public class Periscope extends SubsystemBase {
     }
   }
 
-  /** Update Feedforward gains for the Periscope motors from SmartDashboard inputs */
+  /** Update Feedforward gains for the Periscope motors from SmartDashboard inputs. */
   private void updateFF() {
     // If any value on SmartDashboard changes, update the gains
     if (PeriscopeConstants.KS
             != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KS", PeriscopeConstants.KS)
+        || PeriscopeConstants.KG
+            != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KG", PeriscopeConstants.KG)
         || PeriscopeConstants.KV
             != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KV", PeriscopeConstants.KV)
-        || PeriscopeConstants.KG
-            != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KG", PeriscopeConstants.KG)) {
+        || PeriscopeConstants.KA
+            != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KA", PeriscopeConstants.KA)) {
       PeriscopeConstants.KS =
           SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KS", PeriscopeConstants.KS);
       PeriscopeConstants.KG =

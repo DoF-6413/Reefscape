@@ -20,7 +20,7 @@ public class AEE extends SubsystemBase {
   /**
    * Constructs a new ALGAE End Effector ({@link AEE}) instance.
    *
-   * <p>This creates a new AEE {@link SubsystemBase} object with given IO implementation which
+   * <p>This creates a new AEE {@link SubsystemBase} object with the given IO implementation which
    * determines whether the methods and inputs are initialized with the real, sim, or replay code.
    *
    * @param io {@link AEEIO} implementation of the current mode of the robot.
@@ -50,7 +50,7 @@ public class AEE extends SubsystemBase {
 
     // Control the AEE through the PID controller if enabled, open loop voltage control if disabled
     if (m_enablePID) {
-      m_PIDController.calculate(m_inputs.velocityRadPerSec);
+      this.setVoltage(m_PIDController.calculate(m_inputs.velocityRadPerSec));
     }
 
     // Enable and update tunable PID gains through SmartDashboard

@@ -56,7 +56,8 @@ public class Drive extends SubsystemBase {
    * Constructs a new {@link Drive} instance.
    *
    * <p>This creates a new Drive {@link SubsystemBase} object which determines whether the methods
-   * and inputs are initialized with the real, sim, or replay code. The Drivetrain consists of four {@link Module} and a {@link Gyro}.
+   * and inputs are initialized with the real, sim, or replay code. The Drivetrain consists of four
+   * {@link Module} and a {@link Gyro}.
    *
    * @param FRModuleIO Front Right {@link ModuleIO} implementation of the current robot mode.
    * @param FLModuleIO Front Left {@link ModuleIO} implementation of the current robot mode.
@@ -168,8 +169,9 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the velocity of the Swerve Drive through passing in a {@link ChassisSpeeds} (can be Field Relative
-   * OR Robot Orientated) that contains the desired linear and angular velocities for the robot.
+   * Sets the velocity of the Swerve Drive through passing in a {@link ChassisSpeeds} (can be Field
+   * Relative OR Robot Orientated) that contains the desired linear and angular velocities for the
+   * robot.
    *
    * @param speeds The desired {@link ChassisSpeeds}.
    */
@@ -203,8 +205,8 @@ public class Drive extends SubsystemBase {
   /**
    * Run each Module at a specified linear speed and angle.
    *
-   * @param setpointStates An array of {@link SwerveModuleState} (Module speed in m/s, and the Module angle
-   *     in radians).
+   * @param setpointStates An array of {@link SwerveModuleState} (Module speed in m/s, and the
+   *     Module angle in radians).
    */
   public void runSwerveModules(SwerveModuleState[] setpointStates) {
     // Record initial Module States setpoint
@@ -231,7 +233,8 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * @return An array of {@link SwerveModulePosition} for each Module (distance travelled and wheel angles).
+   * @return An array of {@link SwerveModulePosition} for each Module (distance travelled and wheel
+   *     angles).
    */
   public SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
@@ -258,7 +261,8 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * @return An array of {@link SwerveModulePosition} containing the change in Module position and angle.
+   * @return An array of {@link SwerveModulePosition} containing the change in Module position and
+   *     angle.
    */
   public SwerveModulePosition[] getWheelDeltas() {
     SwerveModulePosition[] wheelDeltas = new SwerveModulePosition[4];
@@ -275,7 +279,8 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * @return Current linear and angular speed of the robot based on the current State of each Module.
+   * @return Current linear and angular speed of the robot based on the current State of each
+   *     Module.
    */
   public ChassisSpeeds getChassisSpeeds() {
     return m_swerveDriveKinematics.toChassisSpeeds(

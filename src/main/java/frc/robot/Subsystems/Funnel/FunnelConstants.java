@@ -4,14 +4,14 @@ public class FunnelConstants {
   // REAL CONSTANTS
   /** CAN ID of the Funnel SPARK MAX */
   public static final int CAN_ID = 18;
-  /** Current limit for the NEO motor of the Funnel */
-  public static final int CUR_LIM_A = 30;
+  /** Gear reduction of 3:1 for the Funnel motor */
+  public static final double GEAR_RATIO = 3.0 / 1.0;
   /**
    * Set the inversion status of the Funnel to false, making Counterclockwise the positive direction
    */
   public static final boolean IS_INVERTED = false;
-  /** Gear reduction of 3:1 for the Funnel motor */
-  public static final double GEAR_RATIO = 3.0 / 1.0;
+  /** Current limit for the NEO motor of the Funnel */
+  public static final int CUR_LIM_A = 30;
 
   // PID CONSTANTS
   /**

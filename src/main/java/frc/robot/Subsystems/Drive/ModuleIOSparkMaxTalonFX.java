@@ -37,22 +37,23 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   private final CANcoder m_turnAbsoluteEncoder;
   private final double m_absoluteEncoderOffsetRad;
 
-  // Drive motor logged signals
-  private StatusSignal<Angle> m_drivePositionRot; // Rotations
-  private StatusSignal<AngularVelocity> m_driveVelocityRotPerSec; // Rotations per second
+  // Drive motor's logged signals
   private StatusSignal<Voltage> m_driveAppliedVolts;
   private StatusSignal<Current> m_driveCurrentAmps;
   private StatusSignal<Temperature> m_driveTempCelsius;
+  private StatusSignal<Angle> m_drivePositionRot; // Rotations
+  private StatusSignal<AngularVelocity> m_driveVelocityRotPerSec; // Rotations per second
 
-  // CANcoder logged signals
+  // CANcoder's logged signals
   private StatusSignal<Angle> m_absoluteEncoderPositionRot; // Rotations
   private StatusSignal<AngularVelocity> m_absoluteEncoderVelocityRotPerSec; // Rotations per second
 
   /**
    * Constructs a new {@link ModuleIOSparkMaxTalonFX} instance.
    *
-   * <p>This creates a new {@link ModuleIO} object that uses the real KrakenX60 and NEO motors to run the
-   * Drive and Turn of the Module and the CANcoder for the absolute Turn position of the wheels.
+   * <p>This creates a new {@link ModuleIO} object that uses the real KrakenX60 and NEO motors to
+   * run the Drive and Turn of the Module and the CANcoder for the absolute Turn position of the
+   * wheels.
    *
    * @param moduleNumber Number to the corresponding Swerve Module that is to be initilized.
    */
@@ -105,7 +106,10 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     // TalonFX motor configurations
     m_driveConfig
         .MotorOutput
-        .withInverted(DriveConstants.DRIVE_IS_INVERTED ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive)
+        .withInverted(
+            DriveConstants.DRIVE_IS_INVERTED
+                ? InvertedValue.CounterClockwise_Positive
+                : InvertedValue.Clockwise_Positive)
         .withNeutralMode(NeutralModeValue.Brake)
         .withControlTimesyncFreqHz(DriveConstants.UPDATE_FREQUENCY_HZ);
 
@@ -119,12 +123,12 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
     // TalonFX PID and Feedforward gains configuration
     m_driveConfig
-      .Slot0
-      .withKP(DriveConstants.DRIVE_KP)
-      .withKI(DriveConstants.DRIVE_KI)
-      .withKD(DriveConstants.DRIVE_KD)
-      .withKS(DriveConstants.DRIVE_KS)
-      .withKV(DriveConstants.DRIVE_KV);
+        .Slot0
+        .withKP(DriveConstants.DRIVE_KP)
+        .withKI(DriveConstants.DRIVE_KI)
+        .withKD(DriveConstants.DRIVE_KD)
+        .withKS(DriveConstants.DRIVE_KS)
+        .withKV(DriveConstants.DRIVE_KV);
 
     // TalonFX closed loop configurations
     m_driveConfig.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(
@@ -260,7 +264,9 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
    */
   @Override
   public void setDrivePID(double kP, double kI, double kD) {
+    // Configure new gains
     m_driveConfig.Slot0.withKP(kP).withKI(kI).withKD(kD);
+    // Apply configuration
     m_driveTalonFX.getConfigurator().apply(m_driveConfig);
   }
 
@@ -272,7 +278,9 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
    */
   @Override
   public void setDriveFF(double kS, double kV) {
+    // Configure new gains
     m_driveConfig.Slot0.withKS(kS).withKV(kV);
+    // Apply configuration
     m_driveTalonFX.getConfigurator().apply(m_driveConfig);
   }
 }

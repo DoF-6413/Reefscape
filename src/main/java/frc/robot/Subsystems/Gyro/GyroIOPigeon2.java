@@ -10,9 +10,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
-/** GyroIO implementation for the real mode of the robot running a Pigeon 2.0 */
+/** GyroIO implementation for the real mode of the robot running a Pigeon 2.0. */
 public class GyroIOPigeon2 implements GyroIO {
-  // Gyroscope
+  // IMU
   private final Pigeon2 m_gyro;
 
   // Pigeon logged signals
@@ -20,22 +20,24 @@ public class GyroIOPigeon2 implements GyroIO {
   private StatusSignal<AngularVelocity> m_yawVelocityDegPerSec;
 
   /**
-   * Constructs a new GyroIOPigeon2 instance
+   * Constructs a new {@link GyroIOPigeon2} instance.
    *
-   * <p>This creates a new GyroIO object that uses the real Pigeon 2.0 IMU sensor for updating
-   * values related to Gyroscope readings
+   * <p>This creates a new {@link GyroIO} object that uses the real Pigeon 2.0 Inertial Measurement
+   * Unit (IMU) for updating values related to IMU readings.
    */
   public GyroIOPigeon2() {
     System.out.println("[Init] Creating GyroIOPigeon2");
 
-    // Initialize Pigeon Gyro
+    // Initialize Pigeon 2.0 IMU
     m_gyro = new Pigeon2(GyroConstants.CAN_ID, "DriveTrain");
 
     // Pigeon configuration
     m_gyro.getConfigurator().apply(new Pigeon2Configuration());
+
+    // Optimize CAN bus usage, disable all signals aside from those refreshed in code
     m_gyro.optimizeBusUtilization();
 
-    // Initialize Gyro inputs and set update frequency to be every 0.01 seconds
+    // Initialize IMU inputs and set update frequency to be every 0.01 seconds
     m_yawDeg = m_gyro.getYaw();
     m_yawDeg.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
     m_yawVelocityDegPerSec = m_gyro.getAngularVelocityZWorld();
@@ -44,9 +46,9 @@ public class GyroIOPigeon2 implements GyroIO {
 
   @Override
   public void updateInputs(GyroIOInputs inputs) {
-    // Update Gyro signals and check if they are recieved
+    // Update signals and check if they are recieved
     inputs.connected = BaseStatusSignal.refreshAll(m_yawDeg, m_yawVelocityDegPerSec).isOK();
-    // Update Gyro logged inputs
+    // Update logged inputs from IMU
     inputs.yawPositionRad =
         Rotation2d.fromRadians(
             MathUtil.angleModulus(

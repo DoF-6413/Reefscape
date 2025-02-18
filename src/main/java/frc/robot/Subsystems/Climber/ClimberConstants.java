@@ -16,23 +16,23 @@ public final class ClimberConstants {
   public static final int CUR_LIM_A = 50;
   /** Enable current limiting for the Climber motor */
   public static final boolean ENABLE_CUR_LIM = true;
-  /** Update the signals from the Climber motor every 0.02 seconds */
+  /** Refresh signals of the TalonFX 50 times a second (every 0.02 second) */
   public static final double UPDATE_FREQUENCY_HZ = 50;
   /** Length of the Climber arm in meters */
   public static final double LENGTH_M = Units.inchesToMeters(11.919);
   /** Weight of the Climber in kilograms */
-  public static final double MASS_KG = Units.lbsToKilograms(1);
+  public static final double MASS_KG = Units.lbsToKilograms(10);
   // Angle positions
   /** Minimum angle of the Climber in radians */
-  public static final double CLIMBER_MIN_ANGLE_RAD = Units.degreesToRadians(10);
+  public static final double MIN_ANGLE_RAD = Units.degreesToRadians(10);
   /** Maximum (default) angle of the Climber in radians */
-  public static final double CLIMBER_MAX_ANGLE_RAD = Units.degreesToRadians(90);
+  public static final double MAX_ANGLE_RAD = Units.degreesToRadians(90);
 
   // PID Constants
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */
-  public static double KP = 1.0;
+  public static double KP = 2.0;
   /**
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
