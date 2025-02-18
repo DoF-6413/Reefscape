@@ -10,7 +10,7 @@ public class CEEIOSim implements CEEIO {
   private final FlywheelSim m_sim;
 
   /**
-   * This constructs a new {@link CEEIOSim} instance.
+   * Constructs a new {@link CEEIOSim} instance.
    *
    * <p>This creates a new {@link CEEIO} object that creates that uses the simulated versions of the NEO 550
    * motor to run the CEE simulated flywheel

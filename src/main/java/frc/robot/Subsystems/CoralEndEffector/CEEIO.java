@@ -8,7 +8,7 @@ public interface CEEIO {
   public static class CEEIOInputs {
     /** Voltage applied to the CEE motor */
     public double appliedVoltage = 0.0;
-    /** Velocity of the CEE in radians per sec */
+    /** Velocity of the CEE in radians per second */
     public double velocityRadPerSec = 0.0;
     /** Current drawn by the CEE motor in amps */
     public double currentAmps = 0.0;

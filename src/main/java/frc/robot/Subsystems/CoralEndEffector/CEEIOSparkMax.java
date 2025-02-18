@@ -18,15 +18,15 @@ public class CEEIOSparkMax implements CEEIO {
   private final SparkMaxConfig m_config = new SparkMaxConfig();
 
   /**
-   * This constructs a new {@link CEEIOSparkMax} instance.
+   * Constructs a new {@link CEEIOSparkMax} instance.
    *
-   * <p>This creates a new {@link CEEIO} object that uses the real NEO 550 motor to run the real CEE
+   * <p>This creates a new {@link CEEIO} object that uses a real NEO 550 motor to run the CEE
    * mechanism
    */
   public CEEIOSparkMax() {
     System.out.println("[Init] Creating CEEIOSparkMax");
     
-    // Initailize the SPARK MAX with a NEO (brushless) motor
+    // Initialize the SPARK MAX with a NEO (brushless) motor
     m_sparkmax = new SparkMax(CEEConstants.CAN_ID, MotorType.kBrushless);
 
     // SPARK MAX configurations

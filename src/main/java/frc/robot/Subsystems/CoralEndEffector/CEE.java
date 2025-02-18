@@ -18,20 +18,20 @@ public class CEE extends SubsystemBase {
   private boolean m_enablePID = false;
 
   /**
-   * Creates a new Coral End Effector ({@link CEE}) instance.
+   * Constructs a new Coral End Effector ({@link CEE}) instance.
    *
    * <p>This creates a new CEE {@link SubsystemBase} object with given IO implementation which
-   * determines whether the methods and inputs are initailized with the real, sim, or replay code
+   * determines whether the methods and inputs are initialized with the real, sim, or replay code
    *
-   * @param io CEEIO implementation of the current mode of the robot
+   * @param io {@link CEEIO} implementation of the current mode of the robot
    */
   public CEE(CEEIO io) {
     System.out.println("[Init] Creating Coral End Effector");
 
-    // Initailize the IO implementation
+    // Initialize the IO implementation
     m_io = io;
 
-    // Initailize the PID controller
+    // Initialize the PID controller
     m_PIDController = new PIDController(CEEConstants.KP, CEEConstants.KI, CEEConstants.KD);
 
     // Tunable PID values
