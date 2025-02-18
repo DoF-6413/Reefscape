@@ -61,4 +61,11 @@ public interface PeriscopeIO {
    * @param kA Acceleration gain value
    */
   public default void setFF(double kS, double kG, double kV, double kA) {}
+
+  /**
+   * Sets the idle mode for Periscope motors
+   *
+   * @param enable Sets brake mode on true, coast on false
+   */
+  public default void enableBrakeMode(boolean enable) {}
 }

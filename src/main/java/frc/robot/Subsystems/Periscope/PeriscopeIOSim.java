@@ -73,8 +73,7 @@ public class PeriscopeIOSim implements PeriscopeIO {
     inputs.isConnected = new boolean[] {true, true};
     inputs.heightMeters = m_elevatorSim.getPositionMeters();
     inputs.velocityMetersPerSec = m_elevatorSim.getVelocityMetersPerSecond();
-    inputs.velocityRadPerSec =
-        inputs.velocityMetersPerSec / PeriscopeConstants.DRUM_RADIUS_M;
+    inputs.velocityRadPerSec = inputs.velocityMetersPerSec / PeriscopeConstants.DRUM_RADIUS_M;
     inputs.appliedVolts = new double[] {voltage, voltage};
     inputs.currentDraw =
         new double[] {

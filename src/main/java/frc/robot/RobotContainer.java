@@ -267,11 +267,15 @@ public class RobotContainer {
     m_auxController
         .a()
         .onTrue(
-            new InstantCommand(() -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MIN_HEIGHT_M), m_periscopeSubsystem));
+            new InstantCommand(
+                () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MIN_HEIGHT_M),
+                m_periscopeSubsystem));
     m_auxController
         .b()
         .onTrue(
-            new InstantCommand(() -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MAX_HEIGHT_M), m_periscopeSubsystem));
+            new InstantCommand(
+                () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MAX_HEIGHT_M),
+                m_periscopeSubsystem));
   }
 
   /**
@@ -290,5 +294,6 @@ public class RobotContainer {
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.setBrakeModeAll(enable);
+    m_periscopeSubsystem.enableBrakeMode(enable);
   }
 }

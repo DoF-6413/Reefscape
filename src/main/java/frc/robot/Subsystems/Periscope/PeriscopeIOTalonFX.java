@@ -41,28 +41,31 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     // Initialize the motors
     m_periscopeMotors[0] = new TalonFX(PeriscopeConstants.CAN_ID_0);
     m_periscopeMotors[1] = new TalonFX(PeriscopeConstants.CAN_ID_1);
-
+    
     // Initialize the closed loop motor controllers
     m_motorControllers[0] = new PositionVoltage(0);
     m_motorControllers[1] = new PositionVoltage(0);
 
     // Motor configuration
     m_motorConfig
-        .MotorOutput
-        .withInverted(PeriscopeConstants.IS_INVERTED ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive)
+    .MotorOutput
+    .withInverted(
+            PeriscopeConstants.IS_INVERTED
+            ? InvertedValue.CounterClockwise_Positive
+            : InvertedValue.Clockwise_Positive)
         .withNeutralMode(NeutralModeValue.Brake)
         .withControlTimesyncFreqHz(PeriscopeConstants.UPDATE_FREQUENCY_HZ);
-
+        
     // Current limit configuration
     m_motorConfig
-        .CurrentLimits
-        .withSupplyCurrentLimit(PeriscopeConstants.CUR_LIM_A)
-        .withSupplyCurrentLimitEnable(PeriscopeConstants.ENABLE_CUR_LIM)
+    .CurrentLimits
+    .withSupplyCurrentLimit(PeriscopeConstants.CUR_LIM_A)
+    .withSupplyCurrentLimitEnable(PeriscopeConstants.ENABLE_CUR_LIM)
         .withStatorCurrentLimit(PeriscopeConstants.CUR_LIM_A)
         .withStatorCurrentLimitEnable(PeriscopeConstants.ENABLE_CUR_LIM);
-
-    // PID and Feedforward gains configuration
-    m_motorConfig
+        
+        // PID and Feedforward gains configuration
+        m_motorConfig
         .Slot0
         .withKP(PeriscopeConstants.KP)
         .withKI(PeriscopeConstants.KI)
@@ -70,32 +73,32 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
         .withKS(PeriscopeConstants.KS)
         .withKV(PeriscopeConstants.KV)
         .withKG(PeriscopeConstants.KG);
-
-    // Motion Magic (motion profiling) configuration
-    m_motorConfig
+        
+        // Motion Magic (motion profiling) configuration
+        m_motorConfig
         .MotionMagic
         .withMotionMagicCruiseVelocity(PeriscopeConstants.MAX_VELOCITY_ROT_PER_SEC)
         .withMotionMagicAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2);
-
+        
     // Closed loop controller configuration
     m_motorConfig.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(
         1.0 / PeriscopeConstants.UPDATE_FREQUENCY_HZ);
-
-    // Misc and apply configuration
-    for (var motor : m_periscopeMotors) {
+        
+        // Misc and apply configuration
+        for (var motor : m_periscopeMotors) {
       // Reset position
       motor.setPosition(0.0);
-
+      
       // Optimize CAN bus usage, disable all signals aside from those refreshed in code
       motor.optimizeBusUtilization();
-
+      
       // Timeout CAN after 500 seconds
       motor.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
 
       // Apply configurations
       motor.getConfigurator().apply(m_motorConfig);
     }
-
+    
     // Initailize logged signals for both motors
     for (int i = 0; i < 2; i++) {
       m_positionRot[i] = m_periscopeMotors[i].getPosition();
@@ -110,63 +113,77 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
       m_tempCelsius[i].setUpdateFrequency(PeriscopeConstants.UPDATE_FREQUENCY_HZ);
     }
   }
-
+  
   @Override
   public void updateInputs(PeriscopeIOInputs inputs) {
     // Update logged inputs from each motor
     for (int i = 0; i < 2; i++) {
       // Update motor signals and check if they are recieved
       inputs.isConnected[i] =
-          BaseStatusSignal.refreshAll(
+      BaseStatusSignal.refreshAll(
                   m_positionRot[i],
                   m_velocityRotPerSec[i],
                   m_appliedVolts[i],
                   m_currentAmps[i],
                   m_tempCelsius[i])
-              .isOK();
-      // Update logged inputs for the motor
-      inputs.appliedVolts[i] = m_appliedVolts[i].getValueAsDouble();
+                  .isOK();
+                  // Update logged inputs for the motor
+                  inputs.appliedVolts[i] = m_appliedVolts[i].getValueAsDouble();
       inputs.currentDraw[i] = m_currentAmps[i].getValueAsDouble();
       inputs.tempCelsius[i] = m_tempCelsius[i].getValueAsDouble();
     }
     // Update logged inputs for the entire Periscope
     inputs.heightMeters =
-        Units.rotationsToRadians(
-                (m_positionRot[0].getValueAsDouble() + m_positionRot[1].getValueAsDouble()) / 2)
-            / PeriscopeConstants.GEAR_RATIO
-            * PeriscopeConstants.DRUM_RADIUS_M;
-    inputs.velocityRadPerSec =
-        (Units.rotationsToRadians(
-                (m_velocityRotPerSec[0].getValueAsDouble()
+    Units.rotationsToRadians(
+      (m_positionRot[0].getValueAsDouble() + m_positionRot[1].getValueAsDouble()) / 2)
+      / PeriscopeConstants.GEAR_RATIO
+      * PeriscopeConstants.DRUM_RADIUS_M;
+      inputs.velocityRadPerSec =
+      (Units.rotationsToRadians(
+        (m_velocityRotPerSec[0].getValueAsDouble()
                         + m_velocityRotPerSec[1].getValueAsDouble())
                     / 2))
             / PeriscopeConstants.GEAR_RATIO;
-    inputs.velocityMetersPerSec = inputs.velocityRadPerSec * PeriscopeConstants.DRUM_RADIUS_M;
-  }
-
-  @Override
-  public void setVoltage(double volts) {
-    for (int i = 0; i < 2; i++) {
-      m_periscopeMotors[i].setVoltage(
+            inputs.velocityMetersPerSec = inputs.velocityRadPerSec * PeriscopeConstants.DRUM_RADIUS_M;
+          }
+          
+          @Override
+          public void setVoltage(double volts) {
+            for (int i = 0; i < 2; i++) {
+              m_periscopeMotors[i].setVoltage(
           MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
-    }
-  }
-
-  /**
-   * Sets the position of the Periscope using the motors' closed loop controller built into the
-   * TalonFX speed controller
-   *
-   * @param heightMeters Position of the Periscope in meters
-   */
+        }
+      }
+      
+      /**
+       * Sets the position of the Periscope using the motors' closed loop controller built into the
+       * TalonFX speed controller
+       *
+       * @param heightMeters Position of the Periscope in meters
+       */
   @Override
   public void setPosition(double heightMeters) {
     var positionRotations =
-        Units.radiansToRotations(heightMeters / PeriscopeConstants.DRUM_RADIUS_M);
+    Units.radiansToRotations(heightMeters / PeriscopeConstants.DRUM_RADIUS_M);
     for (int i = 0; i < 2; i++) {
       m_periscopeMotors[i].setControl(m_motorControllers[i].withPosition(positionRotations));
     }
   }
 
+  /**
+   * Sets the idle mode for Turn and Drive motors
+   *
+   * @param enable Sets brake mode on true, coast on false
+   */
+  public void enableBrakeMode(boolean enable) {
+    m_motorConfig.MotorOutput.withNeutralMode(
+        enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+
+    for (var motor : m_periscopeMotors) {
+      motor.getConfigurator().apply(m_motorConfig);
+    }
+  }
+  
   /**
    * Sets the PID gains of the Periscope motors' built in closed loop controller
    *
@@ -202,4 +219,5 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
       motor.getConfigurator().apply(m_motorConfig);
     }
   }
+
 }

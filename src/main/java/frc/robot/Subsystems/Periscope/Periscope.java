@@ -50,7 +50,16 @@ public class Periscope extends SubsystemBase {
       this.updateFF();
     }
   }
-
+  
+  /**
+   * Sets the Periscope motors to brake mode
+   *
+   * @param enable True to enable brake mode, false to disable
+   */
+  public void enableBrakeMode(boolean enable) {
+    m_io.enableBrakeMode(enable);
+  }
+  
   /**
    * Sets voltage of the Periscope motors. The value inputed is clamped between values of -12 to 12
    *
@@ -59,7 +68,7 @@ public class Periscope extends SubsystemBase {
   public void setVoltage(double volts) {
     m_io.setVoltage(volts);
   }
-
+  
   /**
    * Sets the position of the Periscope using a motion profiled PID controller
    *
@@ -137,4 +146,5 @@ public class Periscope extends SubsystemBase {
           PeriscopeConstants.KA);
     }
   }
+
 }
