@@ -30,7 +30,7 @@ public class ClimberIOTalonFX implements ClimberIO {
   private StatusSignal<Temperature> m_tempCelsius;
 
   /**
-   * This constructs a new {@link ClimberIOTalonFX} instance.
+   * Constructs a new {@link ClimberIOTalonFX} instance.
    *
    * <p>This creates a new {@link ClimberIO} object that uses a real KrakenX60 motor to drive the
    * Climber mechanism
@@ -99,7 +99,7 @@ public class ClimberIOTalonFX implements ClimberIO {
         BaseStatusSignal.refreshAll(
                 m_positionRot, m_velocityRotPerSec, m_appliedVolts, m_currentAmps, m_tempCelsius)
             .isOK();
-    // Update logged inputs
+    // Update logged inputs from motor
     inputs.appliedVoltage = m_appliedVolts.getValueAsDouble();
     inputs.currentAmps = m_currentAmps.getValueAsDouble();
     inputs.tempCelsius = m_tempCelsius.getValueAsDouble();
@@ -108,6 +108,11 @@ public class ClimberIOTalonFX implements ClimberIO {
     inputs.velocityRadPerSec =
         Units.rotationsToRadians(m_velocityRotPerSec.getValueAsDouble())
             / ClimberConstants.GEAR_RATIO;
+  }
+
+  @Override
+  public void enableBrakeMode(boolean enable) {
+    m_talonFX.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 
   @Override

@@ -9,7 +9,7 @@ public class Climber extends SubsystemBase {
   private final ClimberIOInputsAutoLogged m_inputs = new ClimberIOInputsAutoLogged();
 
   /**
-   * This constructs a new {@link Climber} instance.
+   * Constructs a new {@link Climber} instance.
    *
    * <p>This creates a new Climber {@link SubsystemBase} object with given IO implementation which
    * determines whether the methods and inputs are initailized with the real, sim, or replay code
@@ -17,13 +17,12 @@ public class Climber extends SubsystemBase {
    * @param io {@link ClimberIO} implementation of the current robot mode
    */
   public Climber(ClimberIO io) {
-    // Initialize the Climber subsystem
     System.out.println("[Init] Creating Climber");
 
     // Initialize the IO implementation
     m_io = io;
 
-    // Tunable PID values
+    // Tunable PID gains
     SmartDashboard.putBoolean("PIDFF_Tuning_Tuning/Climber/EnableTuning", false);
     SmartDashboard.putNumber("PIDFF_Tuning_Tuning/Climber/KP", ClimberConstants.KP);
     SmartDashboard.putNumber("PIDFF_Tuning_Tuning/Climber/KI", ClimberConstants.KI);
@@ -33,7 +32,7 @@ public class Climber extends SubsystemBase {
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
-    // Update inputs and log them
+    // Update inputs and logger
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Climber", m_inputs);
 
@@ -41,6 +40,15 @@ public class Climber extends SubsystemBase {
     if (SmartDashboard.getBoolean("PIDFF_Tuning/Climber/EnableTuning", false)) {
       this.updatePID();
     }
+  }
+
+  /**
+   * Enables or disables brake mode for the Climber motor
+   *
+   * @param enable Sets brake mode on true, coast on false
+   */
+  public void enableBrakeMode(boolean enable) {
+    m_io.enableBrakeMode(enable);
   }
 
   /**

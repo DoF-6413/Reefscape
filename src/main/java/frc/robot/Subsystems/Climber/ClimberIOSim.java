@@ -13,10 +13,10 @@ public class ClimberIOSim implements ClimberIO {
 
   // PID controller
   private final PIDController m_PIDController;
-  private double m_setpointRad = 0.0; // setpoint
+  private double m_setpointRad = 0.0;
 
   /**
-   * This constructs a new {@link ClimberIOSim} instance.
+   * Constructs a new {@link ClimberIOSim} instance.
    *
    * <p>This creates a new {@link ClimberIO} object that uses a simulated KrakenX60 motor to drive
    * the simulated Climber (arm) mechanism
@@ -51,7 +51,7 @@ public class ClimberIOSim implements ClimberIO {
     // Update arm sim
     m_climberSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
-    // Update logged inputs
+    // Update logged inputs from simulated arm system
     inputs.isConnected = true;
     inputs.positionRad = m_climberSim.getAngleRads();
     inputs.velocityRadPerSec = m_climberSim.getVelocityRadPerSec();

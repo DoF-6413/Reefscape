@@ -296,5 +296,6 @@ public class RobotContainer {
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.setBrakeModeAll(enable);
+    m_climberSubsystem.enableBrakeMode(enable);
   }
 }

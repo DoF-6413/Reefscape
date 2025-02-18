@@ -32,6 +32,13 @@ public interface ClimberIO {
   public default void updateInputs(ClimberIOInputs inputs) {}
 
   /**
+   * Enables or disables brake mode for the Climber motor
+   *
+   * @param enable Sets brake mode on true, coast on false
+   */
+  public default void enableBrakeMode(boolean enable) {}
+
+  /**
    * Sets voltage of the Climber motor. The value inputed is clamped between values of -12 to 12
    *
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
