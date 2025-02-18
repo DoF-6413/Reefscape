@@ -18,9 +18,10 @@ public class AEEIOSparkMax implements AEEIO {
   private final SparkMaxConfig m_config = new SparkMaxConfig();
 
   /**
-   * This constructs a new AEEIOSparkMax instance.
+   * Constructs a new {@link AEEIOSparkMax} instance.
    *
-   * <p>This creates a new AEEIO object that uses the real NEO motor to run the real AEE mechanism
+   * <p>This creates a new {@link AEEIO} object that uses the real NEO motor to run the AEE
+   * mechanism
    */
   public AEEIOSparkMax() {
     System.out.println("[Init] Creating AEEIOSparkMax");
@@ -45,13 +46,22 @@ public class AEEIOSparkMax implements AEEIO {
 
   @Override
   public void updateInputs(AEEIOInputs inputs) {
-    // Update inputs for the motor
+    // Update logged inputs from the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / AEEConstants.GEAR_RATIO;
     inputs.currentAmps = m_sparkmax.getOutputCurrent();
     inputs.tempCelsius = m_sparkmax.getMotorTemperature();
+  }
+
+  @Override
+  public void enableBrakeMode(boolean enable) {
+    // Update configurator
+    m_config.idleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
+    // Apply configuration
+    m_sparkmax.configure(
+        m_config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   @Override

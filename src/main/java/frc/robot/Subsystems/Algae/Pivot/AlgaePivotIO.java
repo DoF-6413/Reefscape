@@ -28,18 +28,18 @@ public interface AlgaePivotIO {
   public default void updateInputs(AlgaePivotIOInputs inputs) {}
 
   /**
+   * Sets the idle mode for the Algae Pivot motor
+   *
+   * @param enable Sets brake mode on true, coast on false
+   */
+  public default void enableBrakeMode(boolean enable) {}
+
+  /**
    * Sets voltage of the Algae Pivot motor. The value inputed is clamped between values of -12 to 12
    *
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public default void setVoltage(double volts) {}
-
-  /**
-   * Sets the idle mode for the Algae Pivot motor
-   *
-   * @param enable Sets brake mode on true, coast on false
-   */
-  public default void setBrakeMode(boolean enable) {}
 
   /**
    * Sets the position of the Pivot using a PID controller

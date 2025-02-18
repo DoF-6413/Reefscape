@@ -10,7 +10,7 @@ public class AEEIOSim implements AEEIO {
   private final FlywheelSim m_sim;
 
   /**
-   * This constructs a new {@link AEEIOSim} instance.
+   * Constructs a new {@link AEEIOSim} instance.
    *
    * <p>This creates a new {@link AEEIO} object that creates that uses the simulated versions of the
    * NEO motor to run the AEE simulated flywheel
@@ -32,7 +32,7 @@ public class AEEIOSim implements AEEIO {
     // Update flywheel sim
     m_sim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
-    // Update inputs
+    // Update logged inputs from the simulated flywheel system
     inputs.velocityRadPerSec = m_sim.getAngularVelocityRadPerSec();
     inputs.appliedVoltage = m_sim.getInputVoltage();
     inputs.currentAmps = Math.abs(m_sim.getCurrentDrawAmps());

@@ -12,19 +12,19 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.RobotStateConstants;
 
 public class AlgaePivotIOSparkMax implements AlgaePivotIO {
-  // Algae Pivot motor
+  // ALGAE Pivot motor
   private final SparkMax m_sparkmax;
   private final RelativeEncoder m_relativeEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
 
   /**
-   * This constructs a new {@link AlgaePivotIOSparkMax} instance.
+   * Constructs a new {@link AlgaePivotIOSparkMax} instance.
    *
    * <p>This creates a new {@link AlgaePivotIO} object that uses the real NEO motor to run the Algae
    * Pivot mechanism
    */
   public AlgaePivotIOSparkMax() {
-    System.out.println("[Init] Creating AlgaePivotSparkMax");
+    System.out.println("[Init] Creating ALGAEPivotSparkMax");
 
     // Initialize the SPARK MAX with a NEO (brushless) motor
     m_sparkmax = new SparkMax(AlgaePivotConstants.CAN_ID, MotorType.kBrushless);
@@ -46,7 +46,7 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
 
   @Override
   public void updateInputs(AlgaePivotIOInputs inputs) {
-    // Update inputs for the motor
+    // Update logged inputs from the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
     inputs.positionRad =
         Units.rotationsToRadians(m_relativeEncoder.getPosition()) / AlgaePivotConstants.GEAR_RATIO;
@@ -55,6 +55,15 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
             / AlgaePivotConstants.GEAR_RATIO;
     inputs.currentAmps = m_sparkmax.getOutputCurrent();
     inputs.tempCelsius = m_sparkmax.getMotorTemperature();
+  }
+
+  @Override
+  public void enableBrakeMode(boolean enable) {
+    // Update configurator
+    m_config.idleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
+    // Apply configuration
+    m_sparkmax.configure(
+        m_config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   @Override

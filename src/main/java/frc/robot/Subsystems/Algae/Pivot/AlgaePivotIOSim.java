@@ -18,7 +18,7 @@ public class AlgaePivotIOSim implements AlgaePivotIO {
    * the simulated Pivot (arm) mechanism
    */
   public AlgaePivotIOSim() {
-    System.out.println("[Init] Creating AlgaePivotIOSim");
+    System.out.println("[Init] Creating ALGAEPivotIOSim");
 
     // Initialize the simulated Algae Pivot arm with a NEO motor
     m_algaePivotSim =
@@ -39,7 +39,7 @@ public class AlgaePivotIOSim implements AlgaePivotIO {
     // Update arm sim
     m_algaePivotSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
-    // Update logged inputs
+    // Update logged inputs from the simulated arm system
     inputs.isConnected = true;
     inputs.positionRad = m_algaePivotSim.getAngleRads();
     inputs.velocityRadPerSec = m_algaePivotSim.getVelocityRadPerSec();

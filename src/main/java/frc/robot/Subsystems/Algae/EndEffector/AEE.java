@@ -18,10 +18,10 @@ public class AEE extends SubsystemBase {
   private boolean m_enablePID = false;
 
   /**
-   * Constructs a new Algae End Effector (AEE) instance.
+   * Constructs a new ALGAE End Effector ({@link AEE}) instance.
    *
    * <p>This creates a new AEE {@link SubsystemBase} object with given IO implementation which
-   * determines whether the methods and inputs are initailized with the real, sim, or replay code
+   * determines whether the methods and inputs are initialized with the real, sim, or replay code
    *
    * @param io {@link AEEIO} implementation of the current mode of the robot
    */
@@ -44,6 +44,7 @@ public class AEE extends SubsystemBase {
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
+    // Update inputs and logger
     m_io.updateInputs(m_inputs);
     Logger.processInputs("AEE", m_inputs);
 
@@ -56,6 +57,15 @@ public class AEE extends SubsystemBase {
     if (SmartDashboard.getBoolean("PIDFF_Tuning/AEE/EnableTuning", false)) {
       this.updatePID();
     }
+  }
+
+  /**
+   * Sets the AEE motor to brake mode
+   *
+   * @param enable True to enable brake mode, false to disable
+   */
+  public void enableBrakeMode(boolean enable) {
+    m_io.enableBrakeMode(enable);
   }
 
   /**
@@ -77,7 +87,7 @@ public class AEE extends SubsystemBase {
   }
 
   /**
-   * Sets the PID gains for PID controller
+   * Sets the gains for PID controller
    *
    * @param kP Proportional gain value
    * @param kI Integral gain value

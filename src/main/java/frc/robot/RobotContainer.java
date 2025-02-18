@@ -301,5 +301,7 @@ public class RobotContainer {
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.setBrakeModeAll(enable);
+    m_AEESubsystem.enableBrakeMode(enable);
+    m_algaePivotSubsystem.enableBrakeMode(enable);
   }
 }
