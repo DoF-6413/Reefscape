@@ -21,10 +21,10 @@ public class AlgaePivot extends SubsystemBase {
    * Constructs a new {@link AlgaePivot} instance.
    *
    * <p>This creates a new ALGAE Pivot {@link SubsystemBase} object with given IO implementation
-   * which determines whether the methods and inputs are initailized with the real, sim, or replay
-   * code
+   * which determines whether the methods and inputs are initialized with the real, sim, or replay
+   * code.
    *
-   * @param io {@link AlgaePivotIO} implementation of the current mode of the robot
+   * @param io {@link AlgaePivotIO} implementation of the current mode of the robot.
    */
   public AlgaePivot(AlgaePivotIO io) {
     System.out.println("[Init] Creating ALGAE Pivot");
@@ -32,7 +32,7 @@ public class AlgaePivot extends SubsystemBase {
     // Initialize IO implementation
     m_io = io;
 
-    // Initalize PID Controller
+    // Initialize PID Controller
     m_PIDController =
         new PIDController(AlgaePivotConstants.KP, AlgaePivotConstants.KI, AlgaePivotConstants.KD);
 
@@ -63,53 +63,54 @@ public class AlgaePivot extends SubsystemBase {
   }
 
   /**
-   * Sets the idle mode for the ALGAE Pivot motor
+   * Sets the idle mode of the ALGAE Pivot motor.
    *
-   * @param enable Sets brake mode on true, coast on false
+   * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public void enableBrakeMode(boolean enable) {
     m_io.enableBrakeMode(enable);
   }
 
   /**
-   * Sets voltage of the ALGAE Pivot motor. The value inputed is clamped between values of -12 to 12
+   * Sets voltage of the ALGAE Pivot motor. The value inputed is clamped between values of -12 to
+   * 12.
    *
-   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed).
    */
   public void setVoltage(double volts) {
     m_io.setVoltage(volts);
   }
 
   /**
-   * Sets the setpoint of the ALGAE Pivot PID controller
+   * Sets the setpoint of the ALGAE Pivot PID controller.
    *
-   * @param setpoint Angle in radians
+   * @param setpoint Angle in radians.
    */
-  public void setSetpoint(double setPoint) {
-    m_PIDController.setSetpoint(setPoint);
+  public void setSetpoint(double setpoint) {
+    m_PIDController.setSetpoint(setpoint);
   }
 
   /**
-   * Sets the PID gains for PID controller
+   * Sets the gains for the PID controller.
    *
-   * @param kP Proportional gain value
-   * @param kI Integral gain value
-   * @param kD Derivative gain value
+   * @param kP Proportional gain value.
+   * @param kI Integral gain value.
+   * @param kD Derivative gain value.
    */
   public void setPID(double kP, double kI, double kD) {
     m_PIDController.setPID(kP, kI, kD);
   }
 
   /**
-   * Enable closed loop PID control for the ALGAE Pivot
+   * Enable closed loop PID control for the ALGAE Pivot.
    *
-   * @param enable True to enable PID, false to disable
+   * @param enable {@code true} to enable PID control, {@code false} to disable.
    */
   public void enablePID(boolean enable) {
     m_enablePID = enable;
   }
 
-  /** Update PID gains for the ALGAE Pivot motors from SmartDashboard inputs */
+  /** Update PID gains for the ALGAE Pivot motor from SmartDashboard inputs. */
   private void updatePID() {
     // If any value on SmartDashboard changes, update the gains
     if (AlgaePivotConstants.KP

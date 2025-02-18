@@ -14,7 +14,10 @@ public class PeriscopeConstants {
   public static final int CUR_LIM_A = 60;
   /** Enable current limiting for the Periscope motors */
   public static final boolean ENABLE_CUR_LIM = true;
-  /** Sets the inversion status of the Periscope motors to false, making CCW positive */
+  /**
+   * Sets the inversion status of the Periscope motors to false, making Counterclockwise the
+   * positive direction
+   */
   public static final boolean IS_INVERTED = false;
   /** Update the signals from the Periscope motors every 0.02 seconds */
   public static final int UPDATE_FREQUENCY_HZ = 50;

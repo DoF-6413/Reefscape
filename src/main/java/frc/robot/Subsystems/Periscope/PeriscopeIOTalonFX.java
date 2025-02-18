@@ -99,7 +99,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
       motor.getConfigurator().apply(m_motorConfig);
     }
 
-    // Initailize logged signals for both motors
+    // Initialize logged signals for both motors
     for (int i = 0; i < 2; i++) {
       m_positionRot[i] = m_periscopeMotors[i].getPosition();
       m_positionRot[i].setUpdateFrequency(PeriscopeConstants.UPDATE_FREQUENCY_HZ);

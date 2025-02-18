@@ -33,7 +33,7 @@ public class ClimberIOTalonFX implements ClimberIO {
    * Constructs a new {@link ClimberIOTalonFX} instance.
    *
    * <p>This creates a new {@link ClimberIO} object that uses a real KrakenX60 motor to drive the
-   * Climber mechanism
+   * Climber mechanism.
    */
   public ClimberIOTalonFX() {
     System.out.println("[Init] ClimberIOTalonFX");
@@ -44,7 +44,10 @@ public class ClimberIOTalonFX implements ClimberIO {
     // Motor configuration
     m_motorConfig
         .MotorOutput
-        .withInverted(InvertedValue.Clockwise_Positive)
+        .withInverted(
+            ClimberConstants.IS_INVERTED
+              ? InvertedValue.CounterClockwise_Positive
+              : InvertedValue.Clockwise_Positive)
         .withNeutralMode(NeutralModeValue.Brake)
         .withControlTimesyncFreqHz(ClimberConstants.UPDATE_FREQUENCY_HZ);
 
@@ -66,6 +69,7 @@ public class ClimberIOTalonFX implements ClimberIO {
     // Closed loop controller configuration
     m_motorConfig.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(
         1.0 / ClimberConstants.UPDATE_FREQUENCY_HZ);
+    m_controller.withUpdateFreqHz(ClimberConstants.UPDATE_FREQUENCY_HZ);
 
     // Reset position
     m_talonFX.setPosition(0.0);
@@ -79,7 +83,7 @@ public class ClimberIOTalonFX implements ClimberIO {
     // Apply configurations
     m_talonFX.getConfigurator().apply(m_motorConfig);
 
-    // Initailize logged signals
+    // Initialize logged signals
     m_positionRot = m_talonFX.getPosition();
     m_positionRot.setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
     m_velocityRotPerSec = m_talonFX.getVelocity();
@@ -125,7 +129,7 @@ public class ClimberIOTalonFX implements ClimberIO {
    * Sets the position of the Climber using the motor's closed loop controller built into the
    * TalonFX speed controller
    *
-   * @param heightMeters Angular position of the Climber in radians
+   * @param positionRad Angular position of the Climber in radians
    */
   @Override
   public void setPosition(double positionRad) {

@@ -21,7 +21,7 @@ public class CEEIOSparkMax implements CEEIO {
    * Constructs a new {@link CEEIOSparkMax} instance.
    *
    * <p>This creates a new {@link CEEIO} object that uses a real NEO 550 motor to run the CEE
-   * mechanism
+   * mechanism.
    */
   public CEEIOSparkMax() {
     System.out.println("[Init] Creating CEEIOSparkMax");
@@ -48,22 +48,23 @@ public class CEEIOSparkMax implements CEEIO {
   public void updateInputs(CEEIOInputs inputs) {
     // Update inputs from the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
+    inputs.currentAmps = m_sparkmax.getOutputCurrent();
+    inputs.tempCelsius = m_sparkmax.getMotorTemperature();
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / CEEConstants.GEAR_RATIO;
-    inputs.currentAmps = m_sparkmax.getOutputCurrent();
-    inputs.tempCelsius = m_sparkmax.getMotorTemperature();
+  }
+
+  @Override
+  public void enableBrakeMode(boolean enable) {
+    m_config.idleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
+    m_sparkmax.configure(
+        m_config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   @Override
   public void setVoltage(double volts) {
     m_sparkmax.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
-  }
-
-  @Override
-  public void enableBrakeMode(boolean enable) {
-    m_config.idleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
-    m_sparkmax.configure(m_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 }

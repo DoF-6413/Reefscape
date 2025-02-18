@@ -18,12 +18,12 @@ public class CEE extends SubsystemBase {
   private boolean m_enablePID = false;
 
   /**
-   * Constructs a new Coral End Effector ({@link CEE}) instance.
+   * Constructs a new CORAL End Effector ({@link CEE}) instance.
    *
    * <p>This creates a new CEE {@link SubsystemBase} object with given IO implementation which
-   * determines whether the methods and inputs are initialized with the real, sim, or replay code
+   * determines whether the methods and inputs are initialized with the real, sim, or replay code.
    *
-   * @param io {@link CEEIO} implementation of the current mode of the robot
+   * @param io {@link CEEIO} implementation of the current mode of the robot.
    */
   public CEE(CEEIO io) {
     System.out.println("[Init] Creating Coral End Effector");
@@ -34,7 +34,7 @@ public class CEE extends SubsystemBase {
     // Initialize the PID controller
     m_PIDController = new PIDController(CEEConstants.KP, CEEConstants.KI, CEEConstants.KD);
 
-    // Tunable PID values
+    // Tunable PID gains
     SmartDashboard.putBoolean("PIDFF_Tuning/CEE/EnableTunung", false);
     SmartDashboard.putNumber("PIDFF_Tuning/CEE/KP", CEEConstants.KP);
     SmartDashboard.putNumber("PIDFF_Tuning/CEE/KI", CEEConstants.KI);
@@ -44,7 +44,7 @@ public class CEE extends SubsystemBase {
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
-    // Update inputs and logger
+    // Update and log inputs
     m_io.updateInputs(m_inputs);
     Logger.processInputs("CEE", m_inputs);
 
@@ -53,60 +53,60 @@ public class CEE extends SubsystemBase {
       m_PIDController.calculate(m_inputs.velocityRadPerSec);
     }
 
-    // Enable and update tunable PID values through SmartDashboard
+    // Enable and update tunable PID gains through SmartDashboard
     if (SmartDashboard.getBoolean("PIDFF_Tuning/CEE/EnableTuning", false)) {
       this.updatePID();
     }
   }
 
   /**
-   * Enables or disables brake mode for the CEE motor
+   * Sets the idle mode of the CEE motor.
    *
-   * @param enable
+   * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public void enableBrakeMode(boolean enable) {
     m_io.enableBrakeMode(enable);
   }
 
   /**
-   * Sets voltage of the CEE motor. The value inputed is clamped between values of -12 to 12
+   * Sets voltage of the CEE motor. The value inputed is clamped between values of -12 to 12.
    *
-   * @param volts A value between -12 (full reverse speed) tp 12 (full forward speed)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed).
    */
   public void setVoltage(double volts) {
     m_io.setVoltage(volts);
   }
 
   /**
-   * Sets the setpoint of the CEE PID controller
+   * Sets the setpoint of the CEE PID controller.
    *
-   * @param setpoint Velocity in radians per second
+   * @param setpoint Velocity in radians per second.
    */
   public void setSetpoint(double setpoint) {
     m_PIDController.setSetpoint(setpoint);
   }
 
   /**
-   * Sets the PID gains for PID controller
+   * Sets the PID gains for PID controller.
    *
-   * @param kP Proportional gain value
-   * @param kI Integral gain value
-   * @param kD Derivative gain value
+   * @param kP Proportional gain value.
+   * @param kI Integral gain value.
+   * @param kD Derivative gain value.
    */
   public void setPID(double kP, double kI, double kD) {
     m_PIDController.setPID(kP, kI, kD);
   }
 
   /**
-   * Enable closed loop PID control for the CEE
+   * Enable closed loop PID control for the CEE.
    *
-   * @param enable True to enable PID, false to disable
+   * @param enable {@code true} to enable PID control, {@code false} to disable.
    */
   public void enablePID(boolean enable) {
     m_enablePID = enable;
   }
 
-  /** Update PID gains for the CEE motors from SmartDashboard inputs */
+  /** Update PID gains for the CEE motors from SmartDashboard inputs. */
   private void updatePID() {
     // If any value on SmartDashboard changes, update the gains
     if (CEEConstants.KP != SmartDashboard.getNumber("PIDFF_Tuning/CEE/KP", CEEConstants.KP)

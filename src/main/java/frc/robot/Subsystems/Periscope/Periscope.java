@@ -16,14 +16,14 @@ public class Periscope extends SubsystemBase {
    * This constructs a new {@link Periscope} instance.
    *
    * <p>This creates a new Periscope {@link SubsystemBase} object with given IO implementation which
-   * determines whether the methods and inputs are initailized with the real, sim, or replay code
+   * determines whether the methods and inputs are initialized with the real, sim, or replay code
    *
    * @param io {@link PeriscopeIO} implementation of the current robot mode
    */
   public Periscope(PeriscopeIO io) {
     System.out.println("[Init] Creating Periscope");
 
-    // Initailize the IO implementation
+    // Initialize the IO implementation
     m_io = io;
 
     // Tunable PID & Feedforward gains

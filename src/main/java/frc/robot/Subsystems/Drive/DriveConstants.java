@@ -5,6 +5,20 @@ import edu.wpi.first.math.util.Units;
 
 public final class DriveConstants {
   // REAL CONSTANTS
+  /** Gear Ratio for MK4i L3 Krakens */
+  public static final double DRIVE_GEAR_RATIO = 6.12;
+  /** Gear Ratio for MK4i Turn motors */
+  public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
+  /** Inversion status for the Drive motor, makes Counterclockwise the positive direction */
+  public static final boolean DRIVE_IS_INVERTED = false;
+  /** Inversion status for the Turn motor, makes Clockwise the positive direction */
+  public static final boolean TURN_IS_INVERTED = true;
+  /** Current limiting in amps */
+  public static final int CUR_LIM_A = 60;
+  /** Enables the current limit */
+  public static final boolean ENABLE_CUR_LIM = true;
+  /** Refresh signals of the TalonFX every 0.01 seconds */
+  public static final double UPDATE_FREQUENCY_HZ = 100;
   /**
    * Proportion of error from Drive relative encoder readings to actual distance travelled by the
    * wheel due to the bolts holding down the tread
@@ -16,31 +30,19 @@ public final class DriveConstants {
   public static final double TRACK_WIDTH_M = Units.inchesToMeters(29);
   /** Radius of the robot (diagonal) in meters */
   public static final double DRIVETRAIN_RADIUS_M = Math.hypot(TRACK_WIDTH_M / 2, TRACK_WIDTH_M / 2);
-  /** Gear Ratio for MK4i L3 Krakens */
-  public static final double DRIVE_GEAR_RATIO = 6.12;
-  /** Gear Ratio for MK4i Turn motors */
-  public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
   /** Max linear speed of robot */
   public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2; // TODO: Update? Since robot is larger
   /** Max angular speed of the robot */
   public static final double MAX_ANGULAR_SPEED_RAD_PER_S =
       MAX_LINEAR_SPEED_M_PER_S / DRIVETRAIN_RADIUS_M;
-  /** Inversion status for the Turn motor, makes CW the positive direction */
-  public static final boolean TURN_IS_INVERTED = true;
-  /** Refresh signals of the TalonFX every 0.01 seconds */
-  public static final double UPDATE_FREQUENCY_HZ = 100;
-  /** Current limiting in amps */
-  public static final int CUR_LIM_A = 60;
-  /** Enables the current limit */
-  public static final boolean ENABLE_CUR_LIM = true;
   /** Ingnore joystick inputs less than 10% tilted */
   public static final double DEADBAND = 0.1;
 
   /**
    * Translation 2d assumes that the robot front facing is in the positive x direction and the robot
-   * left is in the positive y direction
+   * left is in the positive y direction.
    *
-   * @return A list of the 2d Module translations from the center of the robot
+   * @return An array of the {@link Translation2d} for the Modules from the center of the robot.
    */
   public static final Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
@@ -143,9 +145,9 @@ public final class DriveConstants {
   public static double TURN_KD = 0.05;
 
   // SIM CONSTANTS
-  /** Moment of Inertia value for Drive motor - Module wheel system in kilograms * meters squared */
+  /** Moment of inertia value for Drive motor - Module wheel system in kilograms * meters squared */
   public static final double DRIVE_MOI_KG_M2 = 0.0003125;
-  /** Moment of Inertia value for Turn motor - Module wheel system in kilograms * meters squared */
+  /** Moment of inertia value for Turn motor - Module wheel system in kilograms * meters squared */
   public static final double TURN_MOI_KG_M2 = 0.0000158025413;
   /** KP value for the simulated Drive motor as the simulation conditions are ideal and static */
   public static double DRIVE_KP_SIM = 0.01;

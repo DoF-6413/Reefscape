@@ -10,7 +10,9 @@ public interface ClimberIO {
 
   @AutoLog
   public static class ClimberIOInputs {
-    /** Voltage applied to the Climber motor in volts */
+    /** Whether a singal is being recieved by the Climber motor or not */
+    public boolean isConnected = false;
+    /** Voltage applied to the Climber motor */
     public double appliedVoltage = 0.0;
     /** Current draw of the Climber motor in amps */
     public double currentAmps = 0.0;
@@ -20,21 +22,19 @@ public interface ClimberIO {
     public double positionRad = 0.0;
     /** Velocity of the Climber in radians per second */
     public double velocityRadPerSec = 0.0;
-    /** Whether a singal is being recieved by the Climber motor or not */
-    public boolean isConnected = false;
   }
 
   /**
-   * Peridocially updates the logged inputs for the Climber motor.
+   * Updates the logged inputs for the Climber. Must be called periodically.
    *
-   * @param inputs Inputs from the auto logger
+   * @param inputs Inputs from the auto logger.
    */
   public default void updateInputs(ClimberIOInputs inputs) {}
 
   /**
-   * Enables or disables brake mode for the Climber motor
+   * Sets the idle mode of the Climber motor.
    *
-   * @param enable Sets brake mode on true, coast on false
+   * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public default void enableBrakeMode(boolean enable) {}
 

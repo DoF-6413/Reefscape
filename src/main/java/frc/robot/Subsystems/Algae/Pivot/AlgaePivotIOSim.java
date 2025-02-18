@@ -12,13 +12,13 @@ public class AlgaePivotIOSim implements AlgaePivotIO {
   private double m_voltage = 0.0;
 
   /**
-   * Constructs a new {@link AlgaePivotIOSim} instance
+   * Constructs a new {@link AlgaePivotIOSim} instance.
    *
    * <p>This creates a new {@link AlgaePivotIOSim} object that uses a simulated NEO motor to drive
-   * the simulated Pivot (arm) mechanism
+   * the simulated Pivot (arm) mechanism.
    */
   public AlgaePivotIOSim() {
-    System.out.println("[Init] Creating ALGAEPivotIOSim");
+    System.out.println("[Init] Creating AlgaePivotIOSim");
 
     // Initialize the simulated Algae Pivot arm with a NEO motor
     m_algaePivotSim =
@@ -40,11 +40,10 @@ public class AlgaePivotIOSim implements AlgaePivotIO {
     m_algaePivotSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
     // Update logged inputs from the simulated arm system
-    inputs.isConnected = true;
-    inputs.positionRad = m_algaePivotSim.getAngleRads();
-    inputs.velocityRadPerSec = m_algaePivotSim.getVelocityRadPerSec();
     inputs.appliedVoltage = m_voltage;
     inputs.currentAmps = Math.abs(m_algaePivotSim.getCurrentDrawAmps());
+    inputs.positionRad = m_algaePivotSim.getAngleRads();
+    inputs.velocityRadPerSec = m_algaePivotSim.getVelocityRadPerSec();
   }
 
   @Override

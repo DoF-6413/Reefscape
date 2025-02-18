@@ -27,7 +27,7 @@ public class PeriscopeIOSim implements PeriscopeIO {
   public PeriscopeIOSim() {
     System.out.println("[Init] Creating PeriscopeIOSim");
 
-    // Initailize elevator simulation
+    // Initialize elevator simulation
     m_elevatorSim =
         new ElevatorSim(
             LinearSystemId.createElevatorSystem(
@@ -41,7 +41,7 @@ public class PeriscopeIOSim implements PeriscopeIO {
             PeriscopeConstants.SIMULATE_GRAVITY,
             PeriscopeConstants.MIN_HEIGHT_M);
 
-    // Initailize controllers with gains
+    // Initialize controllers with gains
     m_profiledPIDController =
         new ProfiledPIDController(
             PeriscopeConstants.KP,

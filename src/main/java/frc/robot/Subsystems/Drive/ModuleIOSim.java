@@ -10,7 +10,7 @@ import frc.robot.Constants.RobotStateConstants;
 
 /** ModuleIO implementation for the simulated mode of the robot */
 public class ModuleIOSim implements ModuleIO {
-  // Sim objects
+  // Flywheel simulations
   private final FlywheelSim m_driveSim;
   private final FlywheelSim m_turnSim;
 
@@ -21,13 +21,13 @@ public class ModuleIOSim implements ModuleIO {
   // PID & Feedforward controllers
   private final PIDController m_driveController;
   private SimpleMotorFeedforward m_driveFeedforward;
-  private double m_driveSetpoint = 0.0;
+  private double m_driveSetpointRadPerSec = 0.0;
 
   /**
-   * Constructs a new ModuleIOSim instance
+   * Constructs a new {@link ModuleIOSim} instance.
    *
-   * <p>This creates a new ModuleIO object that uses the simulated versions of the KrakenX60 and NEO
-   * motors to run the Drive and Turn of the simulated Module
+   * <p>This creates a new {@link ModuleIO} object that uses the simulated versions of the KrakenX60 and NEO
+   * motors to run the Drive and Turn of the simulated Module.
    */
   public ModuleIOSim() {
     System.out.println("[Init] Creating ModuleIOSim");
@@ -58,53 +58,51 @@ public class ModuleIOSim implements ModuleIO {
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-    // Update Drive motor based on setpoint
+    // Calculate and apply next output voltage from the PID and Feedforward controller
     m_driveAppliedVolts =
-        m_driveController.calculate(inputs.driveVelocityRadPerSec, m_driveSetpoint)
-            + m_driveFeedforward.calculate(m_driveSetpoint);
+        m_driveController.calculate(inputs.driveVelocityRadPerSec, m_driveSetpointRadPerSec)
+            + m_driveFeedforward.calculate(m_driveSetpointRadPerSec);
+    this.setDriveVoltage(m_driveAppliedVolts);
 
     // Update simulated motors
-    this.setDriveVoltage(m_driveAppliedVolts);
     m_driveSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
     m_turnSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
-    // Update Drive motor inputs
+    // Update logged Drive motor inputs from the simulated flywheel system
     inputs.driveIsConnected = true;
+    inputs.driveAppliedVoltage = m_driveAppliedVolts;
+    inputs.driveCurrentAmps = Math.abs(m_driveSim.getCurrentDrawAmps());
     inputs.driveVelocityRadPerSec = m_driveSim.getAngularVelocityRadPerSec();
     inputs.drivePositionRad +=
         inputs.driveVelocityRadPerSec * RobotStateConstants.LOOP_PERIODIC_SEC;
-    inputs.driveAppliedVoltage = m_driveAppliedVolts;
-    inputs.driveCurrentAmps = Math.abs(m_driveSim.getCurrentDrawAmps());
-
-    // Update Turn motor inputs
+    
+    // Update logged Turn motor inputs from the simulated flywheel system
     inputs.absoluteEncoderIsConnected = true;
+    inputs.turnAppliedVoltage = m_turnAppliedVolts;
+    inputs.turnCurrentAmps = Math.abs(m_turnSim.getCurrentDrawAmps());
     inputs.turnVelocityRadPerSec = m_turnSim.getAngularVelocityRadPerSec();
     inputs.turnAbsolutePositionRad =
         MathUtil.angleModulus(
             inputs.turnAbsolutePositionRad
-                + (m_turnSim.getAngularVelocityRadPerSec()
+                + (inputs.turnVelocityRadPerSec
                     * RobotStateConstants.LOOP_PERIODIC_SEC));
-    inputs.turnVelocityRadPerSec = m_turnSim.getAngularVelocityRadPerSec();
-    inputs.turnAppliedVoltage = m_turnAppliedVolts;
-    inputs.turnCurrentAmps = Math.abs(m_turnSim.getCurrentDrawAmps());
   }
 
   @Override
   public void setDriveVoltage(double volts) {
-    m_turnAppliedVolts = volts;
-    m_driveSim.setInputVoltage(
-        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+    m_driveAppliedVolts = MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
+    m_driveSim.setInputVoltage(m_driveAppliedVolts);
   }
 
   @Override
   public void setTurnVoltage(double volts) {
-    m_turnSim.setInputVoltage(
-        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+    m_turnAppliedVolts = MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
+    m_turnSim.setInputVoltage(m_turnAppliedVolts);
   }
 
   @Override
   public void setDriveVelocity(double velocityRadPerSec) {
-    m_driveSetpoint = velocityRadPerSec;
+    m_driveSetpointRadPerSec = velocityRadPerSec;
   }
 
   @Override
@@ -114,6 +112,7 @@ public class ModuleIOSim implements ModuleIO {
 
   @Override
   public void setDriveFF(double kS, double kV) {
-    m_driveFeedforward = new SimpleMotorFeedforward(kS, kV);
+    m_driveFeedforward.setKs(kS);
+    m_driveFeedforward.setKv(kV);
   }
 }

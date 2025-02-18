@@ -6,54 +6,37 @@ public interface AlgaePivotIO {
 
   @AutoLog
   public static class AlgaePivotIOInputs {
-    /** Voltage applied to the Algae Pivot motor in volts */
+    /** Voltage applied to the ALGAE Pivot motor in volts */
     public double appliedVoltage = 0.0;
-    /** Current draws of the Algae Pivot motor in amps */
+    /** Current draws of the ALGAE Pivot motor in amps */
     public double currentAmps = 0.0;
-    /** Temperature of the Algae Pivot motor in celsius */
+    /** Temperature of the ALGAE Pivot motor in celsius */
     public double tempCelsius = 0.0;
     /** Angular position of the Pivot in radians */
     public double positionRad = 0.0;
-    /** Velocity of the Algae Pivot in radians per second */
+    /** Velocity of the ALGAE Pivot in radians per second */
     public double velocityRadPerSec = 0.0;
-    /** Whether a signal is being received by the Algae Pivot motor or not */
-    public boolean isConnected = false;
   }
 
   /**
-   * Periodically updates the logged inputs for the Algae Pivot motor
+   * Periodically updates the logged inputs for the ALGAE Pivot motor.
    *
-   * @param inputs Inputs from the auto logger
+   * @param inputs Inputs from the auto logger.
    */
   public default void updateInputs(AlgaePivotIOInputs inputs) {}
 
   /**
-   * Sets the idle mode for the Algae Pivot motor
+   * Sets the idle mode of the ALGAE Pivot motor.
    *
-   * @param enable Sets brake mode on true, coast on false
+   * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public default void enableBrakeMode(boolean enable) {}
 
   /**
-   * Sets voltage of the Algae Pivot motor. The value inputed is clamped between values of -12 to 12
+   * Sets voltage of the ALGAE Pivot motor. The value inputed is clamped between values of -12 to
+   * 12.
    *
-   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed).
    */
   public default void setVoltage(double volts) {}
-
-  /**
-   * Sets the position of the Pivot using a PID controller
-   *
-   * @param positionRad Angular position of the Pivot in radians
-   */
-  public default void setPosition(double positionRad) {}
-
-  /**
-   * Sets the PID gains of the Algae Pivot motor's PID controller
-   *
-   * @param kP Proportional gain value
-   * @param kI Integral gain value
-   * @param kD Derivative gain value
-   */
-  public default void setPID(double kP, double kI, double kD) {}
 }

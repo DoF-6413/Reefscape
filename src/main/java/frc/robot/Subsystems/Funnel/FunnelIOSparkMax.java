@@ -26,7 +26,7 @@ public class FunnelIOSparkMax implements FunnelIO {
   public FunnelIOSparkMax() {
     System.out.println("[Init] Creating FunnelIOSparkMax");
 
-    // Initailize the SPARK MAX with a NEO (brushless) motor
+    // Initialize the SPARK MAX with a NEO (brushless) motor
     m_sparkmax = new SparkMax(FunnelConstants.CAN_ID, MotorType.kBrushless);
 
     // SPARK MAX configurations

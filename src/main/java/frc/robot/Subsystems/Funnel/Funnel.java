@@ -30,7 +30,7 @@ public class Funnel extends SubsystemBase {
     /// Initialize the PID controller
     m_PIDController = new PIDController(FunnelConstants.KP, FunnelConstants.KI, FunnelConstants.KD);
 
-    // Tunable PID values
+    // Tunable PID gains
     SmartDashboard.putBoolean("PIDFF_Tuning/Funnel/EnableTuning", false);
     SmartDashboard.putNumber("PIDFF_Tuning/Funnel/KP", FunnelConstants.KP);
     SmartDashboard.putNumber("PIDFF_Tuning/Funnel/KI", FunnelConstants.KI);
@@ -51,7 +51,7 @@ public class Funnel extends SubsystemBase {
       SmartDashboard.putNumber("Funnel Setpoint", m_PIDController.getSetpoint());
     }
 
-    // Enable and update tunable PID values through SmartDashboard
+    // Enable and update tunable PID gains through SmartDashboard
     if (SmartDashboard.getBoolean("PIDFF_Tuning/Funnel/EnableTuning", false)) {
       this.updatePID();
     }
@@ -60,7 +60,7 @@ public class Funnel extends SubsystemBase {
   /**
    * Sets voltage of the Funnel motor. The value inputed is clamped between values of -12 to 12
    *
-   * @param volts A value between -12 (full reverse speed) tp 12 (full forward speed)
+   * @param volts A value between -12 (full reverse speed) to 12 (full forward speed)
    */
   public void setVoltage(double volts) {
     m_io.setVoltage(volts);

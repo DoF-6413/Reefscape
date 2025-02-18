@@ -12,7 +12,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.RobotStateConstants;
 
 public class AEEIOSparkMax implements AEEIO {
-  // AEE motor
+  // Motor, encoder, and configurator
   private final SparkMax m_sparkmax;
   private final RelativeEncoder m_relativeEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
@@ -21,12 +21,12 @@ public class AEEIOSparkMax implements AEEIO {
    * Constructs a new {@link AEEIOSparkMax} instance.
    *
    * <p>This creates a new {@link AEEIO} object that uses the real NEO motor to run the AEE
-   * mechanism
+   * mechanism.
    */
   public AEEIOSparkMax() {
     System.out.println("[Init] Creating AEEIOSparkMax");
 
-    // Initailize the SPARK MAX with a NEO (brushless) motor
+    // Initialize the SPARK MAX with a NEO (brushless) motor
     m_sparkmax = new SparkMax(AEEConstants.CAN_ID, MotorType.kBrushless);
 
     // SPARK MAX configurations
@@ -48,11 +48,11 @@ public class AEEIOSparkMax implements AEEIO {
   public void updateInputs(AEEIOInputs inputs) {
     // Update logged inputs from the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
+    inputs.currentAmps = m_sparkmax.getOutputCurrent();
+    inputs.tempCelsius = m_sparkmax.getMotorTemperature();
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / AEEConstants.GEAR_RATIO;
-    inputs.currentAmps = m_sparkmax.getOutputCurrent();
-    inputs.tempCelsius = m_sparkmax.getMotorTemperature();
   }
 
   @Override

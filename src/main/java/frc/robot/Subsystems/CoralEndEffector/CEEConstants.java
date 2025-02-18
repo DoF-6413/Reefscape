@@ -6,7 +6,9 @@ public class CEEConstants {
   public static final int CAN_ID = 19;
   /** Current limit, in amps for the CEE motor */
   public static final int CUR_LIM_A = 20;
-  /** Set the inversion status of the CEE to false, making CCW positive */
+  /**
+   * Set the inversion status of the CEE to false, making Counterclockwise the positive direction
+   */
   public static final boolean IS_INVERTED = false;
   /** Gear ratio of 3:1 for the CEE motor */
   public static final double GEAR_RATIO = 3.0 / 1.0;
@@ -25,6 +27,6 @@ public class CEEConstants {
   public static double KD = 0.0;
 
   // SIM Constants
-  /** Moment of Inertia of the CEE wheels in kilograms * meters squared */
+  /** Moment of inertia of the CEE wheels in kilograms * meters squared */
   public static final double MOI_KG_M2 = 0.0025;
 }

@@ -12,7 +12,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.RobotStateConstants;
 
 public class AlgaePivotIOSparkMax implements AlgaePivotIO {
-  // ALGAE Pivot motor
+  // Motor, encoder, and configurator
   private final SparkMax m_sparkmax;
   private final RelativeEncoder m_relativeEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
@@ -20,11 +20,11 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
   /**
    * Constructs a new {@link AlgaePivotIOSparkMax} instance.
    *
-   * <p>This creates a new {@link AlgaePivotIO} object that uses the real NEO motor to run the Algae
-   * Pivot mechanism
+   * <p>This creates a new {@link AlgaePivotIO} object that uses the real NEO motor to run the ALGAE
+   * Pivot mechanism.
    */
   public AlgaePivotIOSparkMax() {
-    System.out.println("[Init] Creating ALGAEPivotSparkMax");
+    System.out.println("[Init] Creating AlgaePivotSparkMax");
 
     // Initialize the SPARK MAX with a NEO (brushless) motor
     m_sparkmax = new SparkMax(AlgaePivotConstants.CAN_ID, MotorType.kBrushless);

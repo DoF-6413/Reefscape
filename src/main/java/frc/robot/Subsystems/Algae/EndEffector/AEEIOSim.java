@@ -7,13 +7,14 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants.RobotStateConstants;
 
 public class AEEIOSim implements AEEIO {
+  // Flywheel system simulation
   private final FlywheelSim m_sim;
 
   /**
    * Constructs a new {@link AEEIOSim} instance.
    *
    * <p>This creates a new {@link AEEIO} object that creates that uses the simulated versions of the
-   * NEO motor to run the AEE simulated flywheel
+   * NEO motor to run the AEE simulated flywheel.
    */
   public AEEIOSim() {
     System.out.println("[Init] Creating AEEIOSim");

@@ -26,12 +26,12 @@ import frc.robot.Constants.RobotStateConstants;
 
 /** ModuleIO implementation for the real mode of the robot */
 public class ModuleIOSparkMaxTalonFX implements ModuleIO {
-  // Drive motor
+  // Drive motor, controller, and configurator
   private final TalonFX m_driveTalonFX;
   private final VelocityVoltage m_driveController = new VelocityVoltage(0);
   private final TalonFXConfiguration m_driveConfig = new TalonFXConfiguration();
 
-  // Turn motor
+  // Turn motor, absolute encoder, controller, and configurator
   private final SparkMax m_turnSparkMax;
   private final SparkMaxConfig m_turnConfig = new SparkMaxConfig();
   private final CANcoder m_turnAbsoluteEncoder;
@@ -49,12 +49,12 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   private StatusSignal<AngularVelocity> m_absoluteEncoderVelocityRotPerSec; // Rotations per second
 
   /**
-   * Constructs a new ModuleIOSparkMaxTalonFX instance
+   * Constructs a new {@link ModuleIOSparkMaxTalonFX} instance.
    *
-   * <p>This creates a new ModuleIO object that uses the real KrakenX60 and NEO motors to run the
-   * Drive and Turn of the Module and the CANcoder for the absolute Turn position of the wheels
+   * <p>This creates a new {@link ModuleIO} object that uses the real KrakenX60 and NEO motors to run the
+   * Drive and Turn of the Module and the CANcoder for the absolute Turn position of the wheels.
    *
-   * @param moduleNumber Number to the corresponding Swerve Module that is to be initilized
+   * @param moduleNumber Number to the corresponding Swerve Module that is to be initilized.
    */
   public ModuleIOSparkMaxTalonFX(int moduleNumber) {
     System.out.println("[Init] Creating ModuleIOSparkMaxTalonFX " + moduleNumber);
@@ -105,7 +105,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     // TalonFX motor configurations
     m_driveConfig
         .MotorOutput
-        .withInverted(InvertedValue.Clockwise_Positive)
+        .withInverted(DriveConstants.DRIVE_IS_INVERTED ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive)
         .withNeutralMode(NeutralModeValue.Brake)
         .withControlTimesyncFreqHz(DriveConstants.UPDATE_FREQUENCY_HZ);
 
@@ -117,14 +117,16 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         .withStatorCurrentLimit(DriveConstants.CUR_LIM_A)
         .withStatorCurrentLimitEnable(DriveConstants.ENABLE_CUR_LIM);
 
-    // TalonFX closed loop configurations
+    // TalonFX PID and Feedforward gains configuration
     m_driveConfig
-        .Slot0
-        .withKP(DriveConstants.DRIVE_KP)
-        .withKI(DriveConstants.DRIVE_KI)
-        .withKD(DriveConstants.DRIVE_KD)
-        .withKS(DriveConstants.DRIVE_KS)
-        .withKV(DriveConstants.DRIVE_KV);
+      .Slot0
+      .withKP(DriveConstants.DRIVE_KP)
+      .withKI(DriveConstants.DRIVE_KI)
+      .withKD(DriveConstants.DRIVE_KD)
+      .withKS(DriveConstants.DRIVE_KS)
+      .withKV(DriveConstants.DRIVE_KV);
+
+    // TalonFX closed loop configurations
     m_driveConfig.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(
         1.0 / DriveConstants.UPDATE_FREQUENCY_HZ);
     m_driveController.withUpdateFreqHz(DriveConstants.UPDATE_FREQUENCY_HZ);
@@ -146,15 +148,14 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     m_driveTalonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
     m_turnSparkMax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);
 
-    // Apply all TalonFX configurations
+    // Apply TalonFX configurations
     m_driveTalonFX.getConfigurator().apply(m_driveConfig);
 
-    // Apply all SPARK MAX configurations
+    // Apply SPARK MAX configurations
     m_turnSparkMax.configure(
         m_turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    // Initialize Drive motor signals and set their update frequency (how many times to refresh per
-    // second)
+    // Initialize logged Drive motor signals
     m_drivePositionRot = m_driveTalonFX.getPosition();
     m_drivePositionRot.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     m_driveVelocityRotPerSec = m_driveTalonFX.getVelocity();
@@ -166,7 +167,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     m_driveTempCelsius = m_driveTalonFX.getDeviceTemp();
     m_driveTempCelsius.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
 
-    // Initialize Absolute Encoder signals
+    // Initialize logged Absolute Encoder signals
     m_absoluteEncoderPositionRot = m_turnAbsoluteEncoder.getAbsolutePosition();
     m_absoluteEncoderPositionRot.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     m_absoluteEncoderVelocityRotPerSec = m_turnAbsoluteEncoder.getVelocity();
@@ -185,15 +186,15 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
                 m_drivePositionRot)
             .isOK();
     // Update Drive motor logged inputs
+    inputs.driveAppliedVoltage = m_driveAppliedVolts.getValueAsDouble();
+    inputs.driveCurrentAmps = m_driveCurrentAmps.getValueAsDouble();
+    inputs.driveTempCelsius = m_driveTempCelsius.getValueAsDouble();
     inputs.drivePositionRad =
         Units.rotationsToRadians(m_drivePositionRot.getValueAsDouble())
             / DriveConstants.DRIVE_GEAR_RATIO;
     inputs.driveVelocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_driveVelocityRotPerSec.getValueAsDouble() * 60)
             / DriveConstants.DRIVE_GEAR_RATIO;
-    inputs.driveAppliedVoltage = m_driveAppliedVolts.getValueAsDouble();
-    inputs.driveCurrentAmps = m_driveCurrentAmps.getValueAsDouble();
-    inputs.driveTempCelsius = m_driveTempCelsius.getValueAsDouble();
 
     // Update Absolute Encoder signals and check if they are recieved
     inputs.absoluteEncoderIsConnected =
@@ -201,6 +202,9 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
                 m_absoluteEncoderPositionRot, m_absoluteEncoderVelocityRotPerSec)
             .isOK();
     // Update Turn motor and Absolute Encoder logged inputs
+    inputs.turnAppliedVoltage = m_turnSparkMax.getAppliedOutput() * m_turnSparkMax.getBusVoltage();
+    inputs.turnCurrentAmps = m_turnSparkMax.getOutputCurrent();
+    inputs.turnTempCelsius = m_turnSparkMax.getMotorTemperature();
     inputs.turnAbsolutePositionRad =
         MathUtil.angleModulus(
             new Rotation2d(
@@ -210,26 +214,6 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     inputs.turnVelocityRadPerSec =
         Units.rotationsToRadians(m_absoluteEncoderVelocityRotPerSec.getValueAsDouble())
             / DriveConstants.STEER_GEAR_RATIO;
-    inputs.turnAppliedVoltage = m_turnSparkMax.getAppliedOutput() * m_turnSparkMax.getBusVoltage();
-    inputs.turnCurrentAmps = m_turnSparkMax.getOutputCurrent();
-    inputs.turnTempCelsius = m_turnSparkMax.getMotorTemperature();
-  }
-
-  @Override
-  public void setDriveVoltage(double volts) {
-    m_driveTalonFX.setVoltage(
-        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
-  }
-
-  @Override
-  public void setTurnVoltage(double volts) {
-    m_turnSparkMax.setVoltage(
-        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
-  }
-
-  @Override
-  public void setDriveVelocity(double velocityRadPerSec) {
-    m_driveTalonFX.setControl(m_driveController.withVelocity(velocityRadPerSec));
   }
 
   @Override
@@ -245,11 +229,47 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   }
 
   @Override
+  public void setDriveVoltage(double volts) {
+    m_driveTalonFX.setVoltage(
+        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+  }
+
+  @Override
+  public void setTurnVoltage(double volts) {
+    m_turnSparkMax.setVoltage(
+        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+  }
+
+  /**
+   * Sets the velocity of the Drive motor using the closed loop controller built into the TalonFX
+   * speed controller.
+   *
+   * @param velocityRadPerSec Velocity to set Drive motor to in radians per second.
+   */
+  @Override
+  public void setDriveVelocity(double velocityRadPerSec) {
+    m_driveTalonFX.setControl(m_driveController.withVelocity(velocityRadPerSec));
+  }
+
+  /**
+   * Sets the PID gains for the Drive motor's built in closed loop controller.
+   *
+   * @param kP Proportional gain value.
+   * @param kI Integral gain value.
+   * @param kD Derivative gain value.
+   */
+  @Override
   public void setDrivePID(double kP, double kI, double kD) {
     m_driveConfig.Slot0.withKP(kP).withKI(kI).withKD(kD);
     m_driveTalonFX.getConfigurator().apply(m_driveConfig);
   }
 
+  /**
+   * Sets the Feedforward gains for the Drive motor's built in closed loop controller.
+   *
+   * @param kS Static gain value.
+   * @param kV Velocity gain value.
+   */
   @Override
   public void setDriveFF(double kS, double kV) {
     m_driveConfig.Slot0.withKS(kS).withKV(kV);
