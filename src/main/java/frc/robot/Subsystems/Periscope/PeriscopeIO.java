@@ -6,7 +6,7 @@ public interface PeriscopeIO {
 
   @AutoLog
   public static class PeriscopeIOInputs {
-    /** Whether a singal is being recieved by the Periscope motors or not */
+    /** Whether a signal is being recieved by the Periscope motors or not */
     public boolean[] isConnected = {false, false};
     /** Voltage applied to the Periscope motors */
     public double[] appliedVolts = {0.0, 0.0};

@@ -416,15 +416,11 @@ public class RobotContainer {
         .y()
         .onTrue(
             new InstantCommand(
-                () ->
-                    m_climberSubsystem.setPosition(
-                        ClimberConstants.MIN_ANGLE_RAD),
+                () -> m_climberSubsystem.setPosition(ClimberConstants.MIN_ANGLE_RAD),
                 m_climberSubsystem))
         .onFalse(
             new InstantCommand(
-                () ->
-                    m_climberSubsystem.setPosition(
-                        ClimberConstants.MAX_ANGLE_RAD),
+                () -> m_climberSubsystem.setPosition(ClimberConstants.MAX_ANGLE_RAD),
                 m_climberSubsystem));
   }
 

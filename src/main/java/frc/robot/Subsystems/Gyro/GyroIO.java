@@ -8,7 +8,7 @@ public interface GyroIO {
 
   @AutoLog
   public static class GyroIOInputs {
-    /** Whether a singal is being recieved by the Pigeon IMU or not */
+    /** Whether a signal is being recieved by the Pigeon IMU or not */
     public boolean connected = false;
     /** Current yaw angle as a Rotation2d object */
     public Rotation2d yawPositionRad = new Rotation2d();

@@ -10,7 +10,7 @@ public interface ClimberIO {
 
   @AutoLog
   public static class ClimberIOInputs {
-    /** Whether a singal is being recieved by the Climber motor or not */
+    /** Whether a signal is being recieved by the Climber motor or not */
     public boolean isConnected = false;
     /** Voltage applied to the Climber motor */
     public double appliedVoltage = 0.0;

@@ -8,7 +8,7 @@ public interface ModuleIO {
   @AutoLog
   public static class ModuleIOInputs {
     // Drive motor
-    /** Whether a singal is being recieved by the Drive motor or not */
+    /** Whether a signal is being recieved by the Drive motor or not */
     public boolean driveIsConnected = false;
     /** Voltage applied to the Drive motor */
     public double driveAppliedVoltage = 0.0;
@@ -22,7 +22,7 @@ public interface ModuleIO {
     public double driveVelocityRadPerSec = 0.0;
 
     // Turn motor
-    /** Whether a singal is being recieved by the CANcoder or not */
+    /** Whether a signal is being recieved by the CANcoder or not */
     public boolean absoluteEncoderIsConnected = false;
     /** Voltage applied to the Turn motor */
     public double turnAppliedVoltage = 0.0;
