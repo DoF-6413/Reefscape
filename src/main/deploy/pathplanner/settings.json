@@ -3,12 +3,17 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "CS2R",
     "CS1L",
+    "CS2M",
+    "CS2R",
+    "Test Paths",
     "Reef",
-    "SLC"
+    "SLC",
+    "SLR"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "Test Autos"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
