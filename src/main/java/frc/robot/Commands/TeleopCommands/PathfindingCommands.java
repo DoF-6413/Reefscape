@@ -3,6 +3,7 @@ package frc.robot.Commands.TeleopCommands;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.FieldConstants;
@@ -59,7 +60,7 @@ public class PathfindingCommands {
             apriltagPose2d.getRotation().plus(Rotation2d.k180deg));
 
     // Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the robot
-    return AutoBuilder.pathfindToPose(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+    return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
   }
 
   /**
@@ -94,36 +95,178 @@ public class PathfindingCommands {
             // Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the robot
             apriltagPose.getRotation().plus(Rotation2d.k180deg));
 
-    return AutoBuilder.pathfindToPose(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+    return AutoBuilder.pathfindToPoseFlipped(
+        goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
   }
 
-  public static Command pathfindToClosestReef(Drive drive) {
+  public static Command pathfindToClosestReef(
+      Drive drive, DoubleSupplier distanceFromBranchMeters) {
     var currentPose = drive.getCurrentPose2d();
+    // Angle from REEF to robot
+    double thetaDeg =
+        Units.radiansToDegrees(
+            Math.atan2(
+                currentPose.getY() - FieldConstants.REEF_CENTER_TRANSLATION.getY(),
+                currentPose.getX() - FieldConstants.REEF_CENTER_TRANSLATION.getX()));
+    // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on top of
+    // the BRANCH
+    Pose2d goalPose;
 
-    if (currentPose.getY() < FieldConstants.REEF_ZONE_X_M) {
-        if (currentPose.getX() < FieldConstants.REEF_ZONE_X_M) {
-            // 17 or 11
-        } else {
-            // 22 or 6
-        }
-    } else if (currentPose.getY() < FieldConstants.REEF_ZONE_Y_2_M) {
-        if (currentPose.getX() < FieldConstants.REEF_ZONE_X_M) {
-            // 18 or 10
-        } else {
-            // 21 or 7
-        }
-    } else if (currentPose.getY() < FieldConstants.REEF_ZONE_Y_3_M) {
-        if (currentPose.getX() < FieldConstants.REEF_ZONE_X_M) {
-            // .
-        } else {
-            // 
-        }
+    if (thetaDeg > 150 && thetaDeg < -150) {
+      // In zone AB
+      if (thetaDeg < 180 && thetaDeg > 0) {
+        // Go to Left BRANCH (A)
+        var branchPose = FieldConstants.BRANCH_POSES.get("A");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      } else {
+        // Go to Right BRANCH (B)
+        var branchPose = FieldConstants.BRANCH_POSES.get("B");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      }
+
+    } else if (thetaDeg > -150 && thetaDeg < -90) {
+      // In zone CD
+      if (thetaDeg < -120) {
+        // Go to Left BRANCH (C)
+        var branchPose = FieldConstants.BRANCH_POSES.get("C");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      } else {
+        // Go to Right BRANCH (D)
+        var branchPose = FieldConstants.BRANCH_POSES.get("D");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      }
+
+    } else if (thetaDeg > -90 && thetaDeg < -30) {
+      // In zone EF
+      if (thetaDeg < -60) {
+        // Go to Left BRANCH (E)
+        var branchPose = FieldConstants.BRANCH_POSES.get("E");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      } else {
+        // Go to Right BRANCH (F)
+        var branchPose = FieldConstants.BRANCH_POSES.get("F");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      }
+
+    } else if (thetaDeg > -30 && thetaDeg < 30) {
+      // In zone GH
+      if (thetaDeg < 0) {
+        // Go to Left BRANCH (G)
+        var branchPose = FieldConstants.BRANCH_POSES.get("G");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      } else {
+        // Go to Right BRANCH (H)
+        var branchPose = FieldConstants.BRANCH_POSES.get("H");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      }
+
+    } else if (thetaDeg > 30 && thetaDeg < 90) {
+      // In zone IJ
+      if (thetaDeg < 60) {
+        // Go to Left BRANCH (I)
+        var branchPose = FieldConstants.BRANCH_POSES.get("I");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      } else {
+        // Go to Right BRANCH (J)
+        var branchPose = FieldConstants.BRANCH_POSES.get("J");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      }
+
     } else {
-        if (currentPose.getX() < FieldConstants.REEF_ZONE_X_M) {
-            // 
-        }    else {
-            // 
-        } 
+      // In zone KL
+      if (thetaDeg < 120) {
+        // Go to Left BRANCH (K)
+        var branchPose = FieldConstants.BRANCH_POSES.get("K");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      } else {
+        // Go to Right BRANCH (L)
+        var branchPose = FieldConstants.BRANCH_POSES.get("L");
+        goalPose =
+            new Pose2d(
+                branchPose.getX()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getCos()),
+                branchPose.getY()
+                    - (distanceFromBranchMeters.getAsDouble() * branchPose.getRotation().getSin()),
+                branchPose.getRotation().plus(Rotation2d.k180deg));
+        return AutoBuilder.pathfindToPoseFlipped(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+      }
     }
   }
 }

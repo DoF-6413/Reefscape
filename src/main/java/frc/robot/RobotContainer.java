@@ -296,13 +296,11 @@ public class RobotContainer {
             PathfindingCommands.pathfindToAprilTag(
                     () -> 19, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
                 .until(m_driverController.rightTrigger().negate()));
-    // AprilTag 14 - BARGE Net
+    // Closest REEF BRANCH
     m_driverController
         .rightBumper()
         .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 14, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.rightBumper().negate()));
+            PathfindingCommands.pathfindToClosestReef(m_driveSubsystem, ()-> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M));
   }
 
   /** Aux Controls */

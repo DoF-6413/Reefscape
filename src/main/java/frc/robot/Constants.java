@@ -18,13 +18,18 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Subsystems.Drive.DriveConstants;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -66,6 +71,12 @@ public final class Constants {
      */
     public static Optional<Alliance> getAlliance() {
       return DriverStation.getAlliance();
+    }
+
+    /** Whether or not the robot is on the Red Alliance */
+    public static boolean isRed() {
+      return RobotStateConstants.getAlliance().isPresent()
+          && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red;
     }
 
     /** After 500 seconds, the CAN times out */
@@ -130,10 +141,29 @@ public final class Constants {
       return APRILTAG_FIELD_LAYOUT.getTagPose(ID);
     }
 
-    public static final double REEF_ZONE_Y_1_M = 3.306317;
-    public static final double REEF_ZONE_Y_2_M = 4.0259;
-    public static final double REEF_ZONE_Y_3_M = 4.745482;
-    public static final double REEF_ZONE_X_M = (RobotStateConstants.getAlliance().isPresent() && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red) ? 13.05 :4.5;
+    /**
+     * Translation of the center of the REEF from the origin point (bottom left corner) of the
+     * field. Measured in meters
+     */
+    public static final Translation2d REEF_CENTER_TRANSLATION =
+        new Translation2d(Units.inchesToMeters(176.746), FIELD_WIDTH / 2.0);
+
+    public static final Map<String, Pose2d> BRANCH_POSES = new HashMap<>();
+
+    static {
+      BRANCH_POSES.put("A", new Pose2d(3, 3, Rotation2d.k180deg));
+      BRANCH_POSES.put("B", new Pose2d(3, 4, Rotation2d.k180deg));
+      BRANCH_POSES.put("C", new Pose2d(0, 0, Rotation2d.fromDegrees(-120)));
+      BRANCH_POSES.put("D", new Pose2d(0, 0, Rotation2d.fromDegrees(-120)));
+      BRANCH_POSES.put("E", new Pose2d(0, 0, Rotation2d.fromDegrees(-60)));
+      BRANCH_POSES.put("F", new Pose2d(0, 0, Rotation2d.fromDegrees(-60)));
+      BRANCH_POSES.put("G", new Pose2d(0, 0, Rotation2d.kZero));
+      BRANCH_POSES.put("H", new Pose2d(0, 0, Rotation2d.kZero));
+      BRANCH_POSES.put("I", new Pose2d(0, 0, Rotation2d.fromDegrees(60)));
+      BRANCH_POSES.put("J", new Pose2d(0, 0, Rotation2d.fromDegrees(60)));
+      BRANCH_POSES.put("K", new Pose2d(0, 0, Rotation2d.fromDegrees(120)));
+      BRANCH_POSES.put("L", new Pose2d(0, 0, Rotation2d.fromDegrees(120)));
+    } // TODO: get X and Y translations for all BRANCH POSES
   }
 
   /** Constants for PathPlanner configurations and Pathfinding */
