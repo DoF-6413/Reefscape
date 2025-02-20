@@ -129,6 +129,11 @@ public final class Constants {
     public static Optional<Pose3d> getAprilTagPose(int ID) {
       return APRILTAG_FIELD_LAYOUT.getTagPose(ID);
     }
+
+    public static final double REEF_ZONE_Y_1_M = 3.306317;
+    public static final double REEF_ZONE_Y_2_M = 4.0259;
+    public static final double REEF_ZONE_Y_3_M = 4.745482;
+    public static final double REEF_ZONE_X_M = (RobotStateConstants.getAlliance().isPresent() && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red) ? 13.05 :4.5;
   }
 
   /** Constants for PathPlanner configurations and Pathfinding */

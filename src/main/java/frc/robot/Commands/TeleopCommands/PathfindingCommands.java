@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlannerConstants;
+import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
 import frc.robot.Subsystems.Vision.Vision;
 import frc.robot.Subsystems.Vision.VisionConstants;
@@ -94,5 +95,35 @@ public class PathfindingCommands {
             apriltagPose.getRotation().plus(Rotation2d.k180deg));
 
     return AutoBuilder.pathfindToPose(goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+  }
+
+  public static Command pathfindToClosestReef(Drive drive) {
+    var currentPose = drive.getCurrentPose2d();
+
+    if (currentPose.getY() < FieldConstants.REEF_ZONE_X_M) {
+        if (currentPose.getX() < FieldConstants.REEF_ZONE_X_M) {
+            // 17 or 11
+        } else {
+            // 22 or 6
+        }
+    } else if (currentPose.getY() < FieldConstants.REEF_ZONE_Y_2_M) {
+        if (currentPose.getX() < FieldConstants.REEF_ZONE_X_M) {
+            // 18 or 10
+        } else {
+            // 21 or 7
+        }
+    } else if (currentPose.getY() < FieldConstants.REEF_ZONE_Y_3_M) {
+        if (currentPose.getX() < FieldConstants.REEF_ZONE_X_M) {
+            // .
+        } else {
+            // 
+        }
+    } else {
+        if (currentPose.getX() < FieldConstants.REEF_ZONE_X_M) {
+            // 
+        }    else {
+            // 
+        } 
+    }
   }
 }
