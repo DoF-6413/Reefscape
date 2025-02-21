@@ -151,19 +151,19 @@ public final class Constants {
     public static final Map<String, Pose2d> BRANCH_POSES = new HashMap<>();
 
     static {
-      BRANCH_POSES.put("A", new Pose2d(3, 3, Rotation2d.k180deg));
-      BRANCH_POSES.put("B", new Pose2d(3, 4, Rotation2d.k180deg));
-      BRANCH_POSES.put("C", new Pose2d(0, 0, Rotation2d.fromDegrees(-120)));
-      BRANCH_POSES.put("D", new Pose2d(0, 0, Rotation2d.fromDegrees(-120)));
-      BRANCH_POSES.put("E", new Pose2d(0, 0, Rotation2d.fromDegrees(-60)));
-      BRANCH_POSES.put("F", new Pose2d(0, 0, Rotation2d.fromDegrees(-60)));
-      BRANCH_POSES.put("G", new Pose2d(0, 0, Rotation2d.kZero));
-      BRANCH_POSES.put("H", new Pose2d(0, 0, Rotation2d.kZero));
-      BRANCH_POSES.put("I", new Pose2d(0, 0, Rotation2d.fromDegrees(60)));
-      BRANCH_POSES.put("J", new Pose2d(0, 0, Rotation2d.fromDegrees(60)));
-      BRANCH_POSES.put("K", new Pose2d(0, 0, Rotation2d.fromDegrees(120)));
-      BRANCH_POSES.put("L", new Pose2d(0, 0, Rotation2d.fromDegrees(120)));
-    } // TODO: get X and Y translations for all BRANCH POSES
+      BRANCH_POSES.put("A", new Pose2d(3.678, 4.189, Rotation2d.k180deg));
+      BRANCH_POSES.put("B", new Pose2d(3.678, 3.864, Rotation2d.k180deg));
+      BRANCH_POSES.put("C", new Pose2d(3.924, 3.432, Rotation2d.fromDegrees(-120)));
+      BRANCH_POSES.put("D", new Pose2d(4.176, 3.309, Rotation2d.fromDegrees(-120)));
+      BRANCH_POSES.put("E", new Pose2d(4.708, 3.300, Rotation2d.fromDegrees(-60)));
+      BRANCH_POSES.put("F", new Pose2d(4.989, 3.432, Rotation2d.fromDegrees(-60)));
+      BRANCH_POSES.put("G", new Pose2d(5.300, 3.864, Rotation2d.kZero));
+      BRANCH_POSES.put("H", new Pose2d(5.300, 4.189, Rotation2d.kZero));
+      BRANCH_POSES.put("I", new Pose2d(4.989, 4.686, Rotation2d.fromDegrees(60)));
+      BRANCH_POSES.put("J", new Pose2d(4.705, 4.770, Rotation2d.fromDegrees(60)));
+      BRANCH_POSES.put("K", new Pose2d(4.178, 4.770, Rotation2d.fromDegrees(120)));
+      BRANCH_POSES.put("L", new Pose2d(3.924, 4.686, Rotation2d.fromDegrees(120)));
+    }
   }
 
   /** Constants for PathPlanner configurations and Pathfinding */
@@ -197,8 +197,8 @@ public final class Constants {
     /* Pathfinding */
     /** Max translational and rotational velocity and acceleration used for Pathfinding */
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
-        new PathConstraints(3, 3, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
+        new PathConstraints(3, 1, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
     /** Default distnace away from an AprilTag the robot should be when Pathfinding to it */
-    public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(8);
+    public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(12);
   }
 }
