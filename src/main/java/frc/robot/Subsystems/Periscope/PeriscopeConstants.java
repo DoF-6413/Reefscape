@@ -82,4 +82,20 @@ public class PeriscopeConstants {
   public static final double KV_SIM = 5.25;
   /** KA represents the voltage used every second squared per meter */
   public static final double KA_SIM = 0.02;
+  // POSITIONS 
+  /** Position of the Periscope when is reaching L1 */
+  public static final double L1_HEIGHT_M = Units.inchesToMeters(8.18);
+  /** Position of the Periscope when is reaching L2 */
+  public static final double L2_HEIGHT_M = Units.inchesToMeters(19.57);
+  /** Position of the Periscope when is reaching L3 */
+  public static final double L3_HEIGHT_M = Units.inchesToMeters(33.33);
+  /** Position of the Periscope when is reaching L4 */
+  public static final double L4_HEIGHT_M = MAX_HEIGHT_M;
+  /** Position of the Periscope when is reaching the CORAL Station */
+  public static final double CORAL_STATION_HEIGHT_M = MIN_HEIGHT_M;
+  /** Position of the Periscope when is reaching the PROCCESOR  */
+  public static final double PROCESSOR_HEIGHT_M = Units.inchesToMeters(0.0);
+  /** Position of the Periscope when is reaching the NET  */
+  public static final double NET_HEIGHT_M = Units.inchesToMeters(0.0);
+  
 }

@@ -47,4 +47,14 @@ public class AlgaePivotConstants {
   public static final double MOI_KG_M2 = SingleJointedArmSim.estimateMOI(LENGTH_M, MASS_KG);
   /** Simulate the pull of gravity in the ALGAE Pivot simulation */
   public static final boolean SIMULATE_GRAVITY = true;
+
+  // POSITION CONSTANTS
+  /** Position of the Pivot when is trying to score CORAL at any level */
+  public static final double CORAL_POSITION_RAD = Units.degreesToRadians(90);
+  /** Position of the Pivot when is trying to score ALGEA at net */
+  public static final double NET_POSITION_RAD = Units.degreesToRadians(45);
+  /** Position of the Pivot when is trying to pickup ALGEA */
+  public static final double ALGEA_PICKUP_POSITION_RAD = Units.degreesToRadians(12.5);
+  /** Position of the Pivot when is trying to score ALGEA at processor */
+  public static final double ALGEA_PROCESSOR_POSITION_RAD = Units.degreesToRadians(0);
 }
