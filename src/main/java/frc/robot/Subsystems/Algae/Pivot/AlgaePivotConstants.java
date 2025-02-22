@@ -22,11 +22,18 @@ public class AlgaePivotConstants {
   public static final double MASS_KG = Units.lbsToKilograms(1); // TODO: Update
   // Angle positions
   /** Starting angle of the ALGAE Pivot in radians */
-  public static final double DEFAULT_ANGLE_RAD = 0.0;
+  public static final double DEFAULT_POSITION_RAD = 0.0;
   /** Minimum angle of the ALGAE Pivot in radians */
-  public static final double MIN_ANGLE_RAD = Units.degreesToRadians(-35);
-  /** Maximum angle of the ALGAE Pivot in radians */
-  public static final double MAX_ANGLE_RAD = Units.degreesToRadians(45);
+  public static final double MIN_POSITION_RAD = Units.degreesToRadians(-35);
+  /** Maximum angle of the ALGAE Pivot in radians. Used when scoring CORAL */
+  public static final double MAX_POSITION_RAD = Units.degreesToRadians(90);
+  /** Angle (radians) of the ALGAE Pivot when trying to pickup ALGAE off the REEF */
+  public static final double ALGAE_PICKUP_POSITION_RAD = Units.degreesToRadians(12.5);
+  /** Angle (radians) of the ALGAE Pivot when trying to score ALGAE at the NET */
+  public static final double NET_POSITION_RAD = Units.degreesToRadians(45);
+  /** Angle (radians) of the ALGAE Pivot when trying to score ALGAE at PROCESSOR */
+  public static final double ALGAE_PROCESSOR_POSITION_RAD =
+      Units.degreesToRadians(0); // TODO: Update
 
   // PID CONSTANTS
   // TODO: Test PID gains
@@ -41,20 +48,12 @@ public class AlgaePivotConstants {
   public static double KI = 0.0;
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
   public static double KD = 0.0;
+  /** How many radians the angle of the ALGAE Pivot can be within its angle setpoint to be consider at the setpoint */
+  public static final double ERROR_TOLERANCE_RAD = 0.0; // TODO: update
 
   // SIM CONSTANTS
   /** Moment of inertia for the ALGAE Pivot in kilograms * meters squared */
   public static final double MOI_KG_M2 = SingleJointedArmSim.estimateMOI(LENGTH_M, MASS_KG);
   /** Simulate the pull of gravity in the ALGAE Pivot simulation */
   public static final boolean SIMULATE_GRAVITY = true;
-
-  // POSITION CONSTANTS
-  /** Position of the Pivot when is trying to score CORAL at any level */
-  public static final double CORAL_POSITION_RAD = Units.degreesToRadians(90);
-  /** Position of the Pivot when is trying to score ALGEA at net */
-  public static final double NET_POSITION_RAD = Units.degreesToRadians(45);
-  /** Position of the Pivot when is trying to pickup ALGEA */
-  public static final double ALGEA_PICKUP_POSITION_RAD = Units.degreesToRadians(12.5);
-  /** Position of the Pivot when is trying to score ALGEA at processor */
-  public static final double ALGEA_PROCESSOR_POSITION_RAD = Units.degreesToRadians(0);
 }

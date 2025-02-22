@@ -66,8 +66,8 @@ public class Climber extends SubsystemBase {
    *
    * @param positionRad Angular position of the Climber in radians.
    */
-  public void setPosition(double positionRad) {
-    m_io.setPosition(positionRad);
+  public void setAngle(double positionRad) {
+    m_io.setAngle(positionRad);
   }
 
   /**

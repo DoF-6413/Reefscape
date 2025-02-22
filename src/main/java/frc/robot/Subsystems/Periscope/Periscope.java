@@ -76,6 +76,7 @@ public class Periscope extends SubsystemBase {
    * @param heightMeters Position of the Periscope in meters.
    */
   public void setPosition(double heightMeters) {
+    Logger.recordOutput("SuperstructureSetpoints/PSHeight", heightMeters);
     m_io.setPosition(heightMeters);
   }
 

@@ -11,50 +11,22 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Commands.AlgaeCommands;
 import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.PathfindingCommands;
+import frc.robot.Commands.SuperstructureCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
-import frc.robot.Subsystems.Algae.EndEffector.AEE;
-import frc.robot.Subsystems.Algae.EndEffector.AEEIO;
-import frc.robot.Subsystems.Algae.EndEffector.AEEIOSim;
-import frc.robot.Subsystems.Algae.EndEffector.AEEIOSparkMax;
-import frc.robot.Subsystems.Algae.Pivot.AlgaePivot;
-import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIO;
-import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSim;
-import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSparkMax;
-import frc.robot.Subsystems.Climber.Climber;
-import frc.robot.Subsystems.Climber.ClimberIO;
-import frc.robot.Subsystems.Climber.ClimberIOSim;
-import frc.robot.Subsystems.Climber.ClimberIOTalonFX;
-import frc.robot.Subsystems.CoralEndEffector.CEE;
-import frc.robot.Subsystems.CoralEndEffector.CEEIO;
-import frc.robot.Subsystems.CoralEndEffector.CEEIOSim;
-import frc.robot.Subsystems.CoralEndEffector.CEEIOSparkMax;
-import frc.robot.Subsystems.Drive.Drive;
-import frc.robot.Subsystems.Drive.ModuleIO;
-import frc.robot.Subsystems.Drive.ModuleIOSim;
-import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
-import frc.robot.Subsystems.Funnel.Funnel;
-import frc.robot.Subsystems.Funnel.FunnelIO;
-import frc.robot.Subsystems.Funnel.FunnelIOSim;
-import frc.robot.Subsystems.Funnel.FunnelIOSparkMax;
-import frc.robot.Subsystems.Gyro.Gyro;
-import frc.robot.Subsystems.Gyro.GyroIO;
-import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
-import frc.robot.Subsystems.Periscope.Periscope;
-import frc.robot.Subsystems.Periscope.PeriscopeIO;
-import frc.robot.Subsystems.Periscope.PeriscopeIOSim;
-import frc.robot.Subsystems.Periscope.PeriscopeIOTalonFX;
-import frc.robot.Subsystems.Vision.Vision;
-import frc.robot.Subsystems.Vision.VisionConstants;
-import frc.robot.Subsystems.Vision.VisionIO;
-import frc.robot.Subsystems.Vision.VisionIOPhotonVision;
-import frc.robot.Subsystems.Vision.VisionIOSim;
+import frc.robot.Subsystems.Algae.EndEffector.*;
+import frc.robot.Subsystems.Algae.Pivot.*;
+import frc.robot.Subsystems.Climber.*;
+import frc.robot.Subsystems.CoralEndEffector.*;
+import frc.robot.Subsystems.Drive.*;
+import frc.robot.Subsystems.Funnel.*;
+import frc.robot.Subsystems.Gyro.*;
+import frc.robot.Subsystems.Periscope.*;
+import frc.robot.Subsystems.Vision.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import frc.robot.Commands.CoralCommands;
 
 public class RobotContainer {
   // Subsystems
@@ -319,13 +291,13 @@ public class RobotContainer {
             Commands.run(
                 () -> {
                   m_AEESubsystem.enablePID(true);
-                  m_AEESubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
+                  m_AEESubsystem.setVelocity(Units.rotationsPerMinuteToRadiansPerSecond(1000));
                 },
                 m_AEESubsystem))
         .onFalse(
             new InstantCommand(
                 () -> {
-                  m_AEESubsystem.setSetpoint(0);
+                  m_AEESubsystem.setVelocity(0);
                   m_AEESubsystem.enablePID(false);
                 },
                 m_AEESubsystem));
@@ -343,13 +315,13 @@ public class RobotContainer {
             Commands.run(
                 () -> {
                   m_CEESubsystem.enablePID(true);
-                  m_CEESubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
+                  m_CEESubsystem.setVelocity(Units.rotationsPerMinuteToRadiansPerSecond(1000));
                 },
                 m_CEESubsystem))
         .onFalse(
             new InstantCommand(
                 () -> {
-                  m_CEESubsystem.setSetpoint(0);
+                  m_CEESubsystem.setVelocity(0);
                   m_CEESubsystem.enablePID(false);
                 },
                 m_CEESubsystem));
@@ -361,13 +333,13 @@ public class RobotContainer {
             Commands.run(
                 () -> {
                   m_funnelSubsystem.enablePID(true);
-                  m_funnelSubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
+                  m_funnelSubsystem.setVelocity(Units.rotationsPerMinuteToRadiansPerSecond(1000));
                 },
                 m_funnelSubsystem))
         .onFalse(
             new InstantCommand(
                 () -> {
-                  m_funnelSubsystem.setSetpoint(0);
+                  m_funnelSubsystem.setVelocity(0);
                   m_funnelSubsystem.enablePID(false);
                 },
                 m_funnelSubsystem));
@@ -426,35 +398,37 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(
                 () ->
-                    CoralCommands.mechanisms2Position(m_periscopeSubsystem, m_algaePivotSubsystem,1,90),
+                    SuperstructureCommands.superstructureToPosition(
+                        m_periscopeSubsystem, m_algaePivotSubsystem, 1, 90),
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem));
 
     m_auxController
         .b()
-        .onTrue(
-            new InstantCommand(
-                () ->
-                    AlgaeCommands.mechanisms2PickupL3(m_periscopeSubsystem, m_algaePivotSubsystem),
-                m_algaePivotSubsystem,
-                m_periscopeSubsystem));
+        .onTrue(SuperstructureCommands.superstructureToL1(
+                        m_periscopeSubsystem,
+                        m_algaePivotSubsystem,
+                        m_AEESubsystem,
+                        m_CEESubsystem)); // TODO: return to default when let go of button (onFalse)
 
-    m_auxController
-        .x()
-        .onTrue(
-            new InstantCommand(
-                () -> AlgaeCommands.mechanisms2Net(m_periscopeSubsystem, m_algaePivotSubsystem),
-                m_algaePivotSubsystem,
-                m_periscopeSubsystem));
+    // m_auxController
+    //     .x()
+    //     .onTrue(
+    //         new InstantCommand(
+    //             () -> SuperstructureCommands.superstructureToPosition(m_periscopeSubsystem,
+    // m_algaePivotSubsystem),
+    //             m_algaePivotSubsystem,
+    //             m_periscopeSubsystem));
 
-    m_auxController
-        .y()
-        .onTrue(
-            new InstantCommand(
-                () ->
-                    AlgaeCommands.mechanisms2Processor(m_periscopeSubsystem, m_algaePivotSubsystem),
-                m_algaePivotSubsystem,
-                m_periscopeSubsystem));
+    // m_auxController
+    //     .y()
+    //     .onTrue(
+    //         new InstantCommand(
+    //             () ->
+    //                 SuperstructureCommands.superstructureToPosition(m_periscopeSubsystem,
+    // m_algaePivotSubsystem),
+    //             m_algaePivotSubsystem,
+    //             m_periscopeSubsystem));
   }
 
   /**

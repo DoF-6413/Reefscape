@@ -28,10 +28,10 @@ public class AlgaePivotIOSim implements AlgaePivotIO {
             DCMotor.getNEO(1),
             AlgaePivotConstants.GEAR_RATIO,
             AlgaePivotConstants.LENGTH_M,
-            AlgaePivotConstants.MIN_ANGLE_RAD,
-            AlgaePivotConstants.MAX_ANGLE_RAD,
+            AlgaePivotConstants.MIN_POSITION_RAD,
+            AlgaePivotConstants.MAX_POSITION_RAD,
             AlgaePivotConstants.SIMULATE_GRAVITY,
-            AlgaePivotConstants.DEFAULT_ANGLE_RAD); // Starting angle
+            AlgaePivotConstants.DEFAULT_POSITION_RAD); // Starting angle
   }
 
   @Override

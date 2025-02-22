@@ -82,7 +82,7 @@ public class CEE extends SubsystemBase {
    *
    * @param setpoint Velocity in radians per second.
    */
-  public void setSetpoint(double setpoint) {
+  public void setVelocity(double setpoint) {
     m_PIDController.setSetpoint(setpoint);
   }
 

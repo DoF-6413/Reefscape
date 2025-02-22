@@ -35,6 +35,7 @@ public class AlgaePivot extends SubsystemBase {
     // Initialize PID Controller
     m_PIDController =
         new PIDController(AlgaePivotConstants.KP, AlgaePivotConstants.KI, AlgaePivotConstants.KD);
+    m_PIDController.setTolerance(0);
 
     // Tunable PID gains
     SmartDashboard.putBoolean("PIDFF_Tuning/ALGAE_Pivot/EnableTuning", false);
@@ -86,8 +87,18 @@ public class AlgaePivot extends SubsystemBase {
    *
    * @param setpoint Angle in radians.
    */
-  public void setSetpoint(double setpoint) {
+  public void setAngle(double setpoint) {
+    Logger.recordOutput("SuperstructureSetpoints/AEEPivotAngle", setpoint);
     m_PIDController.setSetpoint(setpoint);
+  }
+
+  /**
+   * Whether or not the ALGAE Pivot is at its angle setpoint.
+   * 
+   * @return {@code true} if at setpoint angle, {@code false} if not
+   */
+  public boolean atSetpointAngle() {
+    return m_PIDController.atSetpoint();
   }
 
   /**

@@ -12,6 +12,11 @@ public class FunnelConstants {
   public static final boolean IS_INVERTED = false;
   /** Current limit for the NEO motor of the Funnel */
   public static final int CUR_LIM_A = 30;
+  // Velocities
+  /** Intaking velocity in radians per second */
+  public static final double INTAKE_SPEED_RAD_PER_SEC = 0;
+  /** Intaking speed, open loop voltage control */
+  public static final double INTAKE_PERCENT_SPEED = 0.80; // TODO: Verify
 
   // PID CONSTANTS
   /**

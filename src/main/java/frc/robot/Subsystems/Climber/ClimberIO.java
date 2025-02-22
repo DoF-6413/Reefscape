@@ -57,7 +57,7 @@ public interface ClimberIO {
    *
    * @param positionRad Angular position of the Climber in radians
    */
-  public default void setPosition(double positionRad) {}
+  public default void setAngle(double positionRad) {}
 
   /**
    * Sets the PID gains of the Climber motor's PID controller
