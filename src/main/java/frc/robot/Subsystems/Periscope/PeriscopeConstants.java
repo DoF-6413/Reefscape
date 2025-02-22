@@ -5,9 +5,9 @@ import edu.wpi.first.math.util.Units;
 public class PeriscopeConstants {
   // REAL CONSTANTS
   /** CAN ID for the first Periscope motor. This motor will use index 0 in any array */
-  public static final int CAN_ID_0 = 15;
+  public static final int CAN_ID_LEFT = 15;
   /** CAN ID for the second Periscope motor. This motor will use index 1 in any array */
-  public static final int CAN_ID_1 = 16;
+  public static final int CAN_ID_RIGHT = 16;
   /** Gear reduction of 38:12 for the Periscope */
   public static final double GEAR_RATIO = 38.0 / 12.0;
   /**

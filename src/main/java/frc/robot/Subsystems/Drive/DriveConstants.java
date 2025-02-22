@@ -47,20 +47,20 @@ public final class DriveConstants {
   public static final Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
       new Translation2d(
-          DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 0
+          - DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 0
       new Translation2d(
           DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 1
       new Translation2d(
-          -DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 2
+          -DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 2
       new Translation2d(
-          -DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 3
+          DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 3
     };
   }
 
   /** KrakenX60 CAN IDs */
   public enum DRIVE_MOTOR {
-    FRONT_RIGHT(2), // Module 0
-    FRONT_LEFT(3), // Module 1
+    FRONT_LEFT(2), // Module 0
+    FRONT_RIGHT(3), // Module 1
     BACK_LEFT(4), // Module 2
     BACK_RIGHT(5); // Module 3
 
@@ -70,31 +70,31 @@ public final class DriveConstants {
       CAN_ID = value;
     }
   }
-
-  /** NEOs CAN IDs */
-  public enum TURN_MOTOR {
-    FRONT_RIGHT(6), // Module 0
-    FRONT_LEFT(7), // Module 1
-    BACK_LEFT(8), // Module 2
-    BACK_RIGHT(9); // Module 3
-
+  
+  /** CANcoders CAN IDs */
+  public enum ABSOLUTE_ENCODER {
+    FRONT_LEFT(5), // Module 0
+    FRONT_RIGHT(6), // Module 1
+    BACK_LEFT(7), // Module 2
+    BACK_RIGHT(8); // Module 3
+    
     public final int CAN_ID;
-
-    TURN_MOTOR(int value) {
+    
+    ABSOLUTE_ENCODER(int value) {
       CAN_ID = value;
     }
   }
-
-  /** CANcoders CAN IDs */
-  public enum ABSOLUTE_ENCODER {
-    FRONT_RIGHT(10), // Module 0
-    FRONT_LEFT(11), // Module 1
+  
+  /** NEOs CAN IDs */
+  public enum TURN_MOTOR {
+    FRONT_LEFT(10), // Module 0
+    FRONT_RIGHT(11), // Module 1
     BACK_LEFT(12), // Module 2
     BACK_RIGHT(13); // Module 3
 
     public final int CAN_ID;
 
-    ABSOLUTE_ENCODER(int value) {
+    TURN_MOTOR(int value) {
       CAN_ID = value;
     }
   }
@@ -104,10 +104,10 @@ public final class DriveConstants {
    * at 0 degrees
    */
   public enum ABSOLUTE_ENCODER_OFFSET {
-    FRONT_RIGHT(1.88059248437), // Module 0
-    FRONT_LEFT(1.16695161013), // Module 1
-    BACK_LEFT(-0.60147581563), // Module 2
-    BACK_RIGHT(1.04951470522); // Module 3
+    FRONT_LEFT(0), // Module 0
+    FRONT_RIGHT(0), // Module 1
+    BACK_LEFT(0), // Module 2
+    BACK_RIGHT(0); // Module 3
 
     public final double OFFSET;
 

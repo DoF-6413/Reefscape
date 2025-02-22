@@ -39,8 +39,8 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     System.out.println("[Init] PeriscopeIOTalonFX");
 
     // Initialize the motors
-    m_periscopeMotors[0] = new TalonFX(PeriscopeConstants.CAN_ID_0);
-    m_periscopeMotors[1] = new TalonFX(PeriscopeConstants.CAN_ID_1);
+    m_periscopeMotors[0] = new TalonFX(PeriscopeConstants.CAN_ID_LEFT);
+    m_periscopeMotors[1] = new TalonFX(PeriscopeConstants.CAN_ID_RIGHT);
 
     // Initialize the closed loop motor controllers
     m_motorControllers[0] = new PositionVoltage(0);

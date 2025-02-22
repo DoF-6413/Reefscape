@@ -3,7 +3,7 @@ package frc.robot.Subsystems.Funnel;
 public class FunnelConstants {
   // REAL CONSTANTS
   /** CAN ID of the Funnel SPARK MAX */
-  public static final int CAN_ID = 18;
+  public static final int CAN_ID = 17;
   /** Gear reduction of 3:1 for the Funnel motor */
   public static final double GEAR_RATIO = 3.0 / 1.0;
   /**

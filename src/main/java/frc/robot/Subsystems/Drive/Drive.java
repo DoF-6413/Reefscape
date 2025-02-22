@@ -59,15 +59,15 @@ public class Drive extends SubsystemBase {
    * and inputs are initialized with the real, sim, or replay code. The Drivetrain consists of four
    * {@link Module} and a {@link Gyro}.
    *
-   * @param FRModuleIO Front Right {@link ModuleIO} implementation of the current robot mode.
    * @param FLModuleIO Front Left {@link ModuleIO} implementation of the current robot mode.
+   * @param FRModuleIO Front Right {@link ModuleIO} implementation of the current robot mode.
    * @param BLModuleIO Back Left {@link ModuleIO} implementation of the current robot mode.
    * @param BRModuleIO Back Right {@link ModuleIO} implementation of the current robot mode.
    * @param gyro {@link Gyro} subsystem.
    */
   public Drive(
-      ModuleIO FRModuleIO,
       ModuleIO FLModuleIO,
+      ModuleIO FRModuleIO,
       ModuleIO BLModuleIO,
       ModuleIO BRModuleIO,
       Gyro gyro) {
@@ -75,8 +75,8 @@ public class Drive extends SubsystemBase {
 
     // Initialize Drivetrain and Gyro
     m_gyro = gyro;
-    m_modules[0] = new Module(FRModuleIO, 0); // Index 0 corresponds to front right Module
-    m_modules[1] = new Module(FLModuleIO, 1); // Index 1 corresponds to front left Module
+    m_modules[0] = new Module(FLModuleIO, 0); // Index 0 corresponds to front left Module
+    m_modules[1] = new Module(FRModuleIO, 1); // Index 1 corresponds to front right Module
     m_modules[2] = new Module(BLModuleIO, 2); // Index 2 corresponds to back left Module
     m_modules[3] = new Module(BRModuleIO, 3); // Index 3 corresponds to back right Module
 

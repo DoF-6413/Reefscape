@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public final class ClimberConstants {
   /** CAN ID for the first Climber motor */
-  public static final int CAN_ID = 17;
+  public static final int CAN_ID = 18;
   /** Gear reduction of 9:1 for the Climber */
   public static final double GEAR_RATIO = 9.0 / 1.0;
   /**
