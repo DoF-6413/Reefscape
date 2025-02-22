@@ -14,6 +14,9 @@ public interface GyroIO {
     public Rotation2d yawPositionRad = new Rotation2d();
     /** Angular velocity about the z-axis (yaw) in radians per second */
     public double yawVelocityRadPerSec = 0.0;
+
+    public double[] odometryYawTimestamps = new double[] {};
+    public Rotation2d[] odometryYawPositions = new Rotation2d[] {};
   }
 
   /**

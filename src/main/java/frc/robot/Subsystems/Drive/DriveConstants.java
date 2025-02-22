@@ -17,8 +17,13 @@ public final class DriveConstants {
   public static final int CUR_LIM_A = 60;
   /** Enables the current limit */
   public static final boolean ENABLE_CUR_LIM = true;
-  /** Refresh signals of the TalonFX and CANcoder 100 times a second (every 0.01 second) */
-  public static final double UPDATE_FREQUENCY_HZ = 100;
+  /** Refresh signals of the TalonFX and CANcoder 50 times a second (every 0.02 second) */
+  public static final double UPDATE_FREQUENCY_HZ = 50;
+  /**
+   * Refresh the position signals of the TalonFX and CANcoder 250 times a second (every 0.004
+   * second)
+   */
+  public static final double ODOMETRY_UPDATE_FREQUENCY_HZ = 250;
   /**
    * Proportion of error from Drive relative encoder readings to actual distance travelled by the
    * wheel due to the bolts holding down the tread

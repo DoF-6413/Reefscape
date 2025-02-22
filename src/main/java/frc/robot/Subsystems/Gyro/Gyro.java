@@ -5,18 +5,17 @@
 package frc.robot.Subsystems.Gyro;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-public class Gyro extends SubsystemBase {
+public class Gyro {
   private final GyroIO m_io;
   private final GyroIOInputsAutoLogged m_inputs = new GyroIOInputsAutoLogged();
 
   /**
    * Constructs a new {@link Gyro} instance.
    *
-   * <p>This creates a new Gyro {@link SubsystemBase} object with the given IO implementation which
-   * determines whether the methods and inputs are initialized with the real, or replay code.
+   * <p>This creates a new Gyro object with the given IO implementation which determines whether the
+   * methods and inputs are initialized with the real, or replay code.
    *
    * @param io {@link GyroIO} implementation of the current robot mode (no simulation mode)
    */
@@ -25,8 +24,6 @@ public class Gyro extends SubsystemBase {
     m_io = io;
   }
 
-  @Override
-  // This method will be called once per scheduler run
   public void periodic() {
     // Update and log inputs
     m_io.updateInputs(m_inputs);

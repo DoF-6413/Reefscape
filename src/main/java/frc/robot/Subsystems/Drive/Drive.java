@@ -32,6 +32,8 @@ import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Utils.LocalADStarAK;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
@@ -51,6 +53,8 @@ public class Drive extends SubsystemBase {
   // Swerve Pose Estimator Objects
   private final SwerveDrivePoseEstimator m_swervePoseEstimator;
   private Field2d m_field;
+
+  static final Lock odometryLock = new ReentrantLock();
 
   /**
    * Constructs a new {@link Drive} instance.
@@ -139,10 +143,15 @@ public class Drive extends SubsystemBase {
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
-    // Update the periodic for each Module
+    // Prevents odometry updates while reading data
+    odometryLock.lock();
+    // Update the periodic for each Module and the Gyro
     for (int i = 0; i < 4; i++) {
       m_modules[i].periodic();
     }
+    m_gyro.periodic();
+    // Reenable odometry updates
+    odometryLock.unlock();
 
     // Update Pose Estimation based on Module Positions and robot rotation
     m_swervePoseEstimator.updateWithTime(

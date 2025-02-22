@@ -1,5 +1,6 @@
 package frc.robot.Subsystems.Drive;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 /** IO Interface to log the inputs of and create the default methods for the Swerve Modules */
@@ -34,6 +35,10 @@ public interface ModuleIO {
     public double turnAbsolutePositionRad = 0.0;
     /** Velocity of the Module wheel driven by the Turn motor in radians per sec (CANcoder) */
     public double turnVelocityRadPerSec = 0.0;
+
+    public double[] odometryTimestamps = new double[] {};
+    public double[] odometryDrivePositionsRad = new double[] {};
+    public Rotation2d[] odometryTurnPositions = new Rotation2d[] {};
   }
 
   /**
