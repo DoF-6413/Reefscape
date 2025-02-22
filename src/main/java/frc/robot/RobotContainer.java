@@ -28,6 +28,7 @@ import frc.robot.Subsystems.Vision.VisionConstants;
 import frc.robot.Subsystems.Vision.VisionIO;
 import frc.robot.Subsystems.Vision.VisionIOPhotonVision;
 import frc.robot.Subsystems.Vision.VisionIOSim;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -152,6 +153,20 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    // Testing if the BRANCH locations work // TODO: removed before PR'ing
+    Logger.recordOutput("Branches/A", FieldConstants.BRANCH_POSES.get("A"));
+    Logger.recordOutput("Branches/B", FieldConstants.BRANCH_POSES.get("B"));
+    Logger.recordOutput("Branches/C", FieldConstants.BRANCH_POSES.get("C"));
+    Logger.recordOutput("Branches/D", FieldConstants.BRANCH_POSES.get("D"));
+    Logger.recordOutput("Branches/E", FieldConstants.BRANCH_POSES.get("E"));
+    Logger.recordOutput("Branches/F", FieldConstants.BRANCH_POSES.get("F"));
+    Logger.recordOutput("Branches/G", FieldConstants.BRANCH_POSES.get("G"));
+    Logger.recordOutput("Branches/H", FieldConstants.BRANCH_POSES.get("H"));
+    Logger.recordOutput("Branches/I", FieldConstants.BRANCH_POSES.get("I"));
+    Logger.recordOutput("Branches/J", FieldConstants.BRANCH_POSES.get("J"));
+    Logger.recordOutput("Branches/K", FieldConstants.BRANCH_POSES.get("K"));
+    Logger.recordOutput("Branches/L", FieldConstants.BRANCH_POSES.get("L"));
   }
 
   /**
@@ -246,8 +261,10 @@ public class RobotContainer {
         .x()
         .onTrue(
             PathfindingCommands.pathfindToCurrentTag(
-                    m_visionSubsystem, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.x().negate()));
+                m_driveSubsystem,
+                m_visionSubsystem,
+                () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                m_driverController.x().negate()));
     // AprilTag 18 - REEF
     m_driverController
         .leftTrigger()
@@ -278,8 +295,7 @@ public class RobotContainer {
         .rightBumper()
         .onTrue(
             PathfindingCommands.pathfindToClosestReef(
-                    m_driveSubsystem, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.rightBumper().negate()));
+                m_driveSubsystem, () -> 0, m_driverController.rightBumper().negate()));
   }
 
   /** Aux Controls */

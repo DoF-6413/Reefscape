@@ -20,7 +20,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -148,21 +147,68 @@ public final class Constants {
     public static final Translation2d REEF_CENTER_TRANSLATION =
         new Translation2d(Units.inchesToMeters(176.746), FIELD_WIDTH / 2.0);
 
+    /** A Map that links the BRANCH letter to its position on the field as a {@link Pose2d} */
     public static final Map<String, Pose2d> BRANCH_POSES = new HashMap<>();
+    /**
+     * The center of each face of the REEF, aka where the AprilTag is located. Definded starting at
+     * the inner face (facing towards opposite alliance side) in clockwise order
+     */
+    public static final Pose2d[] CENTER_FACES = new Pose2d[6];
+    /** Distance from the BRANCH to the REEF face wall in meters */
+    public static final double BRANCH_TO_WALL_M = Units.inchesToMeters(7);
 
     static {
-      BRANCH_POSES.put("A", new Pose2d(3.678, 4.189, Rotation2d.k180deg));
-      BRANCH_POSES.put("B", new Pose2d(3.678, 3.864, Rotation2d.k180deg));
-      BRANCH_POSES.put("C", new Pose2d(3.924, 3.432, Rotation2d.fromDegrees(-120)));
-      BRANCH_POSES.put("D", new Pose2d(4.176, 3.309, Rotation2d.fromDegrees(-120)));
-      BRANCH_POSES.put("E", new Pose2d(4.708, 3.300, Rotation2d.fromDegrees(-60)));
-      BRANCH_POSES.put("F", new Pose2d(4.989, 3.432, Rotation2d.fromDegrees(-60)));
-      BRANCH_POSES.put("G", new Pose2d(5.300, 3.864, Rotation2d.kZero));
-      BRANCH_POSES.put("H", new Pose2d(5.300, 4.189, Rotation2d.kZero));
-      BRANCH_POSES.put("I", new Pose2d(4.989, 4.686, Rotation2d.fromDegrees(60)));
-      BRANCH_POSES.put("J", new Pose2d(4.705, 4.770, Rotation2d.fromDegrees(60)));
-      BRANCH_POSES.put("K", new Pose2d(4.178, 4.770, Rotation2d.fromDegrees(120)));
-      BRANCH_POSES.put("L", new Pose2d(3.924, 4.686, Rotation2d.fromDegrees(120)));
+      // Initialize faces starting from inner face and in clockwise order
+      CENTER_FACES[0] = getAprilTagPose(21).get().toPose2d();
+      CENTER_FACES[1] = getAprilTagPose(22).get().toPose2d();
+      CENTER_FACES[2] = getAprilTagPose(17).get().toPose2d();
+      CENTER_FACES[3] = getAprilTagPose(18).get().toPose2d();
+      CENTER_FACES[4] = getAprilTagPose(19).get().toPose2d();
+      CENTER_FACES[5] = getAprilTagPose(20).get().toPose2d();
+      /**
+       * Letters of BRANCHES in same order as faces, first 6 are left BRANCHES, last 6 are right
+       * BRANCHES
+       */
+      String BRANCH_LETTERS = "GECAKIHFDBLJ";
+      /** Hypotenuse from AprilTag to BRANCH */
+      double ARPILTAG_TO_BRANCH_M = Units.inchesToMeters(13);
+      /** Angle from AprilTag to BRANCH that the hypotenuse makes */
+      double ARPILTAG_TO_BRANCH_ANGLE_RAD = Units.degreesToRadians(30);
+
+      for (int i = 0; i < 6; i++) {
+        // Left BRANCH of face
+        var leftBranch =
+            new Pose2d(
+                CENTER_FACES[i].getX()
+                    + (-ARPILTAG_TO_BRANCH_M
+                        * Math.cos(
+                            ARPILTAG_TO_BRANCH_ANGLE_RAD
+                                + CENTER_FACES[i].getRotation().getRadians())),
+                CENTER_FACES[i].getY()
+                    + (-ARPILTAG_TO_BRANCH_M
+                        * Math.sin(
+                            ARPILTAG_TO_BRANCH_ANGLE_RAD
+                                + CENTER_FACES[i].getRotation().getRadians())),
+                CENTER_FACES[i].getRotation());
+
+        // Right BRANCH of face
+        var rightBranch =
+            new Pose2d(
+                CENTER_FACES[i].getX()
+                    + (-ARPILTAG_TO_BRANCH_M
+                        * Math.cos(
+                            -ARPILTAG_TO_BRANCH_ANGLE_RAD
+                                + CENTER_FACES[i].getRotation().getRadians())),
+                CENTER_FACES[i].getY()
+                    + (-ARPILTAG_TO_BRANCH_M
+                        * Math.sin(
+                            -ARPILTAG_TO_BRANCH_ANGLE_RAD
+                                + CENTER_FACES[i].getRotation().getRadians())),
+                CENTER_FACES[i].getRotation());
+
+        BRANCH_POSES.put(BRANCH_LETTERS.substring(i, i + 1), leftBranch);
+        BRANCH_POSES.put(BRANCH_LETTERS.substring(i + 6, i + 7), rightBranch);
+      }
     }
   }
 
@@ -199,6 +245,6 @@ public final class Constants {
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
         new PathConstraints(3, 1, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
     /** Default distnace away from an AprilTag the robot should be when Pathfinding to it */
-    public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(12);
+    public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(6);
   }
 }
