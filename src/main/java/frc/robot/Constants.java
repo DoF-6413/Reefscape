@@ -30,7 +30,6 @@ import frc.robot.Subsystems.CoralEndEffector.CEE;
 import frc.robot.Subsystems.Drive.DriveConstants;
 import frc.robot.Subsystems.Funnel.Funnel;
 import frc.robot.Subsystems.Periscope.Periscope;
-
 import java.util.Optional;
 
 /**
@@ -173,8 +172,10 @@ public final class Constants {
     public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(8);
   }
 
-  /** Superstructure includes the {@link Periscope}, {@link AlgaePivot}, {@link AEE}, {@link CEE}, and
-   * {@link Funnel}.  */
+  /**
+   * Superstructure includes the {@link Periscope}, {@link AlgaePivot}, {@link AEE}, {@link CEE},
+   * and {@link Funnel}.
+   */
   public static class SuperstructureConstants {
     /** Used to determine setpoints of each mechanism on the Superstructure */
     public enum OBJECTIVE {
@@ -186,7 +187,8 @@ public final class Constants {
       L4,
       PICKUP,
       NET,
-      PROCESSOR
+      PROCESSOR,
+      Zero
     }
   }
 }

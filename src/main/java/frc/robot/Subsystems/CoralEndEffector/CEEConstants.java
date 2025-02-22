@@ -17,10 +17,10 @@ public class CEEConstants {
   // Velocities
   /** Intaking velocity in radians per second */
   public static final double INTAKE_SPEED_RAD_PER_SEC =
-      Units.rotationsPerMinuteToRadiansPerSecond(0); // TODO: Update
+      Units.rotationsPerMinuteToRadiansPerSecond(30); // TODO: Update
   /** Scoring velocity in radians per second */
   public static final double SCORE_SPEED_RAD_PER_SEC =
-      Units.rotationsPerMinuteToRadiansPerSecond(0); // TODO: Update
+      Units.rotationsPerMinuteToRadiansPerSecond(30); // TODO: Update
   /** Intaking speed, open loop voltage control */
   public static final double INTAKE_PERCENT_SPEED = 0.80; // TODO: Verify
   /** Scoring speed, open loop voltage control */

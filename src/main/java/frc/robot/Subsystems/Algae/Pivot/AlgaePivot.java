@@ -94,7 +94,7 @@ public class AlgaePivot extends SubsystemBase {
 
   /**
    * Whether or not the ALGAE Pivot is at its angle setpoint.
-   * 
+   *
    * @return {@code true} if at setpoint angle, {@code false} if not
    */
   public boolean atSetpointAngle() {
