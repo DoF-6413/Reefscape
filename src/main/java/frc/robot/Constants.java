@@ -155,7 +155,7 @@ public final class Constants {
      */
     public static final Pose2d[] CENTER_FACES = new Pose2d[6];
     /** Distance from the BRANCH to the REEF face wall in meters */
-    public static final double BRANCH_TO_WALL_M = Units.inchesToMeters(7);
+    public static final double BRANCH_TO_WALL_X_M = Units.inchesToMeters(7);
 
     static {
       // Initialize faces starting from inner face and in clockwise order
@@ -171,7 +171,7 @@ public final class Constants {
        */
       String BRANCH_LETTERS = "GECAKIHFDBLJ";
       /** Hypotenuse from AprilTag to BRANCH */
-      double ARPILTAG_TO_BRANCH_M = Units.inchesToMeters(13);
+      double ARPILTAG_TO_BRANCH_HYPOT_M = Units.inchesToMeters(13);
       /** Angle from AprilTag to BRANCH that the hypotenuse makes */
       double ARPILTAG_TO_BRANCH_ANGLE_RAD = Units.degreesToRadians(30);
 
@@ -180,12 +180,12 @@ public final class Constants {
         var leftBranch =
             new Pose2d(
                 CENTER_FACES[i].getX()
-                    + (-ARPILTAG_TO_BRANCH_M
+                    + (-ARPILTAG_TO_BRANCH_HYPOT_M
                         * Math.cos(
                             ARPILTAG_TO_BRANCH_ANGLE_RAD
                                 + CENTER_FACES[i].getRotation().getRadians())),
                 CENTER_FACES[i].getY()
-                    + (-ARPILTAG_TO_BRANCH_M
+                    + (-ARPILTAG_TO_BRANCH_HYPOT_M
                         * Math.sin(
                             ARPILTAG_TO_BRANCH_ANGLE_RAD
                                 + CENTER_FACES[i].getRotation().getRadians())),
@@ -195,12 +195,12 @@ public final class Constants {
         var rightBranch =
             new Pose2d(
                 CENTER_FACES[i].getX()
-                    + (-ARPILTAG_TO_BRANCH_M
+                    + (-ARPILTAG_TO_BRANCH_HYPOT_M
                         * Math.cos(
                             -ARPILTAG_TO_BRANCH_ANGLE_RAD
                                 + CENTER_FACES[i].getRotation().getRadians())),
                 CENTER_FACES[i].getY()
-                    + (-ARPILTAG_TO_BRANCH_M
+                    + (-ARPILTAG_TO_BRANCH_HYPOT_M
                         * Math.sin(
                             -ARPILTAG_TO_BRANCH_ANGLE_RAD
                                 + CENTER_FACES[i].getRotation().getRadians())),
@@ -243,7 +243,8 @@ public final class Constants {
     /* Pathfinding */
     /** Max translational and rotational velocity and acceleration used for Pathfinding */
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
-        new PathConstraints(3, 1, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
+        new PathConstraints(
+            5.2, 5.2, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
     /** Default distnace away from an AprilTag the robot should be when Pathfinding to it */
     public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(6);
   }

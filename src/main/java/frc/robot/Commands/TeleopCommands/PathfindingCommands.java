@@ -144,12 +144,12 @@ public class PathfindingCommands {
              */
             branchPose.getX()
                 + ((DriveConstants.TRACK_WIDTH_M / 2)
-                        + FieldConstants.BRANCH_TO_WALL_M
+                        + FieldConstants.BRANCH_TO_WALL_X_M
                         + wallDistanceMeters.getAsDouble())
                     * branchPose.getRotation().getCos(),
             branchPose.getY()
                 + ((DriveConstants.TRACK_WIDTH_M / 2)
-                        + FieldConstants.BRANCH_TO_WALL_M
+                        + FieldConstants.BRANCH_TO_WALL_X_M
                         + wallDistanceMeters.getAsDouble())
                     * branchPose.getRotation().getSin(),
             // Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the robot
@@ -253,12 +253,12 @@ public class PathfindingCommands {
                    */
                   branchPose.getX()
                       + ((DriveConstants.TRACK_WIDTH_M / 2)
-                              + FieldConstants.BRANCH_TO_WALL_M
+                              + FieldConstants.BRANCH_TO_WALL_X_M
                               + wallDistanceMeters.getAsDouble())
                           * branchPose.getRotation().getCos(),
                   branchPose.getY()
                       + ((DriveConstants.TRACK_WIDTH_M / 2)
-                              + FieldConstants.BRANCH_TO_WALL_M
+                              + FieldConstants.BRANCH_TO_WALL_X_M
                               + wallDistanceMeters.getAsDouble())
                           * branchPose.getRotation().getSin(),
                   // Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the
@@ -272,7 +272,6 @@ public class PathfindingCommands {
               .alongWith(
                   Commands.print("Angle to REEF: " + thetaDeg + "\nBRANCH Letter: " + branchLetter))
               .schedule();
-          ;
         },
         drive);
   }

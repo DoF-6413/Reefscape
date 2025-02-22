@@ -1,8 +1,8 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -283,19 +283,17 @@ public class RobotContainer {
     m_driverController
         .rightTrigger()
         .onTrue(
-            // PathfindingCommands.pathfindToAprilTag(
-            //         () -> 19, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-            AutoBuilder.pathfindToPose(
-                    FieldConstants.BRANCH_POSES.get("A"),
-                    PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS,
-                    0)
+            PathfindingCommands.pathfindToAprilTag(
+                    () -> 19, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
                 .until(m_driverController.rightTrigger().negate()));
     // Closest REEF BRANCH
     m_driverController
         .rightBumper()
         .onTrue(
             PathfindingCommands.pathfindToClosestReef(
-                m_driveSubsystem, () -> 0, m_driverController.rightBumper().negate()));
+                m_driveSubsystem,
+                () -> Units.inchesToMeters(12),
+                m_driverController.rightBumper().negate()));
   }
 
   /** Aux Controls */
