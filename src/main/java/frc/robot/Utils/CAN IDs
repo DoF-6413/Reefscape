@@ -1,7 +1,7 @@
 CAN IDs for the Final Robot
 
-0 - PDH
-1 - roboRIO
+0 - roboRIO
+1 - PDH
 2 - FL Drive TalonFX (Module 0)
 3 - FR Drive TalonFX (Module 1)
 4 - BL Drive TalonFX (Module 2)

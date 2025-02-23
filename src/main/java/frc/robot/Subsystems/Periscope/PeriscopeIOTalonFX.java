@@ -5,7 +5,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
@@ -23,11 +22,12 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
 
   // Periscope motors' logged signals
-  private StatusSignal<Voltage>[] m_appliedVolts;
-  private StatusSignal<Current>[] m_currentAmps;
-  private StatusSignal<Temperature>[] m_tempCelsius;
-  private StatusSignal<Angle>[] m_positionRot; // Rotations
-  private StatusSignal<AngularVelocity>[] m_velocityRotPerSec; // Rotations per second
+  private StatusSignal<Voltage>[] m_appliedVolts = new StatusSignal[2];
+  private StatusSignal<Current>[] m_currentAmps = new StatusSignal[2];
+  private StatusSignal<Temperature>[] m_tempCelsius = new StatusSignal[2];
+  private StatusSignal<Angle>[] m_positionRot = new StatusSignal[2]; // Rotations
+  private StatusSignal<AngularVelocity>[] m_velocityRotPerSec =
+      new StatusSignal[2]; // Rotations per second
 
   /**
    * This constructs a new {@link PeriscopeIOTalonFX} instance.
@@ -49,10 +49,6 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     // Motor configuration
     m_motorConfig
         .MotorOutput
-        .withInverted(
-            PeriscopeConstants.IS_INVERTED
-                ? InvertedValue.CounterClockwise_Positive
-                : InvertedValue.Clockwise_Positive)
         .withNeutralMode(NeutralModeValue.Brake)
         .withControlTimesyncFreqHz(PeriscopeConstants.UPDATE_FREQUENCY_HZ);
 
@@ -86,6 +82,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
 
     // Misc and apply configuration
     for (var motor : m_periscopeMotors) {
+
       // Reset position
       motor.setPosition(0.0);
 

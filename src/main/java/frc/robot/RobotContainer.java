@@ -16,24 +16,11 @@ import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
-import frc.robot.Subsystems.Algae.EndEffector.AEE;
-import frc.robot.Subsystems.Algae.EndEffector.AEEIO;
-import frc.robot.Subsystems.Algae.EndEffector.AEEIOSim;
-import frc.robot.Subsystems.Algae.EndEffector.AEEIOSparkMax;
-import frc.robot.Subsystems.Algae.Pivot.AlgaePivot;
-import frc.robot.Subsystems.Algae.Pivot.AlgaePivotConstants;
-import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIO;
-import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSim;
-import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSparkMax;
 import frc.robot.Subsystems.Climber.Climber;
 import frc.robot.Subsystems.Climber.ClimberConstants;
 import frc.robot.Subsystems.Climber.ClimberIO;
 import frc.robot.Subsystems.Climber.ClimberIOSim;
 import frc.robot.Subsystems.Climber.ClimberIOTalonFX;
-import frc.robot.Subsystems.CoralEndEffector.CEE;
-import frc.robot.Subsystems.CoralEndEffector.CEEIO;
-import frc.robot.Subsystems.CoralEndEffector.CEEIOSim;
-import frc.robot.Subsystems.CoralEndEffector.CEEIOSparkMax;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
@@ -64,12 +51,12 @@ public class RobotContainer {
   private final Gyro m_gyroSubsystem;
 
   // Mechanisms
-//   private final AlgaePivot m_algaePivotSubsystem;
+  //   private final AlgaePivot m_algaePivotSubsystem;
   private final Periscope m_periscopeSubsystem;
   private final Climber m_climberSubsystem;
   private final Funnel m_funnelSubsystem;
-//   private final AEE m_AEESubsystem;
-//   private final CEE m_CEESubsystem;
+  //   private final AEE m_AEESubsystem;
+  //   private final CEE m_CEESubsystem;
 
   // Utils
   private final Vision m_visionSubsystem;
@@ -402,6 +389,16 @@ public class RobotContainer {
     // Periscope testing binding
     m_auxController
         .a()
+        .onTrue(new InstantCommand(() -> m_periscopeSubsystem.setVoltage(1), m_periscopeSubsystem))
+        .onFalse(
+            new InstantCommand(() -> m_periscopeSubsystem.setVoltage(0), m_periscopeSubsystem));
+    m_auxController
+        .x()
+        .onTrue(new InstantCommand(() -> m_periscopeSubsystem.setVoltage(-1), m_periscopeSubsystem))
+        .onFalse(
+            new InstantCommand(() -> m_periscopeSubsystem.setVoltage(0), m_periscopeSubsystem));
+    m_auxController
+        .b()
         .onTrue(
             new InstantCommand(
                 () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MAX_HEIGHT_M),

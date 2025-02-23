@@ -47,13 +47,13 @@ public final class DriveConstants {
   public static final Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
       new Translation2d(
-          - DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 0
+          DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 0
       new Translation2d(
-          DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 1
+          DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 1
       new Translation2d(
-          -DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 2
+          -DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 2
       new Translation2d(
-          DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 3
+          -DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 3
     };
   }
 
@@ -70,21 +70,21 @@ public final class DriveConstants {
       CAN_ID = value;
     }
   }
-  
+
   /** CANcoders CAN IDs */
   public enum ABSOLUTE_ENCODER {
-    FRONT_LEFT(5), // Module 0
-    FRONT_RIGHT(6), // Module 1
-    BACK_LEFT(7), // Module 2
-    BACK_RIGHT(8); // Module 3
-    
+    FRONT_LEFT(6), // Module 0
+    FRONT_RIGHT(7), // Module 1
+    BACK_LEFT(8), // Module 2
+    BACK_RIGHT(9); // Module 3
+
     public final int CAN_ID;
-    
+
     ABSOLUTE_ENCODER(int value) {
       CAN_ID = value;
     }
   }
-  
+
   /** NEOs CAN IDs */
   public enum TURN_MOTOR {
     FRONT_LEFT(10), // Module 0
@@ -104,10 +104,10 @@ public final class DriveConstants {
    * at 0 degrees
    */
   public enum ABSOLUTE_ENCODER_OFFSET {
-    FRONT_LEFT(0), // Module 0
-    FRONT_RIGHT(0), // Module 1
-    BACK_LEFT(0), // Module 2
-    BACK_RIGHT(0); // Module 3
+    FRONT_LEFT(0.4111068511533518 + (Math.PI / 2)), // Module 0
+    FRONT_RIGHT(-2.6323110320117604 + (Math.PI / 2)), // Module 1
+    BACK_LEFT(-1.4312040750973032 + (Math.PI / 2)), // Module 2
+    BACK_RIGHT(-0.8820389530342436 + (Math.PI / 2)); // Module 3
 
     public final double OFFSET;
 

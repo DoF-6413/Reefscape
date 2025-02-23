@@ -29,7 +29,7 @@ public class GyroIOPigeon2 implements GyroIO {
     System.out.println("[Init] Creating GyroIOPigeon2");
 
     // Initialize Pigeon 2.0 IMU
-    m_gyro = new Pigeon2(GyroConstants.CAN_ID, "DriveTrain");
+    m_gyro = new Pigeon2(GyroConstants.CAN_ID, "Drivetrain");
 
     // Pigeon configuration
     m_gyro.getConfigurator().apply(new Pigeon2Configuration());

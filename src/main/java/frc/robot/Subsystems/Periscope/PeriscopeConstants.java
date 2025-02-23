@@ -35,7 +35,7 @@ public class PeriscopeConstants {
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */
-  public static double KP = 0.0;
+  public static double KP = 1.0;
   /**
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
