@@ -24,14 +24,14 @@ public class PathfindingCommands {
    * move again. The trajectory will automatically be rotated to the Red alliance.
    *
    * <p>Since a new trajectory is meant to be generated upon every button press, all the code must
-   * be inside of the return. This is done by returning a Commands.run() with a block of code inside
-   * of the lambda function for the {@link Runnable} parameter.
+   * be inside of the return. This is done by returning a {@code Commands.run()} with a block of
+   * code inside of the lambda function for the {@link Runnable} parameter.
    *
-   * @param drive Drive subsystem
-   * @param vision Vision subsystem
+   * @param drive {@link Drive} subsystem
+   * @param vision {@link Vision} subsystem
    * @param distanceFromTagMeters Distance in front of the AprilTag for the robot to end up.
-   * @param stopTrigger {@link BooleanSupplier} with the condition to end the Pathfinding command
-   * @return Command that makes the robot follow a trajectory to in front of the AprilTag.
+   * @param stopTrigger {@link BooleanSupplier} with the condition to end the Pathfinding command.
+   * @return {@link Command} that makes the robot follow a trajectory to in front of the AprilTag.
    */
   public static Command pathfindToCurrentTag(
       Drive drive,
@@ -40,7 +40,7 @@ public class PathfindingCommands {
       BooleanSupplier stopTrigger) {
     return Commands.run(
         () -> {
-          /**
+          /*
            * Get ID of AprilTag currently seen by the front camera, if any. If an invalid ID is
            * given the apriltagPose Optional will be empty
            */
@@ -51,20 +51,19 @@ public class PathfindingCommands {
           // If no valid tag returned then return a print messsage instead
           if (apriltagPose.isEmpty()) {
             Commands.print("Invalid AprilTag ID").until(stopTrigger).schedule();
-            ;
           } else {
 
             // Turn 3d AprilTag pose into a 2d pose
             var apriltagPose2d = apriltagPose.get().toPose2d();
 
-            /**
+            /*
              * The goal pose is the end position for the center of the robot. Transforming by half
              * the track width will leave the robot right up against the tag and any additional
              * distance can be added
              */
             var goalPose =
                 new Pose2d(
-                    /**
+                    /*
                      * Multiply the x by cos and y by sin of the tag angle so that the hypot (tag to
                      * robot) is the desired distance away from the tag
                      */
@@ -89,23 +88,23 @@ public class PathfindingCommands {
   /**
    * Generates a trajectory for the robot to follow to the AprilTag corresponding to the ID inputed
    * with an additional distance translation. The trajectory will automatically be rotated to the
-   * Red alliance.
+   * red alliance.
    *
    * @param tagID AprilTag ID of the desired AprilTag to align to.
    * @param wallDistanceMeters Distance in front of the AprilTag for the robot to end up.
-   * @return Command that makes the robot follow a trajectory to in front of the AprilTag.
+   * @return {@link Command} that makes the robot follow a trajectory to in front of the AprilTag.
    */
   public static Command pathfindToAprilTag(IntSupplier tagID, DoubleSupplier wallDistanceMeters) {
     // Get the 2d pose of the AprilTag associated with the inputed ID
     var apriltagPose =
         FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tagID.getAsInt()).get().toPose2d();
-    /**
+    /*
      * The goal pose is the end position for the center of the robot. Transforming by half the track
      * width will leave the robot right up against the tag and any additional distance can be added
      */
     var goalPose =
         new Pose2d(
-            /**
+            /*
              * Multiply the x by cos and y by sin of the tag angle so that the hypot (tag to robot)
              * is the desired distance away from the tag
              */
@@ -124,11 +123,11 @@ public class PathfindingCommands {
 
   /**
    * Generates a trajectory for the robot to follow to a specified REEF BRANCH with an additional
-   * distance translation. The trajectory will automatically be rotated to the Red alliance.
+   * distance translation. The trajectory will automatically be rotated to the red alliance.
    *
    * @param branchLetter Letter corresponding to BRANCH to pathfind to.
    * @param wallDistanceMeters Distance from the REEF wall in meters.
-   * @return Command that makes the robot follow a trajectory to in front of the BRANCH.
+   * @return {@link Command} that makes the robot follow a trajectory to in front of the BRANCH.
    */
   public static Command pathfindToBranch(String branchLetter, DoubleSupplier wallDistanceMeters) {
     // Position of BRANCH corresponding to zone the robot is in
@@ -138,10 +137,8 @@ public class PathfindingCommands {
     // the BRANCH
     var goalPose =
         new Pose2d(
-            /**
-             * Multiply the x by cos and y by sin of the tag angle so that the hypot (tag to robot)
-             * is the desired distance away from the tag
-             */
+            // Multiply the x by cos and y by sin of the tag angle so that the hypot (tag to robot)
+            // is the desired distance away from the tag
             branchPose.getX()
                 + ((DriveConstants.TRACK_WIDTH_M / 2)
                         + FieldConstants.BRANCH_TO_WALL_X_M
@@ -164,13 +161,14 @@ public class PathfindingCommands {
    * automatically be rotated to the Red alliance.
    *
    * <p>Since a new trajectory is meant to be generated upon every button press, all the code must
-   * be inside of the return. This is done by returning a Commands.run() with a block of code inside
-   * of the lambda function for the {@link Runnable} parameter.
+   * be inside of the return. This is done by returning a {@code Commands.run()} with a block of
+   * code inside of the lambda function for the {@link Runnable} parameter.
    *
-   * @param drive Drive subsystem
+   * @param drive {@link Drive} subsystem
    * @param wallDistanceMeters Distance from the REEF wall in meters.
-   * @param stopTrigger {@link BooleanSupplier} with the condition to end the Pathfinding command
-   * @return Command that makes the robot follow a trajectory to in front of the nearest BRANCH.
+   * @param stopTrigger {@link BooleanSupplier} with the condition to end the Pathfinding command.
+   * @return {@link Command} that makes the robot follow a trajectory to in front of the nearest
+   *     BRANCH.
    */
   public static Command pathfindToClosestReef(
       Drive drive, DoubleSupplier wallDistanceMeters, BooleanSupplier stopTrigger) {
@@ -241,13 +239,13 @@ public class PathfindingCommands {
           }
           // Position of BRANCH corresponding to zone the robot is in
           var branchPose = FieldConstants.BRANCH_POSES.get(branchLetter);
-
-          // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on
-          // top of
-          // the BRANCH
+          /*
+           * Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on
+           * top of the BRANCH
+           */
           var goalPose =
               new Pose2d(
-                  /**
+                  /*
                    * Multiply the x by cos and y by sin of the tag angle so that the hypot (tag to
                    * robot) is the desired distance away from the tag
                    */
@@ -261,16 +259,16 @@ public class PathfindingCommands {
                               + FieldConstants.BRANCH_TO_WALL_X_M
                               + wallDistanceMeters.getAsDouble())
                           * branchPose.getRotation().getSin(),
-                  // Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the
-                  // robot
+                  /*
+                   * Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the
+                   * robot
+                   */
                   branchPose.getRotation().plus(Rotation2d.k180deg));
 
           // Create and follow the trajectory to the goal pose
           AutoBuilder.pathfindToPoseFlipped(
                   goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0)
               .until(stopTrigger)
-              .alongWith(
-                  Commands.print("Angle to REEF: " + thetaDeg + "\nBRANCH Letter: " + branchLetter))
               .schedule();
         },
         drive);

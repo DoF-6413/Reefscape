@@ -8,27 +8,53 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.TeleopCommands.DriveCommands;
 import frc.robot.Commands.TeleopCommands.PathfindingCommands;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
+import frc.robot.Subsystems.Algae.EndEffector.AEE;
+import frc.robot.Subsystems.Algae.EndEffector.AEEIO;
+import frc.robot.Subsystems.Algae.EndEffector.AEEIOSim;
+import frc.robot.Subsystems.Algae.EndEffector.AEEIOSparkMax;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivot;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotConstants;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIO;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSim;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSparkMax;
+import frc.robot.Subsystems.Climber.Climber;
+import frc.robot.Subsystems.Climber.ClimberConstants;
+import frc.robot.Subsystems.Climber.ClimberIO;
+import frc.robot.Subsystems.Climber.ClimberIOSim;
+import frc.robot.Subsystems.Climber.ClimberIOTalonFX;
+import frc.robot.Subsystems.CoralEndEffector.CEE;
+import frc.robot.Subsystems.CoralEndEffector.CEEIO;
+import frc.robot.Subsystems.CoralEndEffector.CEEIOSim;
+import frc.robot.Subsystems.CoralEndEffector.CEEIOSparkMax;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
 import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
+import frc.robot.Subsystems.Funnel.Funnel;
+import frc.robot.Subsystems.Funnel.FunnelIO;
+import frc.robot.Subsystems.Funnel.FunnelIOSim;
+import frc.robot.Subsystems.Funnel.FunnelIOSparkMax;
 import frc.robot.Subsystems.Gyro.Gyro;
 import frc.robot.Subsystems.Gyro.GyroIO;
 import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
+import frc.robot.Subsystems.Periscope.Periscope;
+import frc.robot.Subsystems.Periscope.PeriscopeConstants;
+import frc.robot.Subsystems.Periscope.PeriscopeIO;
+import frc.robot.Subsystems.Periscope.PeriscopeIOSim;
+import frc.robot.Subsystems.Periscope.PeriscopeIOTalonFX;
 import frc.robot.Subsystems.Vision.Vision;
 import frc.robot.Subsystems.Vision.VisionConstants;
 import frc.robot.Subsystems.Vision.VisionIO;
 import frc.robot.Subsystems.Vision.VisionIOPhotonVision;
 import frc.robot.Subsystems.Vision.VisionIOSim;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -38,12 +64,12 @@ public class RobotContainer {
   private final Gyro m_gyroSubsystem;
 
   // Mechanisms
-  //   private final AlgaePivot m_algaePivotSubsystem;
-  //   private final Periscope m_periscopeSubsystem;
-  //   private final Climber m_climberSubsystem;
-  //   private final Funnel m_funnelSubsystem;
-  //   private final AEE m_AEESubsystem;
-  //   private final CEE m_CEESubsystem;
+  private final AlgaePivot m_algaePivotSubsystem;
+  private final Periscope m_periscopeSubsystem;
+  private final Climber m_climberSubsystem;
+  private final Funnel m_funnelSubsystem;
+  private final AEE m_AEESubsystem;
+  private final CEE m_CEESubsystem;
 
   // Utils
   private final Vision m_visionSubsystem;
@@ -71,12 +97,12 @@ public class RobotContainer {
                 new ModuleIOSparkMaxTalonFX(2),
                 new ModuleIOSparkMaxTalonFX(3),
                 m_gyroSubsystem);
-        // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSparkMax());
-        // m_periscopeSubsystem = new Periscope(new PeriscopeIOTalonFX());
-        // m_climberSubsystem = new Climber(new ClimberIOTalonFX());
-        // m_funnelSubsystem = new Funnel(new FunnelIOSparkMax());
-        // m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
-        // m_CEESubsystem = new CEE(new CEEIOSparkMax());
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSparkMax());
+        m_periscopeSubsystem = new Periscope(new PeriscopeIOTalonFX());
+        m_climberSubsystem = new Climber(new ClimberIOTalonFX());
+        m_funnelSubsystem = new Funnel(new FunnelIOSparkMax());
+        m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
+        m_CEESubsystem = new CEE(new CEEIOSparkMax());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
@@ -94,12 +120,12 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 m_gyroSubsystem);
-        // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSim());
-        // m_periscopeSubsystem = new Periscope(new PeriscopeIOSim());
-        // m_climberSubsystem = new Climber(new ClimberIOSim());
-        // m_funnelSubsystem = new Funnel(new FunnelIOSim());
-        // m_AEESubsystem = new AEE(new AEEIOSim() {});
-        // m_CEESubsystem = new CEE(new CEEIOSim());
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSim());
+        m_periscopeSubsystem = new Periscope(new PeriscopeIOSim());
+        m_climberSubsystem = new Climber(new ClimberIOSim());
+        m_funnelSubsystem = new Funnel(new FunnelIOSim());
+        m_AEESubsystem = new AEE(new AEEIOSim() {});
+        m_CEESubsystem = new CEE(new CEEIOSim());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
@@ -118,12 +144,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 m_gyroSubsystem);
-        // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIO() {});
-        // m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
-        // m_climberSubsystem = new Climber(new ClimberIO() {});
-        // m_funnelSubsystem = new Funnel(new FunnelIO() {});
-        // m_AEESubsystem = new AEE(new AEEIO() {});
-        // m_CEESubsystem = new CEE(new CEEIO() {});
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIO() {});
+        m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
+        m_climberSubsystem = new Climber(new ClimberIO() {});
+        m_funnelSubsystem = new Funnel(new FunnelIO() {});
+        m_AEESubsystem = new AEE(new AEEIO() {});
+        m_CEESubsystem = new CEE(new CEEIO() {});
         m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
         break;
     }
@@ -153,20 +179,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-
-    // Testing if the BRANCH locations work // TODO: removed before PR'ing
-    Logger.recordOutput("Branches/A", FieldConstants.BRANCH_POSES.get("A"));
-    Logger.recordOutput("Branches/B", FieldConstants.BRANCH_POSES.get("B"));
-    Logger.recordOutput("Branches/C", FieldConstants.BRANCH_POSES.get("C"));
-    Logger.recordOutput("Branches/D", FieldConstants.BRANCH_POSES.get("D"));
-    Logger.recordOutput("Branches/E", FieldConstants.BRANCH_POSES.get("E"));
-    Logger.recordOutput("Branches/F", FieldConstants.BRANCH_POSES.get("F"));
-    Logger.recordOutput("Branches/G", FieldConstants.BRANCH_POSES.get("G"));
-    Logger.recordOutput("Branches/H", FieldConstants.BRANCH_POSES.get("H"));
-    Logger.recordOutput("Branches/I", FieldConstants.BRANCH_POSES.get("I"));
-    Logger.recordOutput("Branches/J", FieldConstants.BRANCH_POSES.get("J"));
-    Logger.recordOutput("Branches/K", FieldConstants.BRANCH_POSES.get("K"));
-    Logger.recordOutput("Branches/L", FieldConstants.BRANCH_POSES.get("L"));
   }
 
   /**
@@ -263,28 +275,28 @@ public class RobotContainer {
             PathfindingCommands.pathfindToCurrentTag(
                 m_driveSubsystem,
                 m_visionSubsystem,
-                () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M,
+                () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
                 m_driverController.x().negate()));
     // AprilTag 18 - REEF
     m_driverController
         .leftTrigger()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 18, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
+                    () -> 18, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .until(m_driverController.leftTrigger().negate()));
     // AprilTag 17 - REEF
     m_driverController
         .leftBumper()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 17, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
+                    () -> 17, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .until(m_driverController.leftBumper().negate()));
     // AprilTag 19 - REEF
     m_driverController
         .rightTrigger()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 19, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
+                    () -> 19, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .until(m_driverController.rightTrigger().negate()));
     // Closest REEF BRANCH
     m_driverController
@@ -292,128 +304,128 @@ public class RobotContainer {
         .onTrue(
             PathfindingCommands.pathfindToClosestReef(
                 m_driveSubsystem,
-                () -> Units.inchesToMeters(12),
+                () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
                 m_driverController.rightBumper().negate()));
   }
 
   /** Aux Controls */
   public void auxControllerBindings() {
-    // // AEE testing binding
-    // m_AEESubsystem.setDefaultCommand(
-    //     new InstantCommand(
-    //         () ->
-    //             m_AEESubsystem.setVoltage(
-    //                 m_auxController.getLeftTriggerAxis() * RobotStateConstants.MAX_VOLTAGE),
-    //         m_AEESubsystem));
-    // m_auxController
-    //     .leftBumper()
-    //     .onTrue(
-    //         Commands.run(
-    //             () -> {
-    //               m_AEESubsystem.enablePID(true);
-    //               m_AEESubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
-    //             },
-    //             m_AEESubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> {
-    //               m_AEESubsystem.setSetpoint(0);
-    //               m_AEESubsystem.enablePID(false);
-    //             },
-    //             m_AEESubsystem));
+    // AEE testing binding
+    m_AEESubsystem.setDefaultCommand(
+        new InstantCommand(
+            () ->
+                m_AEESubsystem.setVoltage(
+                    m_auxController.getLeftTriggerAxis() * RobotStateConstants.MAX_VOLTAGE),
+            m_AEESubsystem));
+    m_auxController
+        .leftBumper()
+        .onTrue(
+            Commands.run(
+                () -> {
+                  m_AEESubsystem.enablePID(true);
+                  m_AEESubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
+                },
+                m_AEESubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  m_AEESubsystem.setSetpoint(0);
+                  m_AEESubsystem.enablePID(false);
+                },
+                m_AEESubsystem));
 
-    // // CEE testing binding
-    // m_CEESubsystem.setDefaultCommand(
-    //     new InstantCommand(
-    //         () ->
-    //             m_CEESubsystem.setVoltage(
-    //                 m_auxController.getRightTriggerAxis() * RobotStateConstants.MAX_VOLTAGE),
-    //         m_CEESubsystem));
-    // m_auxController
-    //     .rightBumper()
-    //     .onTrue(
-    //         Commands.run(
-    //             () -> {
-    //               m_CEESubsystem.enablePID(true);
-    //               m_CEESubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
-    //             },
-    //             m_CEESubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> {
-    //               m_CEESubsystem.setSetpoint(0);
-    //               m_CEESubsystem.enablePID(false);
-    //             },
-    //             m_CEESubsystem));
+    // CEE testing binding
+    m_CEESubsystem.setDefaultCommand(
+        new InstantCommand(
+            () ->
+                m_CEESubsystem.setVoltage(
+                    m_auxController.getRightTriggerAxis() * RobotStateConstants.MAX_VOLTAGE),
+            m_CEESubsystem));
+    m_auxController
+        .rightBumper()
+        .onTrue(
+            Commands.run(
+                () -> {
+                  m_CEESubsystem.enablePID(true);
+                  m_CEESubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
+                },
+                m_CEESubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  m_CEESubsystem.setSetpoint(0);
+                  m_CEESubsystem.enablePID(false);
+                },
+                m_CEESubsystem));
 
-    // // Funnel testing binding
-    // m_auxController
-    //     .povUp()
-    //     .onTrue(
-    //         Commands.run(
-    //             () -> {
-    //               m_funnelSubsystem.enablePID(true);
-    //
-    // m_funnelSubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
-    //             },
-    //             m_funnelSubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> {
-    //               m_funnelSubsystem.setSetpoint(0);
-    //               m_funnelSubsystem.enablePID(false);
-    //             },
-    //             m_funnelSubsystem));
-    // m_auxController
-    //     .povDown()
-    //     .onTrue(new InstantCommand(() -> m_funnelSubsystem.setVoltage(12), m_funnelSubsystem))
-    //     .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
+    // Funnel testing binding
+    m_auxController
+        .povUp()
+        .onTrue(
+            Commands.run(
+                () -> {
+                  m_funnelSubsystem.enablePID(true);
 
-    // // ALGAE Pivot testing binding
-    // m_auxController
-    //     .b()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.MAX_ANGLE_RAD),
-    //             m_algaePivotSubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
-    //             m_algaePivotSubsystem));
-    // m_auxController
-    //     .x()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.MIN_ANGLE_RAD),
-    //             m_algaePivotSubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
-    //             m_algaePivotSubsystem));
+                  m_funnelSubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
+                },
+                m_funnelSubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  m_funnelSubsystem.setSetpoint(0);
+                  m_funnelSubsystem.enablePID(false);
+                },
+                m_funnelSubsystem));
+    m_auxController
+        .povDown()
+        .onTrue(new InstantCommand(() -> m_funnelSubsystem.setVoltage(12), m_funnelSubsystem))
+        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
 
-    // // Periscope testing binding
-    // m_auxController
-    //     .a()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MAX_HEIGHT_M),
-    //             m_periscopeSubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MIN_HEIGHT_M),
-    //             m_periscopeSubsystem));
+    // ALGAE Pivot testing binding
+    m_auxController
+        .b()
+        .onTrue(
+            new InstantCommand(
+                () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.MAX_ANGLE_RAD),
+                m_algaePivotSubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
+                m_algaePivotSubsystem));
+    m_auxController
+        .x()
+        .onTrue(
+            new InstantCommand(
+                () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.MIN_ANGLE_RAD),
+                m_algaePivotSubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
+                m_algaePivotSubsystem));
 
-    // // Climber testing binding
-    // m_auxController
-    //     .y()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> m_climberSubsystem.setPosition(ClimberConstants.MIN_ANGLE_RAD),
-    //             m_climberSubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> m_climberSubsystem.setPosition(ClimberConstants.MAX_ANGLE_RAD),
-    //             m_climberSubsystem));
+    // Periscope testing binding
+    m_auxController
+        .a()
+        .onTrue(
+            new InstantCommand(
+                () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MAX_HEIGHT_M),
+                m_periscopeSubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MIN_HEIGHT_M),
+                m_periscopeSubsystem));
+
+    // Climber testing binding
+    m_auxController
+        .y()
+        .onTrue(
+            new InstantCommand(
+                () -> m_climberSubsystem.setPosition(ClimberConstants.MIN_ANGLE_RAD),
+                m_climberSubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> m_climberSubsystem.setPosition(ClimberConstants.MAX_ANGLE_RAD),
+                m_climberSubsystem));
   }
 
   /**
@@ -428,14 +440,15 @@ public class RobotContainer {
   /**
    * Sets all mechanisms to brake mode, intended for use when the robot is disabled.
    *
-   * @param enable - True to set brake mode, False to set coast mode
+   * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.enableBrakeModeAll(enable);
-    // m_climberSubsystem.enableBrakeMode(enable);
-    // m_AEESubsystem.enableBrakeMode(enable);
-    // m_algaePivotSubsystem.enableBrakeMode(enable);
-    // m_funnelSubsystem.enableBrakeMode(enable);
-    // m_periscopeSubsystem.enableBrakeMode(enable);
+    m_algaePivotSubsystem.enableBrakeMode(enable);
+    m_periscopeSubsystem.enableBrakeMode(enable);
+    m_climberSubsystem.enableBrakeMode(enable);
+    m_funnelSubsystem.enableBrakeMode(enable);
+    m_AEESubsystem.enableBrakeMode(enable);
+    m_CEESubsystem.enableBrakeMode(enable);
   }
 }

@@ -175,8 +175,9 @@ public final class Constants {
       /** Angle from AprilTag to BRANCH that the hypotenuse makes */
       double ARPILTAG_TO_BRANCH_ANGLE_RAD = Units.degreesToRadians(30);
 
+      // Initialize BRANCH poses
       for (int i = 0; i < 6; i++) {
-        // Left BRANCH of face
+        // Left BRANCH of REEF face
         var leftBranch =
             new Pose2d(
                 CENTER_FACES[i].getX()
@@ -191,7 +192,7 @@ public final class Constants {
                                 + CENTER_FACES[i].getRotation().getRadians())),
                 CENTER_FACES[i].getRotation());
 
-        // Right BRANCH of face
+        // Right BRANCH of REEF face
         var rightBranch =
             new Pose2d(
                 CENTER_FACES[i].getX()
@@ -206,6 +207,7 @@ public final class Constants {
                                 + CENTER_FACES[i].getRotation().getRadians())),
                 CENTER_FACES[i].getRotation());
 
+        // Map poses to corresponding BRANCH letter
         BRANCH_POSES.put(BRANCH_LETTERS.substring(i, i + 1), leftBranch);
         BRANCH_POSES.put(BRANCH_LETTERS.substring(i + 6, i + 7), rightBranch);
       }
@@ -245,7 +247,7 @@ public final class Constants {
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
         new PathConstraints(
             5.2, 5.2, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
-    /** Default distnace away from an AprilTag the robot should be when Pathfinding to it */
-    public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(6);
+    /** Default distance away from any wall when the robot is Pathfinding towards one */
+    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(6);
   }
 }
