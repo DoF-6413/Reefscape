@@ -28,13 +28,16 @@ public class VisionConstants {
   /** 3d offset of the center of the robot to the Front camera */
   private static final Transform3d FRONT_CAMERA_ROBOT_OFFSET =
       new Transform3d(
-          new Translation3d(Units.inchesToMeters(13.5), 0, Units.inchesToMeters(3.5)),
-          new Rotation3d(0, 0, 0));
+          new Translation3d(
+              Units.inchesToMeters(13.75),
+              Units.inchesToMeters(-5.5),
+              Units.inchesToMeters(5.375)), // measured extremely accurately
+          new Rotation3d(Math.PI / 2, Units.degreesToRadians(-25), 0));
   /** 3d offset of the center of the robot to the Back camera */
   private static final Transform3d BACK_CAMERA_ROBOT_OFFSET =
       new Transform3d(
           new Translation3d(Units.inchesToMeters(-13.5), 0, Units.inchesToMeters(3.5)),
-          new Rotation3d(0, Units.degreesToRadians(35), Math.PI));
+          new Rotation3d(0, Units.degreesToRadians(-25), Math.PI));
   /** Array of 3d transformations from the center of the robot to each camera location */
   public static final Transform3d[] CAMERA_ROBOT_OFFSETS = {
     FRONT_CAMERA_ROBOT_OFFSET, BACK_CAMERA_ROBOT_OFFSET

@@ -14,12 +14,36 @@ import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
+import frc.robot.Subsystems.Algae.EndEffector.AEE;
+import frc.robot.Subsystems.Algae.EndEffector.AEEIO;
+import frc.robot.Subsystems.Algae.EndEffector.AEEIOSim;
+import frc.robot.Subsystems.Algae.EndEffector.AEEIOSparkMax;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivot;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIO;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSim;
+import frc.robot.Subsystems.Algae.Pivot.AlgaePivotIOSparkMax;
+import frc.robot.Subsystems.Climber.Climber;
+import frc.robot.Subsystems.Climber.ClimberIO;
+import frc.robot.Subsystems.Climber.ClimberIOSim;
+import frc.robot.Subsystems.Climber.ClimberIOTalonFX;
+import frc.robot.Subsystems.CoralEndEffector.CEE;
+import frc.robot.Subsystems.CoralEndEffector.CEEIO;
+import frc.robot.Subsystems.CoralEndEffector.CEEIOSim;
+import frc.robot.Subsystems.CoralEndEffector.CEEIOSparkMax;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.GyroIO;
 import frc.robot.Subsystems.Drive.GyroIOPigeon2;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
 import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
+import frc.robot.Subsystems.Funnel.Funnel;
+import frc.robot.Subsystems.Funnel.FunnelIO;
+import frc.robot.Subsystems.Funnel.FunnelIOSim;
+import frc.robot.Subsystems.Funnel.FunnelIOSparkMax;
+import frc.robot.Subsystems.Periscope.Periscope;
+import frc.robot.Subsystems.Periscope.PeriscopeIO;
+import frc.robot.Subsystems.Periscope.PeriscopeIOSim;
+import frc.robot.Subsystems.Periscope.PeriscopeIOTalonFX;
 import frc.robot.Subsystems.Vision.Vision;
 import frc.robot.Subsystems.Vision.VisionConstants;
 import frc.robot.Subsystems.Vision.VisionIO;
@@ -33,12 +57,12 @@ public class RobotContainer {
   private final Drive m_driveSubsystem;
 
   // Mechanisms
-  //   private final AlgaePivot m_algaePivotSubsystem;
-  //   private final Periscope m_periscopeSubsystem;
-  //   private final Climber m_climberSubsystem;
-  //   private final Funnel m_funnelSubsystem;
-  //   private final AEE m_AEESubsystem;
-  //   private final CEE m_CEESubsystem;
+    private final AlgaePivot m_algaePivotSubsystem;
+    private final Periscope m_periscopeSubsystem;
+    private final Climber m_climberSubsystem;
+    private final Funnel m_funnelSubsystem;
+    private final AEE m_AEESubsystem;
+    private final CEE m_CEESubsystem;
 
   // Utils
   private final Vision m_visionSubsystem;
@@ -65,12 +89,12 @@ public class RobotContainer {
                 new ModuleIOSparkMaxTalonFX(2),
                 new ModuleIOSparkMaxTalonFX(3),
                 new GyroIOPigeon2());
-        // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSparkMax());
-        // m_periscopeSubsystem = new Periscope(new PeriscopeIOTalonFX());
-        // m_climberSubsystem = new Climber(new ClimberIOTalonFX());
-        // m_funnelSubsystem = new Funnel(new FunnelIOSparkMax());
-        // m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
-        // m_CEESubsystem = new CEE(new CEEIOSparkMax());
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSparkMax());
+        m_periscopeSubsystem = new Periscope(new PeriscopeIOTalonFX());
+        m_climberSubsystem = new Climber(new ClimberIOTalonFX());
+        m_funnelSubsystem = new Funnel(new FunnelIOSparkMax());
+        m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
+        m_CEESubsystem = new CEE(new CEEIOSparkMax());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
@@ -87,12 +111,12 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new GyroIO() {});
-        // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSim());
-        // m_periscopeSubsystem = new Periscope(new PeriscopeIOSim());
-        // m_climberSubsystem = new Climber(new ClimberIOSim());
-        // m_funnelSubsystem = new Funnel(new FunnelIOSim());
-        // m_AEESubsystem = new AEE(new AEEIOSim() {});
-        // m_CEESubsystem = new CEE(new CEEIOSim());
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSim());
+        m_periscopeSubsystem = new Periscope(new PeriscopeIOSim());
+        m_climberSubsystem = new Climber(new ClimberIOSim());
+        m_funnelSubsystem = new Funnel(new FunnelIOSim());
+        m_AEESubsystem = new AEE(new AEEIOSim() {});
+        m_CEESubsystem = new CEE(new CEEIOSim());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
@@ -110,12 +134,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new GyroIO() {});
-        // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIO() {});
-        // m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
-        // m_climberSubsystem = new Climber(new ClimberIO() {});
-        // m_funnelSubsystem = new Funnel(new FunnelIO() {});
-        // m_AEESubsystem = new AEE(new AEEIO() {});
-        // m_CEESubsystem = new CEE(new CEEIO() {});
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIO() {});
+        m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
+        m_climberSubsystem = new Climber(new ClimberIO() {});
+        m_funnelSubsystem = new Funnel(new FunnelIO() {});
+        m_AEESubsystem = new AEE(new AEEIO() {});
+        m_CEESubsystem = new CEE(new CEEIO() {});
         m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
         break;
     }
@@ -237,36 +261,39 @@ public class RobotContainer {
         .x()
         .onTrue(
             PathfindingCommands.pathfindToCurrentTag(
-                    m_visionSubsystem, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.x().negate()));
+                m_driveSubsystem,
+                m_visionSubsystem,
+                () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
+                m_driverController.x().negate()));
     // AprilTag 18 - REEF
     m_driverController
         .leftTrigger()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 18, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
+                    () -> 18, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .until(m_driverController.leftTrigger().negate()));
     // AprilTag 17 - REEF
     m_driverController
         .leftBumper()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 17, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
+                    () -> 17, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .until(m_driverController.leftBumper().negate()));
     // AprilTag 19 - REEF
     m_driverController
         .rightTrigger()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 19, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
+                    () -> 19, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .until(m_driverController.rightTrigger().negate()));
-    // AprilTag 14 - BARGE Net
+    // Closest REEF BRANCH
     m_driverController
         .rightBumper()
         .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 14, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.rightBumper().negate()));
+            PathfindingCommands.pathfindToClosestReef(
+                m_driveSubsystem,
+                () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
+                m_driverController.rightBumper().negate()));
   }
 
   /** Aux Controls */
@@ -321,30 +348,28 @@ public class RobotContainer {
     //                 },
     //                 m_CEESubsystem));
 
-    //     // Funnel testing binding
-    //     m_auxController
-    //         .povUp()
-    //         .onTrue(
-    //             Commands.run(
-    //                 () -> {
-    //                   m_funnelSubsystem.enablePID(true);
-    //
-    // m_funnelSubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
-    //                 },
-    //                 m_funnelSubsystem))
-    //         .onFalse(
-    //             new InstantCommand(
-    //                 () -> {
-    //                   m_funnelSubsystem.setSetpoint(0);
-    //                   m_funnelSubsystem.enablePID(false);
-    //                 },
-    //                 m_funnelSubsystem));
-    //     m_auxController
-    //         .povDown()
-    //         .onTrue(new InstantCommand(() -> m_funnelSubsystem.setVoltage(12),
-    // m_funnelSubsystem))
-    //         .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0),
-    // m_funnelSubsystem));
+    // Funnel testing binding
+    m_auxController
+        .povUp()
+        .onTrue(
+            Commands.run(
+                () -> {
+                  m_funnelSubsystem.enablePID(true);
+
+                  m_funnelSubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
+                },
+                m_funnelSubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  m_funnelSubsystem.setSetpoint(0);
+                  m_funnelSubsystem.enablePID(false);
+                },
+                m_funnelSubsystem));
+    m_auxController
+        .povDown()
+        .onTrue(new InstantCommand(() -> m_funnelSubsystem.setVoltage(12), m_funnelSubsystem))
+        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
 
     //     // ALGAE Pivot testing binding
     //     m_auxController
@@ -407,14 +432,15 @@ public class RobotContainer {
   /**
    * Sets all mechanisms to brake mode, intended for use when the robot is disabled.
    *
-   * @param enable - True to set brake mode, False to set coast mode
+   * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.enableBrakeModeAll(enable);
-    // m_climberSubsystem.enableBrakeMode(enable);
-    // m_AEESubsystem.enableBrakeMode(enable);
-    // m_algaePivotSubsystem.enableBrakeMode(enable);
-    // m_funnelSubsystem.enableBrakeMode(enable);
-    // m_periscopeSubsystem.enableBrakeMode(enable);
+    m_algaePivotSubsystem.enableBrakeMode(enable);
+    m_periscopeSubsystem.enableBrakeMode(enable);
+    m_climberSubsystem.enableBrakeMode(enable);
+    m_funnelSubsystem.enableBrakeMode(enable);
+    m_AEESubsystem.enableBrakeMode(enable);
+    m_CEESubsystem.enableBrakeMode(enable);
   }
 }
