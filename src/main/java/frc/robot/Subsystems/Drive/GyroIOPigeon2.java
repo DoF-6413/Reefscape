@@ -1,4 +1,4 @@
-package frc.robot.Subsystems.Gyro;
+package frc.robot.Subsystems.Drive;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import frc.robot.Subsystems.Drive.PhoenixOdometryThread;
 import java.util.Queue;
 
 /** GyroIO implementation for the real mode of the robot running a Pigeon 2.0. */

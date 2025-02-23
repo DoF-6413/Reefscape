@@ -3,20 +3,22 @@ package frc.robot.Subsystems.Drive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants.RobotStateConstants;
 
 /** ModuleIO implementation for the simulated mode of the robot */
 public class ModuleIOSim implements ModuleIO {
   // Flywheel simulations
-  private final FlywheelSim m_driveSim;
-  private final FlywheelSim m_turnSim;
+  private final DCMotorSim m_driveSim;
+  private final DCMotorSim m_steerSim;
 
   // Motor voltages
   private double m_driveAppliedVolts = 0.0;
-  private double m_turnAppliedVolts = 0.0;
+  private double m_steerAppliedVolts = 0.0;
 
   // PID & Feedforward controllers
   private final PIDController m_driveController;
@@ -27,26 +29,24 @@ public class ModuleIOSim implements ModuleIO {
    * Constructs a new {@link ModuleIOSim} instance.
    *
    * <p>This creates a new {@link ModuleIO} object that uses the simulated versions of the KrakenX60
-   * and NEO motors to run the Drive and Turn of the simulated Module.
+   * and NEO motors to run the Drive and Steer of the simulated Module.
    */
   public ModuleIOSim() {
     System.out.println("[Init] Creating ModuleIOSim");
 
     // Initialize simulated motors
     m_driveSim =
-        new FlywheelSim(
-            LinearSystemId.createFlywheelSystem(
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
                 DCMotor.getKrakenX60(1),
                 DriveConstants.DRIVE_MOI_KG_M2,
                 DriveConstants.DRIVE_GEAR_RATIO),
-            DCMotor.getKrakenX60(1),
-            0);
-    m_turnSim =
-        new FlywheelSim(
-            LinearSystemId.createFlywheelSystem(
-                DCMotor.getNEO(1), DriveConstants.TURN_MOI_KG_M2, DriveConstants.STEER_GEAR_RATIO),
-            DCMotor.getNEO(1),
-            0);
+            DCMotor.getKrakenX60(1));
+    m_steerSim =
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                DCMotor.getNEO(1), DriveConstants.STEER_MOI_KG_M2, DriveConstants.STEER_GEAR_RATIO),
+            DCMotor.getNEO(1));
 
     // Initialize PID & Feedforward controllers
     m_driveController =
@@ -66,25 +66,27 @@ public class ModuleIOSim implements ModuleIO {
 
     // Update simulated motors
     m_driveSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
-    m_turnSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
+    m_steerSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
     // Update logged Drive motor inputs from the simulated flywheel system
     inputs.driveIsConnected = true;
     inputs.driveAppliedVoltage = m_driveAppliedVolts;
     inputs.driveCurrentAmps = Math.abs(m_driveSim.getCurrentDrawAmps());
+    inputs.drivePositionRad = m_driveSim.getAngularPositionRad();
     inputs.driveVelocityRadPerSec = m_driveSim.getAngularVelocityRadPerSec();
-    inputs.drivePositionRad +=
-        inputs.driveVelocityRadPerSec * RobotStateConstants.LOOP_PERIODIC_SEC;
 
-    // Update logged Turn motor inputs from the simulated flywheel system
+    // Update logged Steer motor inputs from the simulated flywheel system
     inputs.absoluteEncoderIsConnected = true;
-    inputs.turnAppliedVoltage = m_turnAppliedVolts;
-    inputs.turnCurrentAmps = Math.abs(m_turnSim.getCurrentDrawAmps());
-    inputs.turnVelocityRadPerSec = m_turnSim.getAngularVelocityRadPerSec();
-    inputs.turnAbsolutePositionRad =
-        MathUtil.angleModulus(
-            inputs.turnAbsolutePositionRad
-                + (inputs.turnVelocityRadPerSec * RobotStateConstants.LOOP_PERIODIC_SEC));
+    inputs.steerAppliedVoltage = m_steerAppliedVolts;
+    inputs.steerCurrentAmps = Math.abs(m_steerSim.getCurrentDrawAmps());
+    inputs.steerAbsolutePositionRad =
+        Rotation2d.fromRadians(MathUtil.angleModulus(m_steerSim.getAngularPositionRad()));
+    inputs.steerVelocityRadPerSec = m_steerSim.getAngularVelocityRadPerSec();
+
+    // Update odometry inputs
+    inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
+    inputs.odometryDrivePositionsRad = new double[] {inputs.drivePositionRad};
+    inputs.odometrySteerPositions = new Rotation2d[] {inputs.steerAbsolutePositionRad};
   }
 
   @Override
@@ -95,10 +97,10 @@ public class ModuleIOSim implements ModuleIO {
   }
 
   @Override
-  public void setTurnVoltage(double volts) {
-    m_turnAppliedVolts =
+  public void setSteerVoltage(double volts) {
+    m_steerAppliedVolts =
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
-    m_turnSim.setInputVoltage(m_turnAppliedVolts);
+    m_steerSim.setInputVoltage(m_steerAppliedVolts);
   }
 
   @Override

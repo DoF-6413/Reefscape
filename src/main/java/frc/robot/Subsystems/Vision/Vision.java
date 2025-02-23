@@ -108,7 +108,7 @@ public class Vision extends SubsystemBase {
 
     // Log estimated poses, under "RealOutputs" tab rather than "AdvantageKit" tab
     Logger.recordOutput(
-        "Vision/EstimatedPoses", m_estimatedPoses.toArray(new Pose2d[m_estimatedPoses.size()]));
+        "Odometry/Vision/EstimatedPoses", m_estimatedPoses.toArray(new Pose2d[m_estimatedPoses.size()]));
 
     /* Add Vision measurements to Swerve Pose Estimator in Drive through the VisionConsumer */
     if (m_estimatedPoses.size() > 1) {

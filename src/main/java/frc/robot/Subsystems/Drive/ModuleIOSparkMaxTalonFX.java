@@ -32,11 +32,11 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   private final VelocityVoltage m_driveController = new VelocityVoltage(0);
   private final TalonFXConfiguration m_driveConfig = new TalonFXConfiguration();
 
-  // Turn motor, absolute encoder, controller, and configurator
-  private final SparkMax m_turnSparkMax;
+  // Steer motor, absolute encoder, controller, and configurator
+  private final SparkMax m_steerSparkMax;
   private final SparkMaxConfig m_turnConfig = new SparkMaxConfig();
-  private final CANcoder m_turnAbsoluteEncoder;
-  private final double m_absoluteEncoderOffsetRad;
+  private final CANcoder m_steerCANcoder;
+  private final double m_CANcoderOffsetRad;
 
   // PhoenixOdometryThread queues
   private final Queue<Double> m_timestampQueue;
@@ -59,7 +59,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
    * Constructs a new {@link ModuleIOSparkMaxTalonFX} instance.
    *
    * <p>This creates a new {@link ModuleIO} object that uses the real KrakenX60 and NEO motors to
-   * run the Drive and Turn of the Module and the CANcoder for the absolute Turn position of the
+   * run the Drive and Steer of the Module and the CANcoder for the absolute Steer position of the
    * wheels.
    *
    * @param moduleNumber Number to the corresponding Swerve Module that is to be initilized.
@@ -67,43 +67,43 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   public ModuleIOSparkMaxTalonFX(int moduleNumber) {
     System.out.println("[Init] Creating ModuleIOSparkMaxTalonFX " + moduleNumber);
 
-    // Initialize Drive motors, Turn motors, Turn encoders and their offsets based on the Module
+    // Initialize Drive motors, Steer motors, Steer encoders and their offsets based on the Module
     // number
     switch (moduleNumber) {
       case 0:
         m_driveTalonFX = new TalonFX(DriveConstants.DRIVE_MOTOR.FRONT_RIGHT.CAN_ID, "Drivetrain");
-        m_turnSparkMax =
-            new SparkMax(DriveConstants.TURN_MOTOR.FRONT_RIGHT.CAN_ID, MotorType.kBrushless);
-        m_turnAbsoluteEncoder =
+        m_steerSparkMax =
+            new SparkMax(DriveConstants.STEER_MOTOR.FRONT_RIGHT.CAN_ID, MotorType.kBrushless);
+        m_steerCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.FRONT_RIGHT.CAN_ID, "Drivetrain");
-        m_absoluteEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.FRONT_RIGHT.OFFSET;
+        m_CANcoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.FRONT_RIGHT.OFFSET;
         break;
 
       case 1:
         m_driveTalonFX = new TalonFX(DriveConstants.DRIVE_MOTOR.FRONT_LEFT.CAN_ID, "Drivetrain");
-        m_turnSparkMax =
-            new SparkMax(DriveConstants.TURN_MOTOR.FRONT_LEFT.CAN_ID, MotorType.kBrushless);
-        m_turnAbsoluteEncoder =
+        m_steerSparkMax =
+            new SparkMax(DriveConstants.STEER_MOTOR.FRONT_LEFT.CAN_ID, MotorType.kBrushless);
+        m_steerCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.FRONT_LEFT.CAN_ID, "Drivetrain");
-        m_absoluteEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.FRONT_LEFT.OFFSET;
+        m_CANcoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.FRONT_LEFT.OFFSET;
         break;
 
       case 2:
         m_driveTalonFX = new TalonFX(DriveConstants.DRIVE_MOTOR.BACK_LEFT.CAN_ID, "Drivetrain");
-        m_turnSparkMax =
-            new SparkMax(DriveConstants.TURN_MOTOR.BACK_LEFT.CAN_ID, MotorType.kBrushless);
-        m_turnAbsoluteEncoder =
+        m_steerSparkMax =
+            new SparkMax(DriveConstants.STEER_MOTOR.BACK_LEFT.CAN_ID, MotorType.kBrushless);
+        m_steerCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.BACK_LEFT.CAN_ID, "Drivetrain");
-        m_absoluteEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.BACK_LEFT.OFFSET;
+        m_CANcoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.BACK_LEFT.OFFSET;
         break;
 
       case 3:
         m_driveTalonFX = new TalonFX(DriveConstants.DRIVE_MOTOR.BACK_RIGHT.CAN_ID, "Drivetrain");
-        m_turnSparkMax =
-            new SparkMax(DriveConstants.TURN_MOTOR.BACK_RIGHT.CAN_ID, MotorType.kBrushless);
-        m_turnAbsoluteEncoder =
+        m_steerSparkMax =
+            new SparkMax(DriveConstants.STEER_MOTOR.BACK_RIGHT.CAN_ID, MotorType.kBrushless);
+        m_steerCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.BACK_RIGHT.CAN_ID, "Drivetrain");
-        m_absoluteEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.BACK_RIGHT.OFFSET;
+        m_CANcoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.BACK_RIGHT.OFFSET;
         break;
 
       default:
@@ -147,50 +147,55 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
 
     // SPARK MAX configurations
     m_turnConfig
-        .inverted(DriveConstants.TURN_IS_INVERTED)
+        .inverted(DriveConstants.STEER_IS_INVERTED)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(DriveConstants.CUR_LIM_A);
 
     // Optimize CAN bus usage, disable all signals besides those refreshed in code
     m_driveTalonFX.optimizeBusUtilization();
-    m_turnAbsoluteEncoder.optimizeBusUtilization();
+    m_steerCANcoder.optimizeBusUtilization();
 
     // Set CAN timeouts
     m_driveTalonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
-    m_turnSparkMax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);
+    m_steerSparkMax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);
 
     // Apply TalonFX configurations
     m_driveTalonFX.getConfigurator().apply(m_driveConfig);
 
     // Apply SPARK MAX configurations
-    m_turnSparkMax.configure(
+    m_steerSparkMax.configure(
         m_turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // Initialize logged Drive motor signals
     m_drivePositionRot = m_driveTalonFX.getPosition();
-    m_drivePositionRot.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     m_driveVelocityRotPerSec = m_driveTalonFX.getVelocity();
-    m_driveVelocityRotPerSec.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     m_driveAppliedVolts = m_driveTalonFX.getMotorVoltage();
-    m_driveAppliedVolts.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     m_driveCurrentAmps = m_driveTalonFX.getStatorCurrent();
-    m_driveCurrentAmps.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
     m_driveTempCelsius = m_driveTalonFX.getDeviceTemp();
-    m_driveTempCelsius.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
 
     // Initialize logged Absolute Encoder signals
-    m_absoluteEncoderPositionRot = m_turnAbsoluteEncoder.getAbsolutePosition();
-    m_absoluteEncoderPositionRot.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
-    m_absoluteEncoderVelocityRotPerSec = m_turnAbsoluteEncoder.getVelocity();
-    m_absoluteEncoderVelocityRotPerSec.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
+    m_absoluteEncoderPositionRot = m_steerCANcoder.getAbsolutePosition();
+    m_absoluteEncoderVelocityRotPerSec = m_steerCANcoder.getVelocity();
 
     // Initialize PhoenixOdometryThread singals
     m_timestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
     m_drivePositionQueue =
         PhoenixOdometryThread.getInstance().registerSignal(m_driveTalonFX.getPosition());
     m_absoluteEncoderPositionQueue =
-        PhoenixOdometryThread.getInstance()
-            .registerSignal(m_turnAbsoluteEncoder.getAbsolutePosition());
+        PhoenixOdometryThread.getInstance().registerSignal(m_steerCANcoder.getAbsolutePosition());
+
+    // Set update frequencies for signals
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        DriveConstants.UPDATE_FREQUENCY_HZ,
+        m_driveVelocityRotPerSec,
+        m_driveAppliedVolts,
+        m_driveCurrentAmps,
+        m_driveTempCelsius,
+        m_absoluteEncoderVelocityRotPerSec);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        DriveConstants.ODOMETRY_UPDATE_FREQUENCY_HZ,
+        m_drivePositionRot,
+        m_absoluteEncoderPositionRot);
   }
 
   @Override
@@ -220,28 +225,28 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         BaseStatusSignal.refreshAll(
                 m_absoluteEncoderPositionRot, m_absoluteEncoderVelocityRotPerSec)
             .isOK();
-    // Update Turn motor and Absolute Encoder logged inputs
-    inputs.turnAppliedVoltage = m_turnSparkMax.getAppliedOutput() * m_turnSparkMax.getBusVoltage();
-    inputs.turnCurrentAmps = m_turnSparkMax.getOutputCurrent();
-    inputs.turnTempCelsius = m_turnSparkMax.getMotorTemperature();
-    inputs.turnAbsolutePositionRad =
-        MathUtil.angleModulus(
-            new Rotation2d(
-                    Units.rotationsToRadians(m_absoluteEncoderPositionRot.getValueAsDouble())
-                        + m_absoluteEncoderOffsetRad)
-                .getRadians());
-    inputs.turnVelocityRadPerSec =
+    // Update Steer motor and Absolute Encoder logged inputs
+    inputs.steerAppliedVoltage =
+        m_steerSparkMax.getAppliedOutput() * m_steerSparkMax.getBusVoltage();
+    inputs.steerCurrentAmps = m_steerSparkMax.getOutputCurrent();
+    inputs.steerTempCelsius = m_steerSparkMax.getMotorTemperature();
+    inputs.steerAbsolutePositionRad =
+        Rotation2d.fromRadians(
+            MathUtil.angleModulus(
+                Units.rotationsToRadians(m_absoluteEncoderPositionRot.getValueAsDouble())
+                    + m_CANcoderOffsetRad));
+    inputs.steerVelocityRadPerSec =
         Units.rotationsToRadians(m_absoluteEncoderVelocityRotPerSec.getValueAsDouble())
             / DriveConstants.STEER_GEAR_RATIO;
 
-    // Update omodometry
+    // Update odometry
     inputs.odometryTimestamps =
         m_timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryDrivePositionsRad =
         m_drivePositionQueue.stream()
             .mapToDouble((Double value) -> Units.rotationsToRadians(value))
             .toArray();
-    inputs.odometryTurnPositions =
+    inputs.odometrySteerPositions =
         m_absoluteEncoderPositionQueue.stream()
             .map((Double value) -> Rotation2d.fromRotations(value))
             .toArray(Rotation2d[]::new);
@@ -256,9 +261,9 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   }
 
   @Override
-  public void setTurnBrakeMode(boolean enable) {
+  public void setSteerBrakeMode(boolean enable) {
     m_turnConfig.idleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
-    m_turnSparkMax.configure(
+    m_steerSparkMax.configure(
         m_turnConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
@@ -269,8 +274,8 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   }
 
   @Override
-  public void setTurnVoltage(double volts) {
-    m_turnSparkMax.setVoltage(
+  public void setSteerVoltage(double volts) {
+    m_steerSparkMax.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
 

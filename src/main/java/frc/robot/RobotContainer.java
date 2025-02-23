@@ -15,12 +15,11 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
+import frc.robot.Subsystems.Drive.GyroIO;
+import frc.robot.Subsystems.Drive.GyroIOPigeon2;
 import frc.robot.Subsystems.Drive.ModuleIO;
 import frc.robot.Subsystems.Drive.ModuleIOSim;
 import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
-import frc.robot.Subsystems.Gyro.Gyro;
-import frc.robot.Subsystems.Gyro.GyroIO;
-import frc.robot.Subsystems.Gyro.GyroIOPigeon2;
 import frc.robot.Subsystems.Vision.Vision;
 import frc.robot.Subsystems.Vision.VisionConstants;
 import frc.robot.Subsystems.Vision.VisionIO;
@@ -32,7 +31,6 @@ public class RobotContainer {
   // Subsystems
   // Chassis
   private final Drive m_driveSubsystem;
-  private final Gyro m_gyroSubsystem;
 
   // Mechanisms
   //   private final AlgaePivot m_algaePivotSubsystem;
@@ -60,14 +58,13 @@ public class RobotContainer {
     switch (RobotStateConstants.getMode()) {
         // Real robot, instantiates hardware IO implementations
       case REAL:
-        m_gyroSubsystem = new Gyro(new GyroIOPigeon2());
         m_driveSubsystem =
             new Drive(
                 new ModuleIOSparkMaxTalonFX(0),
                 new ModuleIOSparkMaxTalonFX(1),
                 new ModuleIOSparkMaxTalonFX(2),
                 new ModuleIOSparkMaxTalonFX(3),
-                m_gyroSubsystem);
+                new GyroIOPigeon2());
         // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSparkMax());
         // m_periscopeSubsystem = new Periscope(new PeriscopeIOTalonFX());
         // m_climberSubsystem = new Climber(new ClimberIOTalonFX());
@@ -83,14 +80,13 @@ public class RobotContainer {
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
-        m_gyroSubsystem = new Gyro(new GyroIO() {});
         m_driveSubsystem =
             new Drive(
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
-                m_gyroSubsystem);
+                new GyroIO() {});
         // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSim());
         // m_periscopeSubsystem = new Periscope(new PeriscopeIOSim());
         // m_climberSubsystem = new Climber(new ClimberIOSim());
@@ -107,14 +103,13 @@ public class RobotContainer {
         break;
         // Replayed robot, disables all IO implementations
       default:
-        m_gyroSubsystem = new Gyro(new GyroIO() {});
         m_driveSubsystem =
             new Drive(
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                m_gyroSubsystem);
+                new GyroIO() {});
         // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIO() {});
         // m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
         // m_climberSubsystem = new Climber(new ClimberIO() {});
@@ -234,7 +229,7 @@ public class RobotContainer {
     // Reset Gyro heading, making the front side of the robot the new 0 degree angle
     m_driverController
         .a()
-        .onTrue(new InstantCommand(() -> m_gyroSubsystem.zeroYaw()).withName("ZeroYaw"));
+        .onTrue(new InstantCommand(() -> m_driveSubsystem.zeroYaw()).withName("ZeroYaw"));
 
     /* Pathfinding */
     // AprilTag currently seen

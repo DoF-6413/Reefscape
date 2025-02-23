@@ -7,12 +7,12 @@ public final class DriveConstants {
   // REAL CONSTANTS
   /** Gear Ratio for MK4i L3 Krakens */
   public static final double DRIVE_GEAR_RATIO = 6.12;
-  /** Gear Ratio for MK4i Turn motors */
+  /** Gear Ratio for MK4i Steer motors */
   public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
   /** Inversion status for the Drive motor, makes Counterclockwise the positive direction */
   public static final boolean DRIVE_IS_INVERTED = false;
-  /** Inversion status for the Turn motor, makes Clockwise the positive direction */
-  public static final boolean TURN_IS_INVERTED = true;
+  /** Inversion status for the Steer motor, makes Clockwise the positive direction */
+  public static final boolean STEER_IS_INVERTED = true;
   /** Current limiting in amps */
   public static final int CUR_LIM_A = 60;
   /** Enables the current limit */
@@ -77,7 +77,7 @@ public final class DriveConstants {
   }
 
   /** NEOs CAN IDs */
-  public enum TURN_MOTOR {
+  public enum STEER_MOTOR {
     FRONT_RIGHT(6), // Module 0
     FRONT_LEFT(7), // Module 1
     BACK_LEFT(8), // Module 2
@@ -85,7 +85,7 @@ public final class DriveConstants {
 
     public final int CAN_ID;
 
-    TURN_MOTOR(int value) {
+    STEER_MOTOR(int value) {
       CAN_ID = value;
     }
   }
@@ -140,20 +140,20 @@ public final class DriveConstants {
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */
-  public static double TURN_KP = 6.4;
+  public static double STEER_KP = 6.4;
   /**
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
    */
-  public static double TURN_KI = 0.0;
+  public static double STEER_KI = 0.0;
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
-  public static double TURN_KD = 0.05;
+  public static double STEER_KD = 0.05;
 
   // SIM CONSTANTS
   /** Moment of inertia value for Drive motor - Module wheel system in kilograms * meters squared */
   public static final double DRIVE_MOI_KG_M2 = 0.0003125;
-  /** Moment of inertia value for Turn motor - Module wheel system in kilograms * meters squared */
-  public static final double TURN_MOI_KG_M2 = 0.0000158025413;
+  /** Moment of inertia value for Steer motor - Module wheel system in kilograms * meters squared */
+  public static final double STEER_MOI_KG_M2 = 0.0000158025413;
   /** KP value for the simulated Drive motor as the simulation conditions are ideal and static */
   public static double DRIVE_KP_SIM = 0.01;
   /** KI value for the simulated Drive motor as the simulation conditions are ideal and static */

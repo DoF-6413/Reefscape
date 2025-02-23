@@ -78,7 +78,7 @@ public class DriveCommands {
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   chassisSpeeds,
-                  isRed ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation()));
+                  isRed ? drive.getPoseAngle().plus(Rotation2d.kPi) : drive.getPoseAngle()));
         },
         drive);
   }
@@ -156,7 +156,7 @@ public class DriveCommands {
               // Calculate angular velocity from heading setpoint
               double omega =
                   angleController.calculate(
-                      drive.getRotation().getRadians(), headingSetpoint.get().getRadians());
+                      drive.getPoseAngle().getRadians(), headingSetpoint.get().getRadians());
 
               /*
                * Calculate speed for the entire chassis based on the linear and angular velocities calculated from the joysticks
@@ -176,10 +176,10 @@ public class DriveCommands {
               drive.runVelocity(
                   ChassisSpeeds.fromFieldRelativeSpeeds(
                       chassisSpeeds,
-                      isRed ? drive.getRotation().plus(Rotation2d.kPi) : drive.getRotation()));
+                      isRed ? drive.getPoseAngle().plus(Rotation2d.kPi) : drive.getPoseAngle()));
             },
             drive)
-        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+        .beforeStarting(() -> angleController.reset(drive.getPoseAngle().getRadians()));
   }
 
   /**
@@ -279,14 +279,14 @@ public class DriveCommands {
             Commands.runOnce(
                 () -> {
                   state.positions = drive.getDrivePositionRad();
-                  state.lastAngle = drive.getRotation();
+                  state.lastAngle = drive.getPoseAngle();
                   state.gyroDelta = 0.0;
                 }),
 
             // Update gyro delta
             Commands.run(
                     () -> {
-                      var rotation = drive.getRotation();
+                      var rotation = drive.getPoseAngle();
                       state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
                       state.lastAngle = rotation;
 
