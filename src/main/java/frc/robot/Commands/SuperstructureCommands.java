@@ -39,8 +39,8 @@ public class SuperstructureCommands {
   /**
    * Sets the velocities of the flywheels on the Superstructure.
    *
-   * @param AEE {@link AEE} subsystem
-   * @param CEE {@link CEE} subsystem
+   * @param aee {@link AEE} subsystem
+   * @param cee {@link CEE} subsystem
    * @param funnel {@link Funnel} subsystem
    * @param AEEVelocity Velocity of the AEE in radians per second.
    * @param CEEVelocity Velocity of the CEE in radians per second.
@@ -48,23 +48,33 @@ public class SuperstructureCommands {
    * @return {@link Command} that sets the velocities of the Superstructure mechanisms.
    */
   public static Command superstructureVelocities(
-      AEE AEE,
-      CEE CEE,
+      AEE aee,
+      CEE cee,
       Funnel funnel,
       double AEEVelocity,
       double CEEVelocity,
       double funnelVelocity) {
     return Commands.run(
         () -> {
-          AEE.setVelocity(AEEVelocity);
-          CEE.setVelocity(CEEVelocity);
+          aee.setVelocity(AEEVelocity);
+          cee.setVelocity(CEEVelocity);
           funnel.setVelocity(funnelVelocity);
         },
-        AEE,
-        CEE,
+        aee,
+        cee,
         funnel);
   }
 
+  /**
+   * Sets the mechanisms to their zero positions.
+   *
+   * @param periscope {@link Periscope} subsystem
+   * @param algaePivot {@link AlgaePivot} subsystem
+   * @param cee {@link CEE} subsystem
+   * @param aee {@link AEE} subsystem
+   * @param funnel {@link Funnel} subsystem
+   * @return {@link Command} that set to zero the positions of the Superstructure mechanisms.
+   */
   public static Command superstructureToZero(
       Periscope periscope, AlgaePivot algaePivot, CEE cee, AEE aee, Funnel funnel) {
     SuperstructureState.objective(OBJECTIVE.Zero);
@@ -329,8 +339,8 @@ public class SuperstructureCommands {
           break;
 
         case PICKUP:
-          periscopeHeight = PeriscopeConstants.L4_HEIGHT_M;
-          algaePivotAngle = AlgaePivotConstants.MAX_POSITION_RAD;
+          periscopeHeight = PeriscopeConstants.MIN_HEIGHT_M;
+          algaePivotAngle = AlgaePivotConstants.DEFAULT_POSITION_RAD;
           funnelVelocity = FunnelConstants.INTAKE_SPEED_RAD_PER_SEC;
           CEEVelocity = 0.0;
           AEEVelocity = 0.0;
@@ -343,8 +353,8 @@ public class SuperstructureCommands {
           AEEVelocity = AEEConstants.SCORE_SPEED_RAD_PER_SEC;
 
         case PROCESSOR:
-          periscopeHeight = PeriscopeConstants.L4_HEIGHT_M;
-          algaePivotAngle = AlgaePivotConstants.MAX_POSITION_RAD;
+          periscopeHeight = PeriscopeConstants.MIN_HEIGHT_M;
+          algaePivotAngle = AlgaePivotConstants.DEFAULT_POSITION_RAD;
           funnelVelocity = 0.0;
           CEEVelocity = 0.0;
           AEEVelocity = AEEConstants.SCORE_SPEED_RAD_PER_SEC;
@@ -362,16 +372,16 @@ public class SuperstructureCommands {
       }
     }
 
-    /**
-     * Whether or not the Periscope and ALGAE Pivot are at their setpoints.
-     *
-     * @param periscope {@link Periscope} subsystem
-     * @param algaePivot {@link AlgaePivot} subsystem
-     * @return {@code true} if both at setpoints, {@code false} if not.
-     */
-    public static boolean atGoal(Periscope periscope, AlgaePivot algaePivot) {
-      // return periscope.
-      return false; // TODO: Add atSetpoint functions for the periscope and aee pivot
-    }
+    // /**
+    //  * Whether or not the Periscope and ALGAE Pivot are at their setpoints.
+    //  *
+    //  * @param periscope {@link Periscope} subsystem
+    //  * @param algaePivot {@link AlgaePivot} subsystem
+    //  * @return {@code true} if both at setpoints, {@code false} if not.
+    //  */
+    // public static boolean atGoal(Periscope periscope, AlgaePivot algaePivot) {
+    //   // return periscope.
+    //   return false; // TODO: Add atSetpoint functions for the periscope and aee pivot
+    // }
   }
 }
