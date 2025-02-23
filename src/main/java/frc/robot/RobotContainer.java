@@ -242,36 +242,39 @@ public class RobotContainer {
         .x()
         .onTrue(
             PathfindingCommands.pathfindToCurrentTag(
-                    m_visionSubsystem, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.x().negate()));
+                m_driveSubsystem,
+                m_visionSubsystem,
+                () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
+                m_driverController.x().negate()));
     // AprilTag 18 - REEF
     m_driverController
         .leftTrigger()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 18, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
+                    () -> 18, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .until(m_driverController.leftTrigger().negate()));
     // AprilTag 17 - REEF
     m_driverController
         .leftBumper()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 17, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
+                    () -> 17, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .until(m_driverController.leftBumper().negate()));
     // AprilTag 19 - REEF
     m_driverController
         .rightTrigger()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 19, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
+                    () -> 19, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .until(m_driverController.rightTrigger().negate()));
-    // AprilTag 14 - BARGE Net
+    // Closest REEF BRANCH
     m_driverController
         .rightBumper()
         .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 14, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.rightBumper().negate()));
+            PathfindingCommands.pathfindToClosestReef(
+                m_driveSubsystem,
+                () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
+                m_driverController.rightBumper().negate()));
   }
 
   /** Aux Controls */
@@ -546,14 +549,15 @@ public class RobotContainer {
   /**
    * Sets all mechanisms to brake mode, intended for use when the robot is disabled.
    *
-   * @param enable - True to set brake mode, False to set coast mode
+   * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.enableBrakeModeAll(enable);
-    m_climberSubsystem.enableBrakeMode(enable);
-    m_AEESubsystem.enableBrakeMode(enable);
     m_algaePivotSubsystem.enableBrakeMode(enable);
-    m_funnelSubsystem.enableBrakeMode(enable);
     m_periscopeSubsystem.enableBrakeMode(enable);
+    m_climberSubsystem.enableBrakeMode(enable);
+    m_funnelSubsystem.enableBrakeMode(enable);
+    m_AEESubsystem.enableBrakeMode(enable);
+    m_CEESubsystem.enableBrakeMode(enable);
   }
 }
