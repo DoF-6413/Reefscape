@@ -15,12 +15,12 @@ public class Module {
   private SwerveModulePosition[] m_odometryPositions;
 
   // PID controllers
-  private final PIDController m_steerPID;
+  private final PIDController m_turnPID;
 
   /**
    * Constructs a new {@link Module} instance.
    *
-   * <p>This creates a new {@link Module} object used to run the Drive and Steer motors of each
+   * <p>This creates a new {@link Module} object used to run the Drive and Turn motors of each
    * Module.
    *
    * @param io {@link ModuleIO} implementation of the current robot mode.
@@ -34,12 +34,11 @@ public class Module {
     m_moduleNumber = moduleNumber;
 
     // Initialize PID controller
-    m_steerPID =
-        new PIDController(
-            DriveConstants.STEER_KP, DriveConstants.STEER_KI, DriveConstants.STEER_KD);
+    m_turnPID =
+        new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
     // Considers min and max the same point, required for the Swerve Modules since the
-    // Steer position is normalized to a range of negative pi to pi
-    m_steerPID.enableContinuousInput(-Math.PI, Math.PI);
+    // Turn position is normalized to a range of negative pi to pi
+    m_turnPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   /**
@@ -53,7 +52,7 @@ public class Module {
     m_odometryPositions = new SwerveModulePosition[sampleCount];
     for (int i = 0; i < sampleCount; i++) {
       double positionMeters = m_inputs.odometryDrivePositionsRad[i] * DriveConstants.WHEEL_RADIUS_M;
-      var angle = m_inputs.odometrySteerPositions[i];
+      var angle = m_inputs.odometryAbsTurnPositions[i];
       m_odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
     }
   }
@@ -69,19 +68,19 @@ public class Module {
   }
 
   /**
-   * Sets the idle mode of the Drive and Steer motors.
+   * Sets the idle mode of the Drive and Turn motors.
    *
    * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public void enableBrakeMode(boolean enable) {
     m_io.setDriveBrakeMode(enable);
-    m_io.setSteerBrakeMode(enable);
+    m_io.setTurnBrakeMode(enable);
   }
 
-  /** Stops the Drive and Steer motors. */
+  /** Stops the Drive and Turn motors. */
   public void stop() {
     m_io.setDriveVoltage(0.0);
-    m_io.setSteerVoltage(0.0);
+    m_io.setTurnVoltage(0.0);
   }
 
   /**
@@ -94,12 +93,12 @@ public class Module {
   }
 
   /**
-   * Sets voltage of the Steer motor. The value inputed is clamped between values of -12 to 12.
+   * Sets voltage of the Turn motor. The value inputed is clamped between values of -12 to 12.
    *
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed).
    */
-  public void setSteerVoltage(double volts) {
-    m_io.setSteerVoltage(volts);
+  public void setTurnVoltage(double volts) {
+    m_io.setTurnVoltage(volts);
   }
 
   /**
@@ -114,14 +113,14 @@ public class Module {
   }
 
   /**
-   * Set the speed of the Steer motor based on a percent scale.
+   * Set the speed of the Turn motor based on a percent scale.
    *
    * <p>On a -1 to 1 Scale. -1 representing -100%, 1 representing 100%.
    *
    * @param percent -1 (full reverse speed) to 1 (full forward speed).
    */
-  public void setSteerPercentSpeed(double percent) {
-    m_io.setSteerVoltage(percent * 12);
+  public void setTurnPercentSpeed(double percent) {
+    m_io.setTurnVoltage(percent * 12);
   }
 
   /**
@@ -134,13 +133,13 @@ public class Module {
   }
 
   /**
-   * The current absolute Steer angle of the Module in radians, normalized to a range of negative pi
+   * The current absolute Turn angle of the Module in radians, normalized to a range of negative pi
    * to pi.
    *
-   * @return The current Steer angle of the Module in radians.
+   * @return The current Turn angle of the Module in radians.
    */
   public Rotation2d getAngle() {
-    return m_inputs.steerAbsolutePositionRad;
+    return m_inputs.turnAbsolutePositionRad;
   }
 
   /**
@@ -178,14 +177,14 @@ public class Module {
   }
 
   /**
-   * @return The current {@link SwerveModulePosition} (Steer angle and Drive position).
+   * @return The current {@link SwerveModulePosition} (Turn angle and Drive position).
    */
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(getPositionMeters(), getAngle());
   }
 
   /**
-   * @return The current {@link SwerveModuleState} (Steer angle and Drive velocity).
+   * @return The current {@link SwerveModuleState} (Turn angle and Drive velocity).
    */
   public SwerveModuleState getState() {
     return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
@@ -206,7 +205,7 @@ public class Module {
   }
 
   /**
-   * Using a PID controller, calculates the voltage of the Drive and Steer motors based on the
+   * Using a PID controller, calculates the voltage of the Drive and Turn motors based on the
    * current inputed setpoint.
    *
    * @param state Desired {@link SwerveModuleState} (Desired linear speed and wheel angle).
@@ -216,11 +215,11 @@ public class Module {
     // angle in rad (-pi,pi)
     state.optimize(getAngle());
 
-    // Run Steer motor through a PID loop
-    m_io.setSteerVoltage(m_steerPID.calculate(getAngle().getRadians(), state.angle.getRadians()));
+    // Run Turn motor through a PID loop
+    m_io.setTurnVoltage(m_turnPID.calculate(getAngle().getRadians(), state.angle.getRadians()));
 
-    // Update velocity based on Steer error
-    // state.speedMetersPerSecond *= Math.cos(m_steerPID.getError()); // TODO: test and verify is
+    // Update velocity based on Turn error
+    // state.speedMetersPerSecond *= Math.cos(m_turnPID.getError()); // TODO: test and verify is
     // needed
 
     // Linear speed m/s into velocity rad/s
@@ -252,14 +251,14 @@ public class Module {
   }
 
   /**
-   * Sets the PID gains for the Steer motor's PID controller.
+   * Sets the PID gains for the Turn motor's PID controller.
    *
    * @param kP Proportional gain value.
    * @param kI Integral gain value.
    * @param kD Derivative gain value.
    */
-  public void setSteerPID(double kP, double kI, double kD) {
-    m_steerPID.setPID(kP, kI, kD);
+  public void setTurnPID(double kP, double kI, double kD) {
+    m_turnPID.setPID(kP, kI, kD);
   }
 
   /**
@@ -269,6 +268,6 @@ public class Module {
    */
   public void runCharacterization(double output) {
     m_io.setDriveVoltage(output);
-    m_io.setSteerVoltage(m_steerPID.calculate(getAngle().getRadians(), 0)); // Setpoint at 0 degrees
+    m_io.setTurnVoltage(m_turnPID.calculate(getAngle().getRadians(), 0)); // Setpoint at 0 degrees
   }
 }

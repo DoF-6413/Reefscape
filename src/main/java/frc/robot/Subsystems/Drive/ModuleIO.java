@@ -22,27 +22,27 @@ public interface ModuleIO {
     /** Velocity of the Module wheel driven by the Drive motor in radians per sec */
     public double driveVelocityRadPerSec = 0.0;
 
-    // Steer motor
+    // Turn motor
     /** Whether a signal is being recieved by the CANcoder or not */
     public boolean absoluteEncoderIsConnected = false;
-    /** Voltage applied to the Steer motor */
-    public double steerAppliedVoltage = 0.0;
-    /** Current drawn by the Steer motor in amps */
-    public double steerCurrentAmps = 0.0;
-    /** Temperature of the Steer motor in celsius */
-    public double steerTempCelsius = 0.0;
+    /** Voltage applied to the Turn motor */
+    public double turnAppliedVoltage = 0.0;
+    /** Current drawn by the Turn motor in amps */
+    public double turnCurrentAmps = 0.0;
+    /** Temperature of the Turn motor in celsius */
+    public double turnTempCelsius = 0.0;
     /** Absolute position of the wheel angle in radians (CANcoder) */
-    public Rotation2d steerAbsolutePositionRad = new Rotation2d();
-    /** Velocity of the Module wheel driven by the Steer motor in radians per sec (CANcoder) */
-    public double steerVelocityRadPerSec = 0.0;
+    public Rotation2d turnAbsolutePositionRad = new Rotation2d();
+    /** Velocity of the Module wheel driven by the Turn motor in radians per sec (CANcoder) */
+    public double turnVelocityRadPerSec = 0.0;
 
     // Odometry queueing
     /** Timestamps of singal readings */
     public double[] odometryTimestamps = new double[] {};
     /** Queued Drive position signals in radians */
     public double[] odometryDrivePositionsRad = new double[] {};
-    /** Queued Steer CANcoder position signals in radians */
-    public Rotation2d[] odometrySteerPositions = new Rotation2d[] {};
+    /** Queued Turn CANcoder position signals in radians */
+    public Rotation2d[] odometryAbsTurnPositions = new Rotation2d[] {};
   }
 
   /**
@@ -60,11 +60,11 @@ public interface ModuleIO {
   public default void setDriveVoltage(double volts) {}
 
   /**
-   * Sets voltage of the Steer motor. The value inputed is clamped between values of -12 to 12.
+   * Sets voltage of the Turn motor. The value inputed is clamped between values of -12 to 12.
    *
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed).
    */
-  public default void setSteerVoltage(double volts) {}
+  public default void setTurnVoltage(double volts) {}
 
   /**
    * Sets the idle mode of the Drive motor.
@@ -74,11 +74,11 @@ public interface ModuleIO {
   public default void setDriveBrakeMode(boolean enable) {}
 
   /**
-   * Sets the idle mode of the Steer motor.
+   * Sets the idle mode of the Turn motor.
    *
    * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
-  public default void setSteerBrakeMode(boolean enable) {}
+  public default void setTurnBrakeMode(boolean enable) {}
 
   /**
    * Sets the velocity of the Drive motor using a PID controller.

@@ -33,11 +33,12 @@ public class Drive extends SubsystemBase {
   /* Chassis */
   // Modules
   private final Module[] m_modules = new Module[4];
-  public final SwerveDriveKinematics m_swerveDriveKinematics;
+  private final SwerveDriveKinematics m_swerveDriveKinematics;
   // Gyro
   private final GyroIO m_gyroIO;
   private final GyroIOInputsAutoLogged m_gyroInputs = new GyroIOInputsAutoLogged();
   // Robot rotation
+  public Rotation2d m_robotHeading = new Rotation2d();
   private Twist2d m_twist = new Twist2d();
   private SwerveModulePosition[] m_lastModulePositions =
       new SwerveModulePosition[] {
@@ -46,7 +47,6 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition(),
         new SwerveModulePosition()
       };
-  public Rotation2d m_robotHeading = new Rotation2d();
 
   // Swerve Pose Estimator Objects
   private final SwerveDrivePoseEstimator m_swervePoseEstimator;
@@ -59,7 +59,7 @@ public class Drive extends SubsystemBase {
    *
    * <p>This creates a new Drive {@link SubsystemBase} object which determines whether the methods
    * and inputs are initialized with the real, sim, or replay code. The Drivetrain consists of four
-   * {@link Module} and a {@link Gyro}.
+   * {@link Module} and an IMU (Gyro) sensor.
    *
    * @param FRModuleIO Front Right {@link ModuleIO} implementation of the current robot mode.
    * @param FLModuleIO Front Left {@link ModuleIO} implementation of the current robot mode.
@@ -110,7 +110,7 @@ public class Drive extends SubsystemBase {
     // Initialize Pose Estimator
     m_swervePoseEstimator =
         new SwerveDrivePoseEstimator(
-            m_swerveDriveKinematics, this.getGyroAngle(), this.getModulePositions(), new Pose2d());
+            m_swerveDriveKinematics, m_robotHeading, this.getModulePositions(), new Pose2d());
 
     // Tunable PID & Feedforward gains
     SmartDashboard.putBoolean("PIDFF_Tuning/Drive/EnableTuning", false);
@@ -119,9 +119,9 @@ public class Drive extends SubsystemBase {
     SmartDashboard.putNumber("PIDFF_Tuning/Drive/Drive_kD", DriveConstants.DRIVE_KD);
     SmartDashboard.putNumber("PIDFF_Tuning/Drive/Drive_kS", DriveConstants.DRIVE_KS);
     SmartDashboard.putNumber("PIDFF_Tuning/Drive/Drive_kV", DriveConstants.DRIVE_KV);
-    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Steer_kP", DriveConstants.STEER_KP);
-    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Steer_kI", DriveConstants.STEER_KI);
-    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Steer_kD", DriveConstants.STEER_KD);
+    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Turn_kP", DriveConstants.TURN_KP);
+    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Turn_kI", DriveConstants.TURN_KI);
+    SmartDashboard.putNumber("PIDFF_Tuning/Drive/Turn_kD", DriveConstants.TURN_KD);
   }
 
   @Override
@@ -186,12 +186,12 @@ public class Drive extends SubsystemBase {
     if (SmartDashboard.getBoolean("PIDFF_Tuning/Drive/EnableTuning", false)) {
       this.updateDrivePID();
       this.updateDriveFF();
-      this.updateSteerPID();
+      this.updateTurnPID();
     }
   }
 
   /**
-   * Sets the idle mode of the entire Drivetrain (Drive and Steer motors).
+   * Sets the idle mode of the entire Drivetrain (Drive and Turn motors).
    *
    * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
@@ -212,7 +212,7 @@ public class Drive extends SubsystemBase {
    */
   public void runVelocity(ChassisSpeeds speeds) {
     // Convert ChassisSpeeds to SwerveModuleStates, these will be the setpoints for the Drive and
-    // Steer motors
+    // Turn motors
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates =
         m_swerveDriveKinematics.toSwerveModuleStates(discreteSpeeds);
@@ -436,15 +436,15 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Sets the PID gains for all Steer motors' in-code PID controller.
+   * Sets the PID gains for all Turn motors' in-code PID controller.
    *
    * @param kP Proportional gain value.
    * @param kI Integral gain value.
    * @param kD Derivative gain value.
    */
-  public void setSteerPID(double kP, double kI, double kD) {
+  public void setTurnPID(double kP, double kI, double kD) {
     for (int i = 0; i < 4; i++) {
-      m_modules[i].setSteerPID(kP, kI, kD);
+      m_modules[i].setTurnPID(kP, kI, kD);
     }
   }
 
@@ -484,23 +484,23 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  /** Update PID gains for the Steer motors from SmartDashboard inputs. */
-  private void updateSteerPID() {
+  /** Update PID gains for the Turn motors from SmartDashboard inputs. */
+  private void updateTurnPID() {
     // If any value on SmartDashboard changes, update the gains
-    if (DriveConstants.STEER_KP
-            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Steer_kP", DriveConstants.STEER_KP)
-        || DriveConstants.STEER_KI
-            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Steer_kI", DriveConstants.STEER_KI)
-        || DriveConstants.STEER_KD
-            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Steer_kD", DriveConstants.STEER_KD)) {
-      DriveConstants.STEER_KP =
-          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Steer_kP", DriveConstants.STEER_KP);
-      DriveConstants.STEER_KI =
-          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Steer_kI", DriveConstants.STEER_KI);
-      DriveConstants.STEER_KD =
-          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Steer_kD", DriveConstants.STEER_KD);
+    if (DriveConstants.TURN_KP
+            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kP", DriveConstants.TURN_KP)
+        || DriveConstants.TURN_KI
+            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kI", DriveConstants.TURN_KI)
+        || DriveConstants.TURN_KD
+            != SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kD", DriveConstants.TURN_KD)) {
+      DriveConstants.TURN_KP =
+          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kP", DriveConstants.TURN_KP);
+      DriveConstants.TURN_KI =
+          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kI", DriveConstants.TURN_KI);
+      DriveConstants.TURN_KD =
+          SmartDashboard.getNumber("PIDFF_Tuning/Drive/Turn_kD", DriveConstants.TURN_KD);
       // Sets the new gains
-      this.setSteerPID(DriveConstants.STEER_KP, DriveConstants.STEER_KI, DriveConstants.STEER_KD);
+      this.setTurnPID(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
     }
   }
 }
