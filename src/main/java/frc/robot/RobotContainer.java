@@ -405,10 +405,10 @@ public class RobotContainer {
     m_auxController
         .leftTrigger()
         .onTrue(
-            SuperstructureCommands.superstructureToPickup(
+            SuperstructureCommands.positionToPickup(
                 m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_CEESubsystem,
@@ -418,9 +418,9 @@ public class RobotContainer {
     m_auxController
         .a()
         .onTrue(
-            SuperstructureCommands.superstructureToL1(m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.positionToL1(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_CEESubsystem,
@@ -430,10 +430,10 @@ public class RobotContainer {
     m_auxController
         .b()
         .onTrue(
-            SuperstructureCommands.superstructureToL2Coral(
+            SuperstructureCommands.positionToL2Coral(
                 m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_CEESubsystem,
@@ -443,10 +443,10 @@ public class RobotContainer {
     m_auxController
         .y()
         .onTrue(
-            SuperstructureCommands.superstructureToL3Coral(
+            SuperstructureCommands.positionToL3Coral(
                 m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_CEESubsystem,
@@ -456,9 +456,9 @@ public class RobotContainer {
     m_auxController
         .x()
         .onTrue(
-            SuperstructureCommands.superstructureToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.positionToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_CEESubsystem,
@@ -469,10 +469,10 @@ public class RobotContainer {
     m_auxController
         .leftBumper()
         .onTrue(
-            SuperstructureCommands.superstructureToProcessor(
+            SuperstructureCommands.positionToProcessor(
                 m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_CEESubsystem,
@@ -482,9 +482,9 @@ public class RobotContainer {
     m_auxController
         .rightBumper()
         .onTrue(
-            SuperstructureCommands.superstructureToNet(m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.positionToNet(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_CEESubsystem,
@@ -494,10 +494,10 @@ public class RobotContainer {
     m_auxController
         .rightStick()
         .onTrue(
-            SuperstructureCommands.superstructureToL2Algae(
+            SuperstructureCommands.positionToL2Algae(
                 m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_CEESubsystem,
@@ -507,10 +507,10 @@ public class RobotContainer {
     m_auxController
         .leftStick()
         .onTrue(
-            SuperstructureCommands.superstructureToL3Algae(
+            SuperstructureCommands.positionToL3Algae(
                 m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_CEESubsystem,
@@ -521,7 +521,7 @@ public class RobotContainer {
     //     .x()
     //     .onTrue(
     //         new InstantCommand(
-    //             () -> SuperstructureCommands.superstructureToPosition(m_periscopeSubsystem,
+    //             () -> SuperstructureCommands.setPositions(m_periscopeSubsystem,
     // m_algaePivotSubsystem),
     //             m_algaePivotSubsystem,
     //             m_periscopeSubsystem));
@@ -531,7 +531,7 @@ public class RobotContainer {
     //     .onTrue(
     //         new InstantCommand(
     //             () ->
-    //                 SuperstructureCommands.superstructureToPosition(m_periscopeSubsystem,
+    //                 SuperstructureCommands.setPositions(m_periscopeSubsystem,
     // m_algaePivotSubsystem),
     //             m_algaePivotSubsystem,
     //             m_periscopeSubsystem));

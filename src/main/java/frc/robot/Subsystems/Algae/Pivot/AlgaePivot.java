@@ -88,8 +88,9 @@ public class AlgaePivot extends SubsystemBase {
    * @param setpoint Angle in radians.
    */
   public void setAngle(double setpoint) {
-    Logger.recordOutput("SuperstructureSetpoints/AEEPivotAngle", setpoint);
+    Logger.recordOutput("SuperstructureSetpoints/ALGAEPivotAngle", setpoint);
     m_PIDController.setSetpoint(setpoint);
+    m_PIDController.setTolerance(setpoint * AlgaePivotConstants.ERROR_TOLERANCE_PERCENT);
   }
 
   /**

@@ -261,7 +261,7 @@ public final class Constants {
    * and {@link Funnel}.
    */
   public static class SuperstructureConstants {
-    /** Used to determine setpoints of each mechanism on the Superstructure */
+    /** Used to determine setpoints of each mechanism on the Superstructure */ // TODO: Move enum to SuperstructureCommands
     public enum OBJECTIVE {
       L1,
       L2_CORAL,

@@ -48,11 +48,8 @@ public class AlgaePivotConstants {
   public static double KI = 0.0;
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
   public static double KD = 0.0;
-  /**
-   * How many radians the angle of the ALGAE Pivot can be within its angle setpoint to be consider
-   * at the setpoint
-   */
-  public static final double ERROR_TOLERANCE_RAD = 0.0; // TODO: update
+  /** The percent error the ALGAE Pivot is allowed to be within its setpoint to be considered "atSetpoint" */
+  public static final double ERROR_TOLERANCE_PERCENT = 0.02; // TODO: test
 
   // SIM CONSTANTS
   /** Moment of inertia for the ALGAE Pivot in kilograms * meters squared */
