@@ -50,8 +50,8 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     m_motorControllers[1] = new PositionVoltage(0);
 
     // Initialize the hall effect sensors
-    for (int i = 0; i < 6; i++) {
-      m_hallEffectSensors[i] = new DigitalInput(PeriscopeConstants.HALL_EFFECT_SENSORS[i]);
+    for (int i = 0; i < m_hallEffectSensors.length; i++) {
+      m_hallEffectSensors[i] = new DigitalInput(PeriscopeConstants.HALL_EFFECT_SENSORS_PORT[i]);
     }
 
     // Motor configuration
@@ -108,7 +108,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     }
 
     // Initialize logged signals for both motors
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < m_periscopeMotors.length; i++) {
       m_positionRot[i] = m_periscopeMotors[i].getPosition();
       m_positionRot[i].setUpdateFrequency(PeriscopeConstants.UPDATE_FREQUENCY_HZ);
       m_velocityRotPerSec[i] = m_periscopeMotors[i].getVelocity();
@@ -153,7 +153,8 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
                     / 2))
             / PeriscopeConstants.GEAR_RATIO;
     inputs.velocityMetersPerSec = inputs.velocityRadPerSec * PeriscopeConstants.DRUM_RADIUS_M;
-    for (int i = 0; i < 6; i++) {
+
+    for (int i = 0; i <m_hallEffectSensors.length; i++) {
       inputs.hallEffectSensors[i] = m_hallEffectSensors[i].get();
     }
   }
