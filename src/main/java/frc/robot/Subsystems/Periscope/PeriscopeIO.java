@@ -20,8 +20,8 @@ public interface PeriscopeIO {
     public double velocityMetersPerSec = 0.0;
     /** Rotational velocity of the Periscope drum in radians per second */
     public double velocityRadPerSec = 0.0;
-    /** Hall effect sensor is reached */
-    public boolean[] hallEffectSensors = {false, false, false, false, false, false};
+    /** If the Hall effect (magnetic) sensor is triggered */
+    public boolean[] isHallEffectSensorTriggered = {false, false, false, false, false, false};
   }
 
   /**

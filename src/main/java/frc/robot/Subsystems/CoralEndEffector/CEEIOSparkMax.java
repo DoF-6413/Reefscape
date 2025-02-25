@@ -17,7 +17,7 @@ public class CEEIOSparkMax implements CEEIO {
   private final SparkMax m_sparkmax;
   private final RelativeEncoder m_relativeEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
-  private final DigitalInput m_beamBreak = new DigitalInput(CEEConstants.BEAM_BREAK_PORT);
+  private final DigitalInput m_beamBreak;
 
   /**
    * Constructs a new {@link CEEIOSparkMax} instance.
@@ -45,19 +45,23 @@ public class CEEIOSparkMax implements CEEIO {
     // Apply configurations
     m_sparkmax.configure(m_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-
+    // Initialize Beam Break
+    m_beamBreak = new DigitalInput(CEEConstants.BEAM_BREAK_PORT);
   }
 
   @Override
   public void updateInputs(CEEIOInputs inputs) {
-    // Update inputs from the motor
+    // Update logged inputs from the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
     inputs.currentAmps = m_sparkmax.getOutputCurrent();
     inputs.tempCelsius = m_sparkmax.getMotorTemperature();
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / CEEConstants.GEAR_RATIO;
-    inputs.isBeamBrakeBroken = !m_beamBreak.get();
+    
+    // Update logged inputs from the Beam Break
+    // If sensor is NOT broken, returns true, so invert value to match logged variable
+    inputs.isbeamBreakTriggered = !m_beamBreak.get();
   }
 
   @Override

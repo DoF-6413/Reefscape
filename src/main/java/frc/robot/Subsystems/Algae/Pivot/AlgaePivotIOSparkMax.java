@@ -34,13 +34,17 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
     m_absoluteEncoder = m_sparkmax.getAbsoluteEncoder();
 
     // SPARK MAX configurations
-
     m_config
         .inverted(AlgaePivotConstants.IS_INVERTED)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(AlgaePivotConstants.CUR_LIM_A);
     // setCANTimeout arguments in miliseconds so multiple by 1000 to convert sec to miliseconds
     m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);
+
+    // Absolute Encoder configurations
+    m_config
+      .absoluteEncoder
+      .zeroOffset(AlgaePivotConstants.ZERO_OFFSET);
 
     // Apply configuration
     m_sparkmax.configure(m_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

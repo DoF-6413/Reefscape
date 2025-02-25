@@ -14,8 +14,8 @@ public interface CEEIO {
     public double tempCelsius = 0.0;
     /** Velocity of the CEE in radians per second */
     public double velocityRadPerSec = 0.0;
-    /** Beam brake is broken  */
-    public boolean isBeamBrakeBroken = false;
+    /** If the beam break sensor is broken, an object is in between the sensor  */
+    public boolean isbeamBreakTriggered = false;
   }
 
   /**

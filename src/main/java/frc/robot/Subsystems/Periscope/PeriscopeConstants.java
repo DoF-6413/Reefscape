@@ -8,8 +8,17 @@ public class PeriscopeConstants {
   public static final int CAN_ID_0 = 15;
   /** CAN ID for the second Periscope motor. This motor will use index 1 in any array */
   public static final int CAN_ID_1 = 16;
-  /** Port where the hall effect sensors */
-  public static final int[] HALL_EFFECT_SENSORS_PORT = {1,2,3,4,5,6};
+  /** 
+   * DIO ports of the 6 Hall Effect sensors on the Periscope.
+   * 
+   * 0 - Bottom
+   * 1 - L1
+   * 2 - L2
+   * 3 - L3
+   * 4 - L4
+   * 5 - Top
+   */
+  public static final int[] HALL_EFFECT_SENSORS_PORTS = {0, 1, 2, 3, 4, 5};
   /** Gear reduction of 38:12 for the Periscope */
   public static final double GEAR_RATIO = 38.0 / 12.0;
   /**

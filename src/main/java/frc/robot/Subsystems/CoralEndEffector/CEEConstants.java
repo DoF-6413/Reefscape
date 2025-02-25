@@ -4,16 +4,16 @@ public class CEEConstants {
   // REAL CONSTANTS
   /** CAN ID of the CEE SPARK MAX */
   public static final int CAN_ID = 19;
+  /** DIO port of the CEE Beam Break on the roboRIO */
+  public static final int BEAM_BREAK_PORT = 6;
+  /** Gear reduction of 3:1 for the CEE motor */
+  public static final double GEAR_RATIO = 3.0 / 1.0;
   /** Current limit, in amps for the CEE motor */
   public static final int CUR_LIM_A = 20;
   /**
    * Set the inversion status of the CEE to false, making Counterclockwise the positive direction
    */
   public static final boolean IS_INVERTED = false;
-  /** Gear reduction of 3:1 for the CEE motor */
-  public static final double GEAR_RATIO = 3.0 / 1.0;
-  /** Port where the beam breake is */
-  public static final int BEAM_BREAK_PORT = 0;
 
   // PID CONSTANTS
   /**
