@@ -14,9 +14,10 @@
     "Test Paths"
   ],
   "autoFolders": [
-    "1P_SLC",
+    "Test Autos",
+    "1P_SLR",
     "1P_SLL",
-    "1P_SLR"
+    "1P_SLC"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
