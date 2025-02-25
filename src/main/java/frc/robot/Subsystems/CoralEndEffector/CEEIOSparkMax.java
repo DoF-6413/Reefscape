@@ -17,7 +17,7 @@ public class CEEIOSparkMax implements CEEIO {
   private final SparkMax m_sparkmax;
   private final RelativeEncoder m_relativeEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
-  private final DigitalInput m_BeamBrake = new DigitalInput(CEEConstants.BEAM_BRAKE_PORT);
+  private final DigitalInput m_beamBreak = new DigitalInput(CEEConstants.BEAM_BREAK_PORT);
 
   /**
    * Constructs a new {@link CEEIOSparkMax} instance.
@@ -57,7 +57,7 @@ public class CEEIOSparkMax implements CEEIO {
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / CEEConstants.GEAR_RATIO;
-    inputs.isBeamBrakeBroken = !m_BeamBrake.get();
+    inputs.isBeamBrakeBroken = !m_beamBreak.get();
   }
 
   @Override

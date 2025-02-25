@@ -14,6 +14,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.RobotStateConstants;
 
 public class PeriscopeIOTalonFX implements PeriscopeIO {
@@ -21,6 +22,8 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
   private final TalonFX[] m_periscopeMotors = new TalonFX[2];
   private final PositionVoltage[] m_motorControllers = new PositionVoltage[2];
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
+  private final DigitalInput[] m_hallEffectSensors = new DigitalInput[6];
+
 
   // Periscope motors' logged signals
   private StatusSignal<Voltage>[] m_appliedVolts;
@@ -45,6 +48,11 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     // Initialize the closed loop motor controllers
     m_motorControllers[0] = new PositionVoltage(0);
     m_motorControllers[1] = new PositionVoltage(0);
+
+    // Initialize the hall effect sensors
+    for (int i = 0; i < 6; i++) {
+      m_hallEffectSensors[i] = new DigitalInput(PeriscopeConstants.HALL_EFFECT_SENSORS[i]);
+    }
 
     // Motor configuration
     m_motorConfig
@@ -145,6 +153,9 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
                     / 2))
             / PeriscopeConstants.GEAR_RATIO;
     inputs.velocityMetersPerSec = inputs.velocityRadPerSec * PeriscopeConstants.DRUM_RADIUS_M;
+    for (int i = 0; i < 6; i++) {
+      inputs.hallEffectSensors[i] = m_hallEffectSensors[i].get();
+    }
   }
 
   @Override
