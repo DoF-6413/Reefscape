@@ -9,6 +9,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.RobotStateConstants;
 
 public class CEEIOSparkMax implements CEEIO {
@@ -16,6 +17,7 @@ public class CEEIOSparkMax implements CEEIO {
   private final SparkMax m_sparkmax;
   private final RelativeEncoder m_relativeEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
+  private final DigitalInput m_BeamBrake = new DigitalInput(CEEConstants.BEAM_BRAKE_PORT);
 
   /**
    * Constructs a new {@link CEEIOSparkMax} instance.
@@ -42,6 +44,8 @@ public class CEEIOSparkMax implements CEEIO {
 
     // Apply configurations
     m_sparkmax.configure(m_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+
   }
 
   @Override
@@ -53,6 +57,7 @@ public class CEEIOSparkMax implements CEEIO {
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / CEEConstants.GEAR_RATIO;
+    inputs.isBeamBrakeBroken = !m_BeamBrake.get();
   }
 
   @Override
