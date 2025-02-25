@@ -238,7 +238,8 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         m_timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryDrivePositionsRad =
         m_drivePositionQueue.stream()
-            .mapToDouble((Double value) -> Units.rotationsToRadians(value))
+            .mapToDouble(
+                (Double value) -> Units.rotationsToRadians(value / DriveConstants.DRIVE_GEAR_RATIO))
             .toArray();
     inputs.odometryAbsTurnPositions =
         m_absEncoderPositionQueue.stream()

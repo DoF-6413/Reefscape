@@ -130,11 +130,11 @@ public class Drive extends SubsystemBase {
     // Prevents odometry updates while reading data
     odometryLock.lock();
     // Update the periodic for each Module and the Gyro
+    m_gyroIO.updateInputs(m_gyroInputs);
+    Logger.processInputs("Gyro", m_gyroInputs);
     for (int i = 0; i < 4; i++) {
       m_modules[i].updateInputs();
     }
-    m_gyroIO.updateInputs(m_gyroInputs);
-    Logger.processInputs("Gyro", m_gyroInputs);
     // Re-enable odometry updates
     odometryLock.unlock();
 
@@ -151,7 +151,17 @@ public class Drive extends SubsystemBase {
     // Update odometry with queued readings from motors and encoders in the form of
     // SwerveModulePositions
     double[] sampleTimestamps = m_modules[0].getOdometryTimestamps();
-    for (int i = 0; i < sampleTimestamps.length; i++) {
+    double[] goodSamples;
+    // Only the first 5 samples are actually updated for some reason so use those
+    if (sampleTimestamps.length >= 5) {
+      goodSamples = new double[5];
+      for (int i = 0; i < 5; i++) {
+        goodSamples[i] = sampleTimestamps[i];
+      }
+    } else {
+      goodSamples = sampleTimestamps;
+    }
+    for (int i = 0; i < goodSamples.length; i++) {
       SwerveModulePosition[] wheelPositions = new SwerveModulePosition[4];
       SwerveModulePosition[] wheelDeltas = new SwerveModulePosition[4];
 
@@ -357,7 +367,7 @@ public class Drive extends SubsystemBase {
    * @param pose {@link Pose2d} to set the robot to.
    */
   public void resetPose(Pose2d pose) {
-    m_swervePoseEstimator.resetPosition(this.getPoseAngle(), this.getModulePositions(), pose);
+    m_swervePoseEstimator.resetPosition(m_robotHeading, this.getModulePositions(), pose);
   }
 
   /**
