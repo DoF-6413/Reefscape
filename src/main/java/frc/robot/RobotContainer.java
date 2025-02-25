@@ -156,7 +156,26 @@ public class RobotContainer {
 
     /* Autonomous Routines */
     m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
-    m_autoChooser.addOption("Path Planner", new PathPlannerAuto("test1"));
+    // 1 Piece
+    // Starting Line Left (SLL)
+    m_autoChooser.addOption("1P_SLL-IJ1", new PathPlannerAuto("1P_SLL-IJ1"));
+    m_autoChooser.addOption("1P_SLL-I1", new PathPlannerAuto("1P_SLL-I1"));
+    m_autoChooser.addOption("1P_SLL-I4", new PathPlannerAuto("1P_SLL-I4"));
+    m_autoChooser.addOption("1P_SLL-J1", new PathPlannerAuto("1P_SLL-J1"));
+    m_autoChooser.addOption("1P_SLL-J4", new PathPlannerAuto("1P_SLL-J4"));
+    // Starting Line Center (SLC)
+    m_autoChooser.addOption("1P_SLC-GH1", new PathPlannerAuto("1P_SLC-GH1"));
+    m_autoChooser.addOption("1P_SLC-G!", new PathPlannerAuto("1P_SLC-G1"));
+    m_autoChooser.addOption("1P_SLC-G4", new PathPlannerAuto("1P_SLC-G4"));
+    m_autoChooser.addOption("1P_SLC-H1", new PathPlannerAuto("1P_SLC-H1"));
+    m_autoChooser.addOption("1P_SLC-H4", new PathPlannerAuto("1P_SLC-H4"));
+    // Starting Line Right (SLR)
+    m_autoChooser.addOption("1P_SLR-EF1", new PathPlannerAuto("1P_SLR-EF1"));
+    m_autoChooser.addOption("1P_SLR-E1", new PathPlannerAuto("1P_SLR-E1"));
+    m_autoChooser.addOption("1P_SLR-E4", new PathPlannerAuto("1P_SLR-E4"));
+    m_autoChooser.addOption("1P_SLR-F1", new PathPlannerAuto("1P_SLR-F1"));
+    m_autoChooser.addOption("1P_SLR-F4", new PathPlannerAuto("1P_SLR-F4"));
+
     /* Test Routines */
     m_autoChooser.addOption("Forward", new PathPlannerAuto("Forward"));
     m_autoChooser.addOption("Forward 180", new PathPlannerAuto("Forward 180"));
