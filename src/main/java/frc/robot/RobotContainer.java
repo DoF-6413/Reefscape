@@ -2,13 +2,12 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.TeleopCommands.DriveCommands;
@@ -166,6 +165,8 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    SmartDashboard.putNumber("Funnel Speed Percent", 0);
   }
 
   /**
@@ -343,25 +344,46 @@ public class RobotContainer {
     //             m_CEESubsystem));
 
     // Funnel testing binding
+    // m_auxController
+    //     .povUp()
+    //     .onTrue(
+    //         Commands.run(
+    //             () -> {
+    //               m_funnelSubsystem.enablePID(true);
+    //
+    // m_funnelSubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
+    //             },
+    //             m_funnelSubsystem))
+    //     .onFalse(
+    //         new InstantCommand(
+    //             () -> {
+    //               m_funnelSubsystem.setSetpoint(0);
+    //               m_funnelSubsystem.enablePID(false);
+    //             },
+    //             m_funnelSubsystem));
+    m_auxController
+        .povDown()
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    m_funnelSubsystem.setVoltage(
+                        12 * SmartDashboard.getNumber("Funnel Speed Percent", 0)),
+                m_funnelSubsystem))
+        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
+    m_auxController
+        .povLeft()
+        .onTrue(
+            new InstantCommand(() -> m_funnelSubsystem.setVoltage(-12 * 0.8), m_funnelSubsystem))
+        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
+    m_auxController
+        .povRight()
+        .onTrue(
+            new InstantCommand(() -> m_funnelSubsystem.setVoltage(-12 * 0.5), m_funnelSubsystem))
+        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
     m_auxController
         .povUp()
         .onTrue(
-            Commands.run(
-                () -> {
-                  m_funnelSubsystem.enablePID(true);
-                  m_funnelSubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
-                },
-                m_funnelSubsystem))
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  m_funnelSubsystem.setSetpoint(0);
-                  m_funnelSubsystem.enablePID(false);
-                },
-                m_funnelSubsystem));
-    m_auxController
-        .povDown()
-        .onTrue(new InstantCommand(() -> m_funnelSubsystem.setVoltage(12), m_funnelSubsystem))
+            new InstantCommand(() -> m_funnelSubsystem.setVoltage(-12 * 0.3), m_funnelSubsystem))
         .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
 
     // ALGAE Pivot testing binding
