@@ -58,7 +58,7 @@ public class CEEIOSparkMax implements CEEIO {
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / CEEConstants.GEAR_RATIO;
-    
+
     // Update logged inputs from the Beam Break
     // If sensor is NOT broken, returns true, so invert value to match logged variable
     inputs.isbeamBreakTriggered = !m_beamBreak.get();

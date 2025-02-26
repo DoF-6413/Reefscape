@@ -1,7 +1,6 @@
 package frc.robot.Subsystems.Algae.Pivot;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -42,9 +41,7 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
     m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);
 
     // Absolute Encoder configurations
-    m_config
-      .absoluteEncoder
-      .zeroOffset(AlgaePivotConstants.ZERO_OFFSET);
+    m_config.absoluteEncoder.zeroOffset(AlgaePivotConstants.ZERO_OFFSET);
 
     // Apply configuration
     m_sparkmax.configure(m_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -61,7 +58,6 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
             / AlgaePivotConstants.GEAR_RATIO;
     inputs.currentAmps = m_sparkmax.getOutputCurrent();
     inputs.tempCelsius = m_sparkmax.getMotorTemperature();
-    
   }
 
   @Override

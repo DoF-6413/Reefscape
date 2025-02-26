@@ -122,7 +122,7 @@ public class CEE extends SubsystemBase {
 
   /**
    * Triggered means that the beam break is broken (an object is in between the sensor).
-   * 
+   *
    * @return {@code true} if the sensor has been triggered, {@code false} if not.
    */
   public boolean isBeamBreakTriggered() {
