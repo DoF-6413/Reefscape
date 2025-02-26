@@ -145,7 +145,11 @@ public final class Constants {
      * field. Measured in meters
      */
     public static final Translation2d REEF_CENTER_TRANSLATION =
-        new Translation2d(Units.inchesToMeters(176.746), FIELD_WIDTH / 2.0);
+        new Translation2d(
+            RobotStateConstants.isRed()
+                ? FIELD_LENGTH - Units.inchesToMeters(176.746)
+                : Units.inchesToMeters(176.746),
+            FIELD_WIDTH / 2.0);
 
     /** A Map that links the BRANCH letter to its position on the field as a {@link Pose2d} */
     public static final Map<String, Pose2d> BRANCH_POSES = new HashMap<>();

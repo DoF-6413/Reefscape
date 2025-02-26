@@ -302,7 +302,7 @@ public class Drive extends SubsystemBase {
   public void setRaw(double xVelocity, double yVelocity, double angularVelocity) {
     runVelocity(
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            xVelocity, yVelocity, angularVelocity, this.getPoseAngle()));
+            xVelocity, yVelocity, angularVelocity, this.getRobotHeading()));
   }
 
   /**
@@ -326,8 +326,8 @@ public class Drive extends SubsystemBase {
    *
    * @return {@link Rotation2d} of the current angle of the robot.
    */
-  public Rotation2d getPoseAngle() {
-    return this.getCurrentPose2d().getRotation();
+  public Rotation2d getRobotHeading() {
+    return m_robotHeading;
   }
 
   /* ~~~~~~~~~~~~~~~~~~ Gyro ~~~~~~~~~~~~~~~~~~ */

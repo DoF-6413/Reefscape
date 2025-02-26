@@ -1,7 +1,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -238,13 +237,7 @@ public class RobotContainer {
     m_driverController
         .a()
         .onTrue(
-            new InstantCommand(
-                    () ->
-                        m_driveSubsystem.resetPose(
-                            new Pose2d(
-                                m_driveSubsystem.getCurrentPose2d().getTranslation(),
-                                Rotation2d.kZero)),
-                    m_driveSubsystem)
+            new InstantCommand(() -> m_driveSubsystem.zeroYaw(), m_driveSubsystem)
                 .withName("ZeroYaw"));
 
     /* Pathfinding */
@@ -286,7 +279,7 @@ public class RobotContainer {
     m_driverController
         .rightBumper()
         .onTrue(
-            PathfindingCommands.pathfindToClosestReef(
+            PathfindingCommands.pathfindToClosestBranch(
                     m_driveSubsystem,
                     () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
                     m_driverController.rightBumper().negate())

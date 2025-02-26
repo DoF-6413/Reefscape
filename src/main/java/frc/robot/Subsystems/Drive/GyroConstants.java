@@ -9,7 +9,7 @@ public class GyroConstants {
   /** CAN ID for the Pigeon 2.0 IMU */
   public static final int CAN_ID = 14;
   /** Refresh the signals from the Pigeon IMU 50 times a second (every 0.02 seconds) */
-  public static final double UPDATE_FREQUENCY_HZ = 50.0;
+  public static final double UPDATE_FREQUENCY_HZ = 100.0;
   /** Refresh the position signals from the Pigeon IMU 250 times a second (every 0.004 seconds) */
   public static final double ODOMETRY_UPDATE_FREQUENCY_HZ = 250.0;
 }

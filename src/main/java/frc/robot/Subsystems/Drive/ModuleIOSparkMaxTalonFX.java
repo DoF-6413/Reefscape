@@ -243,7 +243,11 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
             .toArray();
     inputs.odometryAbsTurnPositions =
         m_absEncoderPositionQueue.stream()
-            .map((Double value) -> Rotation2d.fromRotations(value))
+            .map(
+                (Double value) ->
+                    Rotation2d.fromRadians(
+                        MathUtil.angleModulus(
+                            Units.rotationsToRadians(value) + m_absEncoderOffsetRad)))
             .toArray(Rotation2d[]::new);
     // Clear queues for a new set of signals next robot cycle
     m_timestampQueue.clear();
