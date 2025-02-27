@@ -8,11 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.197788398217981,
-        "y": 5.341756178092338
+        "x": 6.208405053708346,
+        "y": 5.3434838542974825
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "SLL"
     },
     {
       "anchor": {
@@ -20,12 +20,12 @@
         "y": 5.085911885245901
       },
       "prevControl": {
-        "x": 5.568971995254899,
-        "y": 5.043819647268162
+        "x": 5.569057352469682,
+        "y": 5.044322464926067
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "I"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -121.26373169437733
+    "rotation": -121.42956561483864
   },
   "reversed": false,
   "folder": "SLL",

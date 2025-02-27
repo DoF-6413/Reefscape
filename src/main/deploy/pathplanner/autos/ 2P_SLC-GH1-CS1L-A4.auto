@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SLC-GH"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GH-CS1L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CS1L - A"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "2P_SLC-GH1",
+  "choreoAuto": false
+}

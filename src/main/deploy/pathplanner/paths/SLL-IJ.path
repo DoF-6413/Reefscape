@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.120696721311476,
-        "y": 5.529456967213114
+        "x": 7.132684426229508,
+        "y": 5.325665983606557
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.8881656916079,
-        "y": 5.4257677014302415
+        "x": 5.901224184374967,
+        "y": 5.315439907894256
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "SLL"
     },
     {
       "anchor": {
@@ -20,12 +20,12 @@
         "y": 5.217776639344262
       },
       "prevControl": {
-        "x": 6.334945284426898,
-        "y": 5.378105921097396
+        "x": 6.319352899730698,
+        "y": 5.255120622341785
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "IJ"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -120.9637565320732
+    "rotation": -121.60750224624886
   },
   "reversed": false,
   "folder": "SLL",
