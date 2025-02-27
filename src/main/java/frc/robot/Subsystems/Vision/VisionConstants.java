@@ -70,10 +70,6 @@ public class VisionConstants {
   public static final int AVERAGE_FPS = 40;
   /** Average processing latency from real Raspberry Pis */
   public static final int AVERAGE_LATENCY_MS = 20;
-  /** Average pixel error in calibarion */
-  public static final double AVERAGE_ERROR_PX = 0.60;
-  /** Standard deviations of pixel error */
-  public static final double ERROR_STDDEV_PX = 0.30;
   /** Display simulated camera feed. */
   public static final boolean ENABLE_SIM_CAMERA_STREAM = true;
 }

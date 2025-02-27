@@ -34,7 +34,7 @@ public class VisionIOSim extends VisionIOPhotonVision {
         VisionConstants.CAMERA_RESOLUTION_HEIGHT_PX,
         VisionConstants.CAMERA_FOV);
     camProp.setFPS(VisionConstants.AVERAGE_FPS);
-    camProp.setCalibError(VisionConstants.AVERAGE_ERROR_PX, VisionConstants.ERROR_STDDEV_PX);
+    camProp.setCalibError(0, 0);
     m_cameraSim = new PhotonCameraSim(super.m_camera, camProp);
 
     // Initilze Vision system simulation
