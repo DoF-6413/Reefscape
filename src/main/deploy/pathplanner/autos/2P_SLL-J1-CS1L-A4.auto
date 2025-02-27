@@ -26,6 +26,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "2P_SLL_J1",
+  "folder": "2P_SLL-J1",
   "choreoAuto": false
 }

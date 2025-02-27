@@ -3,7 +3,26 @@
   "command": {
     "type": "sequential",
     "data": {
-      "commands": []
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SLR - E"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "E-CS2R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CS2R-C"
+          }
+        }
+      ]
     }
   },
   "resetOdom": true,

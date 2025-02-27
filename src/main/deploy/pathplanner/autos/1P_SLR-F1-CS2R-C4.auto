@@ -7,25 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SLR - E"
+            "pathName": "SLR - F"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "E-CS2R"
+            "pathName": "F-CS2R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "CS2R-D"
+            "pathName": "CS2R-C"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "2P_SLR-E1",
+  "folder": "2P_SLR-F1",
   "choreoAuto": false
 }

@@ -19,13 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CS2R-D"
+            "pathName": "CS2R-B"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "2P_SLR-E1",
+  "folder": "2P_SLR-E4",
   "choreoAuto": false
 }
