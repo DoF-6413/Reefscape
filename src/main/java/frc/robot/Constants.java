@@ -249,9 +249,8 @@ public final class Constants {
     /* Pathfinding */
     /** Max translational and rotational velocity and acceleration used for Pathfinding */
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
-        new PathConstraints(
-            5.2, 5.2, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
+        new PathConstraints(5, 5, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
     /** Default distance away from any wall when the robot is Pathfinding towards one */
-    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(6);
+    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(12);
   }
 }

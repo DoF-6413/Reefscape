@@ -34,7 +34,7 @@ public class GyroIOPigeon2 implements GyroIO {
     System.out.println("[Init] Creating GyroIOPigeon2");
 
     // Initialize Pigeon 2.0 IMU
-    m_gyro = new Pigeon2(GyroConstants.CAN_ID, "Drivetrain");
+    m_gyro = new Pigeon2(DriveConstants.GYRO_CAN_ID, "Drivetrain");
 
     // Pigeon configuration
     m_gyro.getConfigurator().apply(new Pigeon2Configuration());
@@ -44,9 +44,9 @@ public class GyroIOPigeon2 implements GyroIO {
 
     // Initialize IMU inputs and set update frequency to be every 0.01 seconds
     m_yawDeg = m_gyro.getYaw();
-    m_yawDeg.setUpdateFrequency(GyroConstants.ODOMETRY_UPDATE_FREQUENCY_HZ);
+    m_yawDeg.setUpdateFrequency(DriveConstants.ODOMETRY_UPDATE_FREQUENCY_HZ);
     m_yawVelocityDegPerSec = m_gyro.getAngularVelocityZWorld();
-    m_yawVelocityDegPerSec.setUpdateFrequency(GyroConstants.UPDATE_FREQUENCY_HZ);
+    m_yawVelocityDegPerSec.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
 
     // Initialize queues
     m_yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
@@ -62,10 +62,11 @@ public class GyroIOPigeon2 implements GyroIO {
         Rotation2d.fromRadians(
             MathUtil.angleModulus(
                 Units.degreesToRadians(m_yawDeg.getValueAsDouble())
-                    + GyroConstants.HEADING_OFFSET_RAD));
+                    + DriveConstants.HEADING_OFFSET_RAD));
     inputs.yawVelocityRadPerSec =
         Units.degreesToRadians(m_gyro.getAngularVelocityZWorld().getValueAsDouble());
 
+    // Update odometry queues
     inputs.odometryYawTimestamps =
         m_yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryYawPositions =

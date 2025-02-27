@@ -61,15 +61,15 @@ public class Drive extends SubsystemBase {
    * and inputs are initialized with the real, sim, or replay code. The Drivetrain consists of four
    * {@link Module} and an IMU (Gyro) sensor.
    *
-   * @param FRModuleIO Front Right {@link ModuleIO} implementation of the current robot mode.
    * @param FLModuleIO Front Left {@link ModuleIO} implementation of the current robot mode.
+   * @param FRModuleIO Front Right {@link ModuleIO} implementation of the current robot mode.
    * @param BLModuleIO Back Left {@link ModuleIO} implementation of the current robot mode.
    * @param BRModuleIO Back Right {@link ModuleIO} implementation of the current robot mode.
    * @param gyroIO {@link GyroIO} implementation of the current robot mode.
    */
   public Drive(
-      ModuleIO FRModuleIO,
       ModuleIO FLModuleIO,
+      ModuleIO FRModuleIO,
       ModuleIO BLModuleIO,
       ModuleIO BRModuleIO,
       GyroIO gyroIO) {
@@ -77,8 +77,8 @@ public class Drive extends SubsystemBase {
 
     // Initialize Drivetrain and Gyro
     m_gyroIO = gyroIO;
-    m_modules[0] = new Module(FRModuleIO, 0); // Index 0 corresponds to front right Module
-    m_modules[1] = new Module(FLModuleIO, 1); // Index 1 corresponds to front left Module
+    m_modules[0] = new Module(FLModuleIO, 0); // Index 0 corresponds to front right Module
+    m_modules[1] = new Module(FRModuleIO, 1); // Index 1 corresponds to front left Module
     m_modules[2] = new Module(BLModuleIO, 2); // Index 2 corresponds to back left Module
     m_modules[3] = new Module(BRModuleIO, 3); // Index 3 corresponds to back right Module
 
@@ -132,7 +132,7 @@ public class Drive extends SubsystemBase {
     // Update the periodic for each Module and the Gyro
     m_gyroIO.updateInputs(m_gyroInputs);
     Logger.processInputs("Gyro", m_gyroInputs);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < m_modules.length; i++) {
       m_modules[i].updateInputs();
     }
     // Re-enable odometry updates
@@ -151,17 +151,7 @@ public class Drive extends SubsystemBase {
     // Update odometry with queued readings from motors and encoders in the form of
     // SwerveModulePositions
     double[] sampleTimestamps = m_modules[0].getOdometryTimestamps();
-    double[] goodSamples;
-    // Only the first 5 samples are actually updated for some reason so use those
-    if (sampleTimestamps.length >= 5) {
-      goodSamples = new double[5];
-      for (int i = 0; i < 5; i++) {
-        goodSamples[i] = sampleTimestamps[i];
-      }
-    } else {
-      goodSamples = sampleTimestamps;
-    }
-    for (int i = 0; i < goodSamples.length; i++) {
+    for (int i = 0; i < sampleTimestamps.length; i++) {
       SwerveModulePosition[] wheelPositions = new SwerveModulePosition[4];
       SwerveModulePosition[] wheelDeltas = new SwerveModulePosition[4];
 
@@ -237,7 +227,7 @@ public class Drive extends SubsystemBase {
     SwerveModuleState[] measuredStates = new SwerveModuleState[4];
 
     // Run the Modules and retrieve their State (velocity and angle)
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < m_modules.length; i++) {
       m_modules[i].runSetpoint(setpointStates[i]);
       measuredStates[i] = m_modules[i].getState();
     }
@@ -260,7 +250,7 @@ public class Drive extends SubsystemBase {
     SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
 
     // Run each Module
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < m_modules.length; i++) {
       m_modules[i].runSetpoint(setpointStates[i]);
       optimizedStates[i] = m_modules[i].getState();
     }
@@ -285,7 +275,7 @@ public class Drive extends SubsystemBase {
     SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
 
     // Retrieve SwerveModulePosition for each Module
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < m_modules.length; i++) {
       modulePositions[i] = m_modules[i].getPosition();
     }
 
@@ -390,7 +380,7 @@ public class Drive extends SubsystemBase {
    * @param output Voltage
    */
   public void runCharacterization(double output) {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < m_modules.length; i++) {
       m_modules[i].runCharacterization(output);
     }
   }
@@ -401,7 +391,7 @@ public class Drive extends SubsystemBase {
    */
   public double getAverageDriveVelocity() {
     double velocity = 0.0;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < m_modules.length; i++) {
       velocity += Units.radiansToRotations(m_modules[i].getVelocityRadPerSec());
     }
     return velocity;
@@ -412,7 +402,7 @@ public class Drive extends SubsystemBase {
    */
   public double[] getDrivePositionRad() {
     double[] positions = new double[4];
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < m_modules.length; i++) {
       positions[i] = m_modules[i].getPositionRad();
     }
     return positions;
@@ -428,7 +418,7 @@ public class Drive extends SubsystemBase {
    * @param kD Derivative gain value.
    */
   public void setDrivePID(double kP, double kI, double kD) {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < m_modules.length; i++) {
       m_modules[i].setDrivePID(kP, kI, kD);
     }
   }
@@ -440,7 +430,7 @@ public class Drive extends SubsystemBase {
    * @param kV Velocity gain value.
    */
   public void setDriveFF(double kS, double kV) {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < m_modules.length; i++) {
       m_modules[i].setDriveFF(kS, kV);
     }
   }
@@ -453,7 +443,7 @@ public class Drive extends SubsystemBase {
    * @param kD Derivative gain value.
    */
   public void setTurnPID(double kP, double kI, double kD) {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < m_modules.length; i++) {
       m_modules[i].setTurnPID(kP, kI, kD);
     }
   }

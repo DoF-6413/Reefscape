@@ -5,6 +5,47 @@ import edu.wpi.first.math.util.Units;
 
 public final class DriveConstants {
   // REAL CONSTANTS
+  /** KrakenX60 CAN IDs */
+  public enum DRIVE_MOTOR {
+    FRONT_RIGHT(2), // Module 0
+    FRONT_LEFT(3), // Module 1
+    BACK_LEFT(4), // Module 2
+    BACK_RIGHT(5); // Module 3
+
+    public final int CAN_ID;
+
+    DRIVE_MOTOR(int value) {
+      CAN_ID = value;
+    }
+  }
+  /** NEOs CAN IDs */
+  public enum TURN_MOTOR {
+    FRONT_RIGHT(6), // Module 0
+    FRONT_LEFT(7), // Module 1
+    BACK_LEFT(8), // Module 2
+    BACK_RIGHT(9); // Module 3
+
+    public final int CAN_ID;
+
+    TURN_MOTOR(int value) {
+      CAN_ID = value;
+    }
+  }
+  /** CANcoders CAN IDs */
+  public enum ABSOLUTE_ENCODER {
+    FRONT_RIGHT(10), // Module 0
+    FRONT_LEFT(11), // Module 1
+    BACK_LEFT(12), // Module 2
+    BACK_RIGHT(13); // Module 3
+
+    public final int CAN_ID;
+
+    ABSOLUTE_ENCODER(int value) {
+      CAN_ID = value;
+    }
+  }
+  /** CAN ID for the Pigeon 2.0 IMU */
+  public static final int GYRO_CAN_ID = 14;
   /** Gear Ratio for MK4i L3 Krakens */
   public static final double DRIVE_GEAR_RATIO = 6.12;
   /** Gear Ratio for MK4i Turn motors */
@@ -42,68 +83,11 @@ public final class DriveConstants {
       MAX_LINEAR_SPEED_M_PER_S / DRIVETRAIN_RADIUS_M;
   /** Ingnore joystick inputs less than 10% tilted */
   public static final double DEADBAND = 0.1;
-
   /**
-   * Translation 2d assumes that the robot front facing is in the positive x direction and the robot
-   * left is in the positive y direction.
-   *
-   * @return An array of the {@link Translation2d} for the Modules from the center of the robot.
+   * An angle to offset the heading of the Gyro to be the desired Front side of the robot. The Front
+   * side will be defined as the scoring side for this robot
    */
-  public static final Translation2d[] getModuleTranslations() {
-    return new Translation2d[] {
-      new Translation2d(
-          DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 0
-      new Translation2d(
-          DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 1
-      new Translation2d(
-          -DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 2
-      new Translation2d(
-          -DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 3
-    };
-  }
-
-  /** KrakenX60 CAN IDs */
-  public enum DRIVE_MOTOR {
-    FRONT_RIGHT(2), // Module 0
-    FRONT_LEFT(3), // Module 1
-    BACK_LEFT(4), // Module 2
-    BACK_RIGHT(5); // Module 3
-
-    public final int CAN_ID;
-
-    DRIVE_MOTOR(int value) {
-      CAN_ID = value;
-    }
-  }
-
-  /** NEOs CAN IDs */
-  public enum TURN_MOTOR {
-    FRONT_RIGHT(6), // Module 0
-    FRONT_LEFT(7), // Module 1
-    BACK_LEFT(8), // Module 2
-    BACK_RIGHT(9); // Module 3
-
-    public final int CAN_ID;
-
-    TURN_MOTOR(int value) {
-      CAN_ID = value;
-    }
-  }
-
-  /** CANcoders CAN IDs */
-  public enum ABSOLUTE_ENCODER {
-    FRONT_RIGHT(10), // Module 0
-    FRONT_LEFT(11), // Module 1
-    BACK_LEFT(12), // Module 2
-    BACK_RIGHT(13); // Module 3
-
-    public final int CAN_ID;
-
-    ABSOLUTE_ENCODER(int value) {
-      CAN_ID = value;
-    }
-  }
-
+  public static final double HEADING_OFFSET_RAD = 0;
   /**
    * Offset the absolute position of the CANcoders to orientate the wheels to the front of the robot
    * at 0 degrees
@@ -119,6 +103,25 @@ public final class DriveConstants {
     ABSOLUTE_ENCODER_OFFSET(double value) {
       OFFSET = value;
     }
+  }
+
+  /**
+   * Translation 2d assumes that the robot front facing is in the positive x direction and the robot
+   * left is in the positive y direction.
+   *
+   * @return An array of the {@link Translation2d} for the Modules from the center of the robot.
+   */
+  public static final Translation2d[] getModuleTranslations() {
+    return new Translation2d[] {
+      new Translation2d(
+          DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 0
+      new Translation2d(
+          DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 1
+      new Translation2d(
+          -DriveConstants.TRACK_WIDTH_M / 2.0, DriveConstants.TRACK_WIDTH_M / 2.0), // Module 2
+      new Translation2d(
+          -DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 3
+    };
   }
 
   // PID & FEEDFORWARD CONSTANTS

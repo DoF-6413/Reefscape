@@ -70,21 +70,21 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     // number
     switch (moduleNumber) {
       case 0:
-        m_driveTalonFX = new TalonFX(DriveConstants.DRIVE_MOTOR.FRONT_RIGHT.CAN_ID, "Drivetrain");
-        m_turnSparkMax =
-            new SparkMax(DriveConstants.TURN_MOTOR.FRONT_RIGHT.CAN_ID, MotorType.kBrushless);
-        m_turnCANcoder =
-            new CANcoder(DriveConstants.ABSOLUTE_ENCODER.FRONT_RIGHT.CAN_ID, "Drivetrain");
-        m_absEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.FRONT_RIGHT.OFFSET;
-        break;
-
-      case 1:
         m_driveTalonFX = new TalonFX(DriveConstants.DRIVE_MOTOR.FRONT_LEFT.CAN_ID, "Drivetrain");
         m_turnSparkMax =
             new SparkMax(DriveConstants.TURN_MOTOR.FRONT_LEFT.CAN_ID, MotorType.kBrushless);
         m_turnCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.FRONT_LEFT.CAN_ID, "Drivetrain");
         m_absEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.FRONT_LEFT.OFFSET;
+        break;
+
+      case 1:
+        m_driveTalonFX = new TalonFX(DriveConstants.DRIVE_MOTOR.FRONT_RIGHT.CAN_ID, "Drivetrain");
+        m_turnSparkMax =
+            new SparkMax(DriveConstants.TURN_MOTOR.FRONT_RIGHT.CAN_ID, MotorType.kBrushless);
+        m_turnCANcoder =
+            new CANcoder(DriveConstants.ABSOLUTE_ENCODER.FRONT_RIGHT.CAN_ID, "Drivetrain");
+        m_absEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.FRONT_RIGHT.OFFSET;
         break;
 
       case 2:
@@ -233,7 +233,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     inputs.turnVelocityRadPerSec =
         Units.rotationsToRadians(m_absEncoderVelocityRotPerSec.getValueAsDouble());
 
-    // Update odometry
+    // Update odometry queues
     inputs.odometryTimestamps =
         m_timestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryDrivePositionsRad =
