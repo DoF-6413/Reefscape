@@ -119,4 +119,13 @@ public class CEE extends SubsystemBase {
       this.setPID(CEEConstants.KP, CEEConstants.KI, CEEConstants.KD);
     }
   }
+
+  /**
+   * Triggered means that the beam break is broken (an object is in between the sensor).
+   *
+   * @return {@code true} if the sensor has been triggered, {@code false} if not.
+   */
+  public boolean isBeamBreakTriggered() {
+    return m_inputs.isbeamBreakTriggered;
+  }
 }

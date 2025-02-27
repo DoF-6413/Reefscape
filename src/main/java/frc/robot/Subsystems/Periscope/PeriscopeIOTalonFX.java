@@ -13,6 +13,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.RobotStateConstants;
 
 public class PeriscopeIOTalonFX implements PeriscopeIO {
@@ -20,6 +21,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
   private final TalonFX[] m_periscopeMotors = new TalonFX[2];
   private final PositionVoltage[] m_motorControllers = new PositionVoltage[2];
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
+  private final DigitalInput[] m_hallEffectSensors = new DigitalInput[6];
 
   // Periscope motors' logged signals
   private StatusSignal<Voltage>[] m_appliedVolts = new StatusSignal[2];
@@ -45,6 +47,11 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     // Initialize the closed loop motor controllers
     m_motorControllers[0] = new PositionVoltage(0);
     m_motorControllers[1] = new PositionVoltage(0);
+
+    // Initialize the Hall Effect sensors
+    for (int i = 0; i < m_hallEffectSensors.length; i++) {
+      m_hallEffectSensors[i] = new DigitalInput(PeriscopeConstants.HALL_EFFECT_SENSORS_PORTS[i]);
+    }
 
     // Motor configuration
     m_motorConfig
@@ -97,7 +104,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     }
 
     // Initialize logged signals for both motors
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < m_periscopeMotors.length; i++) {
       m_positionRot[i] = m_periscopeMotors[i].getPosition();
       m_positionRot[i].setUpdateFrequency(PeriscopeConstants.UPDATE_FREQUENCY_HZ);
       m_velocityRotPerSec[i] = m_periscopeMotors[i].getVelocity();
@@ -114,7 +121,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
   @Override
   public void updateInputs(PeriscopeIOInputs inputs) {
     // Update logged inputs from each motor
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < m_periscopeMotors.length; i++) {
       // Update motor signals and check if they are recieved
       inputs.isConnected[i] =
           BaseStatusSignal.refreshAll(
@@ -142,6 +149,11 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
                     / 2))
             / PeriscopeConstants.GEAR_RATIO;
     inputs.velocityMetersPerSec = inputs.velocityRadPerSec * PeriscopeConstants.DRUM_RADIUS_M;
+
+    // Update logged inputs for each Hall Effect sensor
+    for (int i = 0; i < m_hallEffectSensors.length; i++) {
+      inputs.isHallEffectSensorTriggered[i] = m_hallEffectSensors[i].get();
+    }
   }
 
   @Override

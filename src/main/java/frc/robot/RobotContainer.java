@@ -15,30 +15,14 @@ import frc.robot.Commands.TeleopCommands.PathfindingCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
-import frc.robot.Subsystems.Climber.Climber;
-import frc.robot.Subsystems.Climber.ClimberIO;
-import frc.robot.Subsystems.Climber.ClimberIOSim;
-import frc.robot.Subsystems.Climber.ClimberIOTalonFX;
-import frc.robot.Subsystems.Drive.Drive;
-import frc.robot.Subsystems.Drive.GyroIO;
-import frc.robot.Subsystems.Drive.GyroIOPigeon2;
-import frc.robot.Subsystems.Drive.ModuleIO;
-import frc.robot.Subsystems.Drive.ModuleIOSim;
-import frc.robot.Subsystems.Drive.ModuleIOSparkMaxTalonFX;
-import frc.robot.Subsystems.Funnel.Funnel;
-import frc.robot.Subsystems.Funnel.FunnelIO;
-import frc.robot.Subsystems.Funnel.FunnelIOSim;
-import frc.robot.Subsystems.Funnel.FunnelIOSparkMax;
-import frc.robot.Subsystems.Periscope.Periscope;
-import frc.robot.Subsystems.Periscope.PeriscopeConstants;
-import frc.robot.Subsystems.Periscope.PeriscopeIO;
-import frc.robot.Subsystems.Periscope.PeriscopeIOSim;
-import frc.robot.Subsystems.Periscope.PeriscopeIOTalonFX;
-import frc.robot.Subsystems.Vision.Vision;
-import frc.robot.Subsystems.Vision.VisionConstants;
-import frc.robot.Subsystems.Vision.VisionIO;
-import frc.robot.Subsystems.Vision.VisionIOPhotonVision;
-import frc.robot.Subsystems.Vision.VisionIOSim;
+import frc.robot.Subsystems.Algae.EndEffector.*;
+import frc.robot.Subsystems.Algae.Pivot.*;
+import frc.robot.Subsystems.Climber.*;
+import frc.robot.Subsystems.CoralEndEffector.*;
+import frc.robot.Subsystems.Drive.*;
+import frc.robot.Subsystems.Funnel.*;
+import frc.robot.Subsystems.Periscope.*;
+import frc.robot.Subsystems.Vision.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -47,12 +31,12 @@ public class RobotContainer {
   private final Drive m_driveSubsystem;
 
   // Mechanisms
-  //   private final AlgaePivot m_algaePivotSubsystem;
+  // private final AlgaePivot m_algaePivotSubsystem;
   private final Periscope m_periscopeSubsystem;
   private final Climber m_climberSubsystem;
   private final Funnel m_funnelSubsystem;
-  //   private final AEE m_AEESubsystem;
-  //   private final CEE m_CEESubsystem;
+  // private final AEE m_AEESubsystem;
+  // private final CEE m_CEESubsystem;
 
   // Utils
   private final Vision m_visionSubsystem;
@@ -439,67 +423,17 @@ public class RobotContainer {
                 () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MIN_HEIGHT_M),
                 m_periscopeSubsystem));
 
-    //
-    // m_funnelSubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
-    //             },
-    //             m_funnelSubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> {
-    //               m_funnelSubsystem.setSetpoint(0);
-    //               m_funnelSubsystem.enablePID(false);
-    //             },
-    //             m_funnelSubsystem));
-    // m_auxController
-    //     .povDown()
-    //     .onTrue(new InstantCommand(() -> m_funnelSubsystem.setVoltage(12), m_funnelSubsystem))
-    //     .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
-
-    // // ALGAE Pivot testing binding
-    // m_auxController
-    //     .b()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.MAX_ANGLE_RAD),
-    //             m_algaePivotSubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
-    //             m_algaePivotSubsystem));
-    // m_auxController
-    //     .x()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.MIN_ANGLE_RAD),
-    //             m_algaePivotSubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
-    //             m_algaePivotSubsystem));
-
-    // // Periscope testing binding
-    // m_auxController
-    //     .a()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MAX_HEIGHT_M),
-    //             m_periscopeSubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MIN_HEIGHT_M),
-    //             m_periscopeSubsystem));
-
-    // // Climber testing binding
-    // m_auxController
-    //     .y()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> m_climberSubsystem.setPosition(ClimberConstants.MIN_ANGLE_RAD),
-    //             m_climberSubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> m_climberSubsystem.setPosition(ClimberConstants.MAX_ANGLE_RAD),
-    //             m_climberSubsystem));
+    // Climber testing binding
+    m_auxController
+        .y()
+        .onTrue(
+            new InstantCommand(
+                () -> m_climberSubsystem.setPosition(ClimberConstants.MIN_ANGLE_RAD),
+                m_climberSubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> m_climberSubsystem.setPosition(ClimberConstants.MAX_ANGLE_RAD),
+                m_climberSubsystem));
   }
 
   /**
@@ -518,11 +452,11 @@ public class RobotContainer {
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.enableBrakeModeAll(enable);
-    m_climberSubsystem.enableBrakeMode(enable);
-    // m_AEESubsystem.enableBrakeMode(enable);
     // m_algaePivotSubsystem.enableBrakeMode(enable);
-    m_funnelSubsystem.enableBrakeMode(enable);
     m_periscopeSubsystem.enableBrakeMode(enable);
+    m_climberSubsystem.enableBrakeMode(enable);
+    m_funnelSubsystem.enableBrakeMode(enable);
+    // m_AEESubsystem.enableBrakeMode(enable);
     // m_CEESubsystem.enableBrakeMode(enable);
   }
 }
