@@ -25,16 +25,30 @@ public class VisionConstants {
   /** Names of cameras on PhotonVision and NetworkTables */
   public static final String[] CAMERA_NAMES = {"Front", "Back"};
 
-  /** 3d offset of the center of the robot to the Front camera */
+  /**
+   * 3d offset of the center of the robot to the Front camera.
+   *
+   * <p>WPI coordinate system z is camera offset
+   */
   private static final Transform3d FRONT_CAMERA_ROBOT_OFFSET =
       new Transform3d(
-          new Translation3d(Units.inchesToMeters(13.5), 0, Units.inchesToMeters(3.5)),
-          new Rotation3d(0, 0, 0));
-  /** 3d offset of the center of the robot to the Back camera */
+          new Translation3d(
+              Units.inchesToMeters(13.291508),
+              Units.inchesToMeters(4.816861),
+              Units.inchesToMeters(-5.625)), // 5.5 inches for final bot
+          new Rotation3d(Math.PI / 2, Units.degreesToRadians(0), 0));
+  /**
+   * 3d offset of the center of the robot to the Back camera.
+   *
+   * <p>WPI coordinate system z is camera offset
+   */
   private static final Transform3d BACK_CAMERA_ROBOT_OFFSET =
       new Transform3d(
-          new Translation3d(Units.inchesToMeters(-13.5), 0, Units.inchesToMeters(3.5)),
-          new Rotation3d(0, Units.degreesToRadians(35), Math.PI));
+          new Translation3d(
+              Units.inchesToMeters(-13.291508),
+              Units.inchesToMeters(0.569),
+              Units.inchesToMeters(4.816861)),
+          new Rotation3d(0, Units.degreesToRadians(-35), Math.PI));
   /** Array of 3d transformations from the center of the robot to each camera location */
   public static final Transform3d[] CAMERA_ROBOT_OFFSETS = {
     FRONT_CAMERA_ROBOT_OFFSET, BACK_CAMERA_ROBOT_OFFSET
@@ -57,11 +71,9 @@ public class VisionConstants {
   /** Average processing latency from real Raspberry Pis */
   public static final int AVERAGE_LATENCY_MS = 20;
   /** Average pixel error in calibarion */
-  public static final double AVERAGE_ERROR_PX =
-      0.0; // TODO: Update with real value from camera calibration
+  public static final double AVERAGE_ERROR_PX = 0.60;
   /** Standard deviations of pixel error */
-  public static final double ERROR_STDDEV_PX =
-      0.0; // TODO: Update with real value from camera calibration
+  public static final double ERROR_STDDEV_PX = 0.30;
   /** Display simulated camera feed. */
   public static final boolean ENABLE_SIM_CAMERA_STREAM = true;
 }

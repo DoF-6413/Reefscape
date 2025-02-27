@@ -1,6 +1,5 @@
 package frc.robot.Subsystems.Drive;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -10,10 +9,13 @@ import org.littletonrobotics.junction.Logger;
 public class Module {
   private final ModuleIO m_io;
   private final ModuleIOInputsAutoLogged m_inputs = new ModuleIOInputsAutoLogged();
+
+  // Module state
   private final int m_moduleNumber;
+  private SwerveModulePosition[] m_odometryPositions;
 
   // PID controllers
-  private final PIDController m_steerPID;
+  private final PIDController m_turnPID;
 
   /**
    * Constructs a new {@link Module} instance.
@@ -32,22 +34,27 @@ public class Module {
     m_moduleNumber = moduleNumber;
 
     // Initialize PID controller
-    m_steerPID =
+    m_turnPID =
         new PIDController(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
     // Considers min and max the same point, required for the Swerve Modules since the
     // Turn position is normalized to a range of negative pi to pi
-    m_steerPID.enableContinuousInput(-Math.PI, Math.PI);
+    m_turnPID.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   /**
-   * Update and log inputs
+   * Code to be run every cycle of the robot.
    *
-   * <p>Put values that should be called periodically for EACH individual Module here.
-   * Module.periodic() NEEDS to be called in Drive.periodic() OR ELSE it wont run.
+   * <p>Must be called in {@link Drive} periodic.
    */
   public void periodic() {
-    this.updateInputs();
-    Logger.processInputs("Drive/Module" + Integer.toString(m_moduleNumber), m_inputs);
+    // Calculate the positions for odometry updates
+    int sampleCount = m_inputs.odometryTimestamps.length;
+    m_odometryPositions = new SwerveModulePosition[sampleCount];
+    for (int i = 0; i < sampleCount; i++) {
+      double positionMeters = m_inputs.odometryDrivePositionsRad[i] * DriveConstants.WHEEL_RADIUS_M;
+      var angle = m_inputs.odometryAbsTurnPositions[i];
+      m_odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
+    }
   }
 
   /**
@@ -57,6 +64,17 @@ public class Module {
    */
   public void updateInputs() {
     m_io.updateInputs(m_inputs);
+    Logger.processInputs("Drive/Module" + Integer.toString(m_moduleNumber), m_inputs);
+  }
+
+  /**
+   * Sets the idle mode of the Drive and Turn motors.
+   *
+   * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
+   */
+  public void enableBrakeMode(boolean enable) {
+    m_io.setDriveBrakeMode(enable);
+    m_io.setTurnBrakeMode(enable);
   }
 
   /** Stops the Drive and Turn motors. */
@@ -121,7 +139,7 @@ public class Module {
    * @return The current Turn angle of the Module in radians.
    */
   public Rotation2d getAngle() {
-    return new Rotation2d(MathUtil.angleModulus(m_inputs.turnAbsolutePositionRad));
+    return m_inputs.turnAbsolutePositionRad;
   }
 
   /**
@@ -173,13 +191,17 @@ public class Module {
   }
 
   /**
-   * Sets the idle mode of the Drive and Turn motors.
-   *
-   * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
+   * @return An array of the odometry timestamps processed during the robot cycle.
    */
-  public void enableBrakeMode(boolean enable) {
-    m_io.setDriveBrakeMode(enable);
-    m_io.setTurnBrakeMode(enable);
+  public double[] getOdometryTimestamps() {
+    return m_inputs.odometryTimestamps;
+  }
+
+  /**
+   * @return An array of {@link SwerveModulePosition} calculated during the robot cycle.
+   */
+  public SwerveModulePosition[] getOdometryPositions() {
+    return m_odometryPositions;
   }
 
   /**
@@ -194,13 +216,13 @@ public class Module {
     state.optimize(getAngle());
 
     // Run Turn motor through a PID loop
-    m_io.setTurnVoltage(m_steerPID.calculate(getAngle().getRadians(), state.angle.getRadians()));
+    m_io.setTurnVoltage(m_turnPID.calculate(getAngle().getRadians(), state.angle.getRadians()));
 
     // Update velocity based on Turn error
-    // state.speedMetersPerSecond *= Math.cos(m_steerPID.getError()); // TODO: test and verify is
+    // state.speedMetersPerSecond *= Math.cos(m_turnPID.getError()); // TODO: test and verify is
     // needed
 
-    // Turn speed m/s into velocity rad/s
+    // Linear speed m/s into velocity rad/s
     double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
 
     // Runs the Drive motor through the TalonFX closed loop controller
@@ -236,7 +258,7 @@ public class Module {
    * @param kD Derivative gain value.
    */
   public void setTurnPID(double kP, double kI, double kD) {
-    m_steerPID.setPID(kP, kI, kD);
+    m_turnPID.setPID(kP, kI, kD);
   }
 
   /**
@@ -246,6 +268,6 @@ public class Module {
    */
   public void runCharacterization(double output) {
     m_io.setDriveVoltage(output);
-    m_io.setTurnVoltage(m_steerPID.calculate(getAngle().getRadians(), 0)); // Setpoint at 0 degrees
+    m_io.setTurnVoltage(m_turnPID.calculate(getAngle().getRadians(), 0)); // Setpoint at 0 degrees
   }
 }

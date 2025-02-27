@@ -5,10 +5,51 @@ import edu.wpi.first.math.util.Units;
 
 public final class DriveConstants {
   // REAL CONSTANTS
+  /** KrakenX60 CAN IDs */
+  public enum DRIVE_MOTOR {
+    FRONT_LEFT(2), // Module 0
+    FRONT_RIGHT(3), // Module 1
+    BACK_LEFT(4), // Module 2
+    BACK_RIGHT(5); // Module 3
+
+    public final int CAN_ID;
+
+    DRIVE_MOTOR(int value) {
+      CAN_ID = value;
+    }
+  }
+  /** NEOs CAN IDs */
+  public enum TURN_MOTOR {
+    FRONT_LEFT(6), // Module 0
+    FRONT_RIGHT(7), // Module 1
+    BACK_LEFT(8), // Module 2
+    BACK_RIGHT(9); // Module 3
+
+    public final int CAN_ID;
+
+    TURN_MOTOR(int value) {
+      CAN_ID = value;
+    }
+  }
+  /** CANcoders CAN IDs */
+  public enum ABSOLUTE_ENCODER {
+    FRONT_LEFT(10), // Module 0
+    FRONT_RIGHT(11), // Module 1
+    BACK_LEFT(12), // Module 2
+    BACK_RIGHT(13); // Module 3
+
+    public final int CAN_ID;
+
+    ABSOLUTE_ENCODER(int value) {
+      CAN_ID = value;
+    }
+  }
+  /** CAN ID for the Pigeon 2.0 IMU */
+  public static final int GYRO_CAN_ID = 14;
   /** Gear Ratio for MK4i L3 Krakens */
   public static final double DRIVE_GEAR_RATIO = 6.12;
   /** Gear Ratio for MK4i Turn motors */
-  public static final double STEER_GEAR_RATIO = 150.0 / 7.0;
+  public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
   /** Inversion status for the Drive motor, makes Counterclockwise the positive direction */
   public static final boolean DRIVE_IS_INVERTED = false;
   /** Inversion status for the Turn motor, makes Clockwise the positive direction */
@@ -17,8 +58,13 @@ public final class DriveConstants {
   public static final int CUR_LIM_A = 60;
   /** Enables the current limit */
   public static final boolean ENABLE_CUR_LIM = true;
-  /** Refresh signals of the TalonFX and CANcoder 100 times a second (every 0.01 second) */
-  public static final double UPDATE_FREQUENCY_HZ = 100;
+  /** Refresh signals of the TalonFX and CANcoder 50 times a second (every 0.02 second) */
+  public static final double UPDATE_FREQUENCY_HZ = 50;
+  /**
+   * Refresh the position signals of the TalonFX and CANcoder 250 times a second (every 0.004
+   * second)
+   */
+  public static final double ODOMETRY_UPDATE_FREQUENCY_HZ = 250;
   /**
    * Proportion of error from Drive relative encoder readings to actual distance travelled by the
    * wheel due to the bolts holding down the tread
@@ -37,6 +83,27 @@ public final class DriveConstants {
       MAX_LINEAR_SPEED_M_PER_S / DRIVETRAIN_RADIUS_M;
   /** Ingnore joystick inputs less than 10% tilted */
   public static final double DEADBAND = 0.1;
+  /**
+   * An angle to offset the heading of the Gyro to be the desired Front side of the robot. The Front
+   * side will be defined as the scoring side for this robot
+   */
+  public static final double HEADING_OFFSET_RAD = 0;
+  /**
+   * Offset the absolute position of the CANcoders to orientate the wheels to the front of the robot
+   * at 0 degrees
+   */
+  public enum ABSOLUTE_ENCODER_OFFSET {
+    FRONT_LEFT(0.4111068511533518 + (Math.PI / 2)), // Module 0
+    FRONT_RIGHT(-2.6323110320117604 + (Math.PI / 2)), // Module 1
+    BACK_LEFT(-1.4312040750973032 + (Math.PI / 2)), // Module 2
+    BACK_RIGHT(-0.8820389530342436 + (Math.PI / 2)); // Module 3
+
+    public final double OFFSET;
+
+    ABSOLUTE_ENCODER_OFFSET(double value) {
+      OFFSET = value;
+    }
+  }
 
   /**
    * Translation 2d assumes that the robot front facing is in the positive x direction and the robot
@@ -55,65 +122,6 @@ public final class DriveConstants {
       new Translation2d(
           -DriveConstants.TRACK_WIDTH_M / 2.0, -DriveConstants.TRACK_WIDTH_M / 2.0), // Module 3
     };
-  }
-
-  /** KrakenX60 CAN IDs */
-  public enum DRIVE_MOTOR {
-    FRONT_LEFT(2), // Module 0
-    FRONT_RIGHT(3), // Module 1
-    BACK_LEFT(4), // Module 2
-    BACK_RIGHT(5); // Module 3
-
-    public final int CAN_ID;
-
-    DRIVE_MOTOR(int value) {
-      CAN_ID = value;
-    }
-  }
-
-  /** CANcoders CAN IDs */
-  public enum ABSOLUTE_ENCODER {
-    FRONT_LEFT(6), // Module 0
-    FRONT_RIGHT(7), // Module 1
-    BACK_LEFT(8), // Module 2
-    BACK_RIGHT(9); // Module 3
-
-    public final int CAN_ID;
-
-    ABSOLUTE_ENCODER(int value) {
-      CAN_ID = value;
-    }
-  }
-
-  /** NEOs CAN IDs */
-  public enum TURN_MOTOR {
-    FRONT_LEFT(10), // Module 0
-    FRONT_RIGHT(11), // Module 1
-    BACK_LEFT(12), // Module 2
-    BACK_RIGHT(13); // Module 3
-
-    public final int CAN_ID;
-
-    TURN_MOTOR(int value) {
-      CAN_ID = value;
-    }
-  }
-
-  /**
-   * Offset the absolute position of the CANcoders to orientate the wheels to the front of the robot
-   * at 0 degrees
-   */
-  public enum ABSOLUTE_ENCODER_OFFSET {
-    FRONT_LEFT(0.4111068511533518 + (Math.PI / 2)), // Module 0
-    FRONT_RIGHT(-2.6323110320117604 + (Math.PI / 2)), // Module 1
-    BACK_LEFT(-1.4312040750973032 + (Math.PI / 2)), // Module 2
-    BACK_RIGHT(-0.8820389530342436 + (Math.PI / 2)); // Module 3
-
-    public final double OFFSET;
-
-    ABSOLUTE_ENCODER_OFFSET(double value) {
-      OFFSET = value;
-    }
   }
 
   // PID & FEEDFORWARD CONSTANTS
