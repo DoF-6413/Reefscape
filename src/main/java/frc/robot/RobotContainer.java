@@ -363,21 +363,6 @@ public class RobotContainer {
                         12 * SmartDashboard.getNumber("Funnel Speed Percent", 0)),
                 m_funnelSubsystem))
         .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
-    m_auxController
-        .povLeft()
-        .onTrue(
-            new InstantCommand(() -> m_funnelSubsystem.setVoltage(-12 * 0.8), m_funnelSubsystem))
-        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
-    m_auxController
-        .povRight()
-        .onTrue(
-            new InstantCommand(() -> m_funnelSubsystem.setVoltage(-12 * 0.5), m_funnelSubsystem))
-        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
-    m_auxController
-        .povUp()
-        .onTrue(
-            new InstantCommand(() -> m_funnelSubsystem.setVoltage(-12 * 0.3), m_funnelSubsystem))
-        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
 
     // ALGAE Pivot testing binding
     // m_auxController
@@ -428,11 +413,11 @@ public class RobotContainer {
         .y()
         .onTrue(
             new InstantCommand(
-                () -> m_climberSubsystem.setPosition(ClimberConstants.MIN_ANGLE_RAD),
+                () -> m_climberSubsystem.setPosition(ClimberConstants.MAX_ANGLE_RAD),
                 m_climberSubsystem))
         .onFalse(
             new InstantCommand(
-                () -> m_climberSubsystem.setPosition(ClimberConstants.MAX_ANGLE_RAD),
+                () -> m_climberSubsystem.setPosition(ClimberConstants.MIN_ANGLE_RAD),
                 m_climberSubsystem));
   }
 

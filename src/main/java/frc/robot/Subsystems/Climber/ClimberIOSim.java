@@ -36,7 +36,7 @@ public class ClimberIOSim implements ClimberIO {
             ClimberConstants.MIN_ANGLE_RAD,
             ClimberConstants.MAX_ANGLE_RAD,
             ClimberConstants.SIMULATE_GRAVITY,
-            ClimberConstants.MAX_ANGLE_RAD); // Starting height
+            ClimberConstants.MIN_ANGLE_RAD); // Starting height
 
     // Initialize PID controller
     m_PIDController =

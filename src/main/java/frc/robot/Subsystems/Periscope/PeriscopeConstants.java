@@ -58,13 +58,14 @@ public class PeriscopeConstants {
   /** KA represents the voltage used every second squared per meter */
   public static double KA = 0.0;
   /**
-   * Max velocity for trapezoidal motion profiling in rotations per second. 2.25 = max velocity, in
+   * Max velocity for trapezoidal motion profiling in rotations per second. 3.54 = max velocity, in
    * meters per second, calculated from https://www.reca.lc/ assuming 100% efficiency
    */
   public static final double MAX_VELOCITY_ROT_PER_SEC =
-      Units.radiansToRotations(2.25 / DRUM_RADIUS_M);
+      Units.radiansToRotations(3.54 / DRUM_RADIUS_M);
   /** Ideal acceleration for trapezoidal motion profiling in rotations per second squared */
-  public static final double IDEAL_ACCELERATION_ROT_PER_SEC2 = 0.0;
+  public static final double IDEAL_ACCELERATION_ROT_PER_SEC2 =
+      Units.radiansToRotations(33.79 / DRUM_RADIUS_M);
 
   // SIM CONSTANTS
   /** Simulate the pull of gravity in the elevator simulation */
@@ -83,9 +84,9 @@ public class PeriscopeConstants {
   /** KG represents the voltage required to overcome static friction */
   public static final double KS_SIM = 0.0;
   /** KG represents the voltage required to overcome gravity */
-  public static final double KG_SIM = 0.21;
+  public static final double KG_SIM = 0.2;
   /** KV represents the voltage used every second per meter */
-  public static final double KV_SIM = 5.25;
+  public static final double KV_SIM = 3.32;
   /** KA represents the voltage used every second squared per meter */
-  public static final double KA_SIM = 0.02;
+  public static final double KA_SIM = 0.03;
 }
