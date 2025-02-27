@@ -1,5 +1,6 @@
 package frc.robot.Subsystems.Drive;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 /** IO Interface to log the inputs of and create the default methods for the Swerve Modules */
@@ -31,9 +32,17 @@ public interface ModuleIO {
     /** Temperature of the Turn motor in celsius */
     public double turnTempCelsius = 0.0;
     /** Absolute position of the wheel angle in radians (CANcoder) */
-    public double turnAbsolutePositionRad = 0.0;
+    public Rotation2d turnAbsolutePositionRad = new Rotation2d();
     /** Velocity of the Module wheel driven by the Turn motor in radians per sec (CANcoder) */
     public double turnVelocityRadPerSec = 0.0;
+
+    // Odometry queueing
+    /** Timestamps of singal readings */
+    public double[] odometryTimestamps = new double[] {};
+    /** Queued Drive position signals in radians */
+    public double[] odometryDrivePositionsRad = new double[] {};
+    /** Queued Turn CANcoder position signals in radians */
+    public Rotation2d[] odometryAbsTurnPositions = new Rotation2d[] {};
   }
 
   /**

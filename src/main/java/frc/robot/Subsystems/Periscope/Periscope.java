@@ -149,4 +149,15 @@ public class Periscope extends SubsystemBase {
           PeriscopeConstants.KA);
     }
   }
+
+  /**
+   * Triggered means that the Periscope is at the sensor. Hall Effect works just as a magnetic limit
+   * switch.
+   *
+   * @param index Port of the desired Hall Effect sensor to get the triggered status of.
+   * @return {@code true} if the specified Hall Effect sensor triggered, {@code false} if not.
+   */
+  public boolean isHallEffectSensorTriggered(int index) {
+    return m_inputs.isHallEffectSensorTriggered[index];
+  }
 }
