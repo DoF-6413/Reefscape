@@ -411,13 +411,13 @@ public class RobotContainer {
     m_auxController
         .rightTrigger()
         .onTrue(
-            SuperstructureCommands.superstructureScore(
+            SuperstructureCommands.score(
                 m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
 
     m_auxController
         .leftTrigger()
         .onTrue(
-            SuperstructureCommands.positionToPickup(m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.coralPickup(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem))
         .onFalse(
             SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
@@ -499,7 +499,7 @@ public class RobotContainer {
     m_auxController
         .rightStick()
         .onTrue(
-            SuperstructureCommands.positionToL2Algae(m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.positionToL2Algae(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem))
         .onFalse(
             SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
@@ -511,7 +511,7 @@ public class RobotContainer {
     m_auxController
         .leftStick()
         .onTrue(
-            SuperstructureCommands.positionToL3Algae(m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.positionToL3Algae(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem))
         .onFalse(
             SuperstructureCommands.positionToZero(
                 m_periscopeSubsystem,
