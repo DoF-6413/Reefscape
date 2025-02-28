@@ -8,6 +8,8 @@ public class CEEConstants {
   public static final int CAN_ID = 19;
   /** Gear reduction of 3:1 for the CEE motor */
   public static final double GEAR_RATIO = 3.0 / 1.0;
+  /** DIO port of the CEE Beam Break on the roboRIO */
+  public static final int BEAM_BREAK_PORT = 6;
   /**
    * Set the inversion status of the CEE to false, making Counterclockwise the positive direction
    */

@@ -170,7 +170,7 @@ public class PathfindingCommands {
    * @return {@link Command} that makes the robot follow a trajectory to in front of the nearest
    *     BRANCH.
    */
-  public static Command pathfindToClosestReef(
+  public static Command pathfindToClosestBranch(
       Drive drive, DoubleSupplier wallDistanceMeters, BooleanSupplier stopTrigger) {
     return Commands.run(
         () -> {

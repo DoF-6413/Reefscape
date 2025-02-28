@@ -150,7 +150,11 @@ public final class Constants {
      * field. Measured in meters
      */
     public static final Translation2d REEF_CENTER_TRANSLATION =
-        new Translation2d(Units.inchesToMeters(176.746), FIELD_WIDTH / 2.0);
+        new Translation2d(
+            RobotStateConstants.isRed()
+                ? FIELD_LENGTH - Units.inchesToMeters(176.746)
+                : Units.inchesToMeters(176.746),
+            FIELD_WIDTH / 2.0);
 
     /** A Map that links the BRANCH letter to its position on the field as a {@link Pose2d} */
     public static final Map<String, Pose2d> BRANCH_POSES = new HashMap<>();
@@ -250,10 +254,9 @@ public final class Constants {
     /* Pathfinding */
     /** Max translational and rotational velocity and acceleration used for Pathfinding */
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
-        new PathConstraints(
-            5.2, 5.2, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
+        new PathConstraints(5, 5, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
     /** Default distance away from any wall when the robot is Pathfinding towards one */
-    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(6);
+    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(12);
   }
 
   /**

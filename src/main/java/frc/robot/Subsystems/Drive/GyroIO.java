@@ -1,4 +1,4 @@
-package frc.robot.Subsystems.Gyro;
+package frc.robot.Subsystems.Drive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
@@ -14,6 +14,10 @@ public interface GyroIO {
     public Rotation2d yawPositionRad = new Rotation2d();
     /** Angular velocity about the z-axis (yaw) in radians per second */
     public double yawVelocityRadPerSec = 0.0;
+    /** Timestamps of signal readings */
+    public double[] odometryYawTimestamps = new double[] {};
+    /** Queued yaw position readings */
+    public Rotation2d[] odometryYawPositions = new Rotation2d[] {};
   }
 
   /**

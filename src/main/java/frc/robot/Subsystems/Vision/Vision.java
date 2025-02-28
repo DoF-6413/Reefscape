@@ -61,6 +61,8 @@ public class Vision extends SubsystemBase {
               FieldConstants.APRILTAG_FIELD_LAYOUT,
               PoseStrategy.LOWEST_AMBIGUITY,
               VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
+      Logger.recordOutput(
+          "Camera/" + VisionConstants.CAMERA_NAMES[i], VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
     }
   }
 
@@ -79,7 +81,7 @@ public class Vision extends SubsystemBase {
       var target = currentResult.getBestTarget();
       if (target.getFiducialId() >= 1
           && target.getFiducialId() <= 22
-          && target.getPoseAmbiguity() >= 0.0
+          && target.getPoseAmbiguity() > 0.0
           && target.getPoseAmbiguity() <= 0.2) {
         var estimatedPose = m_photonPoseEstimators[i].update(currentResult);
         if (estimatedPose.isEmpty())
@@ -108,7 +110,8 @@ public class Vision extends SubsystemBase {
 
     // Log estimated poses, under "RealOutputs" tab rather than "AdvantageKit" tab
     Logger.recordOutput(
-        "Vision/EstimatedPoses", m_estimatedPoses.toArray(new Pose2d[m_estimatedPoses.size()]));
+        "Odometry/Vision/EstimatedPoses",
+        m_estimatedPoses.toArray(new Pose2d[m_estimatedPoses.size()]));
 
     /* Add Vision measurements to Swerve Pose Estimator in Drive through the VisionConsumer */
     if (m_estimatedPoses.size() > 1) {
