@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.TeleopCommands.DriveCommands;
 import frc.robot.Commands.TeleopCommands.PathfindingCommands;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
@@ -54,6 +55,8 @@ import frc.robot.Subsystems.Vision.VisionConstants;
 import frc.robot.Subsystems.Vision.VisionIO;
 import frc.robot.Subsystems.Vision.VisionIOPhotonVision;
 import frc.robot.Subsystems.Vision.VisionIOSim;
+
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -245,6 +248,13 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    Logger.recordOutput("CSPOSES/CS1C", FieldConstants.CORAL_STATION_POSES.get("CS1C"));
+    Logger.recordOutput("CSPOSES/CS1L", FieldConstants.CORAL_STATION_POSES.get("CS1L"));
+    Logger.recordOutput("CSPOSES/CS1R", FieldConstants.CORAL_STATION_POSES.get("CS1R"));
+    Logger.recordOutput("CSPOSES/CS2C", FieldConstants.CORAL_STATION_POSES.get("CS2C"));
+    Logger.recordOutput("CSPOSES/CS2L", FieldConstants.CORAL_STATION_POSES.get("CS2L"));
+    Logger.recordOutput("CSPOSES/CS2R", FieldConstants.CORAL_STATION_POSES.get("CS2R"));
   }
 
   /**

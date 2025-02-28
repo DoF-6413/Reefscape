@@ -161,6 +161,14 @@ public final class Constants {
     /** Distance from the BRANCH to the REEF face wall in meters */
     public static final double BRANCH_TO_WALL_X_M = Units.inchesToMeters(7);
 
+    /** A Map that links the CORAL STATION names to its position on the field as a {@link Pose2d} */
+    public static final Map<String, Pose2d> CORAL_STATION_POSES = new HashMap<>();
+    /**
+     * {@link Pose2d} of the center of the CORAL STATIONS (same as the AprilTag pose). Bottom left
+     * is index 0, top left is index 1
+     */
+    public static final Pose2d[] CENTER_CORAL_STATION = new Pose2d[2];
+
     static {
       // Initialize faces starting from inner face and in clockwise order
       CENTER_FACES[0] = getAprilTagPose(21).get().toPose2d();
@@ -214,6 +222,51 @@ public final class Constants {
         // Map poses to corresponding BRANCH letter
         BRANCH_POSES.put(BRANCH_LETTERS.substring(i, i + 1), leftBranch);
         BRANCH_POSES.put(BRANCH_LETTERS.substring(i + 6, i + 7), rightBranch);
+      }
+      // Initialize the locations of the center of the CORAL STATIONS
+      CENTER_CORAL_STATION[0] = APRILTAG_FIELD_LAYOUT.getTagPose(12).get().toPose2d();
+      CENTER_CORAL_STATION[1] = APRILTAG_FIELD_LAYOUT.getTagPose(13).get().toPose2d();
+      /**
+       * Distance from the center of the CS to the left/right sides. 76 = CS Width, (76 in / 2) -
+       * (76 in / 3) = 12.6667
+       */
+      double CENTER_TO_SIDE = Units.inchesToMeters(12.6667);
+      /** Angle that the CS makes with the x-axis of the field */
+      double CORAL_STATION_ANGLE = Units.degreesToRadians(30.0);
+      for (int i = 0; i < 2; i++) {
+        // Left CORAL STATION area
+        var leftCS =
+            new Pose2d(
+                CENTER_CORAL_STATION[i].getX()
+                    + (CENTER_TO_SIDE
+                        * Math.cos(
+                            -CORAL_STATION_ANGLE
+                                + CENTER_CORAL_STATION[i].getRotation().getRadians())),
+                CENTER_CORAL_STATION[i].getY()
+                    + (CENTER_TO_SIDE
+                        * Math.sin(
+                            -CORAL_STATION_ANGLE
+                                + CENTER_CORAL_STATION[i].getRotation().getRadians())),
+                CENTER_CORAL_STATION[i].getRotation());
+        // Right CORAL STATION area
+        var rightCS =
+            new Pose2d(
+                CENTER_CORAL_STATION[i].getX()
+                    + (-CENTER_TO_SIDE
+                        * Math.cos(
+                            -CORAL_STATION_ANGLE
+                                + CENTER_CORAL_STATION[i].getRotation().getRadians())),
+                CENTER_CORAL_STATION[i].getY()
+                    + (-CENTER_TO_SIDE
+                        * Math.sin(
+                            -CORAL_STATION_ANGLE
+                                + CENTER_CORAL_STATION[i].getRotation().getRadians())),
+                CENTER_CORAL_STATION[i].getRotation());
+
+        // Map poses to names
+        CORAL_STATION_POSES.put("CS" + (i + 1) + "C", CENTER_CORAL_STATION[i]);
+        CORAL_STATION_POSES.put("CS" + (i + 1) + "L", leftCS);
+        CORAL_STATION_POSES.put("CS" + (i + 1) + "R", rightCS);
       }
     }
   }
