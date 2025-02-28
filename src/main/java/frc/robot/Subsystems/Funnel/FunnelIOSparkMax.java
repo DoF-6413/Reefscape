@@ -11,7 +11,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.RobotStateConstants;
-import frc.robot.Subsystems.CoralEndEffector.CEEConstants;
 
 public class FunnelIOSparkMax implements FunnelIO {
   // Funnel motor, encoder, and configurator
