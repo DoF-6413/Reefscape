@@ -14,6 +14,8 @@ public interface FunnelIO {
     public double tempCelsius = 0.0;
     /** Velocity of the Funnel in radians per second */
     public double velocityRadPerSec = 0.0;
+    /** If the beam break sensor is broken, an object is in between the sensor */
+    public boolean isbeamBreakTriggered = false;
   }
 
   /**

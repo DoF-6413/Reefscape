@@ -30,10 +30,10 @@ import frc.robot.Subsystems.Algae.EndEffector.AEE;
 import frc.robot.Subsystems.Algae.Pivot.AlgaePivot;
 import frc.robot.Subsystems.CoralEndEffector.CEE;
 import frc.robot.Subsystems.Drive.DriveConstants;
-import java.util.HashMap;
-import java.util.Map;
 import frc.robot.Subsystems.Funnel.Funnel;
 import frc.robot.Subsystems.Periscope.Periscope;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -264,7 +264,8 @@ public final class Constants {
    * and {@link Funnel}.
    */
   public static class SuperstructureConstants {
-    /** Used to determine setpoints of each mechanism on the Superstructure */ // TODO: Move enum to SuperstructureCommands
+    /** Used to determine setpoints of each mechanism on the Superstructure */
+    // TODO: Move enum to SuperstructureCommands
     public enum OBJECTIVE {
       L1,
       L2_CORAL,

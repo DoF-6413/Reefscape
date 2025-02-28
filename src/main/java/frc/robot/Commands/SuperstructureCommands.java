@@ -215,7 +215,8 @@ public class SuperstructureCommands {
    *
    * @param periscope {@link Periscope} subsystem
    * @param algaePivot {@link AlgaePivot} subsystem
-   * @return {@link Command} that sets the positions of the Superstructure to score ALGAE in the NET.
+   * @return {@link Command} that sets the positions of the Superstructure to score ALGAE in the
+   *     NET.
    */
   public static Command positionToNet(Periscope periscope, AlgaePivot algaePivot) {
     SuperstructureState.objective(OBJECTIVE.NET);
@@ -232,7 +233,8 @@ public class SuperstructureCommands {
    *
    * @param periscope {@link Periscope} subsystem
    * @param algaePivot {@link AlgaePivot} subsystem
-   * @return {@link Command} that sets the positions of the Superstructure to score ALGAE in the PROCESSOR.
+   * @return {@link Command} that sets the positions of the Superstructure to score ALGAE in the
+   *     PROCESSOR.
    */
   public static Command positionToProcessor(Periscope periscope, AlgaePivot algaePivot) {
     SuperstructureState.objective(OBJECTIVE.PROCESSOR);
@@ -249,7 +251,8 @@ public class SuperstructureCommands {
    * @param aee {@link AEE} subsystem
    * @param cee {@link CEE} subsystem
    * @param funnel {@link Funnel} subsystem
-   * @return {@link Command} that sets the velocities of the Superstructure to score the current objective.
+   * @return {@link Command} that sets the velocities of the Superstructure to score the current
+   *     objective.
    */
   public static Command superstructureScore(AEE aee, CEE cee, Funnel funnel) {
     return SuperstructureCommands.setVelocities(
