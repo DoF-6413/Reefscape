@@ -2,11 +2,13 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.DriveCommands;
@@ -30,7 +32,6 @@ public class RobotContainer {
   // Subsystems
   // Chassis
   private final Drive m_driveSubsystem;
-  private final Gyro m_gyroSubsystem;
 
   // Mechanisms
   private final AlgaePivot m_algaePivotSubsystem;
@@ -59,14 +60,13 @@ public class RobotContainer {
     switch (RobotStateConstants.getMode()) {
         // Real robot, instantiates hardware IO implementations
       case REAL:
-        m_gyroSubsystem = new Gyro(new GyroIOPigeon2());
         m_driveSubsystem =
             new Drive(
                 new ModuleIOSparkMaxTalonFX(0),
                 new ModuleIOSparkMaxTalonFX(1),
                 new ModuleIOSparkMaxTalonFX(2),
                 new ModuleIOSparkMaxTalonFX(3),
-                m_gyroSubsystem);
+                new GyroIOPigeon2());
         m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSparkMax());
         m_periscopeSubsystem = new Periscope(new PeriscopeIOTalonFX());
         m_climberSubsystem = new Climber(new ClimberIOTalonFX());
@@ -82,14 +82,13 @@ public class RobotContainer {
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
-        m_gyroSubsystem = new Gyro(new GyroIO() {});
         m_driveSubsystem =
             new Drive(
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
-                m_gyroSubsystem);
+                new GyroIO() {});
         m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSim());
         m_periscopeSubsystem = new Periscope(new PeriscopeIOSim());
         m_climberSubsystem = new Climber(new ClimberIOSim());
@@ -106,14 +105,13 @@ public class RobotContainer {
         break;
         // Replayed robot, disables all IO implementations
       default:
-        m_gyroSubsystem = new Gyro(new GyroIO() {});
         m_driveSubsystem =
             new Drive(
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                m_gyroSubsystem);
+                new GyroIO() {});
         m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIO() {});
         m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
         m_climberSubsystem = new Climber(new ClimberIO() {});
@@ -170,71 +168,78 @@ public class RobotContainer {
     // Default to field relative driving
     m_driveSubsystem.setDefaultCommand(
         DriveCommands.fieldRelativeDrive(
-            m_driveSubsystem,
-            () -> -m_driverController.getLeftY(),
-            () -> -m_driverController.getLeftX(),
-            () -> -m_driverController.getRightX()));
+                m_driveSubsystem,
+                () -> -m_driverController.getLeftY(),
+                () -> -m_driverController.getLeftX(),
+                () -> -m_driverController.getRightX())
+            .withName("FieldRelativeDrive"));
     // Field relative
     m_driverController
         .y()
         .onTrue(
             DriveCommands.fieldRelativeDrive(
-                m_driveSubsystem,
-                () -> -m_driverController.getLeftY(),
-                () -> -m_driverController.getLeftX(),
-                () -> -m_driverController.getRightX()));
+                    m_driveSubsystem,
+                    () -> -m_driverController.getLeftY(),
+                    () -> -m_driverController.getLeftX(),
+                    () -> -m_driverController.getRightX())
+                .withName("FieldRelativeDrive"));
     // Robot relative
     m_driverController
         .b()
         .onTrue(
             DriveCommands.robotRelativeDrive(
-                m_driveSubsystem,
-                () -> -m_driverController.getLeftY(),
-                () -> -m_driverController.getLeftX(),
-                () -> -m_driverController.getRightX()));
+                    m_driveSubsystem,
+                    () -> -m_driverController.getLeftY(),
+                    () -> -m_driverController.getLeftX(),
+                    () -> -m_driverController.getRightX())
+                .withName("RobotRelativeDrive"));
     // Lock robot heading to 0 degrees
     m_driverController
         .povUp()
         .onTrue(
             DriveCommands.fieldRelativeDriveAtAngle(
-                m_driveSubsystem,
-                () -> -m_driverController.getLeftY(),
-                () -> -m_driverController.getLeftX(),
-                () -> Rotation2d.fromRadians(0)));
+                    m_driveSubsystem,
+                    () -> -m_driverController.getLeftY(),
+                    () -> -m_driverController.getLeftX(),
+                    () -> Rotation2d.fromRadians(0))
+                .withName("0DegreeHeadingDrive"));
     // Lock robot heading to 90 degrees
     m_driverController
         .povLeft()
         .onTrue(
             DriveCommands.fieldRelativeDriveAtAngle(
-                m_driveSubsystem,
-                () -> -m_driverController.getLeftY(),
-                () -> -m_driverController.getLeftX(),
-                () -> Rotation2d.fromRadians(Math.PI / 2)));
+                    m_driveSubsystem,
+                    () -> -m_driverController.getLeftY(),
+                    () -> -m_driverController.getLeftX(),
+                    () -> Rotation2d.fromRadians(Math.PI / 2))
+                .withName("90DegreeHeadingDrive"));
     // Lock robot heading to 180 degrees
     m_driverController
         .povDown()
         .onTrue(
             DriveCommands.fieldRelativeDriveAtAngle(
-                m_driveSubsystem,
-                () -> -m_driverController.getLeftY(),
-                () -> -m_driverController.getLeftX(),
-                () -> Rotation2d.fromRadians(Math.PI)));
+                    m_driveSubsystem,
+                    () -> -m_driverController.getLeftY(),
+                    () -> -m_driverController.getLeftX(),
+                    () -> Rotation2d.fromRadians(Math.PI))
+                .withName("180DegreeHeadingDrive"));
     // Lock robot heading to -90 degrees
     m_driverController
         .povRight()
         .onTrue(
             DriveCommands.fieldRelativeDriveAtAngle(
-                m_driveSubsystem,
-                () -> -m_driverController.getLeftY(),
-                () -> -m_driverController.getLeftX(),
-                () -> Rotation2d.fromRadians(-Math.PI / 2)));
+                    m_driveSubsystem,
+                    () -> -m_driverController.getLeftY(),
+                    () -> -m_driverController.getLeftX(),
+                    () -> Rotation2d.fromRadians(-Math.PI / 2))
+                .withName("-90DegreeHeadingDrive"));
 
     /* Gyro */
     // Reset Gyro heading, making the front side of the robot the new 0 degree angle
     m_driverController
         .a()
         .onTrue(
-            new InstantCommand(() -> m_gyroSubsystem.zeroYaw(), m_gyroSubsystem)
+            new InstantCommand(() -> m_driveSubsystem.zeroYaw(), m_driveSubsystem)
                 .withName("ZeroYaw"));
 
     /* Pathfinding */
@@ -243,36 +248,44 @@ public class RobotContainer {
         .x()
         .onTrue(
             PathfindingCommands.pathfindToCurrentTag(
-                    m_visionSubsystem, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.x().negate()));
+                    m_driveSubsystem,
+                    m_visionSubsystem,
+                    () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
+                    m_driverController.x().negate())
+                .withName("PathfindToAprilTag"));
     // AprilTag 18 - REEF
     m_driverController
         .leftTrigger()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 18, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.leftTrigger().negate()));
+                    () -> 18, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .until(m_driverController.leftTrigger().negate())
+                .withName("PathfindToAprilTag18"));
     // AprilTag 17 - REEF
     m_driverController
         .leftBumper()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 17, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.leftBumper().negate()));
+                    () -> 17, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .until(m_driverController.leftBumper().negate())
+                .withName("PathfindToAprilTag17"));
     // AprilTag 19 - REEF
     m_driverController
         .rightTrigger()
         .onTrue(
             PathfindingCommands.pathfindToAprilTag(
-                    () -> 19, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.rightTrigger().negate()));
-    // AprilTag 14 - BARGE Net
+                    () -> 19, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .until(m_driverController.rightTrigger().negate())
+                .withName("PathfindToAprilTag19"));
+    // Closest REEF BRANCH
     m_driverController
         .rightBumper()
         .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 14, () -> PathPlannerConstants.DEFAULT_APRILTAG_DISTANCE_M)
-                .until(m_driverController.rightBumper().negate()));
+            PathfindingCommands.pathfindToClosestBranch(
+                    m_driveSubsystem,
+                    () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
+                    m_driverController.rightBumper().negate())
+                .withName("PathfindToBranch"));
   }
 
   /** Aux Controls */
@@ -398,15 +411,15 @@ public class RobotContainer {
     /* Scoring */
     m_auxController
         .a()
-        .onTrue(SuperstructureCommands.superstructureScore(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+        .onTrue(SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
     /* CORAL Score Positions */
     // L1
     m_auxController
         .leftTrigger()
         .onTrue(
-            SuperstructureCommands.superstructureToL1(m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.positionsToL1(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_AEESubsystem,
@@ -416,9 +429,9 @@ public class RobotContainer {
     m_auxController
         .leftBumper()
         .onTrue(
-            SuperstructureCommands.superstructureToL2Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.positionsToL2Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_AEESubsystem,
@@ -428,9 +441,9 @@ public class RobotContainer {
     m_auxController
         .rightTrigger()
         .onTrue(
-            SuperstructureCommands.superstructureToL3Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.positionsToL3Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_AEESubsystem,
@@ -440,9 +453,9 @@ public class RobotContainer {
     m_auxController
         .rightBumper()
         .onTrue(
-            SuperstructureCommands.superstructureToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.positionsToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            SuperstructureCommands.superstructureToZero(
+            SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
                 m_AEESubsystem,
@@ -462,14 +475,15 @@ public class RobotContainer {
   /**
    * Sets all mechanisms to brake mode, intended for use when the robot is disabled.
    *
-   * @param enable - True to set brake mode, False to set coast mode
+   * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.enableBrakeModeAll(enable);
-    m_climberSubsystem.enableBrakeMode(enable);
-    m_AEESubsystem.enableBrakeMode(enable);
     m_algaePivotSubsystem.enableBrakeMode(enable);
-    m_funnelSubsystem.enableBrakeMode(enable);
     m_periscopeSubsystem.enableBrakeMode(enable);
+    m_climberSubsystem.enableBrakeMode(enable);
+    m_funnelSubsystem.enableBrakeMode(enable);
+    m_AEESubsystem.enableBrakeMode(enable);
+    m_CEESubsystem.enableBrakeMode(enable);
   }
 }

@@ -16,6 +16,8 @@ public class AlgaePivotConstants {
   public static final boolean IS_INVERTED = false;
   /** Current limit for the NEO motor of the ALGAE Pivot */
   public static final int CUR_LIM_A = 30;
+  /** Offset to zero Absolute Encoder to be parallel with the Drivetraion belly pan, in rotations */
+  public static final double ZERO_OFFSET = 0.0;
   /** Length of the ALGAE Pivot in meters */
   public static final double LENGTH_M = Units.inchesToMeters(10.151);
   /** Weight of the ALGAE Pivot in kilograms */

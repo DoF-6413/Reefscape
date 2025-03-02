@@ -18,13 +18,18 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Subsystems.Drive.DriveConstants;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -66,6 +71,12 @@ public final class Constants {
      */
     public static Optional<Alliance> getAlliance() {
       return DriverStation.getAlliance();
+    }
+
+    /** Whether or not the robot is on the Red Alliance */
+    public static boolean isRed() {
+      return RobotStateConstants.getAlliance().isPresent()
+          && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red;
     }
 
     /** After 500 seconds, the CAN times out */
@@ -130,6 +141,83 @@ public final class Constants {
     public static Optional<Pose3d> getAprilTagPose(int ID) {
       return APRILTAG_FIELD_LAYOUT.getTagPose(ID);
     }
+
+    /**
+     * Translation of the center of the REEF from the origin point (bottom left corner) of the
+     * field. Measured in meters
+     */
+    public static final Translation2d REEF_CENTER_TRANSLATION =
+        new Translation2d(
+            RobotStateConstants.isRed()
+                ? FIELD_LENGTH - Units.inchesToMeters(176.746)
+                : Units.inchesToMeters(176.746),
+            FIELD_WIDTH / 2.0);
+
+    /** A Map that links the BRANCH letter to its position on the field as a {@link Pose2d} */
+    public static final Map<String, Pose2d> BRANCH_POSES = new HashMap<>();
+    /**
+     * The center of each face of the REEF, aka where the AprilTag is located. Definded starting at
+     * the inner face (facing towards opposite alliance side) in clockwise order
+     */
+    public static final Pose2d[] CENTER_FACES = new Pose2d[6];
+    /** Distance from the BRANCH to the REEF face wall in meters */
+    public static final double BRANCH_TO_WALL_X_M = Units.inchesToMeters(7);
+
+    static {
+      // Initialize faces starting from inner face and in clockwise order
+      CENTER_FACES[0] = getAprilTagPose(21).get().toPose2d();
+      CENTER_FACES[1] = getAprilTagPose(22).get().toPose2d();
+      CENTER_FACES[2] = getAprilTagPose(17).get().toPose2d();
+      CENTER_FACES[3] = getAprilTagPose(18).get().toPose2d();
+      CENTER_FACES[4] = getAprilTagPose(19).get().toPose2d();
+      CENTER_FACES[5] = getAprilTagPose(20).get().toPose2d();
+      /**
+       * Letters of BRANCHES in same order as faces, first 6 are left BRANCHES, last 6 are right
+       * BRANCHES
+       */
+      String BRANCH_LETTERS = "GECAKIHFDBLJ";
+      /** Hypotenuse from AprilTag to BRANCH */
+      double ARPILTAG_TO_BRANCH_HYPOT_M = Units.inchesToMeters(13);
+      /** Angle from AprilTag to BRANCH that the hypotenuse makes */
+      double ARPILTAG_TO_BRANCH_ANGLE_RAD = Units.degreesToRadians(30);
+
+      // Initialize BRANCH poses
+      for (int i = 0; i < 6; i++) {
+        // Left BRANCH of REEF face
+        var leftBranch =
+            new Pose2d(
+                CENTER_FACES[i].getX()
+                    + (-ARPILTAG_TO_BRANCH_HYPOT_M
+                        * Math.cos(
+                            ARPILTAG_TO_BRANCH_ANGLE_RAD
+                                + CENTER_FACES[i].getRotation().getRadians())),
+                CENTER_FACES[i].getY()
+                    + (-ARPILTAG_TO_BRANCH_HYPOT_M
+                        * Math.sin(
+                            ARPILTAG_TO_BRANCH_ANGLE_RAD
+                                + CENTER_FACES[i].getRotation().getRadians())),
+                CENTER_FACES[i].getRotation());
+
+        // Right BRANCH of REEF face
+        var rightBranch =
+            new Pose2d(
+                CENTER_FACES[i].getX()
+                    + (-ARPILTAG_TO_BRANCH_HYPOT_M
+                        * Math.cos(
+                            -ARPILTAG_TO_BRANCH_ANGLE_RAD
+                                + CENTER_FACES[i].getRotation().getRadians())),
+                CENTER_FACES[i].getY()
+                    + (-ARPILTAG_TO_BRANCH_HYPOT_M
+                        * Math.sin(
+                            -ARPILTAG_TO_BRANCH_ANGLE_RAD
+                                + CENTER_FACES[i].getRotation().getRadians())),
+                CENTER_FACES[i].getRotation());
+
+        // Map poses to corresponding BRANCH letter
+        BRANCH_POSES.put(BRANCH_LETTERS.substring(i, i + 1), leftBranch);
+        BRANCH_POSES.put(BRANCH_LETTERS.substring(i + 6, i + 7), rightBranch);
+      }
+    }
   }
 
   /** Constants for PathPlanner configurations and Pathfinding */
@@ -163,8 +251,8 @@ public final class Constants {
     /* Pathfinding */
     /** Max translational and rotational velocity and acceleration used for Pathfinding */
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
-        new PathConstraints(3, 3, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
-    /** Default distnace away from an AprilTag the robot should be when Pathfinding to it */
-    public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(8);
+        new PathConstraints(5, 5, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
+    /** Default distance away from any wall when the robot is Pathfinding towards one */
+    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(12);
   }
 }
