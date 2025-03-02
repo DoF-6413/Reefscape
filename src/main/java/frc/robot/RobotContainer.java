@@ -2,13 +2,11 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.DriveCommands;
@@ -23,7 +21,6 @@ import frc.robot.Subsystems.Climber.*;
 import frc.robot.Subsystems.CoralEndEffector.*;
 import frc.robot.Subsystems.Drive.*;
 import frc.robot.Subsystems.Funnel.*;
-import frc.robot.Subsystems.Gyro.*;
 import frc.robot.Subsystems.Periscope.*;
 import frc.robot.Subsystems.Vision.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -358,8 +355,10 @@ public class RobotContainer {
     //             m_funnelSubsystem));
     // m_auxController
     //     .povDown()
-    //     .onTrue(new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(-0.8), m_funnelSubsystem))
-    //     .onFalse(new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(0), m_funnelSubsystem));
+    //     .onTrue(new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(-0.8),
+    // m_funnelSubsystem))
+    //     .onFalse(new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(0),
+    // m_funnelSubsystem));
 
     // // ALGAE Pivot testing binding
     // m_auxController
@@ -416,8 +415,7 @@ public class RobotContainer {
     // L1
     m_auxController
         .leftTrigger()
-        .onTrue(
-            SuperstructureCommands.positionsToL1(m_periscopeSubsystem, m_algaePivotSubsystem))
+        .onTrue(SuperstructureCommands.positionsToL1(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
@@ -452,8 +450,7 @@ public class RobotContainer {
     // L4
     m_auxController
         .rightBumper()
-        .onTrue(
-            SuperstructureCommands.positionsToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
+        .onTrue(SuperstructureCommands.positionsToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
