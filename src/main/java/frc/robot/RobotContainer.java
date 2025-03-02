@@ -180,16 +180,6 @@ public class RobotContainer {
                     () -> -m_driverController.getLeftX(),
                     () -> -m_driverController.getRightX())
                 .withName("FieldRelativeDrive"));
-    // Robot relative
-    m_driverController
-        .b()
-        .onTrue(
-            DriveCommands.robotRelativeDrive(
-                    m_driveSubsystem,
-                    () -> -m_driverController.getLeftY(),
-                    () -> -m_driverController.getLeftX(),
-                    () -> -m_driverController.getRightX())
-                .withName("RobotRelativeDrive"));
     // Lock robot heading to 0 degrees
     m_driverController
         .povUp()
@@ -240,49 +230,30 @@ public class RobotContainer {
                 .withName("ZeroYaw"));
 
     /* Pathfinding */
-    // AprilTag currently seen
-    m_driverController
-        .x()
-        .onTrue(
-            PathfindingCommands.pathfindToCurrentTag(
-                    m_driveSubsystem,
-                    m_visionSubsystem,
-                    () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
-                    m_driverController.x().negate())
-                .withName("PathfindToAprilTag"));
-    // AprilTag 18 - REEF
-    m_driverController
-        .leftTrigger()
-        .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 18, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .until(m_driverController.leftTrigger().negate())
-                .withName("PathfindToAprilTag18"));
-    // AprilTag 17 - REEF
-    m_driverController
-        .leftBumper()
-        .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 17, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .until(m_driverController.leftBumper().negate())
-                .withName("PathfindToAprilTag17"));
-    // AprilTag 19 - REEF
-    m_driverController
-        .rightTrigger()
-        .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 19, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .until(m_driverController.rightTrigger().negate())
-                .withName("PathfindToAprilTag19"));
     // Closest REEF BRANCH
     m_driverController
-        .rightBumper()
+        .leftTrigger()
         .onTrue(
             PathfindingCommands.pathfindToClosestBranch(
                     m_driveSubsystem,
                     () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
-                    m_driverController.rightBumper().negate())
+                    m_driverController.leftTrigger().negate())
                 .withName("PathfindToBranch"));
+    
+    /* Scoring commands */
+    // Score
+    m_driverController
+        .rightTrigger()
+        .onTrue(
+            SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem)
+                .until(m_driverController.rightTrigger().negate())
+                .withName("Score"));
+    // Intaking
+    m_driverController
+        .rightBumper()
+        .onTrue(SuperstructureCommands.coralIntake(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem)
+            .until(m_driverController.rightBumper().negate())
+            .withName("CoralIntake"));
   }
 
   /** Aux Controls */
