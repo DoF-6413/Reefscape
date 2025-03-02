@@ -24,12 +24,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.Subsystems.Algae.EndEffector.AEE;
-import frc.robot.Subsystems.Algae.Pivot.AlgaePivot;
-import frc.robot.Subsystems.CoralEndEffector.CEE;
 import frc.robot.Subsystems.Drive.DriveConstants;
-import frc.robot.Subsystems.Funnel.Funnel;
-import frc.robot.Subsystems.Periscope.Periscope;
 import java.util.Optional;
 
 /**
@@ -103,7 +98,8 @@ public final class Constants {
   /** Controller ports */
   public static class OperatorConstants {
     public static final int DRIVER_CONTROLLER = 0;
-    public static final int AUX_CONTROLLER = 1;
+    public static final int AUX_BUTTON_BOARD = 1;
+    public static final int AUX_XBOX_CONTROLLER = 2;
   }
 
   /** Heading Controller */
@@ -170,25 +166,5 @@ public final class Constants {
         new PathConstraints(3, 3, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
     /** Default distnace away from an AprilTag the robot should be when Pathfinding to it */
     public static final double DEFAULT_APRILTAG_DISTANCE_M = Units.inchesToMeters(8);
-  }
-
-  /**
-   * Superstructure includes the {@link Periscope}, {@link AlgaePivot}, {@link AEE}, {@link CEE},
-   * and {@link Funnel}.
-   */
-  public static class SuperstructureConstants {
-    /** Used to determine setpoints of each mechanism on the Superstructure */
-    public enum OBJECTIVE {
-      L1,
-      L2_CORAL,
-      L2_ALGAE,
-      L3_CORAL,
-      L3_ALGAE,
-      L4,
-      PICKUP,
-      NET,
-      PROCESSOR,
-      Zero
-    }
   }
 }

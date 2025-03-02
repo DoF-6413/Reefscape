@@ -7,6 +7,7 @@ package frc.robot.Subsystems.Algae.Pivot;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.RobotStateConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class AlgaePivot extends SubsystemBase {
@@ -34,8 +35,17 @@ public class AlgaePivot extends SubsystemBase {
 
     // Initialize PID Controller
     m_PIDController =
-        new PIDController(AlgaePivotConstants.KP, AlgaePivotConstants.KI, AlgaePivotConstants.KD);
-    m_PIDController.setTolerance(0);
+        new PIDController(
+            RobotStateConstants.getMode() == RobotStateConstants.Mode.SIM
+                ? AlgaePivotConstants.KP_SIM
+                : AlgaePivotConstants.KP,
+            RobotStateConstants.getMode() == RobotStateConstants.Mode.SIM
+                ? AlgaePivotConstants.KI_SIM
+                : AlgaePivotConstants.KI,
+            RobotStateConstants.getMode() == RobotStateConstants.Mode.SIM
+                ? AlgaePivotConstants.KD_SIM
+                : AlgaePivotConstants.KD);
+    m_PIDController.setTolerance(AlgaePivotConstants.ERROR_TOLERANCE_RAD);
 
     // Tunable PID gains
     SmartDashboard.putBoolean("PIDFF_Tuning/ALGAE_Pivot/EnableTuning", false);

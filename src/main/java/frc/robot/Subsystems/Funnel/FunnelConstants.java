@@ -1,5 +1,7 @@
 package frc.robot.Subsystems.Funnel;
 
+import edu.wpi.first.math.util.Units;
+
 public class FunnelConstants {
   // REAL CONSTANTS
   /** CAN ID of the Funnel SPARK MAX */
@@ -14,7 +16,8 @@ public class FunnelConstants {
   public static final int CUR_LIM_A = 30;
   // Velocities
   /** Intaking velocity in radians per second */
-  public static final double INTAKE_SPEED_RAD_PER_SEC = 0;
+  public static final double INTAKE_SPEED_RAD_PER_SEC =
+      Units.rotationsPerMinuteToRadiansPerSecond(1000); // TODO: Update
   /** Intaking speed, open loop voltage control */
   public static final double INTAKE_PERCENT_SPEED = 0.80; // TODO: Verify
 

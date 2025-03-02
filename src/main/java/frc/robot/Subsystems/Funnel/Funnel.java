@@ -3,6 +3,7 @@ package frc.robot.Subsystems.Funnel;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.RobotStateConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Funnel extends SubsystemBase {
@@ -73,6 +74,15 @@ public class Funnel extends SubsystemBase {
    */
   public void setVoltage(double volts) {
     m_io.setVoltage(volts);
+  }
+
+  /**
+   * Sets the speed of the Funnel motor based on a percentage.
+   *
+   * @param percent A value between -1 (full reverse speed) to 1 (full forward speed).
+   */
+  public void setPercentSpeed(double percent) {
+    m_io.setVoltage(percent * RobotStateConstants.MAX_VOLTAGE);
   }
 
   /**

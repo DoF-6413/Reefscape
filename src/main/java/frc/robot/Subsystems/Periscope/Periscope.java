@@ -12,6 +12,9 @@ public class Periscope extends SubsystemBase {
   private final PeriscopeIO m_io;
   private final PeriscopeIOInputsAutoLogged m_inputs = new PeriscopeIOInputsAutoLogged();
 
+  /** Keep tracks of the setpoint to determine whether or not the Periscope is at its setpoint */
+  private double m_heightSetpointMeters = 0.0;
+
   /**
    * This constructs a new {@link Periscope} instance.
    *
@@ -76,8 +79,19 @@ public class Periscope extends SubsystemBase {
    * @param heightMeters Position of the Periscope in meters.
    */
   public void setPosition(double heightMeters) {
-    Logger.recordOutput("SuperstructureSetpoints/PSHeight", heightMeters);
-    m_io.setPosition(heightMeters);
+    m_heightSetpointMeters = heightMeters;
+    Logger.recordOutput("SuperstructureSetpoints/PSHeight", m_heightSetpointMeters);
+    m_io.setPosition(m_heightSetpointMeters);
+  }
+
+  /**
+   * Whether or not the Periscope is at its height setpoint.
+   *
+   * @return {@code true} if at setpoint height, {@code false} if not
+   */
+  public boolean atSetpointHeight() {
+    return m_inputs.heightMeters <= (m_heightSetpointMeters + PeriscopeConstants.ERROR_TOLERANCE_M)
+        && m_inputs.heightMeters >= (m_heightSetpointMeters - PeriscopeConstants.ERROR_TOLERANCE_M);
   }
 
   /**

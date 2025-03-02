@@ -46,8 +46,9 @@ public class RobotContainer {
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
+  private final GenericHID m_auxButtonBoard = new GenericHID(OperatorConstants.AUX_BUTTON_BOARD);
   private final CommandXboxController m_auxController =
-      new CommandXboxController(OperatorConstants.AUX_CONTROLLER);
+      new CommandXboxController(OperatorConstants.AUX_XBOX_CONTROLLER);
 
   // Autos
   private final LoggedDashboardChooser<Command> m_autoChooser =
@@ -276,7 +277,7 @@ public class RobotContainer {
 
   /** Aux Controls */
   public void auxControllerBindings() {
-    // AEE testing binding
+    // // AEE testing binding
     // m_AEESubsystem.setDefaultCommand(
     //     new InstantCommand(
     //         () ->
@@ -324,7 +325,7 @@ public class RobotContainer {
     //             },
     //             m_CEESubsystem));
 
-    // Funnel testing binding
+    // // Funnel testing binding
     // m_auxController
     //     .povUp()
     //     .onTrue(
@@ -344,32 +345,32 @@ public class RobotContainer {
     //             m_funnelSubsystem));
     // m_auxController
     //     .povDown()
-    //     .onTrue(new InstantCommand(() -> m_funnelSubsystem.setVoltage(12), m_funnelSubsystem))
-    //     .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
+    //     .onTrue(new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(-0.8), m_funnelSubsystem))
+    //     .onFalse(new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(0), m_funnelSubsystem));
 
-    // ALGAE Pivot testing binding
+    // // ALGAE Pivot testing binding
     // m_auxController
-    //     .b()
+    //     .y()
     //     .onTrue(
     //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.MAX_ANGLE_RAD),
+    //             () -> m_algaePivotSubsystem.setAngle(AlgaePivotConstants.MAX_ANGLE_RAD),
     //             m_algaePivotSubsystem))
     //     .onFalse(
     //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
+    //             () -> m_algaePivotSubsystem.setAngle(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
     //             m_algaePivotSubsystem));
     // m_auxController
     //     .x()
     //     .onTrue(
     //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.MIN_ANGLE_RAD),
+    //             () -> m_algaePivotSubsystem.setAngle(AlgaePivotConstants.MIN_ANGLE_RAD),
     //             m_algaePivotSubsystem))
     //     .onFalse(
     //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
+    //             () -> m_algaePivotSubsystem.setAngle(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
     //             m_algaePivotSubsystem));
 
-    // Periscope testing binding
+    // // Periscope testing binding
     // m_auxController
     //     .a()
     //     .onTrue(
@@ -383,155 +384,70 @@ public class RobotContainer {
 
     // // Climber testing binding
     // m_auxController
-    //     .y()
+    //     .b()
     //     .onTrue(
     //         new InstantCommand(
-    //             () -> m_climberSubsystem.setPosition(ClimberConstants.MIN_ANGLE_RAD),
+    //             () -> m_climberSubsystem.setAngle(ClimberConstants.MAX_ANGLE_RAD),
     //             m_climberSubsystem))
     //     .onFalse(
     //         new InstantCommand(
-    //             () -> m_climberSubsystem.setPosition(ClimberConstants.MAX_ANGLE_RAD),
+    //             () -> m_climberSubsystem.setAngle(ClimberConstants.MIN_ANGLE_RAD),
     //             m_climberSubsystem));
 
-    m_auxController
-        .rightTrigger()
-        .onTrue(
-            SuperstructureCommands.superstructureScore(
-                m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
-
-    m_auxController
-        .leftTrigger()
-        .onTrue(
-            SuperstructureCommands.superstructureToPickup(
-                m_periscopeSubsystem, m_algaePivotSubsystem))
-        .onFalse(
-            SuperstructureCommands.superstructureToZero(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
-                m_CEESubsystem,
-                m_AEESubsystem,
-                m_funnelSubsystem));
-
+    /* ~~~~~~~~~~~~~~~ Superstructure bindings~~~~~~~~~~~~~~~ */
+    /* Scoring */
     m_auxController
         .a()
+        .onTrue(SuperstructureCommands.superstructureScore(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+    /* CORAL Score Positions */
+    // L1
+    m_auxController
+        .leftTrigger()
         .onTrue(
             SuperstructureCommands.superstructureToL1(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.superstructureToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_CEESubsystem,
                 m_AEESubsystem,
+                m_CEESubsystem,
                 m_funnelSubsystem));
-
+    // L2
     m_auxController
-        .b()
+        .leftBumper()
         .onTrue(
-            SuperstructureCommands.superstructureToL2Coral(
-                m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.superstructureToL2Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.superstructureToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_CEESubsystem,
                 m_AEESubsystem,
+                m_CEESubsystem,
                 m_funnelSubsystem));
-
+    // L3
     m_auxController
-        .y()
+        .rightTrigger()
         .onTrue(
-            SuperstructureCommands.superstructureToL3Coral(
-                m_periscopeSubsystem, m_algaePivotSubsystem))
+            SuperstructureCommands.superstructureToL3Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.superstructureToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_CEESubsystem,
                 m_AEESubsystem,
+                m_CEESubsystem,
                 m_funnelSubsystem));
-
+    // L4
     m_auxController
-        .x()
+        .rightBumper()
         .onTrue(
             SuperstructureCommands.superstructureToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.superstructureToZero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_CEESubsystem,
                 m_AEESubsystem,
-                m_funnelSubsystem));
-
-    // algae
-    m_auxController
-        .leftBumper()
-        .onTrue(
-            SuperstructureCommands.superstructureToProcessor(
-                m_periscopeSubsystem, m_algaePivotSubsystem))
-        .onFalse(
-            SuperstructureCommands.superstructureToZero(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
                 m_CEESubsystem,
-                m_AEESubsystem,
                 m_funnelSubsystem));
-
-    m_auxController
-        .rightBumper()
-        .onTrue(
-            SuperstructureCommands.superstructureToNet(m_periscopeSubsystem, m_algaePivotSubsystem))
-        .onFalse(
-            SuperstructureCommands.superstructureToZero(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
-                m_CEESubsystem,
-                m_AEESubsystem,
-                m_funnelSubsystem));
-
-    m_auxController
-        .rightStick()
-        .onTrue(
-            SuperstructureCommands.superstructureToL2Algae(
-                m_periscopeSubsystem, m_algaePivotSubsystem))
-        .onFalse(
-            SuperstructureCommands.superstructureToZero(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
-                m_CEESubsystem,
-                m_AEESubsystem,
-                m_funnelSubsystem));
-
-    m_auxController
-        .leftStick()
-        .onTrue(
-            SuperstructureCommands.superstructureToL3Algae(
-                m_periscopeSubsystem, m_algaePivotSubsystem))
-        .onFalse(
-            SuperstructureCommands.superstructureToZero(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
-                m_CEESubsystem,
-                m_AEESubsystem,
-                m_funnelSubsystem));
-
-    // m_auxController
-    //     .x()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> SuperstructureCommands.superstructureToPosition(m_periscopeSubsystem,
-    // m_algaePivotSubsystem),
-    //             m_algaePivotSubsystem,
-    //             m_periscopeSubsystem));
-
-    // m_auxController
-    //     .y()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () ->
-    //                 SuperstructureCommands.superstructureToPosition(m_periscopeSubsystem,
-    // m_algaePivotSubsystem),
-    //             m_algaePivotSubsystem,
-    //             m_periscopeSubsystem));
   }
 
   /**
