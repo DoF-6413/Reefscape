@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Commands.TeleopCommands.DriveCommands;
-import frc.robot.Commands.TeleopCommands.PathfindingCommands;
+import frc.robot.Commands.DriveCommands;
+import frc.robot.Commands.PathfindingCommands;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
@@ -325,7 +325,8 @@ public class RobotContainer {
         .onTrue(
             PathfindingCommands.pathfindToFieldElement(
                     FieldConstants.getAprilTagPose(18).get().toPose2d(),
-                    PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                    PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
+                    PathPlannerConstants.ROBOT_MIDPOINT_TO_CEE)
                 .until(m_driverController.leftTrigger().negate())
                 .withName("PathfindToAprilTag18"));
     // BRANCH A - REEF
@@ -335,7 +336,8 @@ public class RobotContainer {
             PathfindingCommands.pathfindToFieldElement(
                     FieldConstants.BRANCH_POSES.get("A"),
                     PathPlannerConstants.DEFAULT_WALL_DISTANCE_M
-                        + FieldConstants.BRANCH_TO_WALL_X_M)
+                        + FieldConstants.BRANCH_TO_WALL_X_M,
+                    PathPlannerConstants.ROBOT_MIDPOINT_TO_CEE)
                 .until(m_driverController.leftBumper().negate())
                 .withName("PathfindToBRANCH_A"));
     // CORAL STATION (right, aka 2) Center
@@ -344,7 +346,8 @@ public class RobotContainer {
         .onTrue(
             PathfindingCommands.pathfindToFieldElement(
                     FieldConstants.CORAL_STATION_POSES.get("CS2C"),
-                    PathPlannerConstants.DEFAULT_WALL_DISTANCE_M / 2)
+                    PathPlannerConstants.DEFAULT_WALL_DISTANCE_M / 2,
+                    PathPlannerConstants.ROBOT_MIDPOINT_TO_FUNNEL)
                 .until(m_driverController.rightTrigger().negate())
                 .withName("PathfindToCS2C"));
     // Closest REEF BRANCH

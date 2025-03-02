@@ -1,4 +1,4 @@
-package frc.robot.Commands.TeleopCommands;
+package frc.robot.Commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,10 +23,14 @@ public class PathfindingCommands {
    *
    * @param elementPose {@link Pose2d} of the element to pathfind to.
    * @param wallDistanceMeters Distance from the field element in meters.
+   * @param strafeOffset Left/right offset of the robot relative to the field element. Nesessary
+   *     depending on mechanism in use
    * @return {@link Command} that makes the robot follow a trajectory to in front of the field
    *     element.
    */
-  public static Command pathfindToFieldElement(Pose2d elementPose, double wallDistanceMeters) {
+  public static Command pathfindToFieldElement(
+      Pose2d elementPose, double wallDistanceMeters, double strafeOffset) {
+    var elementRotation = elementPose.getRotation();
     // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on top of
     // the specified field element's pose
     var goalPose =
@@ -35,13 +39,15 @@ public class PathfindingCommands {
             // is the desired distance away from the tag
             elementPose.getX()
                 + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters)
-                    * elementPose.getRotation().getCos(),
+                    * elementRotation.getCos()
+                + (strafeOffset * elementRotation.getSin()),
             elementPose.getY()
                 + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters)
-                    * elementPose.getRotation().getSin(),
+                    * elementRotation.getSin()
+                + (strafeOffset * elementRotation.getCos()),
             // Rotate by 180 as the field elements' angles are rotated 180 degrees relative to the
             // robot
-            elementPose.getRotation().plus(Rotation2d.k180deg));
+            elementRotation.plus(Rotation2d.k180deg));
 
     return AutoBuilder.pathfindToPoseFlipped(
         goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
@@ -82,7 +88,9 @@ public class PathfindingCommands {
             // Pathfind to BRANCH pose. This method returns a command to pathfind to in front of the
             // BRANCH'S pose as to not drive into it.
             PathfindingCommands.pathfindToFieldElement(
-                    apriltagPose.get().toPose2d(), wallDistanceMeters)
+                    apriltagPose.get().toPose2d(),
+                    wallDistanceMeters,
+                    PathPlannerConstants.ROBOT_MIDPOINT_TO_CEE)
                 .until(stopTrigger)
                 .schedule();
           }
@@ -106,7 +114,7 @@ public class PathfindingCommands {
    */
   public static Command pathfindToClosestBranch(
       Drive drive, double wallDistanceMeters, BooleanSupplier stopTrigger) {
-        
+
     return Commands.run(
         () -> {
           var currentPose = drive.getCurrentPose2d();
@@ -177,7 +185,8 @@ public class PathfindingCommands {
           // BRANCH'S pose as to not drive into it.
           PathfindingCommands.pathfindToFieldElement(
                   FieldConstants.BRANCH_POSES.get(branchLetter),
-                  wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_X_M)
+                  wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_X_M,
+                  PathPlannerConstants.ROBOT_MIDPOINT_TO_CEE)
               .until(stopTrigger)
               .schedule();
         },
@@ -199,23 +208,27 @@ public class PathfindingCommands {
    */
   public static Command pathfindToClosestCoralStation(
       Drive drive, double wallDistanceMeters, BooleanSupplier stopTrigger) {
-
+    // Initialize CORAL STATIONS based on alliance color
     String csLeft = RobotStateConstants.isRed() ? "CS2C" : "CS1C";
     String csRight = RobotStateConstants.isRed() ? "CS1C" : "CS2C";
     return Commands.run(
         () -> {
           if (drive.getCurrentPose2d().getY() > FieldConstants.FIELD_WIDTH / 2) {
-            // Pathfind to the center of the CS to the left of the Driver Station // TODO: pathfind
-            // to specific parts in the CS if closer?
+            // Pathfind to the center of the CS to the left of the Driver Station
+            // TODO: pathfind to specific parts in the CS if closer?
             PathfindingCommands.pathfindToFieldElement(
-                    FieldConstants.CORAL_STATION_POSES.get(csLeft), wallDistanceMeters)
+                    FieldConstants.CORAL_STATION_POSES.get(csLeft),
+                    wallDistanceMeters,
+                    PathPlannerConstants.ROBOT_MIDPOINT_TO_FUNNEL)
                 .until(stopTrigger)
                 .schedule();
           } else {
-            // Pathfind to the center of the CS to the right of the Driver Station // TODO: pathfind
-            // to specific parts in the CS if closer?
+            // Pathfind to the center of the CS to the right of the Driver Station
+            // TODO: pathfind to specific parts in the CS if closer?
             PathfindingCommands.pathfindToFieldElement(
-                    FieldConstants.CORAL_STATION_POSES.get(csRight), wallDistanceMeters)
+                    FieldConstants.CORAL_STATION_POSES.get(csRight),
+                    wallDistanceMeters,
+                    PathPlannerConstants.ROBOT_MIDPOINT_TO_FUNNEL)
                 .until(stopTrigger)
                 .schedule();
           }

@@ -298,6 +298,10 @@ public final class Constants {
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
         new PathConstraints(5, 5, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
     /** Default distance away from any wall when the robot is Pathfinding towards one */
-    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(12);
+    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(0);
+    /** Distance from the center of the robot to the center of the Funnel */
+    public static final double ROBOT_MIDPOINT_TO_FUNNEL = Units.inchesToMeters(6); // TODO: Update
+    /** Distance from the center of the robot to the center of the CEE */
+    public static final double ROBOT_MIDPOINT_TO_CEE = Units.inchesToMeters(6); // TODO: Update
   }
 }
