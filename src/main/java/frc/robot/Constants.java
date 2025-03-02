@@ -224,15 +224,13 @@ public final class Constants {
         BRANCH_POSES.put(BRANCH_LETTERS.substring(i + 6, i + 7), rightBranch);
       }
       // Initialize the locations of the center of the CORAL STATIONS
-      CENTER_CORAL_STATION[0] = APRILTAG_FIELD_LAYOUT.getTagPose(12).get().toPose2d();
-      CENTER_CORAL_STATION[1] = APRILTAG_FIELD_LAYOUT.getTagPose(13).get().toPose2d();
+      CENTER_CORAL_STATION[0] = APRILTAG_FIELD_LAYOUT.getTagPose(13).get().toPose2d();
+      CENTER_CORAL_STATION[1] = APRILTAG_FIELD_LAYOUT.getTagPose(12).get().toPose2d();
       /**
        * Distance from the center of the CS to the left/right sides. 76 = CS Width, (76 in / 2) -
-       * (76 in / 3) = 12.6667
+       * (76 in / 6) = 25.3333 in
        */
-      double CENTER_TO_SIDE = Units.inchesToMeters(12.6667);
-      /** Angle that the CS makes with the x-axis of the field */
-      double CORAL_STATION_ANGLE = Units.degreesToRadians(30.0);
+      double CENTER_TO_SIDE = Units.inchesToMeters(25.3333);
       for (int i = 0; i < 2; i++) {
         // Left CORAL STATION area
         var leftCS =
@@ -240,13 +238,11 @@ public final class Constants {
                 CENTER_CORAL_STATION[i].getX()
                     + (CENTER_TO_SIDE
                         * Math.cos(
-                            -CORAL_STATION_ANGLE
-                                + CENTER_CORAL_STATION[i].getRotation().getRadians())),
+                            -Math.PI / 2 + CENTER_CORAL_STATION[i].getRotation().getRadians())),
                 CENTER_CORAL_STATION[i].getY()
                     + (CENTER_TO_SIDE
                         * Math.sin(
-                            -CORAL_STATION_ANGLE
-                                + CENTER_CORAL_STATION[i].getRotation().getRadians())),
+                            -Math.PI / 2 + CENTER_CORAL_STATION[i].getRotation().getRadians())),
                 CENTER_CORAL_STATION[i].getRotation());
         // Right CORAL STATION area
         var rightCS =
@@ -254,13 +250,11 @@ public final class Constants {
                 CENTER_CORAL_STATION[i].getX()
                     + (-CENTER_TO_SIDE
                         * Math.cos(
-                            -CORAL_STATION_ANGLE
-                                + CENTER_CORAL_STATION[i].getRotation().getRadians())),
+                            -Math.PI / 2 + CENTER_CORAL_STATION[i].getRotation().getRadians())),
                 CENTER_CORAL_STATION[i].getY()
                     + (-CENTER_TO_SIDE
                         * Math.sin(
-                            -CORAL_STATION_ANGLE
-                                + CENTER_CORAL_STATION[i].getRotation().getRadians())),
+                            -Math.PI / 2 + CENTER_CORAL_STATION[i].getRotation().getRadians())),
                 CENTER_CORAL_STATION[i].getRotation());
 
         // Map poses to names

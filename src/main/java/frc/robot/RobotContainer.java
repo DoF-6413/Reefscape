@@ -319,49 +319,52 @@ public class RobotContainer {
                 .withName("ZeroYaw"));
 
     /* Pathfinding */
-    // AprilTag currently seen
-    // m_driverController
-    //     .x()
-    //     .onTrue(
-    //         PathfindingCommands.pathfindToCurrentTag(
-    //                 m_driveSubsystem,
-    //                 m_visionSubsystem,
-    //                 () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
-    //                 m_driverController.x().negate())
-    //             .withName("PathfindToAprilTag"));
     // AprilTag 18 - REEF
     m_driverController
         .leftTrigger()
         .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 18, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+            PathfindingCommands.pathfindToFieldElement(
+                    FieldConstants.getAprilTagPose(18).get().toPose2d(),
+                    PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .until(m_driverController.leftTrigger().negate())
                 .withName("PathfindToAprilTag18"));
-    // AprilTag 17 - REEF
+    // BRANCH A - REEF
     m_driverController
         .leftBumper()
         .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 17, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+            PathfindingCommands.pathfindToFieldElement(
+                    FieldConstants.BRANCH_POSES.get("A"),
+                    PathPlannerConstants.DEFAULT_WALL_DISTANCE_M
+                        + FieldConstants.BRANCH_TO_WALL_X_M)
                 .until(m_driverController.leftBumper().negate())
-                .withName("PathfindToAprilTag17"));
-    // AprilTag 19 - REEF
+                .withName("PathfindToBRANCH_A"));
+    // CORAL STATION (right, aka 2) Center
     m_driverController
         .rightTrigger()
         .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 19, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+            PathfindingCommands.pathfindToFieldElement(
+                    FieldConstants.CORAL_STATION_POSES.get("CS2C"),
+                    PathPlannerConstants.DEFAULT_WALL_DISTANCE_M / 2)
                 .until(m_driverController.rightTrigger().negate())
-                .withName("PathfindToAprilTag19"));
+                .withName("PathfindToCS2C"));
     // Closest REEF BRANCH
     m_driverController
         .rightBumper()
         .onTrue(
             PathfindingCommands.pathfindToClosestBranch(
                     m_driveSubsystem,
-                    () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
+                    PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
                     m_driverController.rightBumper().negate())
                 .withName("PathfindToBranch"));
+    // Closest CORAL STATION
+    m_driverController
+        .x()
+        .onTrue(
+            PathfindingCommands.pathfindToClosestCoralStation(
+                    m_driveSubsystem,
+                    PathPlannerConstants.DEFAULT_WALL_DISTANCE_M / 2,
+                    m_driverController.x().negate())
+                .withName("PathfindCS"));
   }
 
   /** Aux Controls */
