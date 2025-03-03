@@ -18,8 +18,8 @@ public final class DriveConstants {
       CAN_ID = value;
     }
   }
-  /** NEOs CAN IDs */
-  public enum TURN_MOTOR {
+  /** CANcoders CAN IDs */
+  public enum ABSOLUTE_ENCODER {
     FRONT_LEFT(6), // Module 0
     FRONT_RIGHT(7), // Module 1
     BACK_LEFT(8), // Module 2
@@ -27,12 +27,12 @@ public final class DriveConstants {
 
     public final int CAN_ID;
 
-    TURN_MOTOR(int value) {
+    ABSOLUTE_ENCODER(int value) {
       CAN_ID = value;
     }
   }
-  /** CANcoders CAN IDs */
-  public enum ABSOLUTE_ENCODER {
+  /** NEOs CAN IDs */
+  public enum TURN_MOTOR {
     FRONT_LEFT(10), // Module 0
     FRONT_RIGHT(11), // Module 1
     BACK_LEFT(12), // Module 2
@@ -40,7 +40,7 @@ public final class DriveConstants {
 
     public final int CAN_ID;
 
-    ABSOLUTE_ENCODER(int value) {
+    TURN_MOTOR(int value) {
       CAN_ID = value;
     }
   }

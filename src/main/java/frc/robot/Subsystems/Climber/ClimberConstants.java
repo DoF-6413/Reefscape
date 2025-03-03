@@ -13,7 +13,9 @@ public final class ClimberConstants {
    */
   public static final boolean IS_INVERTED = false;
   /** Current limit of 50 amps for the Climber motor */
-  public static final int CUR_LIM_A = 50;
+  public static final int STALL_CUR_LIM_A = 60;
+  /** Current limit of 50 amps for the Climber motor */
+  public static final int MAX_CURRENT_A = 120;
   /** Enable current limiting for the Climber motor */
   public static final boolean ENABLE_CUR_LIM = true;
   /** Refresh signals of the TalonFX 50 times a second (every 0.02 second) */

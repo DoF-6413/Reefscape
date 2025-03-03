@@ -54,9 +54,9 @@ public class ClimberIOTalonFX implements ClimberIO {
     // Current limit configuration
     m_motorConfig
         .CurrentLimits
-        .withSupplyCurrentLimit(ClimberConstants.CUR_LIM_A)
+        .withSupplyCurrentLimit(ClimberConstants.MAX_CURRENT_A)
         .withSupplyCurrentLimitEnable(ClimberConstants.ENABLE_CUR_LIM)
-        .withStatorCurrentLimit(ClimberConstants.CUR_LIM_A)
+        .withStatorCurrentLimit(ClimberConstants.STALL_CUR_LIM_A)
         .withStatorCurrentLimitEnable(ClimberConstants.ENABLE_CUR_LIM);
 
     // PID gains configuration
