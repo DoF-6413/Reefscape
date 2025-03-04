@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 public class CEEConstants {
   // REAL CONSTANTS
   /** CAN ID of the CEE SPARK MAX */
-  public static final int CAN_ID = 19;
+  public static final int CAN_ID = 20;
   /** Gear reduction of 3:1 for the CEE motor */
   public static final double GEAR_RATIO = 3.0 / 1.0;
   /** DIO port of the CEE Beam Break on the roboRIO */

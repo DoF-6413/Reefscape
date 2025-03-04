@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 public class AEEConstants {
   // REAL CONSTANTS
   /** CAN ID for the AEE SPARK MAX */
-  public static final int CAN_ID = 20;
+  public static final int CAN_ID = 21;
   /** Gear reduction of 6:1 for the AEE motor */
   public static final double GEAR_RATIO = 6.0 / 1.0;
   /**

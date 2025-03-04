@@ -57,7 +57,8 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     m_motorConfig
         .MotorOutput
         .withNeutralMode(NeutralModeValue.Brake)
-        .withControlTimesyncFreqHz(PeriscopeConstants.UPDATE_FREQUENCY_HZ);
+        .withControlTimesyncFreqHz(PeriscopeConstants.UPDATE_FREQUENCY_HZ)
+        .withInverted(null);
 
     // Current limit configuration
     m_motorConfig
@@ -138,8 +139,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     }
     // Update logged inputs for the entire Periscope
     inputs.heightMeters =
-        Units.rotationsToRadians(
-                (m_positionRot[0].getValueAsDouble() + m_positionRot[1].getValueAsDouble()) / 2)
+        Units.rotationsToRadians(-m_positionRot[0].getValueAsDouble())
             / PeriscopeConstants.GEAR_RATIO
             * PeriscopeConstants.DRUM_RADIUS_M;
     inputs.velocityRadPerSec =
@@ -158,10 +158,12 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
 
   @Override
   public void setVoltage(double volts) {
-    for (int i = 0; i < 2; i++) {
-      m_periscopeMotors[i].setVoltage(
-          MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
-    }
+    // for (int i = 0; i < 2; i++) {
+    m_periscopeMotors[0].setVoltage(
+        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+    m_periscopeMotors[1].setVoltage(
+        MathUtil.clamp(-volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+    // }
   }
 
   @Override

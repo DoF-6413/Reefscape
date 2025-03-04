@@ -1,6 +1,7 @@
 package frc.robot.Subsystems.Algae.Pivot;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -14,6 +15,7 @@ import frc.robot.Constants.RobotStateConstants;
 public class AlgaePivotIOSparkMax implements AlgaePivotIO {
   // Motor, encoder, and configurator
   private final SparkMax m_sparkmax;
+  private final RelativeEncoder m_encoder;
   private final AbsoluteEncoder m_absoluteEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
 
@@ -30,6 +32,7 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
     m_sparkmax = new SparkMax(AlgaePivotConstants.CAN_ID, MotorType.kBrushless);
 
     // Initialize absolute encoder
+    m_encoder = m_sparkmax.getEncoder();
     m_absoluteEncoder = m_sparkmax.getAbsoluteEncoder();
 
     // SPARK MAX configurations
@@ -51,7 +54,8 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
   public void updateInputs(AlgaePivotIOInputs inputs) {
     // Update logged inputs from the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
-    inputs.positionRad =
+    inputs.positionRad = m_encoder.getPosition();
+    inputs.absPositionRad =
         Units.rotationsToRadians(m_absoluteEncoder.getPosition()) / AlgaePivotConstants.GEAR_RATIO;
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_absoluteEncoder.getVelocity())

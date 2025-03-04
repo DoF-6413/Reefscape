@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 public class AlgaePivotConstants {
   // REAL CONSTANTS
   /** CAN ID for the ALGAE Pivot SPARK MAX */
-  public static final int CAN_ID = 21;
+  public static final int CAN_ID = 19;
   /** Gear reduction of 140:11 for the ALGAE Pivot motor */
   public static final double GEAR_RATIO = 140.0 / 11.0;
   /**

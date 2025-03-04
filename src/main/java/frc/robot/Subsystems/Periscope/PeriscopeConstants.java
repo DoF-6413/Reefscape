@@ -78,7 +78,8 @@ public class PeriscopeConstants {
   public static final double MAX_VELOCITY_ROT_PER_SEC =
       Units.radiansToRotations(3.54 / DRUM_RADIUS_M);
   /** Ideal acceleration for trapezoidal motion profiling in rotations per second squared */
-  public static final double IDEAL_ACCELERATION_ROT_PER_SEC2 = Units.radiansToRotations(44.31 / DRUM_RADIUS_M);
+  public static final double IDEAL_ACCELERATION_ROT_PER_SEC2 =
+      Units.radiansToRotations(44.31 / DRUM_RADIUS_M);
   /**
    * How many meters the height of the Periscope can be within its height setpoint to be considered
    * at the setpoint
