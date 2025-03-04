@@ -1,17 +1,27 @@
 package frc.robot.Subsystems.Funnel;
 
+import edu.wpi.first.math.util.Units;
+
 public class FunnelConstants {
   // REAL CONSTANTS
   /** CAN ID of the Funnel SPARK MAX */
   public static final int CAN_ID = 17;
   /** Gear reduction of 3:1 for the Funnel motor */
   public static final double GEAR_RATIO = 3.0 / 1.0;
+  /** DIO port of the Funnel Beam Break on the roboRIO */
+  public static final int BEAM_BREAK_PORT = 7;
   /**
    * Set the inversion status of the Funnel to false, making Counterclockwise the positive direction
    */
   public static final boolean IS_INVERTED = false;
   /** Current limit for the NEO motor of the Funnel */
   public static final int CUR_LIM_A = 30;
+  // Velocities
+  /** Intaking velocity in radians per second */
+  public static final double INTAKE_SPEED_RAD_PER_SEC =
+      Units.rotationsPerMinuteToRadiansPerSecond(1000); // TODO: Update
+  /** Intaking speed, open loop voltage control */
+  public static final double INTAKE_PERCENT_SPEED = 0.80; // TODO: Verify
 
   // PID CONSTANTS
   /**

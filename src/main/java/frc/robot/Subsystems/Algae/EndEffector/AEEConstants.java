@@ -15,12 +15,16 @@ public class AEEConstants {
   /** Current limit for the NEO motor of the AEE */
   public static final int CUR_LIM_A = 20;
   // Velocities
-  /** Intaking speed */
-  public static final double INTAKE_SPEED_RAD_PER_SEC =
-      Units.rotationsPerMinuteToRadiansPerSecond(0); // TODO: Update
-  /** Outtake speed */
-  public static final double OUTTAKE_SPEED_RAD_PER_SEC =
-      Units.rotationsPerMinuteToRadiansPerSecond(0); // TODO: Update
+  /** Scoring velocity in radians per second */
+  public static final double SCORE_VELOCITY_RAD_PER_SEC =
+      Units.rotationsPerMinuteToRadiansPerSecond(-30); // TODO: Update
+  /** Intaking velocity in radians per second */
+  public static final double INTAKE_VELOCITY_RAD_PER_SEC =
+      Units.rotationsPerMinuteToRadiansPerSecond(30); // TODO: Update
+  /** Scoring speed, open loop voltage control */
+  public static final double SCORE_PERCENT_SPEED = -0.80; // TODO: Verify
+  /** Intaking speed, open loop voltage control */
+  public static final double INTAKE_PERCENT_SPEED = 0.80; // TODO: Verify
 
   // PID CONSTANTS
   /**

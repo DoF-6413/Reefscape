@@ -108,7 +108,8 @@ public final class Constants {
   /** Controller ports */
   public static class OperatorConstants {
     public static final int DRIVER_CONTROLLER = 0;
-    public static final int AUX_CONTROLLER = 1;
+    public static final int AUX_BUTTON_BOARD = 1;
+    public static final int AUX_XBOX_CONTROLLER = 2;
   }
 
   /** Heading Controller */

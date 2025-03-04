@@ -1,4 +1,4 @@
-package frc.robot.Commands.TeleopCommands;
+package frc.robot.Commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;

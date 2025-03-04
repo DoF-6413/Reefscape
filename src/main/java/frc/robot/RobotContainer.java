@@ -2,18 +2,17 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Commands.TeleopCommands.DriveCommands;
-import frc.robot.Commands.TeleopCommands.PathfindingCommands;
+import frc.robot.Commands.DriveCommands;
+import frc.robot.Commands.PathfindingCommands;
+import frc.robot.Commands.SuperstructureCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
@@ -33,12 +32,12 @@ public class RobotContainer {
   private final Drive m_driveSubsystem;
 
   // Mechanisms
-  //   private final AlgaePivot m_algaePivotSubsystem;
+  private final AlgaePivot m_algaePivotSubsystem;
   private final Periscope m_periscopeSubsystem;
   private final Climber m_climberSubsystem;
   private final Funnel m_funnelSubsystem;
-  //   private final AEE m_AEESubsystem;
-  //   private final CEE m_CEESubsystem;
+  private final AEE m_AEESubsystem;
+  private final CEE m_CEESubsystem;
 
   // Utils
   private final Vision m_visionSubsystem;
@@ -46,8 +45,9 @@ public class RobotContainer {
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
+  private final GenericHID m_auxButtonBoard = new GenericHID(OperatorConstants.AUX_BUTTON_BOARD);
   private final CommandXboxController m_auxController =
-      new CommandXboxController(OperatorConstants.AUX_CONTROLLER);
+      new CommandXboxController(OperatorConstants.AUX_XBOX_CONTROLLER);
 
   // Autos
   private final LoggedDashboardChooser<Command> m_autoChooser =
@@ -65,12 +65,12 @@ public class RobotContainer {
                 new ModuleIOSparkMaxTalonFX(2),
                 new ModuleIOSparkMaxTalonFX(3),
                 new GyroIOPigeon2());
-        // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSparkMax());
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSparkMax());
         m_periscopeSubsystem = new Periscope(new PeriscopeIOTalonFX());
         m_climberSubsystem = new Climber(new ClimberIOTalonFX());
         m_funnelSubsystem = new Funnel(new FunnelIOSparkMax());
-        // m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
-        // m_CEESubsystem = new CEE(new CEEIOSparkMax());
+        m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
+        m_CEESubsystem = new CEE(new CEEIOSparkMax());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
@@ -86,12 +86,12 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new GyroIO() {});
-        // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSim());
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIOSim());
         m_periscopeSubsystem = new Periscope(new PeriscopeIOSim());
         m_climberSubsystem = new Climber(new ClimberIOSim());
         m_funnelSubsystem = new Funnel(new FunnelIOSim());
-        // m_AEESubsystem = new AEE(new AEEIOSim() {});
-        // m_CEESubsystem = new CEE(new CEEIOSim());
+        m_AEESubsystem = new AEE(new AEEIOSim() {});
+        m_CEESubsystem = new CEE(new CEEIOSim());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
@@ -109,12 +109,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new GyroIO() {});
-        // m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIO() {});
+        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIO() {});
         m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
         m_climberSubsystem = new Climber(new ClimberIO() {});
         m_funnelSubsystem = new Funnel(new FunnelIO() {});
-        // m_AEESubsystem = new AEE(new AEEIO() {});
-        // m_CEESubsystem = new CEE(new CEEIO() {});
+        m_AEESubsystem = new AEE(new AEEIO() {});
+        m_CEESubsystem = new CEE(new CEEIO() {});
         m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
         break;
     }
@@ -183,16 +183,6 @@ public class RobotContainer {
                     () -> -m_driverController.getLeftX(),
                     () -> -m_driverController.getRightX())
                 .withName("FieldRelativeDrive"));
-    // Robot relative
-    m_driverController
-        .b()
-        .onTrue(
-            DriveCommands.robotRelativeDrive(
-                    m_driveSubsystem,
-                    () -> -m_driverController.getLeftY(),
-                    () -> -m_driverController.getLeftX(),
-                    () -> -m_driverController.getRightX())
-                .withName("RobotRelativeDrive"));
     // Lock robot heading to 0 degrees
     m_driverController
         .povUp()
@@ -243,54 +233,35 @@ public class RobotContainer {
                 .withName("ZeroYaw"));
 
     /* Pathfinding */
-    // AprilTag currently seen
-    m_driverController
-        .x()
-        .onTrue(
-            PathfindingCommands.pathfindToCurrentTag(
-                    m_driveSubsystem,
-                    m_visionSubsystem,
-                    () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
-                    m_driverController.x().negate())
-                .withName("PathfindToAprilTag"));
-    // AprilTag 18 - REEF
-    m_driverController
-        .leftTrigger()
-        .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 18, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .until(m_driverController.leftTrigger().negate())
-                .withName("PathfindToAprilTag18"));
-    // AprilTag 17 - REEF
-    m_driverController
-        .leftBumper()
-        .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 17, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .until(m_driverController.leftBumper().negate())
-                .withName("PathfindToAprilTag17"));
-    // AprilTag 19 - REEF
-    m_driverController
-        .rightTrigger()
-        .onTrue(
-            PathfindingCommands.pathfindToAprilTag(
-                    () -> 19, () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .until(m_driverController.rightTrigger().negate())
-                .withName("PathfindToAprilTag19"));
     // Closest REEF BRANCH
     m_driverController
-        .rightBumper()
+        .leftTrigger()
         .onTrue(
             PathfindingCommands.pathfindToClosestBranch(
                     m_driveSubsystem,
                     () -> PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
-                    m_driverController.rightBumper().negate())
+                    m_driverController.leftTrigger().negate())
                 .withName("PathfindToBranch"));
+    
+    /* Scoring commands */
+    // Score
+    m_driverController
+        .rightTrigger()
+        .onTrue(
+            SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem)
+                .until(m_driverController.rightTrigger().negate())
+                .withName("Score"));
+    // Intaking
+    m_driverController
+        .rightBumper()
+        .onTrue(SuperstructureCommands.coralIntake(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem)
+            .until(m_driverController.rightBumper().negate())
+            .withName("CoralIntake"));
   }
 
   /** Aux Controls */
   public void auxControllerBindings() {
-    // AEE testing binding
+    // // AEE testing binding
     // m_AEESubsystem.setDefaultCommand(
     //     new InstantCommand(
     //         () ->
@@ -303,13 +274,13 @@ public class RobotContainer {
     //         Commands.run(
     //             () -> {
     //               m_AEESubsystem.enablePID(true);
-    //               m_AEESubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
+    //               m_AEESubsystem.setVelocity(Units.rotationsPerMinuteToRadiansPerSecond(1000));
     //             },
     //             m_AEESubsystem))
     //     .onFalse(
     //         new InstantCommand(
     //             () -> {
-    //               m_AEESubsystem.setSetpoint(0);
+    //               m_AEESubsystem.setVelocity(0);
     //               m_AEESubsystem.enablePID(false);
     //             },
     //             m_AEESubsystem));
@@ -327,113 +298,140 @@ public class RobotContainer {
     //         Commands.run(
     //             () -> {
     //               m_CEESubsystem.enablePID(true);
-    //               m_CEESubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
+    //               m_CEESubsystem.setVelocity(Units.rotationsPerMinuteToRadiansPerSecond(1000));
     //             },
     //             m_CEESubsystem))
     //     .onFalse(
     //         new InstantCommand(
     //             () -> {
-    //               m_CEESubsystem.setSetpoint(0);
+    //               m_CEESubsystem.setVelocity(0);
     //               m_CEESubsystem.enablePID(false);
     //             },
     //             m_CEESubsystem));
 
-    // Funnel testing binding
-    m_auxController
-        .povUp()
-        .onTrue(
-            Commands.run(
-                () -> {
-                  m_funnelSubsystem.enablePID(true);
-                  m_funnelSubsystem.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(1000));
-                },
-                m_funnelSubsystem))
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  m_funnelSubsystem.setSetpoint(0);
-                  m_funnelSubsystem.enablePID(false);
-                },
-                m_funnelSubsystem));
-    m_auxController
-        .povDown()
-        .onTrue(
-            new InstantCommand(
-                () ->
-                    m_funnelSubsystem.setVoltage(
-                        12 * SmartDashboard.getNumber("Funnel Speed Percent", 0)),
-                m_funnelSubsystem))
-        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setVoltage(0), m_funnelSubsystem));
+    // // Funnel testing binding
+    // m_auxController
+    //     .povUp()
+    //     .onTrue(
+    //         Commands.run(
+    //             () -> {
+    //               m_funnelSubsystem.enablePID(true);
+    //
+    // m_funnelSubsystem.setVelocity(Units.rotationsPerMinuteToRadiansPerSecond(1000));
+    //             },
+    //             m_funnelSubsystem))
+    //     .onFalse(
+    //         new InstantCommand(
+    //             () -> {
+    //               m_funnelSubsystem.setVelocity(0);
+    //               m_funnelSubsystem.enablePID(false);
+    //             },
+    //             m_funnelSubsystem));
+    // m_auxController
+    //     .povDown()
+    //     .onTrue(new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(-0.8),
+    // m_funnelSubsystem))
+    //     .onFalse(new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(0),
+    // m_funnelSubsystem));
 
     // // ALGAE Pivot testing binding
     // m_auxController
-    //     .b()
+    //     .y()
     //     .onTrue(
     //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.MAX_ANGLE_RAD),
+    //             () -> m_algaePivotSubsystem.setAngle(AlgaePivotConstants.MAX_ANGLE_RAD),
     //             m_algaePivotSubsystem))
     //     .onFalse(
     //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
+    //             () -> m_algaePivotSubsystem.setAngle(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
     //             m_algaePivotSubsystem));
     // m_auxController
     //     .x()
     //     .onTrue(
     //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.MIN_ANGLE_RAD),
+    //             () -> m_algaePivotSubsystem.setAngle(AlgaePivotConstants.MIN_ANGLE_RAD),
     //             m_algaePivotSubsystem))
     //     .onFalse(
     //         new InstantCommand(
-    //             () -> m_algaePivotSubsystem.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
+    //             () -> m_algaePivotSubsystem.setAngle(AlgaePivotConstants.DEFAULT_ANGLE_RAD),
     //             m_algaePivotSubsystem));
 
-    // Periscope testing binding
-    m_auxController
-        .leftTrigger()
-        .onTrue(new InstantCommand(() -> m_periscopeSubsystem.setVoltage(1), m_periscopeSubsystem))
-        .onFalse(
-            new InstantCommand(() -> m_periscopeSubsystem.setVoltage(0), m_periscopeSubsystem));
-    m_auxController
-        .rightTrigger()
-        .onTrue(new InstantCommand(() -> m_periscopeSubsystem.setVoltage(-1), m_periscopeSubsystem))
-        .onFalse(
-            new InstantCommand(() -> m_periscopeSubsystem.setVoltage(0), m_periscopeSubsystem));
+    // // Periscope testing binding
+    // m_auxController
+    //     .a()
+    //     .onTrue(
+    //         new InstantCommand(
+    //             () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MAX_HEIGHT_M),
+    //             m_periscopeSubsystem))
+    //     .onFalse(
+    //         new InstantCommand(
+    //             () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MIN_HEIGHT_M),
+    //             m_periscopeSubsystem));
+
+    // // Climber testing binding
+    // m_auxController
+    //     .b()
+    //     .onTrue(
+    //         new InstantCommand(
+    //             () -> m_climberSubsystem.setAngle(ClimberConstants.MAX_ANGLE_RAD),
+    //             m_climberSubsystem))
+    //     .onFalse(
+    //         new InstantCommand(
+    //             () -> m_climberSubsystem.setAngle(ClimberConstants.MIN_ANGLE_RAD),
+    //             m_climberSubsystem));
+
+    /* ~~~~~~~~~~~~~~~ Superstructure bindings~~~~~~~~~~~~~~~ */
+    /* Scoring */
     m_auxController
         .a()
-        .onTrue(
-            new InstantCommand(
-                () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MAX_HEIGHT_M),
-                m_periscopeSubsystem))
+        .onTrue(SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+    /* CORAL Score Positions */
+    // L1
+    m_auxController
+        .leftTrigger()
+        .onTrue(SuperstructureCommands.positionsToL1(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            new InstantCommand(
-                () -> m_periscopeSubsystem.setPosition(PeriscopeConstants.MIN_HEIGHT_M),
-                m_periscopeSubsystem));
-
-    // Climber testing binding
+            SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem));
+    // L2
     m_auxController
-        .y()
+        .leftBumper()
         .onTrue(
-            new InstantCommand(
-                () -> m_climberSubsystem.setPosition(ClimberConstants.MAX_ANGLE_RAD),
-                m_climberSubsystem))
+            SuperstructureCommands.positionsToL2Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
-            new InstantCommand(
-                () -> m_climberSubsystem.setPosition(ClimberConstants.MIN_ANGLE_RAD),
-                m_climberSubsystem));
+            SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem));
+    // L3
     m_auxController
-        .povLeft()
+        .rightTrigger()
         .onTrue(
-            new InstantCommand(
-                () -> m_climberSubsystem.setVoltage(SmartDashboard.getNumber("ClimberVoltage", 0)),
-                m_climberSubsystem))
-        .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
+            SuperstructureCommands.positionsToL3Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
+        .onFalse(
+            SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem));
+    // L4
     m_auxController
-        .povRight()
-        .onTrue(
-            new InstantCommand(
-                () -> m_climberSubsystem.setVoltage(-SmartDashboard.getNumber("ClimberVoltage", 0)),
-                m_climberSubsystem))
-        .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
+        .rightBumper()
+        .onTrue(SuperstructureCommands.positionsToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
+        .onFalse(
+            SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem));
   }
 
   /**

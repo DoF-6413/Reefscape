@@ -36,6 +36,20 @@ public class PeriscopeConstants {
   public static final double MIN_HEIGHT_M = 0.0;
   /** Max height of the Periscope in meters */
   public static final double MAX_HEIGHT_M = Units.inchesToMeters(57.925);
+  /** Height position of the Periscope when is reaching L1 */
+  public static final double L1_HEIGHT_M = Units.inchesToMeters(8.18);
+  /** Height position of the Periscope when is reaching L2 */
+  public static final double L2_HEIGHT_M = Units.inchesToMeters(19.57);
+  /** Height position of the Periscope when is reaching L3 */
+  public static final double L3_HEIGHT_M = Units.inchesToMeters(33.33);
+  /** Height position of the Periscope when is reaching L4 */
+  public static final double L4_HEIGHT_M = MAX_HEIGHT_M;
+  /** Height position of the Periscope when is reaching the CORAL Station */
+  public static final double CORAL_STATION_HEIGHT_M = Units.inchesToMeters(0.0); // TODO: Update
+  /** Height position of the Periscope when is reaching the PROCCESOR */
+  public static final double PROCESSOR_HEIGHT_M = Units.inchesToMeters(0.0); // TODO: Update
+  /** Height position of the Periscope when is reaching the NET */
+  public static final double NET_HEIGHT_M = MAX_HEIGHT_M;
 
   // PROFILED PID & FEEDFORWARD CONSTANTS
   /**
@@ -58,14 +72,18 @@ public class PeriscopeConstants {
   /** KA represents the voltage used every second squared per meter */
   public static double KA = 0.0;
   /**
-   * Max velocity for trapezoidal motion profiling in rotations per second. 3.54 = max velocity, in
-   * meters per second, calculated from https://www.reca.lc/ assuming 100% efficiency
+   * Max velocity for trapezoidal motion profiling in rotations per second. 2.25 = max velocity, in
+   * meters per second, calculated from https://www.reca.lc/ assuming 85% efficiency
    */
   public static final double MAX_VELOCITY_ROT_PER_SEC =
       Units.radiansToRotations(3.54 / DRUM_RADIUS_M);
   /** Ideal acceleration for trapezoidal motion profiling in rotations per second squared */
-  public static final double IDEAL_ACCELERATION_ROT_PER_SEC2 =
-      Units.radiansToRotations(33.79 / DRUM_RADIUS_M);
+  public static final double IDEAL_ACCELERATION_ROT_PER_SEC2 = Units.radiansToRotations(44.31 / DRUM_RADIUS_M);
+  /**
+   * How many meters the height of the Periscope can be within its height setpoint to be considered
+   * at the setpoint
+   */
+  public static final double ERROR_TOLERANCE_M = Units.inchesToMeters(2); // TODO: test
 
   // SIM CONSTANTS
   /** Simulate the pull of gravity in the elevator simulation */
@@ -84,9 +102,9 @@ public class PeriscopeConstants {
   /** KG represents the voltage required to overcome static friction */
   public static final double KS_SIM = 0.0;
   /** KG represents the voltage required to overcome gravity */
-  public static final double KG_SIM = 0.2;
+  public static final double KG_SIM = 0.13;
   /** KV represents the voltage used every second per meter */
   public static final double KV_SIM = 3.32;
   /** KA represents the voltage used every second squared per meter */
-  public static final double KA_SIM = 0.03;
+  public static final double KA_SIM = 0.02;
 }
