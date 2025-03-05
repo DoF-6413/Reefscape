@@ -6,18 +6,18 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 public class AlgaePivotConstants {
   // REAL CONSTANTS
   /** CAN ID for the ALGAE Pivot SPARK MAX */
-  public static final int CAN_ID = 19;
+  public static final int CAN_ID = 20;
   /** Gear reduction of 140:11 for the ALGAE Pivot motor */
   public static final double GEAR_RATIO = 140.0 / 11.0;
   /**
    * Set the inversion of the ALGAE Pivot motor to false, making Counterclockwise the positive
    * direction
    */
-  public static final boolean IS_INVERTED = false;
+  public static final boolean IS_INVERTED = true;
   /** Current limit for the NEO motor of the ALGAE Pivot */
   public static final int CUR_LIM_A = 30;
   /** Offset to zero Absolute Encoder to be parallel with the Drivetraion belly pan, in rotations */
-  public static final double ZERO_OFFSET = 0.0;
+  public static final double ZERO_OFFSET_ROT = Units.radiansToRotations(4.039338805897648);
   /** Length of the ALGAE Pivot in meters */
   public static final double LENGTH_M = Units.inchesToMeters(10.151);
   /** Weight of the ALGAE Pivot in kilograms */

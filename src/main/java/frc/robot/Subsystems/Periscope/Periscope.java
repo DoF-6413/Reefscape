@@ -64,6 +64,10 @@ public class Periscope extends SubsystemBase {
     m_io.enableBrakeMode(enable);
   }
 
+  public void resetPosition(double height) {
+    m_io.resetPosition(height);
+  }
+
   /**
    * Sets voltage of the Periscope motors. The value inputed is clamped between values of -12 to 12.
    *
@@ -79,6 +83,11 @@ public class Periscope extends SubsystemBase {
    * @param heightMeters Position of the Periscope in meters.
    */
   public void setPosition(double heightMeters) {
+    if (heightMeters < m_heightSetpointMeters) {
+      this.setMaxAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2 / 2);
+    } else {
+      this.setMaxAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2);
+    }
     m_heightSetpointMeters = heightMeters;
     Logger.recordOutput("SuperstructureSetpoints/PSHeight", m_heightSetpointMeters);
     m_io.setPosition(m_heightSetpointMeters);
@@ -115,6 +124,10 @@ public class Periscope extends SubsystemBase {
    */
   public void setFF(double kS, double kG, double kV, double kA) {
     m_io.setFF(kS, kG, kV, kA);
+  }
+
+  public void setMaxAcceleration(double acceleration) {
+    m_io.setMaxAcceleration(acceleration);
   }
 
   /** Update PID gains for the Periscope motors from SmartDashboard inputs. */

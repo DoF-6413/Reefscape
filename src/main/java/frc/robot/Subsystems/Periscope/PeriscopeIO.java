@@ -14,6 +14,8 @@ public interface PeriscopeIO {
     public double[] currentDraw = {0.0, 0.0};
     /** Tempature of the Periscope motors in celsius */
     public double[] tempCelsius = {0.0, 0.0};
+    /** Number of rotations of the Periscope motors */
+    public double[] positionRot = {0.0, 0.0};
     /** Height of the Periscope in meters */
     public double heightMeters = 0.0;
     /** Linear velocity of the Periscope in meters per second */
@@ -21,7 +23,7 @@ public interface PeriscopeIO {
     /** Rotational velocity of the Periscope drum in radians per second */
     public double velocityRadPerSec = 0.0;
     /** If the Hall effect (magnetic) sensor is triggered */
-    public boolean[] isHallEffectSensorTriggered = {false, false, false, false, false, false};
+    public boolean[] isHallEffectSensorTriggered = {false, false};
   }
 
   /**
@@ -37,6 +39,8 @@ public interface PeriscopeIO {
    * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public default void enableBrakeMode(boolean enable) {}
+
+  public default void resetPosition(double height) {}
 
   /**
    * Sets voltage of the Periscope motors. The value inputed is clamped between values of -12 to 12.
@@ -70,4 +74,6 @@ public interface PeriscopeIO {
    * @param kA Acceleration gain value.
    */
   public default void setFF(double kS, double kG, double kV, double kA) {}
+
+  public default void setMaxAcceleration(double acceleration) {}
 }

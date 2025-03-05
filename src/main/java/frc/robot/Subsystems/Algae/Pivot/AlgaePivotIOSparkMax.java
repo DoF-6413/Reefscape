@@ -44,7 +44,10 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
     m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);
 
     // Absolute Encoder configurations
-    m_config.absoluteEncoder.zeroOffset(AlgaePivotConstants.ZERO_OFFSET);
+    m_config
+        .absoluteEncoder
+        .zeroOffset(AlgaePivotConstants.ZERO_OFFSET_ROT)
+        .inverted(AlgaePivotConstants.IS_INVERTED);
 
     // Apply configuration
     m_sparkmax.configure(m_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -54,9 +57,10 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
   public void updateInputs(AlgaePivotIOInputs inputs) {
     // Update logged inputs from the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
-    inputs.positionRad = m_encoder.getPosition();
+    inputs.positionRad =
+        Units.rotationsToRadians(m_encoder.getPosition()) / AlgaePivotConstants.GEAR_RATIO;
     inputs.absPositionRad =
-        Units.rotationsToRadians(m_absoluteEncoder.getPosition()) / AlgaePivotConstants.GEAR_RATIO;
+        MathUtil.angleModulus(Units.rotationsToRadians(m_absoluteEncoder.getPosition()));
     inputs.velocityRadPerSec =
         Units.rotationsPerMinuteToRadiansPerSecond(m_absoluteEncoder.getVelocity())
             / AlgaePivotConstants.GEAR_RATIO;
