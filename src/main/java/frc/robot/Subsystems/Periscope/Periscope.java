@@ -89,7 +89,7 @@ public class Periscope extends SubsystemBase {
       this.setMaxAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2);
     }
     m_heightSetpointMeters = heightMeters;
-    Logger.recordOutput("SuperstructureSetpoints/PSHeight", m_heightSetpointMeters);
+    Logger.recordOutput("Superstructure/Setpoints/PSHeight", m_heightSetpointMeters);
     m_io.setPosition(m_heightSetpointMeters);
   }
 

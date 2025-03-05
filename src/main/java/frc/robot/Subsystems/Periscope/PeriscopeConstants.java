@@ -47,9 +47,9 @@ public class PeriscopeConstants {
   /** Height position of the Periscope when is reaching L4 */
   public static final double L4_HEIGHT_M = MAX_HEIGHT_M;
   /** Height position of the Periscope when is reaching the CORAL Station */
-  public static final double CORAL_STATION_HEIGHT_M = Units.inchesToMeters(0.0); // TODO: Update
+  public static final double CORAL_STATION_HEIGHT_M = Units.inchesToMeters(50.0); // TODO: Update
   /** Height position of the Periscope when is reaching the PROCCESOR */
-  public static final double PROCESSOR_HEIGHT_M = Units.inchesToMeters(0.0); // TODO: Update
+  public static final double PROCESSOR_HEIGHT_M = Units.inchesToMeters(10.0); // TODO: Update
   /** Height position of the Periscope when is reaching the NET */
   public static final double NET_HEIGHT_M = MAX_HEIGHT_M;
 

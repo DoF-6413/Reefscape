@@ -79,7 +79,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     m_followerTalonFX.setPosition(0.0);
     m_followerTalonFX.optimizeBusUtilization();
     m_followerTalonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
-            
+
     // Current limit configuration
     m_motorConfig
         .CurrentLimits

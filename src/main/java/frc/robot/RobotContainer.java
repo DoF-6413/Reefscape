@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.PathfindingCommands;
+import frc.robot.Commands.SuperstructureCommands;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
@@ -38,7 +39,7 @@ public class RobotContainer {
   private final Climber m_climberSubsystem;
   private final Funnel m_funnelSubsystem;
   private final AEE m_AEESubsystem;
-  //   private final CEE m_CEESubsystem;
+  private final CEE m_CEESubsystem;
 
   // Utils
   private final Vision m_visionSubsystem;
@@ -46,7 +47,8 @@ public class RobotContainer {
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
-  private final GenericHID m_auxButtonBoard = new GenericHID(OperatorConstants.AUX_BUTTON_BOARD);
+  private final CommandXboxController m_auxButtonBoard =
+      new CommandXboxController(OperatorConstants.AUX_BUTTON_BOARD);
   private final CommandXboxController m_auxController =
       new CommandXboxController(OperatorConstants.AUX_XBOX_CONTROLLER);
 
@@ -71,7 +73,7 @@ public class RobotContainer {
         m_climberSubsystem = new Climber(new ClimberIOTalonFX());
         m_funnelSubsystem = new Funnel(new FunnelIOSparkMax());
         m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
-        // m_CEESubsystem = new CEE(new CEEIOSparkMax());
+        m_CEESubsystem = new CEE(new CEEIOSparkMax());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
@@ -92,7 +94,7 @@ public class RobotContainer {
         m_climberSubsystem = new Climber(new ClimberIOSim());
         m_funnelSubsystem = new Funnel(new FunnelIOSim());
         m_AEESubsystem = new AEE(new AEEIOSim() {});
-        // m_CEESubsystem = new CEE(new CEEIOSim());
+        m_CEESubsystem = new CEE(new CEEIOSim());
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
@@ -115,7 +117,7 @@ public class RobotContainer {
         m_climberSubsystem = new Climber(new ClimberIO() {});
         m_funnelSubsystem = new Funnel(new FunnelIO() {});
         m_AEESubsystem = new AEE(new AEEIO() {});
-        // m_CEESubsystem = new CEE(new CEEIO() {});
+        m_CEESubsystem = new CEE(new CEEIO() {});
         m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
         break;
     }
@@ -162,6 +164,7 @@ public class RobotContainer {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
     this.driverControllerBindings();
+    this.auxButtonBoardBindings();
     this.auxControllerBindings();
   }
 
@@ -268,7 +271,74 @@ public class RobotContainer {
     //             .withName("CoralIntake"));
   }
 
-  /** Aux Controls */
+  /** Aux Button Board Controls */
+  public void auxButtonBoardBindings() {
+    /* ~~~~~~~~~~~~~~~~~~~~ Superstructure ~~~~~~~~~~~~~~~~~~~~ */
+    /* Score */
+    m_auxButtonBoard
+        .button(11)
+        .onTrue(SuperstructureCommands.setSpeeds(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem, 0.5, 0.5, 0.5));
+
+    /* CORAL and ALGAE */
+    // L1 or PROCESSOR
+    m_auxButtonBoard
+        .button(1)
+        .onTrue(SuperstructureCommands.positionsToL1(m_periscopeSubsystem, m_algaePivotSubsystem))
+        .onFalse(
+            SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem))
+        .and(()-> m_auxButtonBoard.getRawAxis(1) == 1)
+        .onTrue(SuperstructureCommands.positionsToProcessor(m_periscopeSubsystem, m_algaePivotSubsystem));
+    // L2 CORAL or ALGAE
+    m_auxButtonBoard
+        .button(2)
+        .onTrue(SuperstructureCommands.positionsToL2Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
+        .onFalse(
+            SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem))
+        .and(()-> m_auxButtonBoard.getRawAxis(1) == 1)
+        .onTrue(SuperstructureCommands.intakeL2Algae(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+    // L3 CORAL or ALGAE
+    m_auxButtonBoard
+        .button(3)
+        .onTrue(SuperstructureCommands.positionsToL3Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
+        .onFalse(
+            SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem))
+        .and(()-> m_auxButtonBoard.getRawAxis(1) == 1)
+        .onTrue(SuperstructureCommands.intakeL3Algae(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+    // L4 or NET
+    m_auxButtonBoard
+        .button(4)
+        .onTrue(SuperstructureCommands.positionsToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
+        .onFalse(
+            SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem))
+        .and(()-> m_auxButtonBoard.getRawAxis(1) == 1)
+        .onTrue(SuperstructureCommands.positionsToNet(m_periscopeSubsystem, m_algaePivotSubsystem));
+    // Ground ALGAE
+    m_auxButtonBoard.button(12)
+        .onTrue(SuperstructureCommands.intakeGroundAlgae(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem))
+        .onFalse(SuperstructureCommands.zero(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+  }
+
+  /** Aux Xbox Controls */
   public void auxControllerBindings() {
     // AEE testing binding
     m_AEESubsystem.setDefaultCommand(
@@ -400,7 +470,7 @@ public class RobotContainer {
     //             () -> m_climberSubsystem.setAngle(ClimberConstants.MIN_ANGLE_RAD),
     //             m_climberSubsystem));
 
-    // /* ~~~~~~~~~~~~~~~ Superstructure bindings~~~~~~~~~~~~~~~ */
+    // /* ~~~~~~~~~~~~~~~ Superstructure bindings ~~~~~~~~~~~~~~~ */
     // /* Scoring */
     // m_auxController
     //     .a()

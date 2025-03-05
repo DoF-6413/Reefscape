@@ -1,5 +1,8 @@
 package frc.robot.Commands;
 
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Subsystems.Algae.EndEffector.AEE;
@@ -349,6 +352,7 @@ public class SuperstructureCommands {
     /** Percent speed of the Funnel */
     public static double funnelSpeed = 0.0;
     /** Objective of the Superstructure to determine the mechanisms' setpoints */
+    @AutoLogOutput(key = "Superstructure/Objective")
     public static Objective currentObjective;
 
     /**
@@ -433,7 +437,7 @@ public class SuperstructureCommands {
           break;
 
         case PROCESSOR:
-          periscopeHeight = PeriscopeConstants.L4_HEIGHT_M;
+          periscopeHeight = PeriscopeConstants.PROCESSOR_HEIGHT_M;
           algaePivotAngle = AlgaePivotConstants.MAX_ANGLE_RAD;
           funnelSpeed = 0.0;
           CEESpeed = 0.0;

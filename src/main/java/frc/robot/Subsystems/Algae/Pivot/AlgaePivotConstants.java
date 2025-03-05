@@ -32,7 +32,7 @@ public class AlgaePivotConstants {
   /** Angle (radians) of the ALGAE Pivot when trying to pickup ALGAE off the REEF */
   public static final double REEF_ALGAE_ANGLE_RAD = Units.degreesToRadians(12.5);
   /** Angle (radians) of the ALGAE Pivot when trying to pickup ALGAE off the ground */
-  public static final double GROUND_ALGAE_ANGLE_RAD = Units.degreesToRadians(0); // TODO: Update
+  public static final double GROUND_ALGAE_ANGLE_RAD = MIN_ANGLE_RAD; // TODO: Update
   /** Angle (radians) of the ALGAE Pivot when trying to score ALGAE at the NET */
   public static final double NET_ANGLE_RAD = Units.degreesToRadians(45);
   /** Angle (radians) of the ALGAE Pivot when trying to score ALGAE at PROCESSOR */
