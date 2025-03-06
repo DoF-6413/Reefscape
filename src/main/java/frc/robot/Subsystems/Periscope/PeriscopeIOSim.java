@@ -1,11 +1,8 @@
 package frc.robot.Subsystems.Periscope;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants.RobotStateConstants;
 
@@ -57,7 +54,8 @@ public class PeriscopeIOSim implements PeriscopeIO {
 
   @Override
   public void setVoltage(double volts) {
-    m_voltage = MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
+    m_voltage =
+        MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
     m_elevatorSim.setInputVoltage(m_voltage);
   }
 }

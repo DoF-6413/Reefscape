@@ -42,7 +42,7 @@ public interface PeriscopeIO {
 
   /**
    * Sets the position of the Periscope motors in meters.
-   * 
+   *
    * @param heightMeters New position in meters.
    */
   public default void resetPosition(double heightMeters) {}

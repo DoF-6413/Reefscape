@@ -118,15 +118,15 @@ public final class Constants {
       REEF_GH(5),
       REEF_IJ(9),
       REEF_KL(10),
-      SWITCH_BRANCH(100), // Axis number
+      SWITCH_BRANCH(3), // Axis number
       ZERO(0), // Axis number
-      CLIMB(100), // Axis number
+      CLIMB(2), // Axis number
       SCORE(11),
       GROUND_ALGAE(12);
 
       public final int BUTTON_ID;
 
-      ID(int id) {
+      BUTTON_BOARD(int id) {
         BUTTON_ID = id;
       }
     }

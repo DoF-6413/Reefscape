@@ -9,7 +9,8 @@ public class PeriscopeConstants {
   /** CAN ID for the second Periscope motor. This motor will use index 1 in any array */
   public static final int CAN_ID_RIGHT = 16;
   /**
-   * DIO ports of the 2 Hall Effect sensors on the Periscope. These sensor will serve as magnetic limit switches
+   * DIO ports of the 2 Hall Effect sensors on the Periscope. These sensor will serve as magnetic
+   * limit switches
    *
    * <p>0 - Bottom, 1 - Top
    */
@@ -17,8 +18,8 @@ public class PeriscopeConstants {
   /** Gear reduction of 38:12 for the Periscope */
   public static final double GEAR_RATIO = 38.0 / 12.0;
   /**
-   * Sets the inversion status of the lead Periscope motor to true, making Clockwise the
-   * positive direction
+   * Sets the inversion status of the lead Periscope motor to true, making Clockwise the positive
+   * direction
    */
   public static final boolean IS_INVERTED = true;
   /** Sets the follower Periscope motor to spin opposite of the lead motor */

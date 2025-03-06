@@ -12,7 +12,6 @@ import frc.robot.Subsystems.Funnel.Funnel;
 import frc.robot.Subsystems.Funnel.FunnelConstants;
 import frc.robot.Subsystems.Periscope.Periscope;
 import frc.robot.Subsystems.Periscope.PeriscopeConstants;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 public class SuperstructureCommands {
 
@@ -350,7 +349,6 @@ public class SuperstructureCommands {
     /** Percent speed of the Funnel */
     public static double funnelSpeed = 0.0;
     /** Objective of the Superstructure to determine the mechanisms' setpoints */
-    @AutoLogOutput(key = "Superstructure/Objective")
     public static Objective currentObjective;
 
     /**

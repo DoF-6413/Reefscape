@@ -72,7 +72,9 @@ public class Periscope extends SubsystemBase {
 
     if (m_enablePID) {
       // Calculate voltage based on PID and Feedforward controllers
-      this.setVoltage(m_profiledPIDController.calculate(m_inputs.heightMeters) + m_feedforward.calculate(m_profiledPIDController.getConstraints().maxVelocity));
+      this.setVoltage(
+          m_profiledPIDController.calculate(m_inputs.heightMeters)
+              + m_feedforward.calculate(m_profiledPIDController.getConstraints().maxVelocity));
 
       // Enable and update tunable PID & Feedforward gains through SmartDashboard
       if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
@@ -93,7 +95,7 @@ public class Periscope extends SubsystemBase {
 
   /**
    * Sets the position of the Periscope motors in meters.
-   * 
+   *
    * @param heightMeters New position in meters.
    */
   public void resetPosition(double height) {
@@ -116,7 +118,10 @@ public class Periscope extends SubsystemBase {
    */
   public void setPosition(double heightMeters) {
     // Compare new setpoint to previous to determine whether to lower acceleration or not
-    this.setMaxAcceleration((heightMeters < m_prevSetpoint) ? PeriscopeConstants.IDEAL_ACCELERATION_M_PER_SEC2 / 6 : PeriscopeConstants.IDEAL_ACCELERATION_M_PER_SEC2);
+    this.setMaxAcceleration(
+        (heightMeters < m_prevSetpoint)
+            ? PeriscopeConstants.IDEAL_ACCELERATION_M_PER_SEC2 / 6
+            : PeriscopeConstants.IDEAL_ACCELERATION_M_PER_SEC2);
 
     // Record and update setpoint
     m_prevSetpoint = heightMeters;
