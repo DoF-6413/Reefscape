@@ -14,11 +14,11 @@ import org.littletonrobotics.junction.Logger;
 public class Periscope extends SubsystemBase {
   private final PeriscopeIO m_io;
   private final PeriscopeIOInputsAutoLogged m_inputs = new PeriscopeIOInputsAutoLogged();
+
+  // Controllers
   private final ProfiledPIDController m_profiledPIDController;
   private final ElevatorFeedforward m_feedforward;
-
-  /** Keep tracks of the setpoint to determine whether or not the Periscope is at its setpoint */
-  private double m_heightSetpointMeters = 0.0;
+  private double m_prevSetpoint = 0.0;
 
   /**
    * This constructs a new {@link Periscope} instance.
@@ -35,6 +35,7 @@ public class Periscope extends SubsystemBase {
     // Initialize the IO implementation
     m_io = io;
 
+    // Initialize controllers
     m_profiledPIDController =
         new ProfiledPIDController(
             PeriscopeConstants.KP,
@@ -68,12 +69,13 @@ public class Periscope extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
+    // Calculate and record voltage from controllers
     var goalVoltage =
         m_profiledPIDController.calculate(m_inputs.heightMeters)
             + m_feedforward.calculate(m_profiledPIDController.getConstraints().maxVelocity);
     this.setVoltage(goalVoltage);
-
     Logger.recordOutput("Periscope/GoalVoltage", goalVoltage);
+
     // Enable and update tunable PID & Feedforward gains through SmartDashboard
     if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
       this.updatePID();
@@ -90,6 +92,11 @@ public class Periscope extends SubsystemBase {
     m_io.enableBrakeMode(enable);
   }
 
+  /**
+   * Sets the position of the Periscope motors in meters.
+   * 
+   * @param heightMeters New position in meters.
+   */
   public void resetPosition(double height) {
     m_io.resetPosition(height);
   }
@@ -109,14 +116,12 @@ public class Periscope extends SubsystemBase {
    * @param heightMeters Position of the Periscope in meters.
    */
   public void setPosition(double heightMeters) {
-    if (heightMeters < m_heightSetpointMeters) {
-      this.setMaxAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2 / 6);
-    } else {
-      this.setMaxAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2);
-    }
-    m_heightSetpointMeters = heightMeters;
-    Logger.recordOutput("Superstructure/Setpoints/PSHeight", m_heightSetpointMeters);
-    // m_io.setPosition(m_heightSetpointMeters);
+    // Compare new setpoint to previous to determine whether to lower acceleration or not
+    this.setMaxAcceleration((heightMeters < m_prevSetpoint) ? PeriscopeConstants.IDEAL_ACCELERATION_M_PER_SEC2 / 6 : PeriscopeConstants.IDEAL_ACCELERATION_M_PER_SEC2);
+
+    // Record and update setpoint
+    m_prevSetpoint = heightMeters;
+    Logger.recordOutput("Superstructure/Setpoints/PSHeight", m_prevSetpoint);
     m_profiledPIDController.setGoal(heightMeters);
   }
 
@@ -126,10 +131,6 @@ public class Periscope extends SubsystemBase {
    * @return {@code true} if at setpoint height, {@code false} if not
    */
   public boolean atSetpointHeight() {
-    // return m_inputs.heightMeters <= (m_heightSetpointMeters +
-    // PeriscopeConstants.ERROR_TOLERANCE_M)
-    //     && m_inputs.heightMeters >= (m_heightSetpointMeters -
-    // PeriscopeConstants.ERROR_TOLERANCE_M);
     return m_profiledPIDController.atGoal();
   }
 
@@ -141,7 +142,6 @@ public class Periscope extends SubsystemBase {
    * @param kD Derivative gain value.
    */
   public void setPID(double kP, double kI, double kD) {
-    // m_io.setPID(kP, kI, kD);
     m_profiledPIDController.setPID(kP, kI, kD);
   }
 
@@ -154,7 +154,6 @@ public class Periscope extends SubsystemBase {
    * @param kA Acceleration gain value.
    */
   public void setFF(double kS, double kG, double kV, double kA) {
-    // m_io.setFF(kS, kG, kV, kA);
     m_feedforward.setKs(kS);
     m_feedforward.setKg(kG);
     m_feedforward.setKv(kV);
@@ -162,7 +161,6 @@ public class Periscope extends SubsystemBase {
   }
 
   public void setMaxAcceleration(double acceleration) {
-    // m_io.setMaxAcceleration(acceleration);
     m_profiledPIDController.setConstraints(
         new TrapezoidProfile.Constraints(PeriscopeConstants.MAX_VELOCITY_M_PER_SEC, acceleration));
   }

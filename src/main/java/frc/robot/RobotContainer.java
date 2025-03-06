@@ -248,26 +248,26 @@ public class RobotContainer {
                     m_driverController.leftTrigger().negate())
                 .withName("PathfindToBranch"));
 
-    // /* Scoring commands */
-    // // Score
-    // m_driverController
-    //     .rightTrigger()
-    //     .onTrue(
-    //         SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem)
-    //             .until(m_driverController.rightTrigger().negate())
-    //             .withName("Score"));
-    // // Intaking
-    // m_driverController
-    //     .rightBumper()
-    //     .onTrue(
-    //         SuperstructureCommands.coralIntake(
-    //                 m_periscopeSubsystem,
-    //                 m_algaePivotSubsystem,
-    //                 m_AEESubsystem,
-    //                 m_CEESubsystem,
-    //                 m_funnelSubsystem)
-    //             .until(m_driverController.rightBumper().negate())
-    //             .withName("CoralIntake"));
+    /* Scoring commands */
+    // Score
+    m_driverController
+        .rightTrigger()
+        .onTrue(
+            SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem)
+                .until(m_driverController.rightTrigger().negate())
+                .withName("Score"));
+    // Intaking
+    m_driverController
+        .rightBumper()
+        .onTrue(
+            SuperstructureCommands.coralIntake(
+                    m_periscopeSubsystem,
+                    m_algaePivotSubsystem,
+                    m_AEESubsystem,
+                    m_CEESubsystem,
+                    m_funnelSubsystem)
+                .until(m_driverController.rightBumper().negate())
+                .withName("CoralIntake"));
   }
 
   /** Aux Button Board Controls */
@@ -277,8 +277,8 @@ public class RobotContainer {
     m_auxButtonBoard
         .button(11)
         .onTrue(
-            SuperstructureCommands.setSpeeds(
-                m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem, 0.5, 0.5, 0.5));
+            SuperstructureCommands.score(
+                m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
 
     /* CORAL and ALGAE */
     // L1 or PROCESSOR

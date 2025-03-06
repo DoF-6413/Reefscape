@@ -23,8 +23,6 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
   // Motor, controller, and configurator
   private final TalonFX m_leadTalonFX;
   private final TalonFX m_followerTalonFX;
-  private final PositionVoltage[] m_motorControllers = new PositionVoltage[2];
-  private final MotionMagicExpoVoltage[] m_motionMagic = new MotionMagicExpoVoltage[2];
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
   private final DigitalInput[] m_hallEffectSensors = new DigitalInput[2];
 
@@ -49,15 +47,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     m_leadTalonFX = new TalonFX(PeriscopeConstants.CAN_ID_LEFT);
     m_followerTalonFX = new TalonFX(PeriscopeConstants.CAN_ID_RIGHT);
     m_followerTalonFX.setControl(
-        new Follower(PeriscopeConstants.CAN_ID_LEFT, PeriscopeConstants.IS_INVERTED_FOLLOWER));
-
-    // Initialize the closed loop motor controllers
-    m_motorControllers[0] = new PositionVoltage(0);
-    m_motorControllers[1] = new PositionVoltage(0);
-
-    // Initialize motion magic controller
-    m_motionMagic[0] = new MotionMagicExpoVoltage(0);
-    m_motionMagic[1] = new MotionMagicExpoVoltage(0);
+        new Follower(PeriscopeConstants.CAN_ID_LEFT, PeriscopeConstants.INVERT_FOLLOWER));
 
     // Initialize the Hall Effect sensors
     for (int i = 0; i < m_hallEffectSensors.length; i++) {
@@ -87,26 +77,6 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
         .withSupplyCurrentLimitEnable(PeriscopeConstants.ENABLE_CUR_LIM)
         .withStatorCurrentLimit(PeriscopeConstants.CUR_LIM_A)
         .withStatorCurrentLimitEnable(PeriscopeConstants.ENABLE_CUR_LIM);
-
-    // PID and Feedforward gains configuration
-    m_motorConfig
-        .Slot0
-        .withKP(PeriscopeConstants.KP)
-        .withKI(PeriscopeConstants.KI)
-        .withKD(PeriscopeConstants.KD)
-        .withKS(PeriscopeConstants.KS)
-        .withKV(PeriscopeConstants.KV)
-        .withKG(PeriscopeConstants.KG);
-
-    // Motion Magic (motion profiling) configuration
-    m_motorConfig
-        .MotionMagic
-        .withMotionMagicCruiseVelocity(PeriscopeConstants.MAX_VELOCITY_ROT_PER_SEC)
-        .withMotionMagicAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2);
-
-    // Closed loop controller configuration
-    m_motorConfig.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(
-        1.0 / PeriscopeConstants.UPDATE_FREQUENCY_HZ);
 
     // Apply configurations
     m_leadTalonFX.getConfigurator().apply(m_motorConfig);
@@ -179,68 +149,16 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
 
   @Override
   public void enableBrakeMode(boolean enable) {
+    // Configure neutral mode
     m_motorConfig.MotorOutput.withNeutralMode(
         enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+    // Apply configuration
     m_leadTalonFX.getConfigurator().apply(m_motorConfig);
   }
 
   @Override
-  public void resetPosition(double height) {
-    double positionRot = Units.radiansToRotations(height / PeriscopeConstants.DRUM_RADIUS_M);
+  public void resetPosition(double heightMeters) {
+    double positionRot = Units.radiansToRotations(heightMeters / PeriscopeConstants.DRUM_RADIUS_M);
     m_leadTalonFX.setPosition(positionRot);
-  }
-
-  /**
-   * Sets the position of the Periscope using the motors' closed loop controller built into the
-   * TalonFX speed controller.
-   *
-   * @param heightMeters Position of the Periscope in meters.
-   */
-  @Override
-  public void setPosition(double heightMeters) {
-    // Convert linear position (meters) to angular position (radians), then convert units from
-    // radians to rotations
-    var positionRotations =
-        Units.radiansToRotations(heightMeters / PeriscopeConstants.DRUM_RADIUS_M);
-    m_leadTalonFX.setControl(m_motorControllers[0].withPosition(positionRotations));
-    m_leadTalonFX.setControl(
-        m_motionMagic[0].withPosition(positionRotations).withFeedForward(heightMeters));
-  }
-
-  /**
-   * Sets the PID gains of the Periscope motors' built in closed loop controller.
-   *
-   * @param kP Proportional gain value.
-   * @param kI Integral gain value.
-   * @param kD Derivative gain value.
-   */
-  @Override
-  public void setPID(double kP, double kI, double kD) {
-    // Configure new gains
-    m_motorConfig.Slot0.withKP(kP).withKI(kI).withKD(kD);
-    // Apply configuration for each motor
-    m_leadTalonFX.getConfigurator().apply(m_motorConfig);
-  }
-
-  /**
-   * Sets the Feedforward gains for the Periscope motors' built in closed loop controller.
-   *
-   * @param kS Static gain value.
-   * @param kG Gravity gain value.
-   * @param kV Velocity gain value.
-   * @param kA Acceleration gain value.
-   */
-  @Override
-  public void setFF(double kS, double kG, double kV, double kA) {
-    // Configure new gains
-    m_motorConfig.Slot0.withKS(kS).withKG(kG).withKV(kV).withKA(kA);
-    // Apply configuration for each motor
-    m_leadTalonFX.getConfigurator().apply(m_motorConfig);
-  }
-
-  @Override
-  public void setMaxAcceleration(double acceleration) {
-    m_motorConfig.MotionMagic.withMotionMagicAcceleration(acceleration);
-    m_leadTalonFX.getConfigurator().apply(m_motorConfig);
   }
 }
