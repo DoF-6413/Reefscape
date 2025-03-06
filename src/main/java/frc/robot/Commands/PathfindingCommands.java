@@ -129,7 +129,7 @@ public class PathfindingCommands {
    * @param wallDistanceMeters Distance from the REEF wall in meters.
    * @return {@link Command} that makes the robot follow a trajectory to in front of the BRANCH.
    */
-  public static Command pathfindToBranch(String branchLetter, DoubleSupplier wallDistanceMeters) {
+  public static Command pathfindToBranch(String branchLetter, double wallDistanceMeters) {
     // Position of BRANCH corresponding to zone the robot is in
     var branchPose = FieldConstants.BRANCH_POSES.get(branchLetter);
 
@@ -142,12 +142,12 @@ public class PathfindingCommands {
             branchPose.getX()
                 + ((DriveConstants.TRACK_WIDTH_M / 2)
                         + FieldConstants.BRANCH_TO_WALL_X_M
-                        + wallDistanceMeters.getAsDouble())
+                        + wallDistanceMeters)
                     * branchPose.getRotation().getCos(),
             branchPose.getY()
                 + ((DriveConstants.TRACK_WIDTH_M / 2)
                         + FieldConstants.BRANCH_TO_WALL_X_M
-                        + wallDistanceMeters.getAsDouble())
+                        + wallDistanceMeters)
                     * branchPose.getRotation().getSin(),
             // Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the robot
             branchPose.getRotation().plus(Rotation2d.k180deg));
