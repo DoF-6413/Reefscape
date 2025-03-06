@@ -29,7 +29,8 @@ public class Climber extends SubsystemBase {
     m_io = io;
 
     // Initialize PID controller
-    m_PIDController = new PIDController(ClimberConstants.KP, ClimberConstants.KI, ClimberConstants.KD);
+    m_PIDController =
+        new PIDController(ClimberConstants.KP, ClimberConstants.KI, ClimberConstants.KD);
 
     // Tunable PID gains
     SmartDashboard.putBoolean("PIDFF_Tuning/Climber/EnableTuning", false);

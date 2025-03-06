@@ -180,7 +180,7 @@ public class RobotContainer {
             .withName("FieldRelativeDrive"));
     // Field relative
     m_driverController
-        .y()
+        .rightStick()
         .onTrue(
             DriveCommands.fieldRelativeDrive(
                     m_driveSubsystem,
@@ -228,6 +228,16 @@ public class RobotContainer {
                     () -> -m_driverController.getLeftX(),
                     () -> Rotation2d.fromRadians(-Math.PI / 2))
                 .withName("-90DegreeHeadingDrive"));
+    // Lock forward/backward movement
+    m_driverController
+        .start()
+        .onTrue(
+            DriveCommands.fieldRelativeDrive(
+                    m_driveSubsystem,
+                    () -> 0.0,
+                    () -> -m_driverController.getLeftX(),
+                    () -> -m_driverController.getRightX())
+                .withName("FieldRelativeDriveNoX"));
 
     /* Gyro */
     // Reset Gyro heading, making the front side of the robot the new 0 degree angle
@@ -240,7 +250,7 @@ public class RobotContainer {
     /* Pathfinding */
     // Closest REEF BRANCH
     m_driverController
-        .leftTrigger()
+        .y()
         .onTrue(
             PathfindingCommands.pathfindToClosestBranch(
                     m_driveSubsystem,
@@ -267,7 +277,14 @@ public class RobotContainer {
                     m_CEESubsystem,
                     m_funnelSubsystem)
                 .until(m_driverController.rightBumper().negate())
-                .withName("CoralIntake"));
+                .withName("CoralIntake"))
+        .onFalse(
+            SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem));
   }
 
   /** Aux Button Board Controls */
@@ -403,7 +420,7 @@ public class RobotContainer {
     // REEF Face AB
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.REEF_AB.BUTTON_ID)
-        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("A", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .withName("PathfindToAB"))
@@ -418,7 +435,7 @@ public class RobotContainer {
     // REEF Face CD
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.REEF_CD.BUTTON_ID)
-        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("C", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .withName("PathfindToCD"))
@@ -433,7 +450,7 @@ public class RobotContainer {
     // REEF Face EF
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.REEF_EF.BUTTON_ID)
-        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("F", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .withName("PathfindToEF"))
@@ -448,7 +465,7 @@ public class RobotContainer {
     // REEF Face GH
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.REEF_GH.BUTTON_ID)
-        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("H", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .withName("PathfindToGH"))
@@ -463,7 +480,7 @@ public class RobotContainer {
     // REEF Face IJ
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.REEF_IJ.BUTTON_ID)
-        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("J", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .withName("PathfindToIJ"))
@@ -478,7 +495,7 @@ public class RobotContainer {
     // REEF Face KL
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.REEF_KL.BUTTON_ID)
-        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("K", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
                 .withName("PathfindToKL"))

@@ -87,6 +87,10 @@ public class Vision extends SubsystemBase {
         if (estimatedPose.isEmpty())
           continue; // Move to next camera update iteration if no position is estimated
         m_estimatedPoses.add(estimatedPose.get().estimatedPose.toPose2d());
+        // Record estimated pose
+        Logger.recordOutput(
+            "Odometry/Vision/EstimatedPoses/" + VisionConstants.CAMERA_NAMES[i],
+            estimatedPose.get().estimatedPose.toPose2d());
 
         // Calculate standard deviations for current pipeline results
         double averageTagDistance = 0.0;
@@ -107,11 +111,6 @@ public class Vision extends SubsystemBase {
 
     if (m_estimatedPoses.size() == 0)
       return; // Move to next periodic iteration if no poses estimated
-
-    // Log estimated poses, under "RealOutputs" tab rather than "AdvantageKit" tab
-    Logger.recordOutput(
-        "Odometry/Vision/EstimatedPoses",
-        m_estimatedPoses.toArray(new Pose2d[m_estimatedPoses.size()]));
 
     /* Add Vision measurements to Swerve Pose Estimator in Drive through the VisionConsumer */
     if (m_estimatedPoses.size() > 1) {

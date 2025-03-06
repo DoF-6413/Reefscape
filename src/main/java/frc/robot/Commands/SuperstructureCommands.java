@@ -198,7 +198,7 @@ public class SuperstructureCommands {
                 SuperstructureState.AEESpeed,
                 SuperstructureState.CEESpeed,
                 SuperstructureState.funnelSpeed))
-        .until(() -> cee.isBeamBreakTriggered())
+        .until(() -> cee.isBeamBreakTriggered(CEEConstants.EXIT_BEAM_BREAK_PORT))
         .andThen(Commands.waitSeconds(CEEConstants.BEAM_BREAK_DELAY))
         .andThen(() -> SuperstructureState.CEESpeed = 0)
         .andThen(
@@ -332,7 +332,7 @@ public class SuperstructureCommands {
   }
 
   /**
-   * Positions and speeds of mechanisms on the Peris
+   * Positions and speeds of mechanisms on the Superstructure.
    *
    * <p>Superstructure includes the {@link Periscope}, {@link AlgaePivot}, {@link AEE}, {@link CEE},
    * and {@link Funnel}.
@@ -409,7 +409,7 @@ public class SuperstructureCommands {
           break;
 
         case CORAL_INTAKE:
-          periscopeHeight = PeriscopeConstants.L4_HEIGHT_M;
+          periscopeHeight = PeriscopeConstants.CORAL_STATION_HEIGHT_M;
           algaePivotAngle = AlgaePivotConstants.MAX_ANGLE_RAD;
           funnelSpeed = FunnelConstants.INTAKE_PERCENT_SPEED;
           CEESpeed = CEEConstants.INTAKE_PERCENT_SPEED;

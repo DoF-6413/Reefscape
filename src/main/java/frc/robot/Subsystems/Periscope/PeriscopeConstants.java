@@ -12,9 +12,9 @@ public class PeriscopeConstants {
    * DIO ports of the 2 Hall Effect sensors on the Periscope. These sensor will serve as magnetic
    * limit switches
    *
-   * <p>0 - Bottom, 1 - Top
+   * <p>4 - Bottom, 5 - Top
    */
-  public static final int[] HALL_EFFECT_SENSORS_PORTS = {0, 1};
+  public static final int[] HALL_EFFECT_SENSORS_PORTS = {4, 5};
   /** Gear reduction of 38:12 for the Periscope */
   public static final double GEAR_RATIO = 38.0 / 12.0;
   /**
@@ -48,9 +48,10 @@ public class PeriscopeConstants {
   /** Height position of the Periscope for reaching L4 */
   public static final double L4_HEIGHT_M = MAX_HEIGHT_M;
   /** Height position of the Periscope for aligning with the Funnel at the CORAL STATION */
-  public static final double CORAL_STATION_HEIGHT_M = Units.inchesToMeters(50.0); // TODO: Update
+  public static final double CORAL_STATION_HEIGHT_M =
+      Units.inchesToMeters(12.3456789); // TODO: Update
   /** Height position of the Periscope for reaching the PROCCESOR */
-  public static final double PROCESSOR_HEIGHT_M = Units.inchesToMeters(10.0); // TODO: Update
+  public static final double PROCESSOR_HEIGHT_M = Units.inchesToMeters(12.3456789); // TODO: Update
   /** Height position of the Periscope for reaching the NET */
   public static final double NET_HEIGHT_M = MAX_HEIGHT_M;
 
