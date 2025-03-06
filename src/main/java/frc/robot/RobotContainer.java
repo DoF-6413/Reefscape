@@ -275,7 +275,7 @@ public class RobotContainer {
     /* ~~~~~~~~~~~~~~~~~~~~ Superstructure ~~~~~~~~~~~~~~~~~~~~ */
     /* Score */
     m_auxButtonBoard
-        .button(11)
+        .button(OperatorConstants.BUTTON_BOARD.SCORE.BUTTON_ID)
         .onTrue(
             SuperstructureCommands.score(
                 m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
@@ -283,7 +283,7 @@ public class RobotContainer {
     /* CORAL and ALGAE */
     // L1 or PROCESSOR
     m_auxButtonBoard
-        .button(1)
+        .button(OperatorConstants.BUTTON_BOARD.L1_PROCESSOR.BUTTON_ID)
         .onTrue(SuperstructureCommands.positionsToL1(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
@@ -292,13 +292,13 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5))
+        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5)) // Run ALGAE position if switch is toggled
         .onTrue(
             SuperstructureCommands.positionsToProcessor(
                 m_periscopeSubsystem, m_algaePivotSubsystem));
     // L2 CORAL or ALGAE
     m_auxButtonBoard
-        .button(2)
+        .button(OperatorConstants.BUTTON_BOARD.L2.BUTTON_ID)
         .onTrue(
             SuperstructureCommands.positionsToL2Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
@@ -308,7 +308,7 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5))
+        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5)) // Run ALGAE position if switch is toggled
         .onTrue(
             SuperstructureCommands.intakeL2Algae(
                 m_periscopeSubsystem,
@@ -318,7 +318,7 @@ public class RobotContainer {
                 m_funnelSubsystem));
     // L3 CORAL or ALGAE
     m_auxButtonBoard
-        .button(3)
+        .button(OperatorConstants.BUTTON_BOARD.L3.BUTTON_ID)
         .onTrue(
             SuperstructureCommands.positionsToL3Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
@@ -328,7 +328,7 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5))
+        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5)) // Run ALGAE position if switch is toggled
         .onTrue(
             SuperstructureCommands.intakeL3Algae(
                 m_periscopeSubsystem,
@@ -338,7 +338,7 @@ public class RobotContainer {
                 m_funnelSubsystem));
     // L4 or NET
     m_auxButtonBoard
-        .button(4)
+        .button(OperatorConstants.BUTTON_BOARD.L4_NET.BUTTON_ID)
         .onTrue(SuperstructureCommands.positionsToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
@@ -347,11 +347,11 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5))
+        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5)) // Run ALGAE position if switch is toggled
         .onTrue(SuperstructureCommands.positionsToNet(m_periscopeSubsystem, m_algaePivotSubsystem));
     // Ground ALGAE
     m_auxButtonBoard
-        .button(12)
+        .button(OperatorConstants.BUTTON_BOARD.GROUND_ALGAE.BUTTON_ID)
         .onTrue(
             SuperstructureCommands.intakeGroundAlgae(
                 m_periscopeSubsystem,
@@ -366,78 +366,9 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem));
-
-    /* ~~~~~~~~~~~~~~~~~~~~ Pathfinding Selection ~~~~~~~~~~~~~~~~~~~~ */
-    // REEF Face AB
+    // Zero mechanisms
     m_auxButtonBoard
-        .button(8)
-        .onTrue(
-            PathfindingCommands.pathfindToBranch("A", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToAB"))
-        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
-        .onTrue(
-            PathfindingCommands.pathfindToBranch(
-                "B",
-                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
-    // REEF Face CD
-    m_auxButtonBoard
-        .button(7)
-        .onTrue(    PathfindingCommands.pathfindToBranch("C", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToCD"))
-        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
-        .onTrue(
-            PathfindingCommands.pathfindToBranch(
-                "D",
-                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
-    // REEF Face EF
-    m_auxButtonBoard
-        .button(6)
-        .onTrue(
-            PathfindingCommands.pathfindToBranch("E", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToEF"))
-        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
-        .onTrue(
-            PathfindingCommands.pathfindToBranch(
-                "F",
-                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
-    // REEF Face GH
-    m_auxButtonBoard
-        .button(5)
-        .onTrue(
-            PathfindingCommands.pathfindToBranch("G", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToGH"))
-        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
-        .onTrue(
-            PathfindingCommands.pathfindToBranch(
-                "H",
-                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
-    // REEF Face IJ
-    m_auxButtonBoard
-        .button(9)
-        .onTrue(
-            PathfindingCommands.pathfindToBranch("I", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToIJ"))
-        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
-        .onTrue(
-            PathfindingCommands.pathfindToBranch(
-                "J",
-                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
-    // REEF Face KL
-    m_auxButtonBoard
-        .button(10)
-        .onTrue(
-            PathfindingCommands.pathfindToBranch("K", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToKL"))
-        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
-        .onTrue(
-            PathfindingCommands.pathfindToBranch(
-                "L",
-                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
-    
-
-    // Zero all mechanisms
-    m_auxButtonBoard
-        .axisGreaterThan(0, 0.5)
+        .axisGreaterThan(OperatorConstants.BUTTON_BOARD.ZERO.BUTTON_ID, 0.5)
         .onTrue(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
@@ -445,27 +376,125 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem));
+
+    /* ~~~~~~~~~~~~~~~~~~~~ Climb ~~~~~~~~~~~~~~~~~~~~ */
+    // Deploy Climber
+    m_auxButtonBoard
+        .axisGreaterThan(OperatorConstants.BUTTON_BOARD.CLIMB.BUTTON_ID, 0.5)
+        .onTrue(new InstantCommand(()-> m_climberSubsystem.setVoltage(2), m_climberSubsystem))
+        .onFalse(new InstantCommand(()-> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
+    // // Retract Climber
+    // m_auxButtonBoard
+    //     .axisGreaterThan(OperatorConstants.BUTTON_BOARD.ZERO.BUTTON_ID, 0.5)
+    //     .onTrue(new InstantCommand(()-> m_climberSubsystem.setVoltage(-2), m_climberSubsystem))
+    //     .onFalse(new InstantCommand(()-> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
+
+    /* ~~~~~~~~~~~~~~~~~~~~ Pathfinding Selection ~~~~~~~~~~~~~~~~~~~~ */
+    // REEF Face AB
+    m_auxButtonBoard
+        .button(OperatorConstants.BUTTON_BOARD.REEF_AB.BUTTON_ID)
+        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .onTrue(
+            PathfindingCommands.pathfindToBranch("A", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToAB"))
+        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID, 0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "B",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
+    // REEF Face CD
+    m_auxButtonBoard
+        .button(OperatorConstants.BUTTON_BOARD.REEF_CD.BUTTON_ID)
+        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .onTrue(    PathfindingCommands.pathfindToBranch("C", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToCD"))
+        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID, 0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "D",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
+    // REEF Face EF
+    m_auxButtonBoard
+        .button(OperatorConstants.BUTTON_BOARD.REEF_EF.BUTTON_ID)
+        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .onTrue(
+            PathfindingCommands.pathfindToBranch("F", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToEF"))
+        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID, 0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "E",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
+    // REEF Face GH
+    m_auxButtonBoard
+        .button(OperatorConstants.BUTTON_BOARD.REEF_GH.BUTTON_ID)
+        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .onTrue(
+            PathfindingCommands.pathfindToBranch("H", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToGH"))
+        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID, 0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "G",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
+    // REEF Face IJ
+    m_auxButtonBoard
+        .button(OperatorConstants.BUTTON_BOARD.REEF_IJ.BUTTON_ID)
+        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .onTrue(
+            PathfindingCommands.pathfindToBranch("J", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToIJ"))
+        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID, 0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "I",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
+    // REEF Face KL
+    m_auxButtonBoard
+        .button(OperatorConstants.BUTTON_BOARD.REEF_KL.BUTTON_ID)
+        .and(m_driverController.rightBumper()) // Only Pathfind with Driver confirmation
+        .onTrue(
+            PathfindingCommands.pathfindToBranch("K", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToKL"))
+        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID, 0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "L",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
   }
 
   /** Aux Xbox Controls */
   public void auxControllerBindings() {
     // AEE testing binding
     m_auxController
-        .rightTrigger()
-        .onTrue(new InstantCommand(() -> m_AEESubsystem.setPercentSpeed(0.5), m_AEESubsystem))
+        .leftTrigger()
+        .onTrue(new InstantCommand(() -> m_AEESubsystem.setPercentSpeed(AEEConstants.SCORE_PERCENT_SPEED), m_AEESubsystem))
+        .onFalse(new InstantCommand(() -> m_AEESubsystem.setPercentSpeed(0.0), m_AEESubsystem));
+    m_auxController
+        .leftBumper()
+        .onTrue(new InstantCommand(() -> m_AEESubsystem.setPercentSpeed(AEEConstants.INTAKE_PERCENT_SPEED), m_AEESubsystem))
         .onFalse(new InstantCommand(() -> m_AEESubsystem.setPercentSpeed(0.0), m_AEESubsystem));
 
     // CEE testing binding
     m_auxController
         .rightTrigger()
-        .onTrue(new InstantCommand(() -> m_CEESubsystem.setPercentSpeed(0.5), m_CEESubsystem))
+        .onTrue(new InstantCommand(() -> m_CEESubsystem.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), m_CEESubsystem))
+        .onFalse(new InstantCommand(() -> m_CEESubsystem.setPercentSpeed(0.0), m_CEESubsystem));
+    m_auxController
+        .rightBumper()
+        .onTrue(new InstantCommand(() -> m_CEESubsystem.setPercentSpeed(CEEConstants.INTAKE_PERCENT_SPEED), m_CEESubsystem))
         .onFalse(new InstantCommand(() -> m_CEESubsystem.setPercentSpeed(0.0), m_CEESubsystem));
 
     // Funnel testing binding
     m_auxController
-        .rightBumper()
+        .povLeft()
         .onTrue(
-            new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(-0.8), m_funnelSubsystem))
+            new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(AEEConstants.SCORE_PERCENT_SPEED), m_funnelSubsystem))
+        .onFalse(new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(0), m_funnelSubsystem));
+    m_auxController
+        .povRight()
+        .onTrue(
+            new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(AEEConstants.INTAKE_PERCENT_SPEED), m_funnelSubsystem))
         .onFalse(new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(0), m_funnelSubsystem));
 
     // ALGAE Pivot testing binding
@@ -516,55 +545,114 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> m_periscopeSubsystem.resetPosition(0), m_periscopeSubsystem));
 
-    // Climber testing binding
-    // m_auxController
-    //     .b()
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () -> m_climberSubsystem.setAngle(ClimberConstants.MAX_ANGLE_RAD),
-    //             m_climberSubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> m_climberSubsystem.setAngle(ClimberConstants.MIN_ANGLE_RAD),
-    //             m_climberSubsystem));
+    /* Climb */
+    // Joystick to move
+    m_climberSubsystem.setDefaultCommand(
+        new InstantCommand(
+            ()-> m_climberSubsystem.setVoltage(RobotStateConstants.MAX_VOLTAGE * m_auxController.getLeftY()),
+            m_climberSubsystem));
+    // Deploy
+    m_auxController
+        .povUp()
+        .onTrue(
+            new InstantCommand(() -> m_climberSubsystem.setVoltage(2), m_climberSubsystem))
+        .onFalse(
+            new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
+    // Retract
+    m_auxController
+        .povDown()
+        .onTrue(
+            new InstantCommand(() -> m_climberSubsystem.setVoltage(-2), m_climberSubsystem))
+        .onFalse(
+            new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
 
-    // /* ~~~~~~~~~~~~~~~ Superstructure bindings ~~~~~~~~~~~~~~~ */
-    // /* Scoring */
-    // m_auxController
-    //     .a()
-    //     .onTrue(SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
-    // /* CORAL Score Positions */
-    // // L1
-    // m_auxController
-    //     .leftTrigger()
-    //     .onTrue(SuperstructureCommands.positionsToL1(m_periscopeSubsystem,
-    // m_algaePivotSubsystem))
-    //     .onFalse(
-    //         SuperstructureCommands.zero(
-    //             m_periscopeSubsystem,
-    //             m_algaePivotSubsystem,
-    //             m_AEESubsystem,
-    //             m_CEESubsystem,
-    //             m_funnelSubsystem));
-    // // L2
-    // m_auxController
-    //     .leftBumper()
-    //     .onTrue(
-    //         SuperstructureCommands.positionsToL2Coral(m_periscopeSubsystem,
-    // m_algaePivotSubsystem))
-    //     .onFalse(
-    //         SuperstructureCommands.zero(
-    //             m_periscopeSubsystem,
-    //             m_algaePivotSubsystem,
-    //             m_AEESubsystem,
-    //             m_CEESubsystem,
-    //             m_funnelSubsystem));
-    // // L3
+    // /* ~~~~~~~~~~~~~~~~~~~~ Superstructure ~~~~~~~~~~~~~~~~~~~~ */
+    // /* Score */
     // m_auxController
     //     .rightTrigger()
     //     .onTrue(
-    //         SuperstructureCommands.positionsToL3Coral(m_periscopeSubsystem,
-    // m_algaePivotSubsystem))
+    //         SuperstructureCommands.score(
+    //             m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+
+    // /* CORAL and ALGAE */
+    // // L1 or PROCESSOR
+    // m_auxController
+    //     .a()
+    //     .onTrue(SuperstructureCommands.positionsToL1(m_periscopeSubsystem, m_algaePivotSubsystem))
+    //     .onFalse(
+    //         SuperstructureCommands.zero(
+    //             m_periscopeSubsystem,
+    //             m_algaePivotSubsystem,
+    //             m_AEESubsystem,
+    //             m_CEESubsystem,
+    //             m_funnelSubsystem))
+    //     .and(m_auxController.leftBumper()) // Run ALGAE position if switch is toggled
+    //     .onTrue(
+    //         SuperstructureCommands.positionsToProcessor(
+    //             m_periscopeSubsystem, m_algaePivotSubsystem));
+    // // L2 CORAL or ALGAE
+    // m_auxController
+    //     .x()
+    //     .onTrue(
+    //         SuperstructureCommands.positionsToL2Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
+    //     .onFalse(
+    //         SuperstructureCommands.zero(
+    //             m_periscopeSubsystem,
+    //             m_algaePivotSubsystem,
+    //             m_AEESubsystem,
+    //             m_CEESubsystem,
+    //             m_funnelSubsystem))
+    //     .and(m_auxController.leftBumper()) // Run ALGAE position if switch is toggled
+    //     .onTrue(
+    //         SuperstructureCommands.intakeL2Algae(
+    //             m_periscopeSubsystem,
+    //             m_algaePivotSubsystem,
+    //             m_AEESubsystem,
+    //             m_CEESubsystem,
+    //             m_funnelSubsystem));
+    // // L3 CORAL or ALGAE
+    // m_auxController
+    //     .b()
+    //     .onTrue(
+    //         SuperstructureCommands.positionsToL3Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
+    //     .onFalse(
+    //         SuperstructureCommands.zero(
+    //             m_periscopeSubsystem,
+    //             m_algaePivotSubsystem,
+    //             m_AEESubsystem,
+    //             m_CEESubsystem,
+    //             m_funnelSubsystem))
+    //     .and(m_auxController.leftBumper()) // Run ALGAE position if switch is toggled
+    //     .onTrue(
+    //         SuperstructureCommands.intakeL3Algae(
+    //             m_periscopeSubsystem,
+    //             m_algaePivotSubsystem,
+    //             m_AEESubsystem,
+    //             m_CEESubsystem,
+    //             m_funnelSubsystem));
+    // // L4 or NET
+    // m_auxController
+    //     .y()
+    //     .onTrue(SuperstructureCommands.positionsToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
+    //     .onFalse(
+    //         SuperstructureCommands.zero(
+    //             m_periscopeSubsystem,
+    //             m_algaePivotSubsystem,
+    //             m_AEESubsystem,
+    //             m_CEESubsystem,
+    //             m_funnelSubsystem))
+    //     .and(m_auxController.leftBumper()) // Run ALGAE position if switch is toggled
+    //     .onTrue(SuperstructureCommands.positionsToNet(m_periscopeSubsystem, m_algaePivotSubsystem));
+    // // Ground ALGAE
+    // m_auxController
+    //     .rightBumper()
+    //     .onTrue(
+    //         SuperstructureCommands.intakeGroundAlgae(
+    //             m_periscopeSubsystem,
+    //             m_algaePivotSubsystem,
+    //             m_AEESubsystem,
+    //             m_CEESubsystem,
+    //             m_funnelSubsystem))
     //     .onFalse(
     //         SuperstructureCommands.zero(
     //             m_periscopeSubsystem,
@@ -572,12 +660,27 @@ public class RobotContainer {
     //             m_AEESubsystem,
     //             m_CEESubsystem,
     //             m_funnelSubsystem));
-    // // L4
+    // // CORAL Intake
     // m_auxController
-    //     .rightBumper()
-    //     .onTrue(SuperstructureCommands.positionsToL4(m_periscopeSubsystem,
-    // m_algaePivotSubsystem))
+    //     .leftTrigger()
+    //     .onTrue(
+    //         SuperstructureCommands.coralIntake(
+    //             m_periscopeSubsystem,
+    //             m_algaePivotSubsystem,
+    //             m_AEESubsystem,
+    //             m_CEESubsystem,
+    //             m_funnelSubsystem))
     //     .onFalse(
+    //         SuperstructureCommands.zero(
+    //             m_periscopeSubsystem,
+    //             m_algaePivotSubsystem,
+    //             m_AEESubsystem,
+    //             m_CEESubsystem,
+    //             m_funnelSubsystem));
+    // // Zero mechanisms
+    // m_auxController
+    //     .back()
+    //     .onTrue(
     //         SuperstructureCommands.zero(
     //             m_periscopeSubsystem,
     //             m_algaePivotSubsystem,

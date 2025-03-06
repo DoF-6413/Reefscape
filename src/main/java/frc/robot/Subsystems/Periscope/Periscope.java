@@ -19,6 +19,7 @@ public class Periscope extends SubsystemBase {
   private final ProfiledPIDController m_profiledPIDController;
   private final ElevatorFeedforward m_feedforward;
   private double m_prevSetpoint = 0.0;
+  private boolean m_enablePID = true;
 
   /**
    * This constructs a new {@link Periscope} instance.
@@ -69,17 +70,15 @@ public class Periscope extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
-    // Calculate and record voltage from controllers
-    var goalVoltage =
-        m_profiledPIDController.calculate(m_inputs.heightMeters)
-            + m_feedforward.calculate(m_profiledPIDController.getConstraints().maxVelocity);
-    this.setVoltage(goalVoltage);
-    Logger.recordOutput("Periscope/GoalVoltage", goalVoltage);
+    if (m_enablePID) {
+      // Calculate voltage based on PID and Feedforward controllers
+      this.setVoltage(m_profiledPIDController.calculate(m_inputs.heightMeters) + m_feedforward.calculate(m_profiledPIDController.getConstraints().maxVelocity));
 
-    // Enable and update tunable PID & Feedforward gains through SmartDashboard
-    if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
-      this.updatePID();
-      this.updateFF();
+      // Enable and update tunable PID & Feedforward gains through SmartDashboard
+      if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
+        this.updatePID();
+        this.updateFF();
+      }
     }
   }
 
@@ -121,7 +120,7 @@ public class Periscope extends SubsystemBase {
 
     // Record and update setpoint
     m_prevSetpoint = heightMeters;
-    Logger.recordOutput("Superstructure/Setpoints/PSHeight", m_prevSetpoint);
+    Logger.recordOutput("Superstructure/Setpoints/PeriscopeHeight", m_prevSetpoint);
     m_profiledPIDController.setGoal(heightMeters);
   }
 

@@ -22,9 +22,9 @@ public class AEEConstants {
   public static final double INTAKE_VELOCITY_RAD_PER_SEC =
       Units.rotationsPerMinuteToRadiansPerSecond(30); // TODO: Update
   /** Scoring speed, open loop voltage control */
-  public static final double SCORE_PERCENT_SPEED = -0.80; // TODO: Verify
+  public static final double SCORE_PERCENT_SPEED = 0.80; // TODO: Verify
   /** Intaking speed, open loop voltage control */
-  public static final double INTAKE_PERCENT_SPEED = 0.80; // TODO: Verify
+  public static final double INTAKE_PERCENT_SPEED = -0.80; // TODO: Verify
 
   // PID CONSTANTS
   /**

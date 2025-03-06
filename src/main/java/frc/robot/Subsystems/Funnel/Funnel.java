@@ -49,12 +49,13 @@ public class Funnel extends SubsystemBase {
     // Control the Funnel through the PID controller if enabled, open loop voltage control if
     // disabled
     if (m_enablePID) {
+      // Calculate voltage based on PID controller
       this.setVoltage(m_PIDController.calculate(m_inputs.velocityRadPerSec));
-    }
 
-    // Enable and update tunable PID gains through SmartDashboard
-    if (SmartDashboard.getBoolean("PIDFF_Tuning/Funnel/EnableTuning", false)) {
-      this.updatePID();
+      // Enable and update tunable PID gains through SmartDashboard
+      if (SmartDashboard.getBoolean("PIDFF_Tuning/Funnel/EnableTuning", false)) {
+        this.updatePID();
+      }
     }
   }
 
@@ -91,6 +92,7 @@ public class Funnel extends SubsystemBase {
    * @param setpoint Velocity in radians per second.
    */
   public void setVelocity(double setpoint) {
+    Logger.recordOutput("Superstructure/Setpoints/FunnelVelocity", setpoint);
     m_PIDController.setSetpoint(setpoint);
   }
 

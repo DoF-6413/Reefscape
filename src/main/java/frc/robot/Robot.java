@@ -86,7 +86,7 @@ public class Robot extends LoggedRobot {
      * 3: Commit number (of this branch),
      * 4: Functionality: 0 = working, 1 = WIP, 2 = doesn't work
      */
-    SmartDashboard.putString("Version Number", "27.44.42.1");
+    SmartDashboard.putString("Version Number", "27.44.43.1");
 
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
