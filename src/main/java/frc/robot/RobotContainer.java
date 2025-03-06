@@ -292,7 +292,7 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(() -> m_auxButtonBoard.getRawAxis(1) == 1)
+        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5))
         .onTrue(
             SuperstructureCommands.positionsToProcessor(
                 m_periscopeSubsystem, m_algaePivotSubsystem));
@@ -308,7 +308,7 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(() -> m_auxButtonBoard.getRawAxis(1) == 1)
+        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5))
         .onTrue(
             SuperstructureCommands.intakeL2Algae(
                 m_periscopeSubsystem,
@@ -328,7 +328,7 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(() -> m_auxButtonBoard.getRawAxis(1) == 1)
+        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5))
         .onTrue(
             SuperstructureCommands.intakeL3Algae(
                 m_periscopeSubsystem,
@@ -347,7 +347,7 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(() -> m_auxButtonBoard.getRawAxis(1) == 1)
+        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5))
         .onTrue(SuperstructureCommands.positionsToNet(m_periscopeSubsystem, m_algaePivotSubsystem));
     // Ground ALGAE
     m_auxButtonBoard
@@ -360,6 +360,85 @@ public class RobotContainer {
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .onFalse(
+            SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem));
+
+    /* ~~~~~~~~~~~~~~~~~~~~ Pathfinding Selection ~~~~~~~~~~~~~~~~~~~~ */
+    // REEF Face AB
+    m_auxButtonBoard
+        .button(8)
+        .onTrue(
+            PathfindingCommands.pathfindToBranch("A", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToAB"))
+        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "B",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
+    // REEF Face CD
+    m_auxButtonBoard
+        .button(7)
+        .onTrue(    PathfindingCommands.pathfindToBranch("C", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToCD"))
+        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "D",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
+    // REEF Face EF
+    m_auxButtonBoard
+        .button(6)
+        .onTrue(
+            PathfindingCommands.pathfindToBranch("E", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToEF"))
+        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "F",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
+    // REEF Face GH
+    m_auxButtonBoard
+        .button(5)
+        .onTrue(
+            PathfindingCommands.pathfindToBranch("G", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToGH"))
+        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "H",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
+    // REEF Face IJ
+    m_auxButtonBoard
+        .button(9)
+        .onTrue(
+            PathfindingCommands.pathfindToBranch("I", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToIJ"))
+        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "J",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
+    // REEF Face KL
+    m_auxButtonBoard
+        .button(10)
+        .onTrue(
+            PathfindingCommands.pathfindToBranch("K", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .withName("PathfindToKL"))
+        .and(m_auxButtonBoard.axisGreaterThan(1, 0.5)) // TODO: Change axis to correct one and the threshold too
+        .onTrue(
+            PathfindingCommands.pathfindToBranch(
+                "L",
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)); // TODO: Change axis to correct one
+    
+
+    // Zero all mechanisms
+    m_auxButtonBoard
+        .axisGreaterThan(0, 0.5)
+        .onTrue(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
