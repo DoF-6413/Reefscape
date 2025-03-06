@@ -3,6 +3,7 @@ package frc.robot.Subsystems.Funnel;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.RobotStateConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Funnel extends SubsystemBase {
@@ -76,11 +77,20 @@ public class Funnel extends SubsystemBase {
   }
 
   /**
+   * Sets the speed of the Funnel motor based on a percentage.
+   *
+   * @param percent A value between -1 (full reverse speed) to 1 (full forward speed).
+   */
+  public void setPercentSpeed(double percent) {
+    m_io.setVoltage(percent * RobotStateConstants.MAX_VOLTAGE);
+  }
+
+  /**
    * Sets the setpoint of the Funnel PID controller.
    *
    * @param setpoint Velocity in radians per second.
    */
-  public void setSetpoint(double setpoint) {
+  public void setVelocity(double setpoint) {
     m_PIDController.setSetpoint(setpoint);
   }
 
@@ -118,5 +128,14 @@ public class Funnel extends SubsystemBase {
       // Sets the new gains
       this.setPID(FunnelConstants.KP, FunnelConstants.KI, FunnelConstants.KD);
     }
+  }
+
+  /**
+   * Triggered means that the beam break is broken (an object is in between the sensor).
+   *
+   * @return {@code true} if the sensor has been triggered, {@code false} if not.
+   */
+  public boolean isBeamBreakTriggered() {
+    return m_inputs.isbeamBreakTriggered;
   }
 }

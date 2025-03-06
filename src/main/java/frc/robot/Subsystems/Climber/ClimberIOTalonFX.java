@@ -132,7 +132,7 @@ public class ClimberIOTalonFX implements ClimberIO {
    * @param positionRad Angular position of the Climber in radians
    */
   @Override
-  public void setPosition(double positionRad) {
+  public void setAngle(double positionRad) {
     m_talonFX.setControl(m_controller.withPosition(Units.rotationsToRadians(positionRad)));
   }
 

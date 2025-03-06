@@ -68,7 +68,7 @@ public class ClimberIOSim implements ClimberIO {
   }
 
   @Override
-  public void setPosition(double positionRad) {
+  public void setAngle(double positionRad) {
     m_setpointRad = positionRad;
   }
 

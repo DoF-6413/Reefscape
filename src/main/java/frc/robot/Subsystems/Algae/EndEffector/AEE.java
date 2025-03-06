@@ -7,6 +7,7 @@ package frc.robot.Subsystems.Algae.EndEffector;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.RobotStateConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class AEE extends SubsystemBase {
@@ -78,11 +79,20 @@ public class AEE extends SubsystemBase {
   }
 
   /**
+   * Sets the speed of the AEE motor based on a percentage.
+   *
+   * @param percent A value between -1 (full reverse speed) to 1 (full forward speed).
+   */
+  public void setPercentSpeed(double percent) {
+    m_io.setVoltage(percent * RobotStateConstants.MAX_VOLTAGE);
+  }
+
+  /**
    * Sets the setpoint of the AEE PID controller.
    *
    * @param setpoint Velocity in radians per second.
    */
-  public void setSetpoint(double setpoint) {
+  public void setVelocity(double setpoint) {
     m_PIDController.setSetpoint(setpoint);
   }
 

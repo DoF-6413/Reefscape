@@ -23,9 +23,9 @@ public final class ClimberConstants {
   /** Weight of the Climber in kilograms */
   public static final double MASS_KG = Units.lbsToKilograms(10);
   // Angle positions
-  /** Minimum angle of the Climber in radians */
+  /** Minimum (default) angle of the Climber in radians */
   public static final double MIN_ANGLE_RAD = Units.degreesToRadians(10);
-  /** Maximum (default) angle of the Climber in radians */
+  /** Maximum angle of the Climber in radians */
   public static final double MAX_ANGLE_RAD = Units.degreesToRadians(90);
 
   // PID Constants
