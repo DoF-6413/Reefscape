@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.DriveCommands;
@@ -164,7 +163,7 @@ public class RobotContainer {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
     this.driverControllerBindings();
-    this.auxButtonBoardBindings();
+    // this.auxButtonBoardBindings();
     this.auxControllerBindings();
   }
 
@@ -277,7 +276,9 @@ public class RobotContainer {
     /* Score */
     m_auxButtonBoard
         .button(11)
-        .onTrue(SuperstructureCommands.setSpeeds(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem, 0.5, 0.5, 0.5));
+        .onTrue(
+            SuperstructureCommands.setSpeeds(
+                m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem, 0.5, 0.5, 0.5));
 
     /* CORAL and ALGAE */
     // L1 or PROCESSOR
@@ -291,12 +292,15 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(()-> m_auxButtonBoard.getRawAxis(1) == 1)
-        .onTrue(SuperstructureCommands.positionsToProcessor(m_periscopeSubsystem, m_algaePivotSubsystem));
+        .and(() -> m_auxButtonBoard.getRawAxis(1) == 1)
+        .onTrue(
+            SuperstructureCommands.positionsToProcessor(
+                m_periscopeSubsystem, m_algaePivotSubsystem));
     // L2 CORAL or ALGAE
     m_auxButtonBoard
         .button(2)
-        .onTrue(SuperstructureCommands.positionsToL2Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
+        .onTrue(
+            SuperstructureCommands.positionsToL2Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
@@ -304,12 +308,19 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(()-> m_auxButtonBoard.getRawAxis(1) == 1)
-        .onTrue(SuperstructureCommands.intakeL2Algae(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+        .and(() -> m_auxButtonBoard.getRawAxis(1) == 1)
+        .onTrue(
+            SuperstructureCommands.intakeL2Algae(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem));
     // L3 CORAL or ALGAE
     m_auxButtonBoard
         .button(3)
-        .onTrue(SuperstructureCommands.positionsToL3Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
+        .onTrue(
+            SuperstructureCommands.positionsToL3Coral(m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
@@ -317,8 +328,14 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(()-> m_auxButtonBoard.getRawAxis(1) == 1)
-        .onTrue(SuperstructureCommands.intakeL3Algae(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+        .and(() -> m_auxButtonBoard.getRawAxis(1) == 1)
+        .onTrue(
+            SuperstructureCommands.intakeL3Algae(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem));
     // L4 or NET
     m_auxButtonBoard
         .button(4)
@@ -330,84 +347,44 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem))
-        .and(()-> m_auxButtonBoard.getRawAxis(1) == 1)
+        .and(() -> m_auxButtonBoard.getRawAxis(1) == 1)
         .onTrue(SuperstructureCommands.positionsToNet(m_periscopeSubsystem, m_algaePivotSubsystem));
     // Ground ALGAE
-    m_auxButtonBoard.button(12)
-        .onTrue(SuperstructureCommands.intakeGroundAlgae(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem))
-        .onFalse(SuperstructureCommands.zero(m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+    m_auxButtonBoard
+        .button(12)
+        .onTrue(
+            SuperstructureCommands.intakeGroundAlgae(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem))
+        .onFalse(
+            SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem));
   }
 
   /** Aux Xbox Controls */
   public void auxControllerBindings() {
     // AEE testing binding
-    m_AEESubsystem.setDefaultCommand(
-        new InstantCommand(
-            () ->
-                m_AEESubsystem.setVoltage(
-                    m_auxController.getLeftTriggerAxis() * RobotStateConstants.MAX_VOLTAGE),
-            m_AEESubsystem));
     m_auxController
-        .leftBumper()
-        .onTrue(
-            Commands.run(
-                () -> {
-                  m_AEESubsystem.enablePID(true);
-                  m_AEESubsystem.setVelocity(Units.rotationsPerMinuteToRadiansPerSecond(1000));
-                },
-                m_AEESubsystem))
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  m_AEESubsystem.setVelocity(0);
-                  m_AEESubsystem.enablePID(false);
-                },
-                m_AEESubsystem));
+        .rightTrigger()
+        .onTrue(new InstantCommand(() -> m_AEESubsystem.setPercentSpeed(0.5), m_AEESubsystem))
+        .onFalse(new InstantCommand(() -> m_AEESubsystem.setPercentSpeed(0.0), m_AEESubsystem));
 
-    // // CEE testing binding
-    // m_CEESubsystem.setDefaultCommand(
-    //     new InstantCommand(
-    //         () ->
-    //             m_CEESubsystem.setVoltage(
-    //                 m_auxController.getRightTriggerAxis() * RobotStateConstants.MAX_VOLTAGE),
-    //         m_CEESubsystem));
-    // m_auxController
-    //     .rightBumper()
-    //     .onTrue(
-    //         Commands.run(
-    //             () -> {
-    //               m_CEESubsystem.enablePID(true);
-    //               m_CEESubsystem.setVelocity(Units.rotationsPerMinuteToRadiansPerSecond(1000));
-    //             },
-    //             m_CEESubsystem))
-    //     .onFalse(
-    //         new InstantCommand(
-    //             () -> {
-    //               m_CEESubsystem.setVelocity(0);
-    //               m_CEESubsystem.enablePID(false);
-    //             },
-    //             m_CEESubsystem));
+    // CEE testing binding
+    m_auxController
+        .rightTrigger()
+        .onTrue(new InstantCommand(() -> m_CEESubsystem.setPercentSpeed(0.5), m_CEESubsystem))
+        .onFalse(new InstantCommand(() -> m_CEESubsystem.setPercentSpeed(0.0), m_CEESubsystem));
 
     // Funnel testing binding
     m_auxController
-        .povUp()
-        .onTrue(
-            Commands.run(
-                () -> {
-                  m_funnelSubsystem.enablePID(true);
-
-                  m_funnelSubsystem.setVelocity(Units.rotationsPerMinuteToRadiansPerSecond(1000));
-                },
-                m_funnelSubsystem))
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  m_funnelSubsystem.setVelocity(0);
-                  m_funnelSubsystem.enablePID(false);
-                },
-                m_funnelSubsystem));
-    m_auxController
-        .povDown()
+        .rightBumper()
         .onTrue(
             new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(-0.8), m_funnelSubsystem))
         .onFalse(new InstantCommand(() -> m_funnelSubsystem.setPercentSpeed(0), m_funnelSubsystem));
@@ -439,7 +416,9 @@ public class RobotContainer {
         .a()
         .onTrue(
             new InstantCommand(
-                () -> m_periscopeSubsystem.setPosition(SmartDashboard.getNumber("PSHeight", 0)),
+                () ->
+                    m_periscopeSubsystem.setPosition(
+                        Units.inchesToMeters(SmartDashboard.getNumber("PSHeight", 0))),
                 m_periscopeSubsystem))
         .onFalse(
             new InstantCommand(
@@ -544,11 +523,11 @@ public class RobotContainer {
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.enableBrakeModeAll(enable);
-    // m_algaePivotSubsystem.enableBrakeMode(enable);
+    m_algaePivotSubsystem.enableBrakeMode(enable);
     m_periscopeSubsystem.enableBrakeMode(enable);
     m_climberSubsystem.enableBrakeMode(enable);
     m_funnelSubsystem.enableBrakeMode(enable);
-    // m_AEESubsystem.enableBrakeMode(enable);
-    // m_CEESubsystem.enableBrakeMode(enable);
+    m_AEESubsystem.enableBrakeMode(enable);
+    m_CEESubsystem.enableBrakeMode(enable);
   }
 }

@@ -1,8 +1,5 @@
 package frc.robot.Commands;
 
-import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.AutoLogOutput;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Subsystems.Algae.EndEffector.AEE;
@@ -15,6 +12,7 @@ import frc.robot.Subsystems.Funnel.Funnel;
 import frc.robot.Subsystems.Funnel.FunnelConstants;
 import frc.robot.Subsystems.Periscope.Periscope;
 import frc.robot.Subsystems.Periscope.PeriscopeConstants;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class SuperstructureCommands {
 

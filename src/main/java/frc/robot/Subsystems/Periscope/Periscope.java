@@ -4,6 +4,9 @@
 
 package frc.robot.Subsystems.Periscope;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
@@ -11,6 +14,8 @@ import org.littletonrobotics.junction.Logger;
 public class Periscope extends SubsystemBase {
   private final PeriscopeIO m_io;
   private final PeriscopeIOInputsAutoLogged m_inputs = new PeriscopeIOInputsAutoLogged();
+  private final ProfiledPIDController m_profiledPIDController;
+  private final ElevatorFeedforward m_feedforward;
 
   /** Keep tracks of the setpoint to determine whether or not the Periscope is at its setpoint */
   private double m_heightSetpointMeters = 0.0;
@@ -30,6 +35,21 @@ public class Periscope extends SubsystemBase {
     // Initialize the IO implementation
     m_io = io;
 
+    m_profiledPIDController =
+        new ProfiledPIDController(
+            PeriscopeConstants.KP,
+            PeriscopeConstants.KI,
+            PeriscopeConstants.KD,
+            new TrapezoidProfile.Constraints(
+                PeriscopeConstants.MAX_VELOCITY_M_PER_SEC,
+                PeriscopeConstants.IDEAL_ACCELERATION_M_PER_SEC2));
+    m_feedforward =
+        new ElevatorFeedforward(
+            PeriscopeConstants.KS,
+            PeriscopeConstants.KG,
+            PeriscopeConstants.KV,
+            PeriscopeConstants.KA);
+
     // Tunable PID & Feedforward gains
     SmartDashboard.putBoolean("PIDFF_Tuning/Periscope/EnableTuning", false);
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KP", PeriscopeConstants.KP);
@@ -48,6 +68,12 @@ public class Periscope extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
+    var goalVoltage =
+        m_profiledPIDController.calculate(m_inputs.heightMeters)
+            + m_feedforward.calculate(m_profiledPIDController.getConstraints().maxVelocity);
+    this.setVoltage(goalVoltage);
+
+    Logger.recordOutput("Periscope/GoalVoltage", goalVoltage);
     // Enable and update tunable PID & Feedforward gains through SmartDashboard
     if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
       this.updatePID();
@@ -84,13 +110,14 @@ public class Periscope extends SubsystemBase {
    */
   public void setPosition(double heightMeters) {
     if (heightMeters < m_heightSetpointMeters) {
-      this.setMaxAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2 / 2);
+      this.setMaxAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2 / 6);
     } else {
       this.setMaxAcceleration(PeriscopeConstants.IDEAL_ACCELERATION_ROT_PER_SEC2);
     }
     m_heightSetpointMeters = heightMeters;
     Logger.recordOutput("Superstructure/Setpoints/PSHeight", m_heightSetpointMeters);
-    m_io.setPosition(m_heightSetpointMeters);
+    // m_io.setPosition(m_heightSetpointMeters);
+    m_profiledPIDController.setGoal(heightMeters);
   }
 
   /**
@@ -99,8 +126,11 @@ public class Periscope extends SubsystemBase {
    * @return {@code true} if at setpoint height, {@code false} if not
    */
   public boolean atSetpointHeight() {
-    return m_inputs.heightMeters <= (m_heightSetpointMeters + PeriscopeConstants.ERROR_TOLERANCE_M)
-        && m_inputs.heightMeters >= (m_heightSetpointMeters - PeriscopeConstants.ERROR_TOLERANCE_M);
+    // return m_inputs.heightMeters <= (m_heightSetpointMeters +
+    // PeriscopeConstants.ERROR_TOLERANCE_M)
+    //     && m_inputs.heightMeters >= (m_heightSetpointMeters -
+    // PeriscopeConstants.ERROR_TOLERANCE_M);
+    return m_profiledPIDController.atGoal();
   }
 
   /**
@@ -111,7 +141,8 @@ public class Periscope extends SubsystemBase {
    * @param kD Derivative gain value.
    */
   public void setPID(double kP, double kI, double kD) {
-    m_io.setPID(kP, kI, kD);
+    // m_io.setPID(kP, kI, kD);
+    m_profiledPIDController.setPID(kP, kI, kD);
   }
 
   /**
@@ -123,11 +154,17 @@ public class Periscope extends SubsystemBase {
    * @param kA Acceleration gain value.
    */
   public void setFF(double kS, double kG, double kV, double kA) {
-    m_io.setFF(kS, kG, kV, kA);
+    // m_io.setFF(kS, kG, kV, kA);
+    m_feedforward.setKs(kS);
+    m_feedforward.setKg(kG);
+    m_feedforward.setKv(kV);
+    m_feedforward.setKa(kA);
   }
 
   public void setMaxAcceleration(double acceleration) {
-    m_io.setMaxAcceleration(acceleration);
+    // m_io.setMaxAcceleration(acceleration);
+    m_profiledPIDController.setConstraints(
+        new TrapezoidProfile.Constraints(PeriscopeConstants.MAX_VELOCITY_M_PER_SEC, acceleration));
   }
 
   /** Update PID gains for the Periscope motors from SmartDashboard inputs. */

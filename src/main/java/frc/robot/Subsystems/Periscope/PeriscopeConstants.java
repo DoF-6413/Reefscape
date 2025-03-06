@@ -57,7 +57,7 @@ public class PeriscopeConstants {
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */
-  public static double KP = 0.0;
+  public static double KP = 30.0;
   /**
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
@@ -68,20 +68,27 @@ public class PeriscopeConstants {
   /** KG represents the voltage required to overcome static friction */
   public static double KS = 0.0;
   /** KG represents the voltage required to overcome gravity */
-  public static double KG = 0.18;
+  public static double KG = 0.0;
   /** KV represents the voltage used every second per meter */
-  public static double KV = 5.08;
+  public static double KV = 0.0;
   /** KA represents the voltage used every second squared per meter */
-  public static double KA = 0.03;
+  public static double KA = 0.0;
+  /**
+   * Max velocity for trapezoidal motion profiling in meters per second. 2.32 = max velocity, in
+   * meters per second, calculated from https://www.reca.lc/ assuming 85% efficiency
+   */
+  public static final double MAX_VELOCITY_M_PER_SEC = 2.32;
+  /** Ideal acceleration for trapezoidal motion profiling in meters per second squared */
+  public static final double IDEAL_ACCELERATION_M_PER_SEC2 = 4;
   /**
    * Max velocity for trapezoidal motion profiling in rotations per second. 2.32 = max velocity, in
    * meters per second, calculated from https://www.reca.lc/ assuming 85% efficiency
    */
   public static final double MAX_VELOCITY_ROT_PER_SEC =
-      Units.radiansToRotations(2.32 / DRUM_RADIUS_M);
+      Units.radiansToRotations(MAX_VELOCITY_M_PER_SEC / DRUM_RADIUS_M);
   /** Ideal acceleration for trapezoidal motion profiling in rotations per second squared */
   public static final double IDEAL_ACCELERATION_ROT_PER_SEC2 =
-      Units.radiansToRotations(4 / DRUM_RADIUS_M);
+      Units.radiansToRotations(IDEAL_ACCELERATION_M_PER_SEC2 / DRUM_RADIUS_M);
   /**
    * How many meters the height of the Periscope can be within its height setpoint to be considered
    * at the setpoint
