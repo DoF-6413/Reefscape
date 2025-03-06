@@ -12,10 +12,6 @@ public class ClimberIOSim implements ClimberIO {
   private final SingleJointedArmSim m_armSim;
   private double m_voltage = 0.0;
 
-  // PID controller
-  private final PIDController m_PIDController;
-  private double m_setpointRad = 0.0;
-
   /**
    * Constructs a new {@link ClimberIOSim} instance.
    *
@@ -37,18 +33,10 @@ public class ClimberIOSim implements ClimberIO {
             ClimberConstants.MAX_ANGLE_RAD,
             ClimberConstants.SIMULATE_GRAVITY,
             ClimberConstants.MIN_ANGLE_RAD); // Starting height
-
-    // Initialize PID controller
-    m_PIDController =
-        new PIDController(ClimberConstants.KP, ClimberConstants.KI, ClimberConstants.KD);
   }
 
   @Override
   public void updateInputs(ClimberIOInputs inputs) {
-    // Calculate and apply next output voltage from the PID controller
-    m_voltage = m_PIDController.calculate(inputs.positionRad, m_setpointRad);
-    this.setVoltage(m_voltage);
-
     // Update arm sim
     m_armSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
@@ -65,15 +53,5 @@ public class ClimberIOSim implements ClimberIO {
     m_voltage =
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
     m_armSim.setInputVoltage(m_voltage);
-  }
-
-  @Override
-  public void setAngle(double positionRad) {
-    m_setpointRad = positionRad;
-  }
-
-  @Override
-  public void setPID(double kP, double kI, double kD) {
-    m_PIDController.setPID(kP, kI, kD);
   }
 }

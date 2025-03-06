@@ -1,5 +1,6 @@
 package frc.robot.Subsystems.Climber;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
@@ -7,6 +8,10 @@ import org.littletonrobotics.junction.Logger;
 public class Climber extends SubsystemBase {
   private final ClimberIO m_io;
   private final ClimberIOInputsAutoLogged m_inputs = new ClimberIOInputsAutoLogged();
+
+  // Controller
+  private final PIDController m_PIDController;
+  private boolean m_enablePID = false;
 
   /**
    * Constructs a new {@link Climber} instance.
@@ -23,6 +28,9 @@ public class Climber extends SubsystemBase {
     // Initialize the IO implementation
     m_io = io;
 
+    // Initialize PID controller
+    m_PIDController = new PIDController(ClimberConstants.KP, ClimberConstants.KI, ClimberConstants.KD);
+
     // Tunable PID gains
     SmartDashboard.putBoolean("PIDFF_Tuning/Climber/EnableTuning", false);
     SmartDashboard.putNumber("PIDFF_Tuning/Climber/KP", ClimberConstants.KP);
@@ -37,9 +45,14 @@ public class Climber extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Climber", m_inputs);
 
-    // Enable and update tunable PID gains through SmartDashboard
-    if (SmartDashboard.getBoolean("PIDFF_Tuning/Climber/EnableTuning", false)) {
-      this.updatePID();
+    if (m_enablePID) {
+      // Calculate voltage from PID controller
+      this.setVoltage(m_PIDController.calculate(m_inputs.positionRad));
+
+      // Enable and update tunable PID gains through SmartDashboard
+      if (SmartDashboard.getBoolean("PIDFF_Tuning/Climber/EnableTuning", false)) {
+        this.updatePID();
+      }
     }
   }
 
@@ -68,7 +81,7 @@ public class Climber extends SubsystemBase {
    */
   public void setAngle(double positionRad) {
     Logger.recordOutput("Superstructure/Setpoints/ClimberAngle", positionRad);
-    m_io.setAngle(positionRad);
+    m_PIDController.setSetpoint(positionRad);
   }
 
   /**
@@ -79,7 +92,7 @@ public class Climber extends SubsystemBase {
    * @param kD Derivative gain value.
    */
   public void setPID(double kP, double kI, double kD) {
-    m_io.setPID(kP, kI, kD);
+    m_PIDController.setPID(kP, kI, kD);
   }
 
   /** Update PID gains for the Climber motor from SmartDashboard inputs. */

@@ -3,7 +3,6 @@ package frc.robot.Subsystems.Climber;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -19,7 +18,6 @@ import frc.robot.Constants.RobotStateConstants;
 public class ClimberIOTalonFX implements ClimberIO {
   // Motor, controller, and configurator
   private final TalonFX m_talonFX;
-  private final PositionVoltage m_controller = new PositionVoltage(0);
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
 
   // Climber motor's logged signals
@@ -58,18 +56,6 @@ public class ClimberIOTalonFX implements ClimberIO {
         .withSupplyCurrentLimitEnable(ClimberConstants.ENABLE_CUR_LIM)
         .withStatorCurrentLimit(ClimberConstants.STALL_CUR_LIM_A)
         .withStatorCurrentLimitEnable(ClimberConstants.ENABLE_CUR_LIM);
-
-    // PID gains configuration
-    m_motorConfig
-        .Slot0
-        .withKP(ClimberConstants.KP)
-        .withKI(ClimberConstants.KI)
-        .withKD(ClimberConstants.KD);
-
-    // Closed loop controller configuration
-    m_motorConfig.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(
-        1.0 / ClimberConstants.UPDATE_FREQUENCY_HZ);
-    m_controller.withUpdateFreqHz(ClimberConstants.UPDATE_FREQUENCY_HZ);
 
     // Reset position
     m_talonFX.setPosition(0.0);
@@ -123,31 +109,5 @@ public class ClimberIOTalonFX implements ClimberIO {
   public void setVoltage(double volts) {
     m_talonFX.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
-  }
-
-  /**
-   * Sets the position of the Climber using the motor's closed loop controller built into the
-   * TalonFX speed controller
-   *
-   * @param positionRad Angular position of the Climber in radians
-   */
-  @Override
-  public void setAngle(double positionRad) {
-    m_talonFX.setControl(m_controller.withPosition(Units.rotationsToRadians(positionRad)));
-  }
-
-  /**
-   * Sets the PID gains of the Climber motor's built in closed loop controller
-   *
-   * @param kP Proportional gain value
-   * @param kI Integral gain value
-   * @param kD Derivative gain value
-   */
-  @Override
-  public void setPID(double kP, double kI, double kD) {
-    // Configure new gains
-    m_motorConfig.Slot0.withKP(kP).withKI(kI).withKD(kD);
-    // Apply configuration
-    m_talonFX.getConfigurator().apply(m_motorConfig);
   }
 }
