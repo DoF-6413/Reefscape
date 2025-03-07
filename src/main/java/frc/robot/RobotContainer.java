@@ -26,7 +26,6 @@ import frc.robot.Subsystems.Drive.*;
 import frc.robot.Subsystems.Funnel.*;
 import frc.robot.Subsystems.Periscope.*;
 import frc.robot.Subsystems.Vision.*;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -220,12 +219,6 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    Logger.recordOutput("CSPOSES/CS1C", FieldConstants.CORAL_STATION_POSES.get("CS1C"));
-    Logger.recordOutput("CSPOSES/CS1L", FieldConstants.CORAL_STATION_POSES.get("CS1L"));
-    Logger.recordOutput("CSPOSES/CS1R", FieldConstants.CORAL_STATION_POSES.get("CS1R"));
-    Logger.recordOutput("CSPOSES/CS2C", FieldConstants.CORAL_STATION_POSES.get("CS2C"));
-    Logger.recordOutput("CSPOSES/CS2L", FieldConstants.CORAL_STATION_POSES.get("CS2L"));
-    Logger.recordOutput("CSPOSES/CS2R", FieldConstants.CORAL_STATION_POSES.get("CS2R"));
     SmartDashboard.putNumber("Funnel Speed Percent", 0);
     SmartDashboard.putNumber("ClimberVoltage", 0);
     SmartDashboard.putNumber("PSVoltage", 0);
