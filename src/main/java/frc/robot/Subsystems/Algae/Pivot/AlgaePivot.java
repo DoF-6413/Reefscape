@@ -65,7 +65,7 @@ public class AlgaePivot extends SubsystemBase {
     // disabled
     if (m_enablePID) {
       // Calculate voltage based on PID controller
-      this.setVoltage(m_PIDController.calculate(m_inputs.positionRad));
+      this.setVoltage(m_PIDController.calculate(m_inputs.absPositionRad));
 
       // Enable and update tunable PID gains through SmartDashboard
       if (SmartDashboard.getBoolean("PIDFF_Tuning/ALGAE_Pivot/EnableTuning", false)) {

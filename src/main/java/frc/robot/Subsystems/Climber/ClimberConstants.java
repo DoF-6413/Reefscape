@@ -12,9 +12,9 @@ public final class ClimberConstants {
    * Set the inversion of the Climber motor to false, making Counterclockwise the positive direction
    */
   public static final boolean IS_INVERTED = false;
-  /** Current limit of 50 amps for the Climber motor */
+  /** Current limit of 60 amps for the Climber motor */
   public static final int STALL_CUR_LIM_A = 60;
-  /** Current limit of 50 amps for the Climber motor */
+  /** Current limit of 120 amps for the Climber motor */
   public static final int MAX_CURRENT_A = 120;
   /** Enable current limiting for the Climber motor */
   public static final boolean ENABLE_CUR_LIM = true;
