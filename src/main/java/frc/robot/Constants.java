@@ -89,27 +89,47 @@ public final class Constants {
 
     /** Weight of the robot with bumpers and battery */
     public static final double ROBOT_WEIGHT_KG = Units.lbsToKilograms(135);
-    /** Weight of the Proto-Bot with battery */
-    public static final double PROTOBOT_WEIGHT_KG = Units.lbsToKilograms(35);
     /** Rough moment of inertia calculation of the robot in kilograms * meters squared */
     public static final double ROBOT_MOI_KG_M2 =
         (1.0 / 12.0)
             * ROBOT_WEIGHT_KG
             * ((DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M)
                 + (DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M));
-    /** Rough moment of inertia calculation of the robot in kilograms * meters squared */
-    public static final double PROTOBOT_MOI_KG_M2 =
-        (1.0 / 12.0)
-            * PROTOBOT_WEIGHT_KG
-            * ((DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M)
-                + (DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M));
   }
 
   /** Controller ports */
   public static class OperatorConstants {
+    /** Driver Station port for the Driver Xbox controller */
     public static final int DRIVER_CONTROLLER = 0;
+    /** Driver Station port for the Aux button board */
     public static final int AUX_BUTTON_BOARD = 1;
+    /** Driver Station port for the Aux Xbox controller */
     public static final int AUX_XBOX_CONTROLLER = 2;
+    /** Map button board button names to their numbers on the controller circut board */
+    public enum BUTTON_BOARD {
+      L1_PROCESSOR(1),
+      L2(2),
+      L3(3),
+      L4_NET(4),
+      SWITCH_CORAL_ALGAE(1), // Axis number
+      REEF_AB(8),
+      REEF_CD(7),
+      REEF_EF(6),
+      REEF_GH(5),
+      REEF_IJ(9),
+      REEF_KL(10),
+      SWITCH_BRANCH(3), // Axis number
+      ZERO(0), // Axis number
+      CLIMB(2), // Axis number
+      SCORE(11),
+      GROUND_ALGAE(12);
+
+      public final int BUTTON_ID;
+
+      BUTTON_BOARD(int id) {
+        BUTTON_ID = id;
+      }
+    }
   }
 
   /** Heading Controller */
@@ -289,8 +309,8 @@ public final class Constants {
     /** Robot configuarion for PathPlanner */
     public static final RobotConfig ROBOT_CONFIG =
         new RobotConfig(
-            RobotStateConstants.PROTOBOT_WEIGHT_KG,
-            RobotStateConstants.PROTOBOT_MOI_KG_M2,
+            RobotStateConstants.ROBOT_WEIGHT_KG,
+            RobotStateConstants.ROBOT_MOI_KG_M2,
             MODULE_CONFIG,
             DriveConstants.getModuleTranslations());
 

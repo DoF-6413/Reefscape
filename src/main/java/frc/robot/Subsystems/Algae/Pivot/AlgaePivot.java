@@ -64,12 +64,13 @@ public class AlgaePivot extends SubsystemBase {
     // Control the ALGAE Pivot through the PID controller if enabled, open loop voltage control if
     // disabled
     if (m_enablePID) {
-      this.setVoltage(m_PIDController.calculate(m_inputs.positionRad));
-    }
+      // Calculate voltage based on PID controller
+      this.setVoltage(m_PIDController.calculate(m_inputs.absPositionRad));
 
-    // Enable and update tunable PID gains through SmartDashboard
-    if (SmartDashboard.getBoolean("PIDFF_Tuning/ALGAE_Pivot/EnableTuning", false)) {
-      this.updatePID();
+      // Enable and update tunable PID gains through SmartDashboard
+      if (SmartDashboard.getBoolean("PIDFF_Tuning/ALGAE_Pivot/EnableTuning", false)) {
+        this.updatePID();
+      }
     }
   }
 
@@ -98,7 +99,7 @@ public class AlgaePivot extends SubsystemBase {
    * @param setpoint Angle in radians.
    */
   public void setAngle(double setpoint) {
-    Logger.recordOutput("SuperstructureSetpoints/ALGAEPivotAngle", setpoint);
+    Logger.recordOutput("Superstructure/Setpoints/ALGAEPivotAngle", setpoint);
     m_PIDController.setSetpoint(setpoint);
   }
 

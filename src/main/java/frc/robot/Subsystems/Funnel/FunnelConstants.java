@@ -5,11 +5,9 @@ import edu.wpi.first.math.util.Units;
 public class FunnelConstants {
   // REAL CONSTANTS
   /** CAN ID of the Funnel SPARK MAX */
-  public static final int CAN_ID = 18;
+  public static final int CAN_ID = 17;
   /** Gear reduction of 3:1 for the Funnel motor */
   public static final double GEAR_RATIO = 3.0 / 1.0;
-  /** DIO port of the Funnel Beam Break on the roboRIO */
-  public static final int BEAM_BREAK_PORT = 7;
   /**
    * Set the inversion status of the Funnel to false, making Counterclockwise the positive direction
    */

@@ -51,12 +51,13 @@ public class CEE extends SubsystemBase {
 
     // Control the CEE through the PID controller if enabled, open loop voltage control if disabled
     if (m_enablePID) {
+      // Calculate voltage based on PID controller
       this.setVoltage(m_PIDController.calculate(m_inputs.velocityRadPerSec));
-    }
 
-    // Enable and update tunable PID gains through SmartDashboard
-    if (SmartDashboard.getBoolean("PIDFF_Tuning/CEE/EnableTuning", false)) {
-      this.updatePID();
+      // Enable and update tunable PID gains through SmartDashboard
+      if (SmartDashboard.getBoolean("PIDFF_Tuning/CEE/EnableTuning", false)) {
+        this.updatePID();
+      }
     }
   }
 
@@ -93,6 +94,7 @@ public class CEE extends SubsystemBase {
    * @param setpoint Velocity in radians per second.
    */
   public void setVelocity(double setpoint) {
+    Logger.recordOutput("Superstructure/Setpoints/CEEVelocity", setpoint);
     m_PIDController.setSetpoint(setpoint);
   }
 
@@ -133,9 +135,10 @@ public class CEE extends SubsystemBase {
   /**
    * Triggered means that the beam break is broken (an object is in between the sensor).
    *
+   * @param index Beam break to return status of. 0 = entrance, 1 = exit.
    * @return {@code true} if the sensor has been triggered, {@code false} if not.
    */
-  public boolean isBeamBreakTriggered() {
-    return m_inputs.isbeamBreakTriggered;
+  public boolean isBeamBreakTriggered(int index) {
+    return m_inputs.isbeamBreaksTriggered[index];
   }
 }

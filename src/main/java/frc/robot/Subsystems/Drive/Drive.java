@@ -77,8 +77,8 @@ public class Drive extends SubsystemBase {
 
     // Initialize Drivetrain and Gyro
     m_gyroIO = gyroIO;
-    m_modules[0] = new Module(FLModuleIO, 0); // Index 0 corresponds to front right Module
-    m_modules[1] = new Module(FRModuleIO, 1); // Index 1 corresponds to front left Module
+    m_modules[0] = new Module(FLModuleIO, 0); // Index 0 corresponds to front left Module
+    m_modules[1] = new Module(FRModuleIO, 1); // Index 1 corresponds to front right Module
     m_modules[2] = new Module(BLModuleIO, 2); // Index 2 corresponds to back left Module
     m_modules[3] = new Module(BRModuleIO, 3); // Index 3 corresponds to back right Module
 

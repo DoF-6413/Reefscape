@@ -93,10 +93,10 @@ public final class DriveConstants {
    * at 0 degrees
    */
   public enum ABSOLUTE_ENCODER_OFFSET {
-    FRONT_LEFT(1.16695161013), // Module 1
-    FRONT_RIGHT(1.88059248437), // Module 0
-    BACK_LEFT(-0.60147581563), // Module 2
-    BACK_RIGHT(1.04951470522); // Module 3
+    FRONT_LEFT(0.4111068511533518 + (Math.PI / 2)), // Module 0
+    FRONT_RIGHT(-2.6323110320117604 + (Math.PI / 2)), // Module 1
+    BACK_LEFT(-1.4312040750973032 + (Math.PI / 2)), // Module 2
+    BACK_RIGHT(-0.8820389530342436 + (Math.PI / 2)); // Module 3
 
     public final double OFFSET;
 

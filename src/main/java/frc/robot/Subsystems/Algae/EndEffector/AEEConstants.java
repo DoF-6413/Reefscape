@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 public class AEEConstants {
   // REAL CONSTANTS
   /** CAN ID for the AEE SPARK MAX */
-  public static final int CAN_ID = 20;
+  public static final int CAN_ID = 21;
   /** Gear reduction of 6:1 for the AEE motor */
   public static final double GEAR_RATIO = 6.0 / 1.0;
   /**
@@ -22,9 +22,9 @@ public class AEEConstants {
   public static final double INTAKE_VELOCITY_RAD_PER_SEC =
       Units.rotationsPerMinuteToRadiansPerSecond(30); // TODO: Update
   /** Scoring speed, open loop voltage control */
-  public static final double SCORE_PERCENT_SPEED = -0.80; // TODO: Verify
+  public static final double SCORE_PERCENT_SPEED = 0.80; // TODO: Verify
   /** Intaking speed, open loop voltage control */
-  public static final double INTAKE_PERCENT_SPEED = 0.80; // TODO: Verify
+  public static final double INTAKE_PERCENT_SPEED = -0.80; // TODO: Verify
 
   // PID CONSTANTS
   /**

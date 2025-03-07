@@ -12,8 +12,8 @@ public interface AlgaePivotIO {
     public double currentAmps = 0.0;
     /** Temperature of the ALGAE Pivot motor in celsius */
     public double tempCelsius = 0.0;
-    /** Angular position of the Pivot in radians */
-    public double positionRad = 0.0;
+    /** Angular position of the Pivot from the absolute encoder in radians */
+    public double absPositionRad = 0.0;
     /** Velocity of the ALGAE Pivot in radians per second */
     public double velocityRadPerSec = 0.0;
   }

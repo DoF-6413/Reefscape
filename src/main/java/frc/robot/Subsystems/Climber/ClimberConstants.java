@@ -5,15 +5,17 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public final class ClimberConstants {
   /** CAN ID for the first Climber motor */
-  public static final int CAN_ID = 17;
+  public static final int CAN_ID = 18;
   /** Gear reduction of 9:1 for the Climber */
   public static final double GEAR_RATIO = 9.0 / 1.0;
   /**
    * Set the inversion of the Climber motor to false, making Counterclockwise the positive direction
    */
   public static final boolean IS_INVERTED = false;
-  /** Current limit of 50 amps for the Climber motor */
-  public static final int CUR_LIM_A = 50;
+  /** Current limit of 60 amps for the Climber motor */
+  public static final int STALL_CUR_LIM_A = 60;
+  /** Current limit of 120 amps for the Climber motor */
+  public static final int MAX_CURRENT_A = 120;
   /** Enable current limiting for the Climber motor */
   public static final boolean ENABLE_CUR_LIM = true;
   /** Refresh signals of the TalonFX 50 times a second (every 0.02 second) */

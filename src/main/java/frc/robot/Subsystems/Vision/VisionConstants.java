@@ -28,15 +28,15 @@ public class VisionConstants {
   /**
    * 3d offset of the center of the robot to the Front camera.
    *
-   * <p>WPI coordinate system z is camera offset
+   * <p>WPI coordinate system z is camera y offset and vice versa. Same for pitch and yaw
    */
   private static final Transform3d FRONT_CAMERA_ROBOT_OFFSET =
       new Transform3d(
           new Translation3d(
               Units.inchesToMeters(13.291508),
               Units.inchesToMeters(4.816861),
-              Units.inchesToMeters(-5.625)), // 5.5 inches for final bot
-          new Rotation3d(Math.PI / 2, Units.degreesToRadians(0), 0));
+              Units.inchesToMeters(-5.625)),
+          new Rotation3d(Math.PI / 2, 0, Units.degreesToRadians(35)));
   /**
    * 3d offset of the center of the robot to the Back camera.
    *
@@ -46,9 +46,9 @@ public class VisionConstants {
       new Transform3d(
           new Translation3d(
               Units.inchesToMeters(-13.291508),
-              Units.inchesToMeters(0.569),
-              Units.inchesToMeters(4.816861)),
-          new Rotation3d(0, Units.degreesToRadians(-35), Math.PI));
+              Units.inchesToMeters(4.816861),
+              Units.inchesToMeters(-5.55)),
+          new Rotation3d(Math.PI / 2, Math.PI, Units.degreesToRadians(-35)));
   /** Array of 3d transformations from the center of the robot to each camera location */
   public static final Transform3d[] CAMERA_ROBOT_OFFSETS = {
     FRONT_CAMERA_ROBOT_OFFSET, BACK_CAMERA_ROBOT_OFFSET

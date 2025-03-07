@@ -14,6 +14,8 @@ import frc.robot.Subsystems.Drive.DriveConstants;
 import frc.robot.Subsystems.Vision.Vision;
 import frc.robot.Subsystems.Vision.VisionConstants;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 
 /** The commands for on-the-fly trajectory following using PathPlanner's Pathfinding feature */
 public class PathfindingCommands {
@@ -96,6 +98,77 @@ public class PathfindingCommands {
           }
         },
         drive);
+  }
+
+  /**
+   * Generates a trajectory for the robot to follow to the AprilTag corresponding to the ID inputed
+   * with an additional distance translation. The trajectory will automatically be rotated to the
+   * red alliance.
+   *
+   * @param tagID AprilTag ID of the desired AprilTag to align to.
+   * @param wallDistanceMeters Distance in front of the AprilTag for the robot to end up.
+   * @return {@link Command} that makes the robot follow a trajectory to in front of the AprilTag.
+   */
+  public static Command pathfindToAprilTag(IntSupplier tagID, DoubleSupplier wallDistanceMeters) {
+    // Get the 2d pose of the AprilTag associated with the inputed ID
+    var apriltagPose =
+        FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tagID.getAsInt()).get().toPose2d();
+    /*
+     * The goal pose is the end position for the center of the robot. Transforming by half the track
+     * width will leave the robot right up against the tag and any additional distance can be added
+     */
+    var goalPose =
+        new Pose2d(
+            /*
+             * Multiply the x by cos and y by sin of the tag angle so that the hypot (tag to robot)
+             * is the desired distance away from the tag
+             */
+            apriltagPose.getX()
+                + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters.getAsDouble())
+                    * apriltagPose.getRotation().getCos(),
+            apriltagPose.getY()
+                + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters.getAsDouble())
+                    * apriltagPose.getRotation().getSin(),
+            // Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the robot
+            apriltagPose.getRotation().plus(Rotation2d.k180deg));
+
+    return AutoBuilder.pathfindToPoseFlipped(
+        goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+  }
+
+  /**
+   * Generates a trajectory for the robot to follow to a specified REEF BRANCH with an additional
+   * distance translation. The trajectory will automatically be rotated to the red alliance.
+   *
+   * @param branchLetter Letter corresponding to BRANCH to pathfind to.
+   * @param wallDistanceMeters Distance from the REEF wall in meters.
+   * @return {@link Command} that makes the robot follow a trajectory to in front of the BRANCH.
+   */
+  public static Command pathfindToBranch(String branchLetter, double wallDistanceMeters) {
+    // Position of BRANCH corresponding to zone the robot is in
+    var branchPose = FieldConstants.BRANCH_POSES.get(branchLetter);
+
+    // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on top of
+    // the BRANCH
+    var goalPose =
+        new Pose2d(
+            // Multiply the x by cos and y by sin of the tag angle so that the hypot (tag to robot)
+            // is the desired distance away from the tag
+            branchPose.getX()
+                + ((DriveConstants.TRACK_WIDTH_M / 2)
+                        + FieldConstants.BRANCH_TO_WALL_X_M
+                        + wallDistanceMeters)
+                    * branchPose.getRotation().getCos(),
+            branchPose.getY()
+                + ((DriveConstants.TRACK_WIDTH_M / 2)
+                        + FieldConstants.BRANCH_TO_WALL_X_M
+                        + wallDistanceMeters)
+                    * branchPose.getRotation().getSin(),
+            // Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the robot
+            branchPose.getRotation().plus(Rotation2d.k180deg));
+
+    return AutoBuilder.pathfindToPoseFlipped(
+        goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
   }
 
   /**

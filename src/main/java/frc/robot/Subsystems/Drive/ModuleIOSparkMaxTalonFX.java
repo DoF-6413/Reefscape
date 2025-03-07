@@ -114,8 +114,8 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         .MotorOutput
         .withInverted(
             DriveConstants.DRIVE_IS_INVERTED
-                ? InvertedValue.CounterClockwise_Positive
-                : InvertedValue.Clockwise_Positive)
+                ? InvertedValue.Clockwise_Positive
+                : InvertedValue.CounterClockwise_Positive)
         .withNeutralMode(NeutralModeValue.Brake)
         .withControlTimesyncFreqHz(DriveConstants.ODOMETRY_UPDATE_FREQUENCY_HZ);
 

@@ -1,0 +1,24 @@
+CAN IDs for the Final Robot
+
+0 - roboRIO
+1 - PDH
+2 - FL Drive TalonFX (Module 0)
+3 - FR Drive TalonFX (Module 1)
+4 - BL Drive TalonFX (Module 2)
+5 - BR Drive TalonFX (Module 3)
+6 - FL CANcoder (Module 0)
+7 - FR CANcoder (Module 1)
+8 - BL CANcoder (Module 2)
+9 - BR CANcoder (Module 3)
+10 - FL Steer NEO (Module 0)
+11 - FR Steer NEO (Module 1)
+12 - BL Steer NEO (Module 2)
+13 - BR Steer NEO (Module 3)
+14 - Gyro Pigeon 2.0
+15 - Periscope TalonFX (Left)
+16 - Periscope TalonFX (Right)
+17 - Funnel NEO
+18 - Climber TalonFX
+19 - CEE NEO550
+20 - AEE Pivot NEO
+21 - AEE NEO

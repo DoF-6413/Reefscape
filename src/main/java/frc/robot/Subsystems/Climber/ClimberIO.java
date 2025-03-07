@@ -51,20 +51,4 @@ public interface ClimberIO {
    * @param enable Sets brake mode on true, coast on false
    */
   public default void setBrakeMode(boolean enable) {}
-
-  /**
-   * Sets the position of the Climber using a PID controller
-   *
-   * @param positionRad Angular position of the Climber in radians
-   */
-  public default void setAngle(double positionRad) {}
-
-  /**
-   * Sets the PID gains of the Climber motor's PID controller
-   *
-   * @param kP Proportional gain value
-   * @param kI Integral gain value
-   * @param kD Derivative gain value
-   */
-  public default void setPID(double kP, double kI, double kD) {}
 }
