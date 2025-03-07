@@ -4,7 +4,9 @@
 
 package frc.robot.Subsystems.Algae.Pivot;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotStateConstants;
@@ -16,6 +18,7 @@ public class AlgaePivot extends SubsystemBase {
 
   // PID controller
   private final PIDController m_PIDController;
+  private final ArmFeedforward m_feedforward;
   private boolean m_enablePID = true;
 
   /**
@@ -46,12 +49,17 @@ public class AlgaePivot extends SubsystemBase {
                 ? AlgaePivotConstants.KD_SIM
                 : AlgaePivotConstants.KD);
     m_PIDController.setTolerance(AlgaePivotConstants.ERROR_TOLERANCE_RAD);
+    m_feedforward =
+        new ArmFeedforward(AlgaePivotConstants.KS, AlgaePivotConstants.KG, AlgaePivotConstants.KD);
 
     // Tunable PID gains
     SmartDashboard.putBoolean("PIDFF_Tuning/ALGAE_Pivot/EnableTuning", false);
     SmartDashboard.putNumber("PIDFF_Tuning/ALGAE_Pivot/KP", AlgaePivotConstants.KP);
     SmartDashboard.putNumber("PIDFF_Tuning/ALGAE_Pivot/KI", AlgaePivotConstants.KI);
     SmartDashboard.putNumber("PIDFF_Tuning/ALGAE_Pivot/KD", AlgaePivotConstants.KD);
+    SmartDashboard.putNumber("PIDFF_Tuning/ALGAE_Pivot/KS", AlgaePivotConstants.KS);
+    SmartDashboard.putNumber("PIDFF_Tuning/ALGAE_Pivot/KG", AlgaePivotConstants.KG);
+    SmartDashboard.putNumber("PIDFF_Tuning/ALGAE_Pivot/KV", AlgaePivotConstants.KV);
   }
 
   @Override
@@ -65,11 +73,14 @@ public class AlgaePivot extends SubsystemBase {
     // disabled
     if (m_enablePID) {
       // Calculate voltage based on PID controller
-      this.setVoltage(m_PIDController.calculate(m_inputs.absPositionRad));
+      this.setVoltage(
+          m_PIDController.calculate(m_inputs.absPositionRad)
+              + m_feedforward.calculate(m_PIDController.getSetpoint(), Units.degreesToRadians(10)));
 
       // Enable and update tunable PID gains through SmartDashboard
       if (SmartDashboard.getBoolean("PIDFF_Tuning/ALGAE_Pivot/EnableTuning", false)) {
         this.updatePID();
+        this.updateFF();
       }
     }
   }
@@ -123,6 +134,12 @@ public class AlgaePivot extends SubsystemBase {
     m_PIDController.setPID(kP, kI, kD);
   }
 
+  public void setFF(double kS, double kG, double kV) {
+    m_feedforward.setKs(kS);
+    m_feedforward.setKg(kG);
+    m_feedforward.setKv(kV);
+  }
+
   /**
    * Enable closed loop PID control for the ALGAE Pivot.
    *
@@ -149,6 +166,25 @@ public class AlgaePivot extends SubsystemBase {
           SmartDashboard.getNumber("PIDFF_Tuning/ALGAE_Pivot/KD", AlgaePivotConstants.KD);
       // Sets the new gains
       this.setPID(AlgaePivotConstants.KP, AlgaePivotConstants.KI, AlgaePivotConstants.KD);
+    }
+  }
+
+  private void updateFF() {
+    // If any value on SmartDashboard changes, update the gains
+    if (AlgaePivotConstants.KS
+            != SmartDashboard.getNumber("PIDFF_Tuning/ALGAE_Pivot/KS", AlgaePivotConstants.KS)
+        || AlgaePivotConstants.KG
+            != SmartDashboard.getNumber("PIDFF_Tuning/ALGAE_Pivot/KG", AlgaePivotConstants.KG)
+        || AlgaePivotConstants.KV
+            != SmartDashboard.getNumber("PIDFF_Tuning/ALGAE_Pivot/Kv", AlgaePivotConstants.KV)) {
+      AlgaePivotConstants.KS =
+          SmartDashboard.getNumber("PIDFF_Tuning/ALGAE_Pivot/KS", AlgaePivotConstants.KS);
+      AlgaePivotConstants.KG =
+          SmartDashboard.getNumber("PIDFF_Tuning/ALGAE_Pivot/KG", AlgaePivotConstants.KG);
+      AlgaePivotConstants.KV =
+          SmartDashboard.getNumber("PIDFF_Tuning/ALGAE_Pivot/KV", AlgaePivotConstants.KV);
+      // Sets the new gains
+      this.setFF(AlgaePivotConstants.KS, AlgaePivotConstants.KG, AlgaePivotConstants.KV);
     }
   }
 }

@@ -35,7 +35,7 @@ public class VisionConstants {
           new Translation3d(
               Units.inchesToMeters(13.291508),
               Units.inchesToMeters(4.816861),
-              Units.inchesToMeters(-5.625)),
+              Units.inchesToMeters(5.625)),
           new Rotation3d(Math.PI / 2, 0, Units.degreesToRadians(35)));
   /**
    * 3d offset of the center of the robot to the Back camera.
@@ -47,7 +47,7 @@ public class VisionConstants {
           new Translation3d(
               Units.inchesToMeters(-13.291508),
               Units.inchesToMeters(4.816861),
-              Units.inchesToMeters(-5.55)),
+              Units.inchesToMeters(5.55)),
           new Rotation3d(Math.PI / 2, Math.PI, Units.degreesToRadians(-35)));
   /** Array of 3d transformations from the center of the robot to each camera location */
   public static final Transform3d[] CAMERA_ROBOT_OFFSETS = {

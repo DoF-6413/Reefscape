@@ -46,8 +46,8 @@ public class CEEIOSparkMax implements CEEIO {
     m_sparkmax.configure(m_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // Initialize Beam Breaks
-    m_beamBreaks[0] = new DigitalInput(CEEConstants.ENTRANCE_BEAM_BREAK_PORT);
-    m_beamBreaks[1] = new DigitalInput(CEEConstants.EXIT_BEAM_BREAK_PORT);
+    m_beamBreaks[0] = new DigitalInput(CEEConstants.EXIT_BEAM_BREAK_PORT);
+    m_beamBreaks[1] = new DigitalInput(CEEConstants.ENTRANCE_BEAM_BREAK_PORT);
   }
 
   @Override

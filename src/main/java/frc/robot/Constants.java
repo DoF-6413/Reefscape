@@ -111,16 +111,16 @@ public final class Constants {
       L2(2),
       L3(3),
       L4_NET(4),
-      SWITCH_CORAL_ALGAE(1), // Axis number
+      SWITCH_CORAL_ALGAE(0), // Axis number
       REEF_AB(8),
       REEF_CD(7),
       REEF_EF(6),
       REEF_GH(5),
       REEF_IJ(9),
       REEF_KL(10),
-      SWITCH_BRANCH(3), // Axis number
+      SWITCH_BRANCH(0), // Axis number
       ZERO(0), // Axis number
-      CLIMB(2), // Axis number
+      CLIMB(1), // Axis number
       SCORE(11),
       GROUND_ALGAE(12);
 
@@ -317,12 +317,10 @@ public final class Constants {
     /* Pathfinding */
     /** Max translational and rotational velocity and acceleration used for Pathfinding */
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
-        new PathConstraints(5, 5, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
+        new PathConstraints(2, 1, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
     /** Default distance away from any wall when the robot is Pathfinding towards one */
-    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(0);
-    /** Distance from the center of the robot to the center of the Funnel */
-    public static final double ROBOT_MIDPOINT_TO_FUNNEL = Units.inchesToMeters(6); // TODO: Update
-    /** Distance from the center of the robot to the center of the CEE */
-    public static final double ROBOT_MIDPOINT_TO_CEE = Units.inchesToMeters(6); // TODO: Update
+    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(3);
+    /** Distance from the center of the robot to the center of the Superstructure */
+    public static final double ROBOT_MIDPOINT_TO_INTAKE = Units.inchesToMeters(9);
   }
 }

@@ -26,7 +26,7 @@ public class SuperstructureCommands {
    */
   public static Command setPositions(
       Periscope periscope, AlgaePivot algaePivot, double periscopeHeight, double pivotAngle) {
-    return Commands.run(
+    return Commands.runOnce(
         () -> {
           periscope.setPosition(periscopeHeight);
           algaePivot.setAngle(pivotAngle);
@@ -48,7 +48,7 @@ public class SuperstructureCommands {
    */
   public static Command setSpeeds(
       AEE aee, CEE cee, Funnel funnel, double aeeSpeed, double ceeSpeed, double funnelSpeed) {
-    return Commands.run(
+    return Commands.runOnce(
         () -> {
           aee.setPercentSpeed(aeeSpeed);
           cee.setPercentSpeed(ceeSpeed);
@@ -97,12 +97,7 @@ public class SuperstructureCommands {
    */
   public static Command score(AEE aee, CEE cee, Funnel funnel) {
     return SuperstructureCommands.setSpeeds(
-        aee,
-        cee,
-        funnel,
-        SuperstructureState.AEESpeed,
-        SuperstructureState.CEESpeed,
-        SuperstructureState.funnelSpeed);
+        aee, cee, funnel, AEEConstants.SCORE_PERCENT_SPEED, CEEConstants.SCORE_PERCENT_SPEED, 0);
   }
 
   /* ~~~~~~~~~~~~~~~~~~~~ CORAL ~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -198,17 +193,9 @@ public class SuperstructureCommands {
                 SuperstructureState.AEESpeed,
                 SuperstructureState.CEESpeed,
                 SuperstructureState.funnelSpeed))
-        .until(() -> cee.isBeamBreakTriggered(CEEConstants.EXIT_BEAM_BREAK_PORT))
-        .andThen(Commands.waitSeconds(CEEConstants.BEAM_BREAK_DELAY))
-        .andThen(() -> SuperstructureState.CEESpeed = 0)
         .andThen(
-            setSpeeds(
-                aee,
-                cee,
-                funnel,
-                SuperstructureState.AEESpeed,
-                SuperstructureState.CEESpeed,
-                SuperstructureState.funnelSpeed));
+            Commands.waitUntil(() -> cee.isBeamBreakTriggered(CEEConstants.EXIT_BEAM_BREAK_PORT)))
+        .andThen(Commands.runOnce(() -> cee.setVoltage(0), cee));
   }
 
   /** ~~~~~~~~~~~~~~~~~~~~~~~~~ ALGAE ~~~~~~~~~~~~~~~~~~~~~~~~~ */

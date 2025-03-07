@@ -42,7 +42,7 @@ public class AlgaePivotIOSim implements AlgaePivotIO {
     // Update logged inputs from the simulated arm system
     inputs.appliedVoltage = m_voltage;
     inputs.currentAmps = Math.abs(m_armSim.getCurrentDrawAmps());
-    inputs.absPositionRad= m_armSim.getAngleRads();
+    inputs.absPositionRad = m_armSim.getAngleRads();
     inputs.velocityRadPerSec = m_armSim.getVelocityRadPerSec();
   }
 

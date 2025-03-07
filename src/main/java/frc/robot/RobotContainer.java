@@ -255,7 +255,7 @@ public class RobotContainer {
                 m_driveSubsystem,
                 () -> -m_driverController.getLeftY(),
                 () -> -m_driverController.getLeftX(),
-                () -> -m_driverController.getRightX())
+                () -> 0.8 * -m_driverController.getRightX())
             .withName("FieldRelativeDrive"));
     // Field relative
     m_driverController
@@ -265,7 +265,7 @@ public class RobotContainer {
                     m_driveSubsystem,
                     () -> -m_driverController.getLeftY(),
                     () -> -m_driverController.getLeftX(),
-                    () -> -m_driverController.getRightX())
+                    () -> 0.8 * -m_driverController.getRightX())
                 .withName("FieldRelativeDrive"));
     // Lock robot heading to 0 degrees
     m_driverController
@@ -334,7 +334,7 @@ public class RobotContainer {
             PathfindingCommands.pathfindToClosestBranch(
                     m_driveSubsystem,
                     PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
-                    m_driverController.rightBumper().negate())
+                    m_driverController.y().negate())
                 .withName("PathfindToBranch"));
 
     /* Scoring commands */
@@ -506,7 +506,7 @@ public class RobotContainer {
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
         // axis to correct one and the threshold too
         .onTrue(
             PathfindingCommands.pathfindToBranch(
@@ -521,7 +521,7 @@ public class RobotContainer {
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
         // axis to correct one and the threshold too
         .onTrue(
             PathfindingCommands.pathfindToBranch(
@@ -536,7 +536,7 @@ public class RobotContainer {
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
         // axis to correct one and the threshold too
         .onTrue(
             PathfindingCommands.pathfindToBranch(
@@ -551,7 +551,7 @@ public class RobotContainer {
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
         // axis to correct one and the threshold too
         .onTrue(
             PathfindingCommands.pathfindToBranch(
@@ -566,7 +566,7 @@ public class RobotContainer {
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
         // axis to correct one and the threshold too
         .onTrue(
             PathfindingCommands.pathfindToBranch(
@@ -581,7 +581,7 @@ public class RobotContainer {
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
         // axis to correct one and the threshold too
         .onTrue(
             PathfindingCommands.pathfindToBranch(

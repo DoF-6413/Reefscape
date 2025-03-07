@@ -25,28 +25,29 @@ public class PathfindingCommands {
    *
    * @param elementPose {@link Pose2d} of the element to pathfind to.
    * @param wallDistanceMeters Distance from the field element in meters.
-   * @param strafeOffset Left/right offset of the robot relative to the field element. Nesessary
-   *     depending on mechanism in use
+   * @param strafeOffsetMeters Left/right offset of the robot relative to the field element.
+   *     Nesessary depending on mechanism in use
    * @return {@link Command} that makes the robot follow a trajectory to in front of the field
    *     element.
    */
   public static Command pathfindToFieldElement(
-      Pose2d elementPose, double wallDistanceMeters, double strafeOffset) {
+      Pose2d elementPose, double wallDistanceMeters, double strafeOffsetMeters) {
     var elementRotation = elementPose.getRotation();
     // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on top of
     // the specified field element's pose
     var goalPose =
         new Pose2d(
-            // Multiply the x by cos and y by sin of the tag angle so that the hypot (tag to robot)
-            // is the desired distance away from the tag
+            // Multiply the x by cos and y by sin of the field element angle so that the hypot
+            // (field element to robot)
+            // is the desired distance away from the field element
             elementPose.getX()
                 + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters)
                     * elementRotation.getCos()
-                + (strafeOffset * elementRotation.getSin()),
+                + (strafeOffsetMeters * elementRotation.getSin()),
             elementPose.getY()
                 + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters)
                     * elementRotation.getSin()
-                + (strafeOffset * elementRotation.getCos()),
+                + (strafeOffsetMeters * elementRotation.getCos()),
             // Rotate by 180 as the field elements' angles are rotated 180 degrees relative to the
             // robot
             elementRotation.plus(Rotation2d.k180deg));
@@ -92,7 +93,7 @@ public class PathfindingCommands {
             PathfindingCommands.pathfindToFieldElement(
                     apriltagPose.get().toPose2d(),
                     wallDistanceMeters,
-                    PathPlannerConstants.ROBOT_MIDPOINT_TO_CEE)
+                    PathPlannerConstants.ROBOT_MIDPOINT_TO_INTAKE)
                 .until(stopTrigger)
                 .schedule();
           }
@@ -259,7 +260,7 @@ public class PathfindingCommands {
           PathfindingCommands.pathfindToFieldElement(
                   FieldConstants.BRANCH_POSES.get(branchLetter),
                   wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_X_M,
-                  PathPlannerConstants.ROBOT_MIDPOINT_TO_CEE)
+                  PathPlannerConstants.ROBOT_MIDPOINT_TO_INTAKE)
               .until(stopTrigger)
               .schedule();
         },
@@ -292,7 +293,7 @@ public class PathfindingCommands {
             PathfindingCommands.pathfindToFieldElement(
                     FieldConstants.CORAL_STATION_POSES.get(csLeft),
                     wallDistanceMeters,
-                    PathPlannerConstants.ROBOT_MIDPOINT_TO_FUNNEL)
+                    PathPlannerConstants.ROBOT_MIDPOINT_TO_INTAKE)
                 .until(stopTrigger)
                 .schedule();
           } else {
@@ -301,7 +302,7 @@ public class PathfindingCommands {
             PathfindingCommands.pathfindToFieldElement(
                     FieldConstants.CORAL_STATION_POSES.get(csRight),
                     wallDistanceMeters,
-                    PathPlannerConstants.ROBOT_MIDPOINT_TO_FUNNEL)
+                    PathPlannerConstants.ROBOT_MIDPOINT_TO_INTAKE)
                 .until(stopTrigger)
                 .schedule();
           }

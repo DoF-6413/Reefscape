@@ -9,9 +9,9 @@ public class CEEConstants {
   /** Gear reduction of 3:1 for the CEE motor */
   public static final double GEAR_RATIO = 3.0 / 1.0;
   /** DIO port of the Beam Break, at the entrance of the CEE, on the roboRIO */
-  public static final int ENTRANCE_BEAM_BREAK_PORT = 0;
+  public static final int ENTRANCE_BEAM_BREAK_PORT = 1;
   /** DIO port of the Beam Break, at the exit of the CEE, on the roboRIO */
-  public static final int EXIT_BEAM_BREAK_PORT = 1;
+  public static final int EXIT_BEAM_BREAK_PORT = 0;
 
   /**
    * Set the inversion status of the CEE to false, making Counterclockwise the positive direction
@@ -20,7 +20,7 @@ public class CEEConstants {
   /** Current limit, in amps for the CEE motor */
   public static final int CUR_LIM_A = 20;
   /** Time in seconds to wait after beam break before stopping the CEE motor */
-  public static final double BEAM_BREAK_DELAY = 0.5; // TODO: Update
+  public static final double BEAM_BREAK_DELAY = 0.0; // TODO: Update
   // Velocities
   /** Scoring velocity in radians per second */
   public static final double SCORE_VELOCITY_RAD_PER_SEC =
@@ -29,9 +29,9 @@ public class CEEConstants {
   public static final double INTAKE_VELOCITY_RAD_PER_SEC =
       Units.rotationsPerMinuteToRadiansPerSecond(30); // TODO: Update
   /** Scoring speed, open loop voltage control */
-  public static final double SCORE_PERCENT_SPEED = 0.50; // TODO: Verify
+  public static final double SCORE_PERCENT_SPEED = 1.0; // TODO: Verify
   /** Intaking speed, open loop voltage control */
-  public static final double INTAKE_PERCENT_SPEED = -0.50; // TODO: Verify
+  public static final double INTAKE_PERCENT_SPEED = 0.75; // TODO: Verify
 
   // PID CONSTANTS
   /**
