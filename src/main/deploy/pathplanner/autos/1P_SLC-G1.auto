@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Position_L2_CORAL"
+                  "name": "Position_L1"
                 }
               }
             ]
@@ -32,7 +32,7 @@
         {
           "type": "named",
           "data": {
-            "name": "CEE_Out"
+            "name": "Score"
           }
         }
       ]

@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SLR - E"
+                  "pathName": "SLC-G"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Position_L1"
+                  "name": "Position_L3_CORAL"
                 }
               }
             ]
@@ -39,6 +39,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "1P_SLR",
+  "folder": "1P_SLC",
   "choreoAuto": false
 }

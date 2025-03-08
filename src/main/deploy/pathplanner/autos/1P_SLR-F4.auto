@@ -5,9 +5,34 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "SLR - F"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SLR - F"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Position_L4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         }
       ]

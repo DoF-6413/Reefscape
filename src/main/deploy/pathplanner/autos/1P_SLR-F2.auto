@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SLR - E"
+                  "pathName": "SLR - F"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Position_L1"
+                  "name": "Position_L2_CORAL"
                 }
               }
             ]

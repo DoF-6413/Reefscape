@@ -22,6 +22,9 @@
     "2P_SLC-GH1",
     "2P_SLC-H1",
     "2P_SLC-H4",
+    "2P_SLC_G2",
+    "2P_SLC_G3",
+    "2P_SLC_H2",
     "2P_SLL-I1",
     "2P_SLL-I4",
     "2P_SLL-IJ1",
@@ -32,6 +35,7 @@
     "2P_SLR-EF1",
     "2P_SLR-F1",
     "2P_SLR-F4",
+    "2P_SLC_H3",
     "Test Autos"
   ],
   "defaultMaxVel": 3.0,

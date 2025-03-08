@@ -11,34 +11,34 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SLR - E"
+                  "pathName": "SLL-J"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Position_L1"
+                  "name": "Position_L3_CORAL"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "1P_SLR",
+  "folder": "1P_SLL",
   "choreoAuto": false
 }
