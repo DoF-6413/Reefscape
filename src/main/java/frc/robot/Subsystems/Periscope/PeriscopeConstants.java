@@ -80,12 +80,12 @@ public class PeriscopeConstants {
    */
   public static final double MAX_VELOCITY_M_PER_SEC = 2.32;
   /** Ideal acceleration for trapezoidal motion profiling in meters per second squared */
-  public static final double IDEAL_ACCELERATION_M_PER_SEC2 = 4;
+  public static double MAX_ACCELERATION_M_PER_SEC2 = 4;
   /**
    * How many meters the height of the Periscope can be within its height setpoint to be considered
    * at the setpoint
    */
-  public static final double ERROR_TOLERANCE_M = Units.inchesToMeters(1); // TODO: test
+  public static final double ERROR_TOLERANCE_M = Units.inchesToMeters(1.5);
 
   // SIM CONSTANTS
   /** Simulate the pull of gravity in the elevator simulation */

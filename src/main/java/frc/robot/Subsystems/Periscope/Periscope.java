@@ -44,7 +44,7 @@ public class Periscope extends SubsystemBase {
             PeriscopeConstants.KD,
             new TrapezoidProfile.Constraints(
                 PeriscopeConstants.MAX_VELOCITY_M_PER_SEC,
-                PeriscopeConstants.IDEAL_ACCELERATION_M_PER_SEC2));
+                PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2));
     m_feedforward =
         new ElevatorFeedforward(
             PeriscopeConstants.KS,
@@ -61,6 +61,8 @@ public class Periscope extends SubsystemBase {
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KG", PeriscopeConstants.KG);
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KV", PeriscopeConstants.KV);
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KA", PeriscopeConstants.KA);
+    SmartDashboard.putNumber(
+        "PIDFF_Tuning/Periscope/Max_Accel", PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2);
   }
 
   @Override
@@ -70,7 +72,7 @@ public class Periscope extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
-    if (m_enablePID) {
+    if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
       // Calculate voltage based on PID and Feedforward controllers
       this.setVoltage(
           m_profiledPIDController.calculate(m_inputs.heightMeters)
@@ -120,8 +122,8 @@ public class Periscope extends SubsystemBase {
     // Compare new setpoint to previous to determine whether to lower acceleration or not
     this.setMaxAcceleration(
         (heightMeters < m_prevSetpoint)
-            ? PeriscopeConstants.IDEAL_ACCELERATION_M_PER_SEC2 / 6
-            : PeriscopeConstants.IDEAL_ACCELERATION_M_PER_SEC2);
+            ? PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2 / 6
+            : PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2);
 
     // Record and update setpoint
     m_prevSetpoint = heightMeters;
@@ -177,15 +179,26 @@ public class Periscope extends SubsystemBase {
         || PeriscopeConstants.KI
             != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KI", PeriscopeConstants.KI)
         || PeriscopeConstants.KD
-            != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KD", PeriscopeConstants.KD)) {
+            != SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KD", PeriscopeConstants.KD)
+        || PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2
+            != SmartDashboard.getNumber(
+                "PIDFF_Tuning/Periscope/Max_Accel",
+                PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2)) {
       PeriscopeConstants.KP =
           SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KP", PeriscopeConstants.KP);
       PeriscopeConstants.KI =
           SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KI", PeriscopeConstants.KI);
       PeriscopeConstants.KD =
           SmartDashboard.getNumber("PIDFF_Tuning/Periscope/KD", PeriscopeConstants.KD);
+      PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2 =
+          SmartDashboard.getNumber(
+              "PIDFF_Tuning/Periscope/Max_Accel", PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2);
       // Sets the new gains
       this.setPID(PeriscopeConstants.KP, PeriscopeConstants.KI, PeriscopeConstants.KD);
+      m_profiledPIDController.setConstraints(
+          new TrapezoidProfile.Constraints(
+              PeriscopeConstants.MAX_VELOCITY_M_PER_SEC,
+              PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2));
     }
   }
 
@@ -226,5 +239,10 @@ public class Periscope extends SubsystemBase {
    */
   public boolean isHallEffectSensorTriggered(int index) {
     return m_inputs.isHallEffectSensorTriggered[index];
+  }
+
+  public void enablePID(boolean enable) {
+    m_enablePID = enable;
+    ;
   }
 }

@@ -49,6 +49,7 @@ public class AlgaePivot extends SubsystemBase {
                 ? AlgaePivotConstants.KD_SIM
                 : AlgaePivotConstants.KD);
     m_PIDController.setTolerance(AlgaePivotConstants.ERROR_TOLERANCE_RAD);
+    m_PIDController.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD);
     m_feedforward =
         new ArmFeedforward(AlgaePivotConstants.KS, AlgaePivotConstants.KG, AlgaePivotConstants.KD);
 

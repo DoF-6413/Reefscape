@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -9,12 +10,12 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.PathfindingCommands;
 import frc.robot.Commands.SuperstructureCommands;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
@@ -122,6 +123,42 @@ public class RobotContainer {
         break;
     }
 
+    /* PathPlanner Commands */
+    NamedCommands.registerCommand(
+        "Zero_Superstructure",
+        SuperstructureCommands.zero(
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem));
+    NamedCommands.registerCommand(
+        "Position_L1",
+        SuperstructureCommands.positionsToL1(m_periscopeSubsystem, m_algaePivotSubsystem));
+    NamedCommands.registerCommand(
+        "Position_L2_CORAL",
+        SuperstructureCommands.positionsToL2Coral(m_periscopeSubsystem, m_algaePivotSubsystem));
+    NamedCommands.registerCommand(
+        "Position_L3_CORAL",
+        SuperstructureCommands.positionsToL3Coral(m_periscopeSubsystem, m_algaePivotSubsystem));
+    NamedCommands.registerCommand(
+        "Position_L4",
+        SuperstructureCommands.positionsToL4(
+            m_periscopeSubsystem, m_algaePivotSubsystem, m_CEESubsystem));
+    NamedCommands.registerCommand(
+        "Score", SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+    NamedCommands.registerCommand(
+        "Intake_CORAL",
+        SuperstructureCommands.intakeCoral(
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem));
+    NamedCommands.registerCommand(
+        "CEE_Out",
+        Commands.runOnce(() -> m_CEESubsystem.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED)));
+
     /* Autonomous Routines */
     m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     // 1 Piece
@@ -133,7 +170,7 @@ public class RobotContainer {
     m_autoChooser.addOption("1P_SLL-J4", new PathPlannerAuto("1P_SLL-J4"));
     // Starting Line Center (SLC)
     m_autoChooser.addOption("1P_SLC-GH1", new PathPlannerAuto("1P_SLC-GH1"));
-    m_autoChooser.addOption("1P_SLC-G!", new PathPlannerAuto("1P_SLC-G1"));
+    m_autoChooser.addOption("1P_SLC-G1", new PathPlannerAuto("1P_SLC-G1"));
     m_autoChooser.addOption("1P_SLC-G4", new PathPlannerAuto("1P_SLC-G4"));
     m_autoChooser.addOption("1P_SLC-H1", new PathPlannerAuto("1P_SLC-H1"));
     m_autoChooser.addOption("1P_SLC-H4", new PathPlannerAuto("1P_SLC-H4"));
@@ -342,7 +379,7 @@ public class RobotContainer {
     m_driverController
         .rightBumper()
         .onTrue(
-            SuperstructureCommands.coralIntake(
+            SuperstructureCommands.intakeCoral(
                     m_periscopeSubsystem,
                     m_algaePivotSubsystem,
                     m_AEESubsystem,
@@ -435,7 +472,9 @@ public class RobotContainer {
     // L4 or NET
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.L4_NET.BUTTON_ID)
-        .onTrue(SuperstructureCommands.positionsToL4(m_periscopeSubsystem, m_algaePivotSubsystem))
+        .onTrue(
+            SuperstructureCommands.positionsToL4(
+                m_periscopeSubsystem, m_algaePivotSubsystem, m_CEESubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
@@ -670,7 +709,10 @@ public class RobotContainer {
         .b()
         .onTrue(
             new InstantCommand(
-                () -> m_periscopeSubsystem.setVoltage(SmartDashboard.getNumber("PSVoltage", 0)),
+                () -> {
+                  m_periscopeSubsystem.enablePID(false);
+                  m_periscopeSubsystem.setVoltage(SmartDashboard.getNumber("PSVoltage", 0));
+                },
                 m_periscopeSubsystem))
         .onFalse(
             new InstantCommand(() -> m_periscopeSubsystem.setVoltage(0), m_periscopeSubsystem));
@@ -678,6 +720,10 @@ public class RobotContainer {
         .start()
         .onTrue(
             new InstantCommand(() -> m_periscopeSubsystem.resetPosition(0), m_periscopeSubsystem));
+    m_auxController
+        .back()
+        .onTrue(
+            new InstantCommand(() -> m_periscopeSubsystem.enablePID(true), m_periscopeSubsystem));
 
     /* Climb */
     // Joystick to move
