@@ -17,14 +17,14 @@ public class AEEConstants {
   // Velocities
   /** Scoring velocity in radians per second */
   public static final double SCORE_VELOCITY_RAD_PER_SEC =
-      Units.rotationsPerMinuteToRadiansPerSecond(-30); // TODO: Update
+      Units.rotationsPerMinuteToRadiansPerSecond(-1000);
   /** Intaking velocity in radians per second */
   public static final double INTAKE_VELOCITY_RAD_PER_SEC =
-      Units.rotationsPerMinuteToRadiansPerSecond(30); // TODO: Update
+      Units.rotationsPerMinuteToRadiansPerSecond(1000);
   /** Scoring speed, open loop voltage control */
-  public static final double SCORE_PERCENT_SPEED = 0.80; // TODO: Verify
+  public static final double SCORE_PERCENT_SPEED = 0.80;
   /** Intaking speed, open loop voltage control */
-  public static final double INTAKE_PERCENT_SPEED = -0.80; // TODO: Verify
+  public static final double INTAKE_PERCENT_SPEED = -0.80;
 
   // PID CONSTANTS
   /**

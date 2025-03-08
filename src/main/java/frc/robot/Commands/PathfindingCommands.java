@@ -289,7 +289,6 @@ public class PathfindingCommands {
         () -> {
           if (drive.getCurrentPose2d().getY() > FieldConstants.FIELD_WIDTH / 2) {
             // Pathfind to the center of the CS to the left of the Driver Station
-            // TODO: pathfind to specific parts in the CS if closer?
             PathfindingCommands.pathfindToFieldElement(
                     FieldConstants.CORAL_STATION_POSES.get(csLeft),
                     wallDistanceMeters,
@@ -298,7 +297,6 @@ public class PathfindingCommands {
                 .schedule();
           } else {
             // Pathfind to the center of the CS to the right of the Driver Station
-            // TODO: pathfind to specific parts in the CS if closer?
             PathfindingCommands.pathfindToFieldElement(
                     FieldConstants.CORAL_STATION_POSES.get(csRight),
                     wallDistanceMeters,

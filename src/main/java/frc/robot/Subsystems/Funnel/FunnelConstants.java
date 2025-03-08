@@ -17,9 +17,9 @@ public class FunnelConstants {
   // Velocities
   /** Intaking velocity in radians per second */
   public static final double INTAKE_SPEED_RAD_PER_SEC =
-      Units.rotationsPerMinuteToRadiansPerSecond(1000); // TODO: Update
+      Units.rotationsPerMinuteToRadiansPerSecond(1000);
   /** Intaking speed, open loop voltage control */
-  public static final double INTAKE_PERCENT_SPEED = 0.65; // TODO: Verify
+  public static final double INTAKE_PERCENT_SPEED = 0.65;
 
   // PID CONSTANTS
   /**

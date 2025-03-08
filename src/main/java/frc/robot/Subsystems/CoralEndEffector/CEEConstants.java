@@ -24,14 +24,14 @@ public class CEEConstants {
   // Velocities
   /** Scoring velocity in radians per second */
   public static final double SCORE_VELOCITY_RAD_PER_SEC =
-      Units.rotationsPerMinuteToRadiansPerSecond(-30); // TODO: Update
+      Units.rotationsPerMinuteToRadiansPerSecond(-1000);
   /** Intaking velocity in radians per second */
   public static final double INTAKE_VELOCITY_RAD_PER_SEC =
-      Units.rotationsPerMinuteToRadiansPerSecond(30); // TODO: Update
+      Units.rotationsPerMinuteToRadiansPerSecond(1000);
   /** Scoring speed, open loop voltage control */
-  public static final double SCORE_PERCENT_SPEED = 1.0; // TODO: Verify
+  public static final double SCORE_PERCENT_SPEED = 1.0;
   /** Intaking speed, open loop voltage control */
-  public static final double INTAKE_PERCENT_SPEED = 0.75; // TODO: Verify
+  public static final double INTAKE_PERCENT_SPEED = 0.75;
 
   // PID CONSTANTS
   /**

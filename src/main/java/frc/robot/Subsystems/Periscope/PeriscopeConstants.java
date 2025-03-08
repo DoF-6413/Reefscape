@@ -63,9 +63,9 @@ public class PeriscopeConstants {
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
    */
-  public static double KI = 0.0;
+  public static double KI = 0.65;
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
-  public static double KD = 0.0;
+  public static double KD = 1.0;
   /** KG represents the voltage required to overcome static friction */
   public static double KS = 0.0;
   /** KG represents the voltage required to overcome gravity */

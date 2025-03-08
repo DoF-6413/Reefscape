@@ -39,7 +39,6 @@ public class AlgaePivotConstants {
   public static final double PROCESSOR_ANGLE_RAD = Units.degreesToRadians(0); // TODO: Update
 
   // PID CONSTANTS
-  // TODO: Tune PID gains
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */

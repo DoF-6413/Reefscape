@@ -534,42 +534,44 @@ public class RobotContainer {
         .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("A", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToAB"))
+                .until(m_driverController.leftTrigger().negate())
+                .withName("PathfindToA"))
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
-        // axis to correct one and the threshold too
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(
-            PathfindingCommands.pathfindToBranch(
-                "B", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
+            PathfindingCommands.pathfindToBranch("B", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .until(m_driverController.leftTrigger().negate())
+                .withName("PathfindToB"));
     // REEF Face CD
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.REEF_CD.BUTTON_ID)
         .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("C", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToCD"))
+                .until(m_driverController.leftTrigger().negate())
+                .withName("PathfindToC"))
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
-        // axis to correct one and the threshold too
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(
-            PathfindingCommands.pathfindToBranch(
-                "D", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
+            PathfindingCommands.pathfindToBranch("D", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .until(m_driverController.leftTrigger().negate())
+                .withName("PathfindToD"));
     // REEF Face EF
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.REEF_EF.BUTTON_ID)
         .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("F", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToEF"))
+                .until(m_driverController.leftTrigger().negate())
+                .withName("PathfindToF"))
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
-        // axis to correct one and the threshold too
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(
             PathfindingCommands.pathfindToBranch(
                 "E", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
@@ -579,12 +581,12 @@ public class RobotContainer {
         .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("H", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToGH"))
+                .until(m_driverController.leftTrigger().negate())
+                .withName("PathfindToH"))
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
-        // axis to correct one and the threshold too
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(
             PathfindingCommands.pathfindToBranch(
                 "G", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
@@ -594,30 +596,32 @@ public class RobotContainer {
         .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("J", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToIJ"))
+                .until(m_driverController.leftTrigger().negate())
+                .withName("PathfindToJ"))
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
-        // axis to correct one and the threshold too
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(
-            PathfindingCommands.pathfindToBranch(
-                "I", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
+            PathfindingCommands.pathfindToBranch("I", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .until(m_driverController.leftTrigger().negate())
+                .withName("PathfindToI"));
     // REEF Face KL
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.REEF_KL.BUTTON_ID)
         .and(m_driverController.leftTrigger()) // Only Pathfind with Driver confirmation
         .onTrue(
             PathfindingCommands.pathfindToBranch("K", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
-                .withName("PathfindToKL"))
+                .until(m_driverController.leftTrigger().negate())
+                .withName("PathfindToK"))
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
-                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled // TODO: Change
-        // axis to correct one and the threshold too
+                -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(
-            PathfindingCommands.pathfindToBranch(
-                "L", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M));
+            PathfindingCommands.pathfindToBranch("L", PathPlannerConstants.DEFAULT_WALL_DISTANCE_M)
+                .until(m_driverController.leftTrigger().negate())
+                .withName("PathfindToL"));
   }
 
   /** Aux Xbox Controls */

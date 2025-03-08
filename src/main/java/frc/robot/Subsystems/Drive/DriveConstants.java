@@ -77,8 +77,7 @@ public final class DriveConstants {
   /** Radius of the robot (diagonal) in meters */
   public static final double DRIVETRAIN_RADIUS_M = Math.hypot(TRACK_WIDTH_M / 2, TRACK_WIDTH_M / 2);
   /** Max linear speed of robot */
-  public static final double MAX_LINEAR_SPEED_M_PER_S =
-      5.2; // TODO: Update? Since robot is larger very questionable
+  public static final double MAX_LINEAR_SPEED_M_PER_S = 5.2;
   /** Max angular speed of the robot */
   public static final double MAX_ANGULAR_SPEED_RAD_PER_S =
       MAX_LINEAR_SPEED_M_PER_S / DRIVETRAIN_RADIUS_M;

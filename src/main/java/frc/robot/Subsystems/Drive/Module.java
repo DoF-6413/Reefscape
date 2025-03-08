@@ -218,10 +218,6 @@ public class Module {
     // Run Turn motor through a PID loop
     m_io.setTurnVoltage(m_turnPID.calculate(getAngle().getRadians(), state.angle.getRadians()));
 
-    // Update velocity based on Turn error
-    // state.speedMetersPerSecond *= Math.cos(m_turnPID.getError()); // TODO: test and verify is
-    // needed
-
     // Linear speed m/s into velocity rad/s
     double velocityRadPerSec = state.speedMetersPerSecond / DriveConstants.WHEEL_RADIUS_M;
 
