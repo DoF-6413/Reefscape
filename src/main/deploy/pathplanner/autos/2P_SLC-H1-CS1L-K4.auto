@@ -5,21 +5,84 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "SLC-H"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "SLC-H"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Position_L1"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "H-CS1L"
+            "waitTime": 0.5
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "CS1L - K"
+            "name": "Score"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "H-CS1L"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake_CORAL"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CS1L - K"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Position_L4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         }
       ]

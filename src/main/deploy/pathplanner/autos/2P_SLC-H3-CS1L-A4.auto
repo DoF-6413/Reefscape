@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SLC-GH"
+                  "pathName": "SLC-H"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Position_L1"
+                  "name": "Position_L3_CORAL"
                 }
               }
             ]
@@ -42,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "GH-CS1L"
+                  "pathName": "H-CS1L"
                 }
               },
               {
@@ -61,7 +61,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CS1L - L"
+                  "pathName": "CS1L - A"
                 }
               },
               {
@@ -89,6 +89,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "2P_SLC-GH1",
+  "folder": "2P_SLC_H3",
   "choreoAuto": false
 }
