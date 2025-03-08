@@ -30,8 +30,10 @@ public class PeriscopeConstants {
   public static final boolean ENABLE_CUR_LIM = true;
   /** Refresh signals of the TalonFX 50 times a second (every 0.02 second) */
   public static final int UPDATE_FREQUENCY_HZ = 50;
+  /** Error between CAD spool radius and real radius */
+  public static final double SPOOL_ERROR_COEFF = 57.925 / 59.2228;
   /** Radius of the driving drum of the Periscope, accounts for grooves for rope, in meters */
-  public static final double DRUM_RADIUS_M = Units.inchesToMeters(0.9375);
+  public static final double SPOOL_RADIUS_M = Units.inchesToMeters(0.9175) * SPOOL_ERROR_COEFF;
   /** Mass of the carriage in kilograms */
   public static final double MASS_KG = Units.lbsToKilograms(15.0);
   // Height positions
@@ -48,7 +50,7 @@ public class PeriscopeConstants {
   /** Height position of the Periscope for reaching L4 */
   public static final double L4_HEIGHT_M = MAX_HEIGHT_M;
   /** Height position of the Periscope for aligning with the Funnel at the CORAL STATION */
-  public static final double CORAL_STATION_HEIGHT_M = Units.inchesToMeters(3);
+  public static final double CORAL_STATION_HEIGHT_M = Units.inchesToMeters(2.5);
   /** Height position of the Periscope for reaching the PROCCESOR */
   public static final double PROCESSOR_HEIGHT_M = Units.inchesToMeters(12.3456789); // TODO: Update
   /** Height position of the Periscope for reaching the NET */
@@ -63,9 +65,9 @@ public class PeriscopeConstants {
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
    */
-  public static double KI = 0.65;
+  public static double KI = 0.0;
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
-  public static double KD = 1.0;
+  public static double KD = 0.0;
   /** KG represents the voltage required to overcome static friction */
   public static double KS = 0.0;
   /** KG represents the voltage required to overcome gravity */

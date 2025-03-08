@@ -127,11 +127,11 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     inputs.heightMeters =
         Units.rotationsToRadians(m_positionRot[0].getValueAsDouble())
             / PeriscopeConstants.GEAR_RATIO
-            * PeriscopeConstants.DRUM_RADIUS_M;
+            * PeriscopeConstants.SPOOL_RADIUS_M;
     inputs.velocityRadPerSec =
         (Units.rotationsToRadians(m_velocityRotPerSec[0].getValueAsDouble()))
             / PeriscopeConstants.GEAR_RATIO;
-    inputs.velocityMetersPerSec = inputs.velocityRadPerSec * PeriscopeConstants.DRUM_RADIUS_M;
+    inputs.velocityMetersPerSec = inputs.velocityRadPerSec * PeriscopeConstants.SPOOL_RADIUS_M;
 
     // Update logged inputs for each Hall Effect sensor
     for (int i = 0; i < m_hallEffectSensors.length; i++) {
@@ -156,7 +156,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
 
   @Override
   public void resetPosition(double heightMeters) {
-    double positionRot = Units.radiansToRotations(heightMeters / PeriscopeConstants.DRUM_RADIUS_M);
+    double positionRot = Units.radiansToRotations(heightMeters / PeriscopeConstants.SPOOL_RADIUS_M);
     m_leadTalonFX.setPosition(positionRot);
   }
 }

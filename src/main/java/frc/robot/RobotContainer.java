@@ -537,7 +537,7 @@ public class RobotContainer {
                 .until(m_driverController.leftTrigger().negate())
                 .withName("PathfindToA"))
         .and(
-            m_auxButtonBoard.axisGreaterThan(
+            m_auxButtonBoard.axisLessThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
                 -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(
@@ -553,7 +553,7 @@ public class RobotContainer {
                 .until(m_driverController.leftTrigger().negate())
                 .withName("PathfindToC"))
         .and(
-            m_auxButtonBoard.axisGreaterThan(
+            m_auxButtonBoard.axisLessThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
                 -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(
@@ -569,7 +569,7 @@ public class RobotContainer {
                 .until(m_driverController.leftTrigger().negate())
                 .withName("PathfindToF"))
         .and(
-            m_auxButtonBoard.axisGreaterThan(
+            m_auxButtonBoard.axisLessThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
                 -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(
@@ -584,7 +584,7 @@ public class RobotContainer {
                 .until(m_driverController.leftTrigger().negate())
                 .withName("PathfindToH"))
         .and(
-            m_auxButtonBoard.axisGreaterThan(
+            m_auxButtonBoard.axisLessThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
                 -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(
@@ -599,7 +599,7 @@ public class RobotContainer {
                 .until(m_driverController.leftTrigger().negate())
                 .withName("PathfindToJ"))
         .and(
-            m_auxButtonBoard.axisGreaterThan(
+            m_auxButtonBoard.axisLessThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
                 -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(
@@ -615,7 +615,7 @@ public class RobotContainer {
                 .until(m_driverController.leftTrigger().negate())
                 .withName("PathfindToK"))
         .and(
-            m_auxButtonBoard.axisGreaterThan(
+            m_auxButtonBoard.axisLessThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_BRANCH.BUTTON_ID,
                 -0.5)) // Pathfind to right branch (Driver POV) if switch is toggled
         .onTrue(

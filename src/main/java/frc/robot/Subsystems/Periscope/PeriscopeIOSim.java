@@ -26,7 +26,7 @@ public class PeriscopeIOSim implements PeriscopeIO {
             LinearSystemId.createElevatorSystem(
                 DCMotor.getKrakenX60(2),
                 PeriscopeConstants.MASS_KG,
-                PeriscopeConstants.DRUM_RADIUS_M,
+                PeriscopeConstants.SPOOL_RADIUS_M,
                 PeriscopeConstants.GEAR_RATIO),
             DCMotor.getKrakenX60(2),
             PeriscopeConstants.MIN_HEIGHT_M,
@@ -49,7 +49,7 @@ public class PeriscopeIOSim implements PeriscopeIO {
         };
     inputs.heightMeters = m_elevatorSim.getPositionMeters();
     inputs.velocityMetersPerSec = m_elevatorSim.getVelocityMetersPerSecond();
-    inputs.velocityRadPerSec = inputs.velocityMetersPerSec / PeriscopeConstants.DRUM_RADIUS_M;
+    inputs.velocityRadPerSec = inputs.velocityMetersPerSec / PeriscopeConstants.SPOOL_RADIUS_M;
   }
 
   @Override

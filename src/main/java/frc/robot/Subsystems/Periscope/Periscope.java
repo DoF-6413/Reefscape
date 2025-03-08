@@ -53,7 +53,7 @@ public class Periscope extends SubsystemBase {
             PeriscopeConstants.KA);
 
     // Tunable PID & Feedforward gains
-    SmartDashboard.putBoolean("PIDFF_Tuning/Periscope/EnableTuning", false);
+    SmartDashboard.putBoolean("PIDFF_Tuning/Periscope/EnableTuning", true);
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KP", PeriscopeConstants.KP);
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KI", PeriscopeConstants.KI);
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KD", PeriscopeConstants.KD);
@@ -72,14 +72,14 @@ public class Periscope extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
-    if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
+    if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", true)) {
       // Calculate voltage based on PID and Feedforward controllers
       this.setVoltage(
           m_profiledPIDController.calculate(m_inputs.heightMeters)
               + m_feedforward.calculate(m_profiledPIDController.getConstraints().maxVelocity));
 
       // Enable and update tunable PID & Feedforward gains through SmartDashboard
-      if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
+      if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", true)) {
         this.updatePID();
         this.updateFF();
       }
@@ -243,6 +243,5 @@ public class Periscope extends SubsystemBase {
 
   public void enablePID(boolean enable) {
     m_enablePID = enable;
-    ;
   }
 }
