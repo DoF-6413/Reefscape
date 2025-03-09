@@ -369,7 +369,9 @@ public class Drive extends SubsystemBase {
    */
   public void addVisionMeasurement(
       Pose2d visionPoseEstimation, double timestampSec, Matrix<N3, N1> visionStdDevs) {
-    m_swervePoseEstimator.addVisionMeasurement(visionPoseEstimation, timestampSec, visionStdDevs);
+    var visionPoseGyroRot =
+        new Pose2d(visionPoseEstimation.getTranslation(), this.getRobotHeading());
+    m_swervePoseEstimator.addVisionMeasurement(visionPoseGyroRot, timestampSec, visionStdDevs);
   }
 
   /* ~~~~~~~~~~~~~~~~~~ Wheel Radius Characterization ~~~~~~~~~~~~~~~~~~ */

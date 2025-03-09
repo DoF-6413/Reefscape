@@ -111,13 +111,13 @@ public final class Constants {
       L2(2),
       L3(3),
       L4_NET(4),
-      SWITCH_CORAL_ALGAE(0), // Axis number
+      SWITCH_CORAL_ALGAE(1), // Axis number
       REEF_AB(8),
       REEF_CD(7),
       REEF_EF(6),
       REEF_GH(5),
-      REEF_IJ(9),
-      REEF_KL(10),
+      REEF_IJ(10),
+      REEF_KL(9),
       SWITCH_BRANCH(0), // Axis number
       ZERO(0), // Axis number
       CLIMB(1), // Axis number

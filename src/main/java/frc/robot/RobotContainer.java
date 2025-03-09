@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Commands.AutoCommands;
 import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.PathfindingCommands;
 import frc.robot.Commands.SuperstructureCommands;
@@ -161,6 +162,16 @@ public class RobotContainer {
 
     /* Autonomous Routines */
     m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
+    // Dynamic/Pathfinding Autos
+    m_autoChooser.addOption(
+        "Pathfinding Auto",
+        AutoCommands.pathfindingAuto(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem));
     // 1 Piece
     // Starting Line Left (SLL)
     m_autoChooser.addOption("1P_SLL-IJ1", new PathPlannerAuto("1P_SLL-IJ1"));
@@ -171,8 +182,12 @@ public class RobotContainer {
     // Starting Line Center (SLC)
     m_autoChooser.addOption("1P_SLC-GH1", new PathPlannerAuto("1P_SLC-GH1"));
     m_autoChooser.addOption("1P_SLC-G1", new PathPlannerAuto("1P_SLC-G1"));
+    m_autoChooser.addOption("1P_SLC-G2", new PathPlannerAuto("1P_SLC-G2"));
+    m_autoChooser.addOption("1P_SLC-G3", new PathPlannerAuto("1P_SLC-G3"));
     m_autoChooser.addOption("1P_SLC-G4", new PathPlannerAuto("1P_SLC-G4"));
     m_autoChooser.addOption("1P_SLC-H1", new PathPlannerAuto("1P_SLC-H1"));
+    m_autoChooser.addOption("1P_SLC-H2", new PathPlannerAuto("1P_SLC-H2"));
+    m_autoChooser.addOption("1P_SLC-H3", new PathPlannerAuto("1P_SLC-H3"));
     m_autoChooser.addOption("1P_SLC-H4", new PathPlannerAuto("1P_SLC-H4"));
     // Starting Line Right (SLR)
     m_autoChooser.addOption("1P_SLR-EF1", new PathPlannerAuto("1P_SLR-EF1"));
@@ -394,6 +409,12 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem));
+
+    /* Misc */
+    m_driverController
+        .back()
+        .onTrue(
+            new InstantCommand(() -> m_periscopeSubsystem.resetPosition(0), m_periscopeSubsystem));
   }
 
   /** Aux Button Board Controls */
@@ -892,8 +913,8 @@ public class RobotContainer {
    */
   public void allMechanismsBrakeMode(boolean enable) {
     m_driveSubsystem.enableBrakeModeAll(enable);
-    m_algaePivotSubsystem.enableBrakeMode(enable);
-    m_periscopeSubsystem.enableBrakeMode(enable);
+    // m_algaePivotSubsystem.enableBrakeMode(enable);
+    // m_periscopeSubsystem.enableBrakeMode(enable);
     m_climberSubsystem.enableBrakeMode(enable);
     m_funnelSubsystem.enableBrakeMode(enable);
     m_AEESubsystem.enableBrakeMode(enable);
