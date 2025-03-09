@@ -37,20 +37,25 @@ public class PeriscopeConstants {
   /** Mass of the carriage in kilograms */
   public static final double MASS_KG = Units.lbsToKilograms(15.0);
   // Height positions
+  /**
+   * Height difference from the bottom position and the new resting position from the spacers in
+   * inches
+   */
+  public static final double SPACER_HEIGHT_DIFF_IN = 2;
   /** Minimum height of the Periscope, resting/default position */
   public static final double MIN_HEIGHT_M = 0.0;
   /** Max height of the Periscope in meters */
-  public static final double MAX_HEIGHT_M = Units.inchesToMeters(57.925);
+  public static final double MAX_HEIGHT_M = Units.inchesToMeters(57.925 - SPACER_HEIGHT_DIFF_IN);
   /** Height position of the Periscope for reaching L1 */
-  public static final double L1_HEIGHT_M = Units.inchesToMeters(8.18);
+  public static final double L1_HEIGHT_M = Units.inchesToMeters(8.18 - SPACER_HEIGHT_DIFF_IN);
   /** Height position of the Periscope for reaching L2 */
-  public static final double L2_HEIGHT_M = Units.inchesToMeters(19.57);
+  public static final double L2_HEIGHT_M = Units.inchesToMeters(19.57 - SPACER_HEIGHT_DIFF_IN);
   /** Height position of the Periscope for reaching L3 */
-  public static final double L3_HEIGHT_M = Units.inchesToMeters(33.33);
+  public static final double L3_HEIGHT_M = Units.inchesToMeters(33.33 - SPACER_HEIGHT_DIFF_IN);
   /** Height position of the Periscope for reaching L4 */
   public static final double L4_HEIGHT_M = MAX_HEIGHT_M;
   /** Height position of the Periscope for aligning with the Funnel at the CORAL STATION */
-  public static final double CORAL_STATION_HEIGHT_M = Units.inchesToMeters(2);
+  public static final double CORAL_STATION_HEIGHT_M = MIN_HEIGHT_M;
   /** Height position of the Periscope for reaching the PROCCESOR */
   public static final double PROCESSOR_HEIGHT_M = Units.inchesToMeters(12.3456789); // TODO: Update
   /** Height position of the Periscope for reaching the NET */
@@ -60,29 +65,29 @@ public class PeriscopeConstants {
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */
-  public static double KP = 30.0;
+  public static double KP = 28.0;
   /**
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
    */
   public static double KI = 0.0;
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
-  public static double KD = 0.0;
+  public static double KD = 0.75;
   /** KG represents the voltage required to overcome static friction */
   public static double KS = 0.0;
   /** KG represents the voltage required to overcome gravity */
-  public static double KG = 0.0;
+  public static double KG = 0.18;
   /** KV represents the voltage used every second per meter */
-  public static double KV = 0.0;
+  public static double KV = 5.08;
   /** KA represents the voltage used every second squared per meter */
-  public static double KA = 0.0;
+  public static double KA = 0.03;
   /**
    * Max velocity for trapezoidal motion profiling in meters per second. 2.32 = max velocity, in
    * meters per second, calculated from https://www.reca.lc/ assuming 85% efficiency
    */
   public static final double MAX_VELOCITY_M_PER_SEC = 2.32;
   /** Ideal acceleration for trapezoidal motion profiling in meters per second squared */
-  public static double MAX_ACCELERATION_M_PER_SEC2 = 4;
+  public static double MAX_ACCELERATION_M_PER_SEC2 = 9.8;
   /**
    * How many meters the height of the Periscope can be within its height setpoint to be considered
    * at the setpoint

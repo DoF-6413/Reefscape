@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Commands.AutoCommands;
 import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.PathfindingCommands;
 import frc.robot.Commands.SuperstructureCommands;
@@ -101,11 +100,12 @@ public class RobotContainer {
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
                 // new VisionIOSim(
-                //     VisionConstants.CAMERA.FRONT.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d),
+                //     VisionConstants.CAMERA.FRONT.CAMERA_INDEX,
+                // m_driveSubsystem::getCurrentPose2d),
                 // new VisionIOSim(
-                //     VisionConstants.CAMERA.BACK.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d))
-                new VisionIO() {})
-                    ;
+                //     VisionConstants.CAMERA.BACK.CAMERA_INDEX,
+                // m_driveSubsystem::getCurrentPose2d))
+                new VisionIO() {});
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -165,15 +165,15 @@ public class RobotContainer {
     /* Autonomous Routines */
     m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     // Dynamic/Pathfinding Autos
-    m_autoChooser.addOption(
-        "Pathfinding Auto",
-        AutoCommands.pathfindingAuto(
-            m_driveSubsystem,
-            m_periscopeSubsystem,
-            m_algaePivotSubsystem,
-            m_AEESubsystem,
-            m_CEESubsystem,
-            m_funnelSubsystem));
+    // m_autoChooser.addOption(
+    //     "Pathfinding Auto",
+    //     AutoCommands.pathfindingAuto(
+    //         m_driveSubsystem,
+    //         m_periscopeSubsystem,
+    //         m_algaePivotSubsystem,
+    //         m_AEESubsystem,
+    //         m_CEESubsystem,
+    //         m_funnelSubsystem));
     // 1 Piece
     // Starting Line Left (SLL)
     m_autoChooser.addOption("1P_SLL-IJ1", new PathPlannerAuto("1P_SLL-IJ1"));
@@ -918,7 +918,7 @@ public class RobotContainer {
     // m_algaePivotSubsystem.enableBrakeMode(enable);
     // m_periscopeSubsystem.enableBrakeMode(enable);
     m_climberSubsystem.enableBrakeMode(enable);
-    m_funnelSubsystem.enableBrakeMode(enable);
+    // m_funnelSubsystem.enableBrakeMode(enable);
     m_AEESubsystem.enableBrakeMode(enable);
     m_CEESubsystem.enableBrakeMode(enable);
   }

@@ -48,37 +48,38 @@ public class SuperstructureCommands {
    */
   public static Command setSpeeds(
       AEE aee, CEE cee, Funnel funnel, double aeeSpeed, double ceeSpeed, double funnelSpeed) {
-    // return Commands.runOnce(
-    //     () -> {
-    //       aee.setPercentSpeed(aeeSpeed);
-    //       cee.setPercentSpeed(ceeSpeed);
-    //       funnel.setPercentSpeed(funnelSpeed);
-    //     },
-    //     aee,
-    //     cee,
-    //     funnel);
-    switch (SuperstructureState.currentObjective) {
-      case L1, L2_CORAL, L3_CORAL:
-        return Commands.runOnce(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee);
+    return Commands.runOnce(
+        () -> {
+          aee.setPercentSpeed(aeeSpeed);
+          cee.setPercentSpeed(ceeSpeed);
+          funnel.setPercentSpeed(funnelSpeed);
+        },
+        aee,
+        cee,
+        funnel);
+    // switch (SuperstructureState.currentObjective) {
+    //   case L1, L2_CORAL, L3_CORAL:
+    //     return Commands.runOnce(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED),
+    // cee);
 
-      case L4:
-        return Commands.runOnce(() -> cee.setPercentSpeed(-0.5), cee)
-            .andThen(
-                Commands.waitSeconds(0.25)
-                    .andThen(
-                        Commands.runOnce(
-                            () -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)));
-      default:
-        return Commands.runOnce(
-            () -> {
-              aee.setPercentSpeed(aeeSpeed);
-              cee.setPercentSpeed(ceeSpeed);
-              funnel.setPercentSpeed(funnelSpeed);
-            },
-            aee,
-            cee,
-            funnel);
-    }
+    //   case L4:
+    //     return Commands.runOnce(() -> cee.setPercentSpeed(-0.5), cee)
+    //         .andThen(
+    //             Commands.waitSeconds(0.25)
+    //                 .andThen(
+    //                     Commands.runOnce(
+    //                         () -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)));
+    //   default:
+    //     return Commands.runOnce(
+    //         () -> {
+    //           aee.setPercentSpeed(aeeSpeed);
+    //           cee.setPercentSpeed(ceeSpeed);
+    //           funnel.setPercentSpeed(funnelSpeed);
+    //         },
+    //         aee,
+    //         cee,
+    //         funnel);
+    // }
   }
 
   /**

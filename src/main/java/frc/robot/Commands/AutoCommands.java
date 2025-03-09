@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Subsystems.Algae.EndEffector.AEE;
@@ -26,20 +25,21 @@ public class AutoCommands {
 
     // Choosers to build the auto
     LoggedDashboardChooser<Pose2d> startingPose = new LoggedDashboardChooser<>("Starting Pose");
-    startingPose.addOption("SLL", PathPlannerConstants.STARTING_LINE_LEFT);
     startingPose.addDefaultOption("SLC", PathPlannerConstants.STARTING_LINE_CENTER);
+    startingPose.addOption("SLL", PathPlannerConstants.STARTING_LINE_LEFT);
     startingPose.addOption("SLR", PathPlannerConstants.STARTING_LINE_RIGHT);
     LoggedDashboardChooser<String> firstBranch = new LoggedDashboardChooser<>("First BRANCH");
+    firstBranch.addDefaultOption("G", "G");
     firstBranch.addOption("E", "E");
     firstBranch.addOption("F", "F");
-    firstBranch.addDefaultOption("G", "G");
     firstBranch.addOption("H", "H");
     firstBranch.addOption("I", "I");
     firstBranch.addOption("J", "J");
     LoggedDashboardChooser<Command> firstCoralLevel =
         new LoggedDashboardChooser<>("First CORAL Level");
-    firstCoralLevel.addOption("L1", SuperstructureCommands.positionsToL1(periscope, algaePivot));
     firstCoralLevel.addDefaultOption(
+        "L1", SuperstructureCommands.positionsToL1(periscope, algaePivot));
+    firstCoralLevel.addOption(
         "L2", SuperstructureCommands.positionsToL2Coral(periscope, algaePivot));
     firstCoralLevel.addOption(
         "L3", SuperstructureCommands.positionsToL3Coral(periscope, algaePivot));
@@ -96,8 +96,6 @@ public class AutoCommands {
     Shuffleboard.getTab("Auto").add(secondBranch.getSendableChooser());
     Shuffleboard.getTab("Auto").add(secondCoralLevel.getSendableChooser());
 
-    if (firstCoralLevel.get() == null)
-      return new PrintCommand("ERROR: Dyanamic Auto Paths not loaded!!!");
     return Commands.runOnce(() -> drive.resetPose(startingPose.get()), drive)
         .andThen(
             Commands.parallel(
@@ -126,4 +124,6 @@ public class AutoCommands {
         .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
         .andThen(SuperstructureCommands.score(aee, cee, funnel));
   }
+
+  //   public static Command deadreakon1Piece(Drive drive)
 }

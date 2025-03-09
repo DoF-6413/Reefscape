@@ -32,7 +32,7 @@ public class FunnelIOSparkMax implements FunnelIO {
     // SPARK MAX configurations
     m_config
         .inverted(FunnelConstants.IS_INVERTED)
-        .idleMode(IdleMode.kBrake)
+        .idleMode(IdleMode.kCoast)
         .smartCurrentLimit(FunnelConstants.CUR_LIM_A);
     // setCANTimeout arguments in miliseconds so multiply by 1000 to convert sec to milisec
     m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);

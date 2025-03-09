@@ -51,6 +51,7 @@ public class Periscope extends SubsystemBase {
             PeriscopeConstants.KG,
             PeriscopeConstants.KV,
             PeriscopeConstants.KA);
+    m_profiledPIDController.setGoal(0);
 
     // Tunable PID & Feedforward gains
     SmartDashboard.putBoolean("PIDFF_Tuning/Periscope/EnableTuning", true);
