@@ -20,6 +20,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -313,6 +314,23 @@ public final class Constants {
             RobotStateConstants.ROBOT_MOI_KG_M2,
             MODULE_CONFIG,
             DriveConstants.getModuleTranslations());
+
+    /* Starting Poses */
+    /** {@link Pose2d} of the center starting line pose for autos */
+    public static final Pose2d STARTING_LINE_CENTER =
+        RobotStateConstants.isRed()
+            ? new Pose2d(10.266, 2.874, Rotation2d.kZero)
+            : new Pose2d(7.265, 4.041, Rotation2d.k180deg);
+    /** {@link Pose2d} of the left starting line pose for autos */
+    public static final Pose2d STARTING_LINE_LEFT =
+        RobotStateConstants.isRed()
+            ? new Pose2d(10.266, 5.326, Rotation2d.kZero)
+            : new Pose2d(7.265, 5.326, Rotation2d.k180deg);
+    /** {@link Pose2d} of the right starting line pose for autos */
+    public static final Pose2d STARTING_LINE_RIGHT =
+        RobotStateConstants.isRed()
+            ? new Pose2d(10.266, 4.041, Rotation2d.kZero)
+            : new Pose2d(7.265, 2.874, Rotation2d.k180deg);
 
     /* Pathfinding */
     /** Max translational and rotational velocity and acceleration used for Pathfinding */

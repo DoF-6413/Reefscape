@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
@@ -148,6 +149,9 @@ public class PathfindingCommands {
   public static Command pathfindToBranch(String branchLetter, double wallDistanceMeters) {
     // Position of BRANCH corresponding to zone the robot is in
     var branchPose = FieldConstants.BRANCH_POSES.get(branchLetter);
+
+    if (branchLetter == null || branchLetter.isEmpty() || branchLetter.isBlank())
+      return new InstantCommand();
 
     // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on top of
     // the BRANCH
