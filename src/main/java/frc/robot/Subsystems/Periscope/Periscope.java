@@ -64,6 +64,9 @@ public class Periscope extends SubsystemBase {
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KA", PeriscopeConstants.KA);
     SmartDashboard.putNumber(
         "PIDFF_Tuning/Periscope/Max_Accel", PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2);
+
+    m_feedforward.setKg(0.17);
+    m_feedforward.setKg(PeriscopeConstants.KG);
   }
 
   @Override
@@ -72,6 +75,10 @@ public class Periscope extends SubsystemBase {
     // Update and log inputs
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
+
+    // if (m_inputs.isHallEffectSensorTriggered[0] && m_inputs.get) {
+
+    // }
 
     if (m_enablePID) {
       // Calculate voltage based on PID and Feedforward controllers
@@ -95,7 +102,6 @@ public class Periscope extends SubsystemBase {
   public void enableBrakeMode(boolean enable) {
     m_io.enableBrakeMode(enable);
   }
-  
 
   /**
    * Sets the position of the Periscope motors in meters.
@@ -181,7 +187,7 @@ public class Periscope extends SubsystemBase {
 
   /**
    * Sets the maximum acceleration of the {@link ProfiledPIDController}.
-   * 
+   *
    * @param acceleration Maximum acceleration in m/s²
    */
   public void setMaxAcceleration(double acceleration) {
@@ -191,7 +197,7 @@ public class Periscope extends SubsystemBase {
 
   /**
    * Toggle closed loop {@link ProfiledPIDController} and Feedforward and open loop voltage control.
-   * 
+   *
    * @param enable {@code true} for closed loop control, {@code false} for open loop.
    */
   public void enablePID(boolean enable) {
@@ -255,5 +261,5 @@ public class Periscope extends SubsystemBase {
           PeriscopeConstants.KV,
           PeriscopeConstants.KA);
     }
-  }  
+  }
 }

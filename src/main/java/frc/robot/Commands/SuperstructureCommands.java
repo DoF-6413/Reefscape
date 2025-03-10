@@ -175,7 +175,8 @@ public class SuperstructureCommands {
   }
 
   /**
-   * Sets the position of the Periscope height and ALGAE Pivot angle to score CORAL in L4. Reverses CORAL at the top so that it is not poking out too far.
+   * Sets the position of the Periscope height and ALGAE Pivot angle to score CORAL in L4. Reverses
+   * CORAL at the top so that it is not poking out too far.
    *
    * @param periscope {@link Periscope} subsystem
    * @param algaePivot {@link AlgaePivot} subsystem
@@ -221,8 +222,7 @@ public class SuperstructureCommands {
                 SuperstructureState.AEESpeed,
                 SuperstructureState.CEESpeed,
                 SuperstructureState.funnelSpeed))
-        .andThen(
-            Commands.waitUntil(() -> cee.isBeamBreakTriggered(CEEConstants.EXIT_BEAM_BREAK_PORT)))
+        .andThen(Commands.waitUntil(() -> cee.isBeamBreakTriggered()))
         .andThen(Commands.waitSeconds(CEEConstants.BEAM_BREAK_DELAY))
         .andThen(Commands.runOnce(() -> cee.setVoltage(0), cee));
   }

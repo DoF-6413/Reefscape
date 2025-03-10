@@ -108,22 +108,22 @@ public final class Constants {
     public static final int AUX_XBOX_CONTROLLER = 2;
     /** Map button board button names to their numbers on the controller circut board */
     public enum BUTTON_BOARD {
-      L1_PROCESSOR(1),
-      L2(2),
-      L3(3),
-      L4_NET(4),
+      L1_PROCESSOR(12),
+      L2(11),
+      L3(10),
+      L4_NET(9),
       SWITCH_CORAL_ALGAE(1), // Axis number
-      REEF_AB(8),
-      REEF_CD(7),
-      REEF_EF(6),
-      REEF_GH(5),
-      REEF_IJ(10),
-      REEF_KL(9),
+      REEF_AB(5),
+      REEF_CD(6),
+      REEF_EF(7),
+      REEF_GH(8),
+      REEF_IJ(3),
+      REEF_KL(4),
       SWITCH_BRANCH(0), // Axis number
-      ZERO(0), // Axis number
-      CLIMB(1), // Axis number
-      SCORE(11),
-      GROUND_ALGAE(12);
+      CLIMB_DEPLOY(0), // Axis number
+      CLIMB_RETRACT(1), // Axis number
+      SCORE(2),
+      GROUND_ALGAE(1);
 
       public final int BUTTON_ID;
 
@@ -339,6 +339,6 @@ public final class Constants {
     /** Default distance away from any wall when the robot is Pathfinding towards one */
     public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(3);
     /** Distance from the center of the robot to the center of the Superstructure */
-    public static final double ROBOT_MIDPOINT_TO_INTAKE = Units.inchesToMeters(9);
+    public static final double ROBOT_MIDPOINT_TO_INTAKE = Units.inchesToMeters(-7);
   }
 }

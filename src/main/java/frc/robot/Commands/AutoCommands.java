@@ -1,6 +1,7 @@
 package frc.robot.Commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -9,7 +10,6 @@ import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Subsystems.Algae.EndEffector.AEE;
 import frc.robot.Subsystems.Algae.Pivot.AlgaePivot;
 import frc.robot.Subsystems.CoralEndEffector.CEE;
-import frc.robot.Subsystems.CoralEndEffector.CEEConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Funnel.Funnel;
 import frc.robot.Subsystems.Periscope.Periscope;
@@ -46,7 +46,9 @@ public class AutoCommands {
     firstCoralLevel.addOption(
         "L4", SuperstructureCommands.positionsToL4(periscope, algaePivot, cee));
     LoggedDashboardChooser<Command> coralStation = new LoggedDashboardChooser<>("CORAL STATION");
-    coralStation.addDefaultOption("None (1P)", Commands.waitSeconds(15).alongWith(Commands.repeatingSequence(Commands.print("1P"))));
+    coralStation.addDefaultOption(
+        "None (1P)",
+        Commands.waitSeconds(15).alongWith(Commands.repeatingSequence(Commands.print("1P"))));
     coralStation.addOption(
         "CS1L",
         PathfindingCommands.pathfindToFieldElement(
@@ -104,14 +106,17 @@ public class AutoCommands {
     secondBranch.periodic();
     secondCoralLevel.periodic();
 
-    return Commands.runOnce(() -> {
-        startingPose.periodic();
-        firstBranch.periodic();
-        firstCoralLevel.periodic();
-        coralStation.periodic();
-        secondBranch.periodic();
-        secondCoralLevel.periodic();
-    drive.resetPose(startingPose.get());}, drive)
+    return Commands.runOnce(
+            () -> {
+              startingPose.periodic();
+              firstBranch.periodic();
+              firstCoralLevel.periodic();
+              coralStation.periodic();
+              secondBranch.periodic();
+              secondCoralLevel.periodic();
+              drive.resetPose(startingPose.get());
+            },
+            drive)
         .andThen(
             Commands.parallel(
                 PathfindingCommands.pathfindToBranch(firstBranch.get(), WALL_DISTANCE_M),
@@ -130,8 +135,7 @@ public class AutoCommands {
         .andThen(
             Commands.race(
                 Commands.waitSeconds(CORAL_STATION_DELAY),
-                Commands.waitUntil(
-                    () -> cee.isBeamBreakTriggered(CEEConstants.EXIT_BEAM_BREAK_PORT))))
+                Commands.waitUntil(() -> cee.isBeamBreakTriggered())))
         .andThen(
             Commands.parallel(
                 PathfindingCommands.pathfindToBranch(secondBranch.get(), WALL_DISTANCE_M),
@@ -140,5 +144,44 @@ public class AutoCommands {
         .andThen(SuperstructureCommands.score(aee, cee, funnel));
   }
 
-  // public static Command deadreakon1Piece(Drive drive)
+  public static Command deadreakon1Piece(
+      Drive drive,
+      Periscope periscope,
+      AlgaePivot algaePivot,
+      AEE aee,
+      CEE cee,
+      Funnel funnel,
+      double driveSpeed,
+      int coralLevel) {
+    final Command coralPosition;
+    switch (coralLevel) {
+      case 1:
+        coralPosition = SuperstructureCommands.positionsToL1(periscope, algaePivot);
+        break;
+
+      case 2:
+        coralPosition = SuperstructureCommands.positionsToL2Coral(periscope, algaePivot);
+        break;
+
+      case 3:
+        coralPosition = SuperstructureCommands.positionsToL3Coral(periscope, algaePivot);
+        break;
+
+      case 4:
+        coralPosition = SuperstructureCommands.positionsToL4(periscope, algaePivot, cee);
+        break;
+      default:
+        coralPosition = SuperstructureCommands.positionsToL1(periscope, algaePivot);
+        break;
+    }
+    final double DRIVE_TIME_SEC = 3;
+    return Commands.runOnce(() -> drive.zeroYaw(), drive)
+        .andThen(
+            Commands.parallel(
+                DriveCommands.fieldRelativeDriveAtAngle(
+                    drive, () -> 0, () -> driveSpeed, () -> Rotation2d.kZero),
+                coralPosition))
+        .andThen(Commands.waitSeconds(DRIVE_TIME_SEC))
+        .andThen(SuperstructureCommands.score(aee, cee, funnel));
+  }
 }

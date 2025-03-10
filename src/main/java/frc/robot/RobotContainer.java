@@ -28,7 +28,6 @@ import frc.robot.Subsystems.Drive.*;
 import frc.robot.Subsystems.Funnel.*;
 import frc.robot.Subsystems.Periscope.*;
 import frc.robot.Subsystems.Vision.*;
-
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -177,6 +176,50 @@ public class RobotContainer {
             m_AEESubsystem,
             m_CEESubsystem,
             m_funnelSubsystem));
+    m_autoChooser.addOption(
+        "Deadreakon 1P L1",
+        AutoCommands.deadreakon1Piece(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem,
+            0.2,
+            1));
+    m_autoChooser.addOption(
+        "Deadreakon 1P L2",
+        AutoCommands.deadreakon1Piece(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem,
+            0.2,
+            2));
+    m_autoChooser.addOption(
+        "Deadreakon 1P L3",
+        AutoCommands.deadreakon1Piece(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem,
+            0.2,
+            3));
+    m_autoChooser.addOption(
+        "Deadreakon 1P L4",
+        AutoCommands.deadreakon1Piece(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem,
+            0.2,
+            4));
     // 1 Piece
     // Starting Line Left (SLL)
     m_autoChooser.addOption("1P_SLL-IJ1", new PathPlannerAuto("1P_SLL-IJ1"));
@@ -276,12 +319,18 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    Logger.recordOutput("FieldPoses/CoralStation/CS1L", FieldConstants.CORAL_STATION_POSES.get("CS1L"));
-    Logger.recordOutput("FieldPoses/CoralStation/CS1C", FieldConstants.CORAL_STATION_POSES.get("CS1C"));
-    Logger.recordOutput("FieldPoses/CoralStation/CS1R", FieldConstants.CORAL_STATION_POSES.get("CS1R"));
-    Logger.recordOutput("FieldPoses/CoralStation/CS2L", FieldConstants.CORAL_STATION_POSES.get("CS2L"));
-    Logger.recordOutput("FieldPoses/CoralStation/CS2C", FieldConstants.CORAL_STATION_POSES.get("CS2C"));
-    Logger.recordOutput("FieldPoses/CoralStation/CS2R", FieldConstants.CORAL_STATION_POSES.get("CS2R"));
+    Logger.recordOutput(
+        "FieldPoses/CoralStation/CS1L", FieldConstants.CORAL_STATION_POSES.get("CS1L"));
+    Logger.recordOutput(
+        "FieldPoses/CoralStation/CS1C", FieldConstants.CORAL_STATION_POSES.get("CS1C"));
+    Logger.recordOutput(
+        "FieldPoses/CoralStation/CS1R", FieldConstants.CORAL_STATION_POSES.get("CS1R"));
+    Logger.recordOutput(
+        "FieldPoses/CoralStation/CS2L", FieldConstants.CORAL_STATION_POSES.get("CS2L"));
+    Logger.recordOutput(
+        "FieldPoses/CoralStation/CS2C", FieldConstants.CORAL_STATION_POSES.get("CS2C"));
+    Logger.recordOutput(
+        "FieldPoses/CoralStation/CS2R", FieldConstants.CORAL_STATION_POSES.get("CS2R"));
 
     Logger.recordOutput("FieldPoses/Reef/A", FieldConstants.BRANCH_POSES.get("A"));
     Logger.recordOutput("FieldPoses/Reef/B", FieldConstants.BRANCH_POSES.get("B"));
@@ -555,7 +604,7 @@ public class RobotContainer {
                 m_funnelSubsystem));
     // Zero mechanisms
     m_auxButtonBoard
-        .axisGreaterThan(OperatorConstants.BUTTON_BOARD.ZERO.BUTTON_ID, 0.5)
+        .axisGreaterThan(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID, 0.5)
         .onTrue(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
@@ -567,14 +616,24 @@ public class RobotContainer {
     /* ~~~~~~~~~~~~~~~~~~~~ Climb ~~~~~~~~~~~~~~~~~~~~ */
     // Deploy Climber
     m_auxButtonBoard
-        .axisGreaterThan(OperatorConstants.BUTTON_BOARD.CLIMB.BUTTON_ID, 0.5)
-        .onTrue(new InstantCommand(() -> m_climberSubsystem.setVoltage(2), m_climberSubsystem))
+        .axisGreaterThan(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID, 0.5)
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    m_climberSubsystem.setVoltage(
+                        RobotStateConstants.MAX_VOLTAGE * ClimberConstants.DEPLOY_PERCENT_SPEED),
+                m_climberSubsystem))
         .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
     // // Retract Climber
-    // m_auxButtonBoard
-    //     .axisGreaterThan(OperatorConstants.BUTTON_BOARD.ZERO.BUTTON_ID, 0.5)
-    //     .onTrue(new InstantCommand(()-> m_climberSubsystem.setVoltage(-2), m_climberSubsystem))
-    //     .onFalse(new InstantCommand(()-> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
+    m_auxButtonBoard
+        .axisLessThan(OperatorConstants.BUTTON_BOARD.CLIMB_RETRACT.BUTTON_ID, -0.5)
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    m_climberSubsystem.setVoltage(
+                        RobotStateConstants.MAX_VOLTAGE * ClimberConstants.RETRACT_PERCENT_SPEED),
+                m_climberSubsystem))
+        .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
 
     /* ~~~~~~~~~~~~~~~~~~~~ Pathfinding Selection ~~~~~~~~~~~~~~~~~~~~ */
     // REEF Face AB
@@ -750,9 +809,7 @@ public class RobotContainer {
         .a()
         .onTrue(
             new InstantCommand(
-                () ->
-                    m_periscopeSubsystem.setPosition(
-                        Units.inchesToMeters(18)),
+                () -> m_periscopeSubsystem.setPosition(Units.inchesToMeters(18)),
                 m_periscopeSubsystem))
         .onFalse(
             new InstantCommand(
