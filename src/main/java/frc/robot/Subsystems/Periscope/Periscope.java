@@ -73,7 +73,7 @@ public class Periscope extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
-    if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", true)) {
+    if (m_enablePID) {
       // Calculate voltage based on PID and Feedforward controllers
       this.setVoltage(
           m_profiledPIDController.calculate(m_inputs.heightMeters)
@@ -95,6 +95,7 @@ public class Periscope extends SubsystemBase {
   public void enableBrakeMode(boolean enable) {
     m_io.enableBrakeMode(enable);
   }
+  
 
   /**
    * Sets the position of the Periscope motors in meters.
@@ -112,6 +113,17 @@ public class Periscope extends SubsystemBase {
    */
   public void setVoltage(double volts) {
     m_io.setVoltage(volts);
+  }
+
+  /**
+   * Triggered means that the Periscope is at the sensor. Hall Effect works just as a magnetic limit
+   * switch.
+   *
+   * @param index Port of the desired Hall Effect sensor to get the triggered status of.
+   * @return {@code true} if the specified Hall Effect sensor triggered, {@code false} if not.
+   */
+  public boolean isHallEffectSensorTriggered(int index) {
+    return m_inputs.isHallEffectSensorTriggered[index];
   }
 
   /**
@@ -142,7 +154,7 @@ public class Periscope extends SubsystemBase {
   }
 
   /**
-   * Sets the PID gains of the Periscope motors' Profiled PID controller.
+   * Sets the PID gains of the Periscope motors' {@link ProfiledPIDController}.
    *
    * @param kP Proportional gain value.
    * @param kI Integral gain value.
@@ -167,9 +179,23 @@ public class Periscope extends SubsystemBase {
     m_feedforward.setKa(kA);
   }
 
+  /**
+   * Sets the maximum acceleration of the {@link ProfiledPIDController}.
+   * 
+   * @param acceleration Maximum acceleration in m/s²
+   */
   public void setMaxAcceleration(double acceleration) {
     m_profiledPIDController.setConstraints(
         new TrapezoidProfile.Constraints(PeriscopeConstants.MAX_VELOCITY_M_PER_SEC, acceleration));
+  }
+
+  /**
+   * Toggle closed loop {@link ProfiledPIDController} and Feedforward and open loop voltage control.
+   * 
+   * @param enable {@code true} for closed loop control, {@code false} for open loop.
+   */
+  public void enablePID(boolean enable) {
+    m_enablePID = enable;
   }
 
   /** Update PID gains for the Periscope motors from SmartDashboard inputs. */
@@ -229,20 +255,5 @@ public class Periscope extends SubsystemBase {
           PeriscopeConstants.KV,
           PeriscopeConstants.KA);
     }
-  }
-
-  /**
-   * Triggered means that the Periscope is at the sensor. Hall Effect works just as a magnetic limit
-   * switch.
-   *
-   * @param index Port of the desired Hall Effect sensor to get the triggered status of.
-   * @return {@code true} if the specified Hall Effect sensor triggered, {@code false} if not.
-   */
-  public boolean isHallEffectSensorTriggered(int index) {
-    return m_inputs.isHallEffectSensorTriggered[index];
-  }
-
-  public void enablePID(boolean enable) {
-    m_enablePID = enable;
-  }
+  }  
 }

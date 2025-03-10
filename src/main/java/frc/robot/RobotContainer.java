@@ -7,15 +7,16 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Commands.AutoCommands;
 import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.PathfindingCommands;
 import frc.robot.Commands.SuperstructureCommands;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
@@ -27,6 +28,8 @@ import frc.robot.Subsystems.Drive.*;
 import frc.robot.Subsystems.Funnel.*;
 import frc.robot.Subsystems.Periscope.*;
 import frc.robot.Subsystems.Vision.*;
+
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -165,15 +168,15 @@ public class RobotContainer {
     /* Autonomous Routines */
     m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     // Dynamic/Pathfinding Autos
-    // m_autoChooser.addOption(
-    //     "Pathfinding Auto",
-    //     AutoCommands.pathfindingAuto(
-    //         m_driveSubsystem,
-    //         m_periscopeSubsystem,
-    //         m_algaePivotSubsystem,
-    //         m_AEESubsystem,
-    //         m_CEESubsystem,
-    //         m_funnelSubsystem));
+    m_autoChooser.addOption(
+        "Pathfinding Auto",
+        AutoCommands.pathfindingAuto(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem));
     // 1 Piece
     // Starting Line Left (SLL)
     m_autoChooser.addOption("1P_SLL-IJ1", new PathPlannerAuto("1P_SLL-IJ1"));
@@ -273,10 +276,25 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    SmartDashboard.putNumber("Funnel Speed Percent", 0);
-    SmartDashboard.putNumber("ClimberVoltage", 0);
-    SmartDashboard.putNumber("PSVoltage", 0);
-    SmartDashboard.putNumber("PSHeightInches", 0);
+    Logger.recordOutput("FieldPoses/CoralStation/CS1L", FieldConstants.CORAL_STATION_POSES.get("CS1L"));
+    Logger.recordOutput("FieldPoses/CoralStation/CS1C", FieldConstants.CORAL_STATION_POSES.get("CS1C"));
+    Logger.recordOutput("FieldPoses/CoralStation/CS1R", FieldConstants.CORAL_STATION_POSES.get("CS1R"));
+    Logger.recordOutput("FieldPoses/CoralStation/CS2L", FieldConstants.CORAL_STATION_POSES.get("CS2L"));
+    Logger.recordOutput("FieldPoses/CoralStation/CS2C", FieldConstants.CORAL_STATION_POSES.get("CS2C"));
+    Logger.recordOutput("FieldPoses/CoralStation/CS2R", FieldConstants.CORAL_STATION_POSES.get("CS2R"));
+
+    Logger.recordOutput("FieldPoses/Reef/A", FieldConstants.BRANCH_POSES.get("A"));
+    Logger.recordOutput("FieldPoses/Reef/B", FieldConstants.BRANCH_POSES.get("B"));
+    Logger.recordOutput("FieldPoses/Reef/C", FieldConstants.BRANCH_POSES.get("C"));
+    Logger.recordOutput("FieldPoses/Reef/D", FieldConstants.BRANCH_POSES.get("D"));
+    Logger.recordOutput("FieldPoses/Reef/E", FieldConstants.BRANCH_POSES.get("E"));
+    Logger.recordOutput("FieldPoses/Reef/F", FieldConstants.BRANCH_POSES.get("F"));
+    Logger.recordOutput("FieldPoses/Reef/G", FieldConstants.BRANCH_POSES.get("G"));
+    Logger.recordOutput("FieldPoses/Reef/H", FieldConstants.BRANCH_POSES.get("H"));
+    Logger.recordOutput("FieldPoses/Reef/I", FieldConstants.BRANCH_POSES.get("I"));
+    Logger.recordOutput("FieldPoses/Reef/J", FieldConstants.BRANCH_POSES.get("J"));
+    Logger.recordOutput("FieldPoses/Reef/K", FieldConstants.BRANCH_POSES.get("K"));
+    Logger.recordOutput("FieldPoses/Reef/L", FieldConstants.BRANCH_POSES.get("L"));
   }
 
   /**
@@ -383,6 +401,14 @@ public class RobotContainer {
                     PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
                     m_driverController.y().negate())
                 .withName("PathfindToBranch"));
+    // Closest CORAL STATION
+    m_driverController
+        .leftBumper()
+        .onTrue(
+            PathfindingCommands.pathfindToClosestCoralStation(
+                m_driveSubsystem,
+                PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
+                m_driverController.leftBumper().negate()));
 
     /* Scoring commands */
     // Score
@@ -726,7 +752,7 @@ public class RobotContainer {
             new InstantCommand(
                 () ->
                     m_periscopeSubsystem.setPosition(
-                        Units.inchesToMeters(SmartDashboard.getNumber("PSHeightInches", 0))),
+                        Units.inchesToMeters(18)),
                 m_periscopeSubsystem))
         .onFalse(
             new InstantCommand(
@@ -738,19 +764,23 @@ public class RobotContainer {
             new InstantCommand(
                 () -> {
                   m_periscopeSubsystem.enablePID(false);
-                  m_periscopeSubsystem.setVoltage(SmartDashboard.getNumber("PSVoltage", 0));
+                  m_periscopeSubsystem.setVoltage(2);
                 },
                 m_periscopeSubsystem))
         .onFalse(
             new InstantCommand(() -> m_periscopeSubsystem.setVoltage(0), m_periscopeSubsystem));
     m_auxController
-        .start()
+        .rightStick()
         .onTrue(
             new InstantCommand(() -> m_periscopeSubsystem.resetPosition(0), m_periscopeSubsystem));
     m_auxController
-        .back()
+        .start()
         .onTrue(
             new InstantCommand(() -> m_periscopeSubsystem.enablePID(true), m_periscopeSubsystem));
+    m_auxController
+        .back()
+        .onTrue(
+            new InstantCommand(() -> m_periscopeSubsystem.enablePID(false), m_periscopeSubsystem));
 
     /* Climb */
     // Joystick to move

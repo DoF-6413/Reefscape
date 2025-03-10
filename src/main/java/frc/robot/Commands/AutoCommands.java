@@ -25,13 +25,13 @@ public class AutoCommands {
 
     // Choosers to build the auto
     LoggedDashboardChooser<Pose2d> startingPose = new LoggedDashboardChooser<>("Starting Pose");
-    startingPose.addDefaultOption("SLC", PathPlannerConstants.STARTING_LINE_CENTER);
     startingPose.addOption("SLL", PathPlannerConstants.STARTING_LINE_LEFT);
+    startingPose.addDefaultOption("SLC", PathPlannerConstants.STARTING_LINE_CENTER);
     startingPose.addOption("SLR", PathPlannerConstants.STARTING_LINE_RIGHT);
     LoggedDashboardChooser<String> firstBranch = new LoggedDashboardChooser<>("First BRANCH");
-    firstBranch.addDefaultOption("G", "G");
     firstBranch.addOption("E", "E");
     firstBranch.addOption("F", "F");
+    firstBranch.addDefaultOption("G", "G");
     firstBranch.addOption("H", "H");
     firstBranch.addOption("I", "I");
     firstBranch.addOption("J", "J");
@@ -46,31 +46,31 @@ public class AutoCommands {
     firstCoralLevel.addOption(
         "L4", SuperstructureCommands.positionsToL4(periscope, algaePivot, cee));
     LoggedDashboardChooser<Command> coralStation = new LoggedDashboardChooser<>("CORAL STATION");
-    coralStation.addDefaultOption("None (1P)", Commands.waitSeconds(15));
+    coralStation.addDefaultOption("None (1P)", Commands.waitSeconds(15).alongWith(Commands.repeatingSequence(Commands.print("1P"))));
     coralStation.addOption(
         "CS1L",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS1L"), WALL_DISTANCE_M, 0));
+            FieldConstants.CORAL_STATION_POSES.get("CS1L"), WALL_DISTANCE_M, 0, false));
     coralStation.addOption(
         "CS1C",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS1C"), WALL_DISTANCE_M, 0));
+            FieldConstants.CORAL_STATION_POSES.get("CS1C"), WALL_DISTANCE_M, 0, false));
     coralStation.addOption(
         "CS1R",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS1R"), WALL_DISTANCE_M, 0));
+            FieldConstants.CORAL_STATION_POSES.get("CS1R"), WALL_DISTANCE_M, 0, false));
     coralStation.addOption(
         "CS2L",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS2L"), WALL_DISTANCE_M, 0));
+            FieldConstants.CORAL_STATION_POSES.get("CS2L"), WALL_DISTANCE_M, 0, false));
     coralStation.addOption(
         "CS2C",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS2C"), WALL_DISTANCE_M, 0));
+            FieldConstants.CORAL_STATION_POSES.get("CS2C"), WALL_DISTANCE_M, 0, false));
     coralStation.addOption(
         "CS2R",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS2R"), WALL_DISTANCE_M, 0));
+            FieldConstants.CORAL_STATION_POSES.get("CS2R"), WALL_DISTANCE_M, 0, false));
     LoggedDashboardChooser<String> secondBranch = new LoggedDashboardChooser<>("Second BRANCH");
     secondBranch.addOption("L", "L");
     secondBranch.addOption("K", "K");
@@ -96,7 +96,22 @@ public class AutoCommands {
     Shuffleboard.getTab("Auto").add(secondBranch.getSendableChooser());
     Shuffleboard.getTab("Auto").add(secondCoralLevel.getSendableChooser());
 
-    return Commands.runOnce(() -> drive.resetPose(startingPose.get()), drive)
+    // Initialize options within the choosers so it doesn't crash
+    startingPose.periodic();
+    firstBranch.periodic();
+    firstCoralLevel.periodic();
+    coralStation.periodic();
+    secondBranch.periodic();
+    secondCoralLevel.periodic();
+
+    return Commands.runOnce(() -> {
+        startingPose.periodic();
+        firstBranch.periodic();
+        firstCoralLevel.periodic();
+        coralStation.periodic();
+        secondBranch.periodic();
+        secondCoralLevel.periodic();
+    drive.resetPose(startingPose.get());}, drive)
         .andThen(
             Commands.parallel(
                 PathfindingCommands.pathfindToBranch(firstBranch.get(), WALL_DISTANCE_M),
@@ -125,5 +140,5 @@ public class AutoCommands {
         .andThen(SuperstructureCommands.score(aee, cee, funnel));
   }
 
-  //   public static Command deadreakon1Piece(Drive drive)
+  // public static Command deadreakon1Piece(Drive drive)
 }

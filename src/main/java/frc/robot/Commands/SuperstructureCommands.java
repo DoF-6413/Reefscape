@@ -175,10 +175,11 @@ public class SuperstructureCommands {
   }
 
   /**
-   * Sets the position of the Periscope height and ALGAE Pivot angle to score CORAL in L4.
+   * Sets the position of the Periscope height and ALGAE Pivot angle to score CORAL in L4. Reverses CORAL at the top so that it is not poking out too far.
    *
    * @param periscope {@link Periscope} subsystem
    * @param algaePivot {@link AlgaePivot} subsystem
+   * @param cee {@link CEE} subsystem
    * @return {@link Command} that sets the positions to score CORAL in L4.
    */
   public static Command positionsToL4(Periscope periscope, AlgaePivot algaePivot, CEE cee) {
