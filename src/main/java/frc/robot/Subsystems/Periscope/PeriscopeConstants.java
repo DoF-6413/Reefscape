@@ -57,7 +57,7 @@ public class PeriscopeConstants {
   /** Height position of the Periscope for aligning with the Funnel at the CORAL STATION */
   public static final double CORAL_STATION_HEIGHT_M = MIN_HEIGHT_M;
   /** Height position of the Periscope for reaching the PROCCESOR */
-  public static final double PROCESSOR_HEIGHT_M = Units.inchesToMeters(12.3456789); // TODO: Update
+  public static final double PROCESSOR_HEIGHT_M = Units.inchesToMeters(8); // TODO: Update
   /** Height position of the Periscope for reaching the NET */
   public static final double NET_HEIGHT_M = MAX_HEIGHT_M;
 

@@ -25,6 +25,8 @@ public class AEEConstants {
   public static final double SCORE_PERCENT_SPEED = 0.80;
   /** Intaking speed, open loop voltage control */
   public static final double INTAKE_PERCENT_SPEED = -0.80;
+  /** Speed when removing ALGAE from the REEF, open loop voltage control */
+  public static final double DEALGAE_PERCENT_SPEED = 0.90;
 
   // PID CONSTANTS
   /**

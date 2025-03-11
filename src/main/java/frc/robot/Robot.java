@@ -87,7 +87,7 @@ public class Robot extends LoggedRobot {
      * 4: Functionality: 0 = working, 1 = WIP, 2 = doesn't work
      */
 
-    SmartDashboard.putString("Version Number", "29.51.30.1");
+    SmartDashboard.putString("Version Number", "29.51.31.1");
 
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
@@ -134,6 +134,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    CommandScheduler.getInstance().cancelAll();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

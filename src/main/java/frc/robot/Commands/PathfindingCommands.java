@@ -36,19 +36,38 @@ public class PathfindingCommands {
   public static Command pathfindToFieldElement(
       Pose2d elementPose, double wallDistanceMeters, double strafeOffsetMeters, boolean isFront) {
     var elementRotation = elementPose.getRotation();
-    double hypot =
-        Math.hypot((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters, strafeOffsetMeters);
-    double hypotAngle =
-        Math.atan2(strafeOffsetMeters, (DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters);
-    // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on top of
-    // the specified field element's pose
+    // double hypot =
+    //     Math.hypot((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters, strafeOffsetMeters);
+    // double hypotAngle =
+    //     Math.atan2(strafeOffsetMeters, (DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters);
+    // // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on top
+    // of
+    // // the specified field element's pose
+    // var goalPose =
+    //     new Pose2d(
+    //         // Multiply the x by cos and y by sin of the field element angle so that the hypot
+    //         // (field element to robot)
+    //         // is the desired distance away from the field element
+    //         elementPose.getX() + hypot * Math.cos(elementRotation.getRadians() - hypotAngle),
+    //         elementPose.getY() + hypot * Math.sin(elementRotation.getRadians() - hypotAngle),
+    //         // Rotate by 180 as the field elements' angles are rotated 180 degrees relative to
+    // the
+    //         // robot
+    //         elementRotation.plus(isFront ? Rotation2d.k180deg : Rotation2d.kZero));
+
     var goalPose =
         new Pose2d(
             // Multiply the x by cos and y by sin of the field element angle so that the hypot
             // (field element to robot)
             // is the desired distance away from the field element
-            elementPose.getX() + hypot * Math.cos(elementRotation.getRadians() - hypotAngle),
-            elementPose.getY() + hypot * Math.sin(elementRotation.getRadians() - hypotAngle),
+            elementPose.getX()
+                + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters)
+                    * elementRotation.getCos()
+                + (strafeOffsetMeters * elementRotation.getSin()),
+            elementPose.getY()
+                + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters)
+                    * elementRotation.getSin()
+                + (strafeOffsetMeters * elementRotation.getCos()),
             // Rotate by 180 as the field elements' angles are rotated 180 degrees relative to the
             // robot
             elementRotation.plus(isFront ? Rotation2d.k180deg : Rotation2d.kZero));

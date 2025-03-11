@@ -81,7 +81,7 @@ public class Vision extends SubsystemBase {
       var target = currentResult.getBestTarget();
       if (target.getFiducialId() >= 1
           && target.getFiducialId() <= 22
-          && target.getPoseAmbiguity() > 0.0
+          && target.getPoseAmbiguity() >= 0.0
           && target.getPoseAmbiguity() <= 0.2) {
         var estimatedPose = m_photonPoseEstimators[i].update(currentResult);
         if (estimatedPose.isEmpty())

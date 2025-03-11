@@ -89,7 +89,7 @@ public final class Constants {
     public static final double MAX_VOLTAGE = 12;
 
     /** Weight of the robot with bumpers and battery */
-    public static final double ROBOT_WEIGHT_KG = Units.lbsToKilograms(135);
+    public static final double ROBOT_WEIGHT_KG = Units.lbsToKilograms(142);
     /** Rough moment of inertia calculation of the robot in kilograms * meters squared */
     public static final double ROBOT_MOI_KG_M2 =
         (1.0 / 12.0)

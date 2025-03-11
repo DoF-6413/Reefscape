@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.14675,
+        "x": 7.265,
         "y": 2.8744999999999994
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.782462972962884,
+        "x": 5.900712972962884,
         "y": 2.7121534264291176
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "SLR"
     },
     {
       "anchor": {

@@ -64,9 +64,6 @@ public class Periscope extends SubsystemBase {
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KA", PeriscopeConstants.KA);
     SmartDashboard.putNumber(
         "PIDFF_Tuning/Periscope/Max_Accel", PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2);
-
-    m_feedforward.setKg(0.17);
-    m_feedforward.setKg(PeriscopeConstants.KG);
   }
 
   @Override
@@ -76,8 +73,10 @@ public class Periscope extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
-    // if (m_inputs.isHallEffectSensorTriggered[0] && m_inputs.get) {
-
+    // if (m_inputs.isHallEffectSensorTriggered[0]
+    //     && m_inputs.heightMeters < Units.inchesToMeters(3)
+    //     && m_inputs.currentDraw[0] > 30) {
+    //   this.resetPosition(0);
     // }
 
     if (m_enablePID) {
@@ -139,15 +138,20 @@ public class Periscope extends SubsystemBase {
    */
   public void setPosition(double heightMeters) {
     // Compare new setpoint to previous to determine whether to lower acceleration or not
-    this.setMaxAcceleration(
+    var acceleration =
         (heightMeters < m_prevSetpoint)
             ? PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2 / 6
-            : PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2);
+            : PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2;
+
+    m_feedforward.setKg(0);
+    m_feedforward.setKg(PeriscopeConstants.KG);
 
     // Record and update setpoint
     m_prevSetpoint = heightMeters;
     Logger.recordOutput("Superstructure/Setpoints/PeriscopeHeight", m_prevSetpoint);
     m_profiledPIDController.setGoal(heightMeters);
+    m_profiledPIDController.setConstraints(
+        new TrapezoidProfile.Constraints(PeriscopeConstants.MAX_VELOCITY_M_PER_SEC, acceleration));
   }
 
   /**

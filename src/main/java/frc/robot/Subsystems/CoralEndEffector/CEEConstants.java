@@ -16,7 +16,7 @@ public class CEEConstants {
    */
   public static final boolean IS_INVERTED = false;
   /** Current limit, in amps for the CEE motor */
-  public static final int CUR_LIM_A = 25;
+  public static final int CUR_LIM_A = 20;
   /** Time in seconds to wait after beam break before stopping the CEE motor */
   public static final double BEAM_BREAK_DELAY = 0.0; // TODO: Update
   // Velocities
