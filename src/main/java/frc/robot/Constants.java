@@ -31,6 +31,7 @@ import frc.robot.Subsystems.Drive.DriveConstants;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -244,6 +245,11 @@ public final class Constants {
         // Map poses to corresponding BRANCH letter
         BRANCH_POSES.put(BRANCH_LETTERS.substring(i, i + 1), leftBranch);
         BRANCH_POSES.put(BRANCH_LETTERS.substring(i + 6, i + 7), rightBranch);
+
+        // Log poses
+        Logger.recordOutput("FieldPoses/Reef/" + BRANCH_LETTERS.substring(i, i + 1), leftBranch);
+        Logger.recordOutput(
+            "FieldPoses/Reef/" + BRANCH_LETTERS.substring(i + 6, i + 7), rightBranch);
       }
       // Initialize the locations of the center of the CORAL STATIONS
       CENTER_CORAL_STATION[0] = APRILTAG_FIELD_LAYOUT.getTagPose(13).get().toPose2d();
@@ -279,10 +285,20 @@ public final class Constants {
                             -Math.PI / 2 + CENTER_CORAL_STATION[i].getRotation().getRadians())),
                 CENTER_CORAL_STATION[i].getRotation());
 
+        // CS Names
+        String center = "CS" + (i + 1) + "C";
+        String left = "CS" + (i + 1) + "L";
+        String right = "CS" + (i + 1) + "R";
+
         // Map poses to names
-        CORAL_STATION_POSES.put("CS" + (i + 1) + "C", CENTER_CORAL_STATION[i]);
-        CORAL_STATION_POSES.put("CS" + (i + 1) + "L", leftCS);
-        CORAL_STATION_POSES.put("CS" + (i + 1) + "R", rightCS);
+        CORAL_STATION_POSES.put(center, CENTER_CORAL_STATION[i]);
+        CORAL_STATION_POSES.put(left, leftCS);
+        CORAL_STATION_POSES.put(right, rightCS);
+
+        // Log poses
+        Logger.recordOutput("FieldPoses/CoralStation/" + center, CENTER_CORAL_STATION[i]);
+        Logger.recordOutput("FieldPoses/CoralStation/" + left, leftCS);
+        Logger.recordOutput("FieldPoses/CoralStation/" + right, rightCS);
       }
     }
   }
@@ -339,6 +355,6 @@ public final class Constants {
     /** Default distance away from any wall when the robot is Pathfinding towards one */
     public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(6);
     /** Distance from the center of the robot to the center of the Superstructure */
-    public static final double ROBOT_MIDPOINT_TO_INTAKE = Units.inchesToMeters(7);
+    public static final double ROBOT_MIDPOINT_TO_SUPERSTRUCTURE = Units.inchesToMeters(7);
   }
 }

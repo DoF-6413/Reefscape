@@ -7,6 +7,7 @@ package frc.robot.Subsystems.Periscope;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
@@ -54,7 +55,7 @@ public class Periscope extends SubsystemBase {
     m_profiledPIDController.setGoal(0);
 
     // Tunable PID & Feedforward gains
-    SmartDashboard.putBoolean("PIDFF_Tuning/Periscope/EnableTuning", true);
+    SmartDashboard.putBoolean("PIDFF_Tuning/Periscope/EnableTuning", false);
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KP", PeriscopeConstants.KP);
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KI", PeriscopeConstants.KI);
     SmartDashboard.putNumber("PIDFF_Tuning/Periscope/KD", PeriscopeConstants.KD);
@@ -79,6 +80,10 @@ public class Periscope extends SubsystemBase {
     //   this.resetPosition(0);
     // }
 
+    if (DriverStation.isDisabled()) {
+      this.setPosition(0);
+    }
+
     if (m_enablePID) {
       // Calculate voltage based on PID and Feedforward controllers
       this.setVoltage(
@@ -86,7 +91,7 @@ public class Periscope extends SubsystemBase {
               + m_feedforward.calculate(m_profiledPIDController.getConstraints().maxVelocity));
 
       // Enable and update tunable PID & Feedforward gains through SmartDashboard
-      if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", true)) {
+      if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {
         this.updatePID();
         this.updateFF();
       }
@@ -142,9 +147,6 @@ public class Periscope extends SubsystemBase {
         (heightMeters < m_prevSetpoint)
             ? PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2 / 6
             : PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2;
-
-    m_feedforward.setKg(0);
-    m_feedforward.setKg(PeriscopeConstants.KG);
 
     // Record and update setpoint
     m_prevSetpoint = heightMeters;

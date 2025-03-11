@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
@@ -51,7 +50,7 @@ public class PathfindingCommands {
             elementPose.getX() + hypot * Math.cos(elementRotation.getRadians() + hypotAngle),
             elementPose.getY() + hypot * Math.sin(elementRotation.getRadians() + hypotAngle),
             // Rotate by 180 as the field elements' angles are rotated 180 degrees relative to
-    // the
+            // the
             // robot
             elementRotation.plus(isFront ? Rotation2d.k180deg : Rotation2d.kZero));
 
@@ -68,7 +67,8 @@ public class PathfindingCommands {
     //             + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters)
     //                 * elementRotation.getSin()
     //             + (strafeOffsetMeters * elementRotation.getCos()),
-    //         // Rotate by 180 as the field elements' angles are rotated 180 degrees relative to the
+    //         // Rotate by 180 as the field elements' angles are rotated 180 degrees relative to
+    // the
     //         // robot
     //         elementRotation.plus(isFront ? Rotation2d.k180deg : Rotation2d.kZero));
 
@@ -113,7 +113,7 @@ public class PathfindingCommands {
             PathfindingCommands.pathfindToFieldElement(
                     apriltagPose.get().toPose2d(),
                     wallDistanceMeters,
-                    PathPlannerConstants.ROBOT_MIDPOINT_TO_INTAKE,
+                    PathPlannerConstants.ROBOT_MIDPOINT_TO_SUPERSTRUCTURE,
                     true)
                 .until(stopTrigger)
                 .schedule();
@@ -169,9 +169,6 @@ public class PathfindingCommands {
   public static Command pathfindToBranch(String branchLetter, double wallDistanceMeters) {
     // Position of BRANCH corresponding to zone the robot is in
     var branchPose = FieldConstants.BRANCH_POSES.get(branchLetter);
-
-    if (branchLetter == null || branchLetter.isEmpty() || branchLetter.isBlank())
-      return new InstantCommand();
 
     // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on top of
     // the BRANCH
@@ -284,7 +281,7 @@ public class PathfindingCommands {
           PathfindingCommands.pathfindToFieldElement(
                   FieldConstants.BRANCH_POSES.get(branchLetter),
                   wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_X_M,
-                  PathPlannerConstants.ROBOT_MIDPOINT_TO_INTAKE,
+                  PathPlannerConstants.ROBOT_MIDPOINT_TO_SUPERSTRUCTURE,
                   true)
               .until(stopTrigger)
               .schedule();
@@ -315,13 +312,19 @@ public class PathfindingCommands {
           if (drive.getCurrentPose2d().getY() > FieldConstants.FIELD_WIDTH / 2) {
             // Pathfind to the center of the CS to the left of the Driver Station
             PathfindingCommands.pathfindToFieldElement(
-                    FieldConstants.CORAL_STATION_POSES.get(csLeft), wallDistanceMeters, 0, false)
+                    FieldConstants.CORAL_STATION_POSES.get(csLeft),
+                    wallDistanceMeters,
+                    -PathPlannerConstants.ROBOT_MIDPOINT_TO_SUPERSTRUCTURE,
+                    false)
                 .until(stopTrigger)
                 .schedule();
           } else {
             // Pathfind to the center of the CS to the right of the Driver Station
             PathfindingCommands.pathfindToFieldElement(
-                    FieldConstants.CORAL_STATION_POSES.get(csRight), wallDistanceMeters, 0, false)
+                    FieldConstants.CORAL_STATION_POSES.get(csRight),
+                    wallDistanceMeters,
+                    -PathPlannerConstants.ROBOT_MIDPOINT_TO_SUPERSTRUCTURE,
+                    false)
                 .until(stopTrigger)
                 .schedule();
           }

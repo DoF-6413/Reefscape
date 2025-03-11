@@ -15,7 +15,6 @@ import frc.robot.Commands.AutoCommands;
 import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.PathfindingCommands;
 import frc.robot.Commands.SuperstructureCommands;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
@@ -27,7 +26,6 @@ import frc.robot.Subsystems.Drive.*;
 import frc.robot.Subsystems.Funnel.*;
 import frc.robot.Subsystems.Periscope.*;
 import frc.robot.Subsystems.Vision.*;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -178,8 +176,8 @@ public class RobotContainer {
             m_CEESubsystem,
             m_funnelSubsystem));
     m_autoChooser.addOption(
-        "1P_SLC-G_L4",
-        AutoCommands.pathfindingAuto1Piece(
+        "1P_SLC-G4 (Pathfinding)",
+        AutoCommands.pathfindingAutoOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
@@ -191,7 +189,7 @@ public class RobotContainer {
             4));
     m_autoChooser.addOption(
         "Deadreakon 1P L1",
-        AutoCommands.deadreakon1Piece(
+        AutoCommands.deadreakonOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
@@ -202,7 +200,7 @@ public class RobotContainer {
             1));
     m_autoChooser.addOption(
         "Deadreakon 1P L2",
-        AutoCommands.deadreakon1Piece(
+        AutoCommands.deadreakonOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
@@ -213,7 +211,7 @@ public class RobotContainer {
             2));
     m_autoChooser.addOption(
         "Deadreakon 1P L3",
-        AutoCommands.deadreakon1Piece(
+        AutoCommands.deadreakonOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
@@ -224,7 +222,7 @@ public class RobotContainer {
             3));
     m_autoChooser.addOption(
         "Deadreakon 1P L4",
-        AutoCommands.deadreakon1Piece(
+        AutoCommands.deadreakonOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
@@ -309,15 +307,6 @@ public class RobotContainer {
     m_autoChooser.addOption("2P_SLR-F4-CS2R-C4", new PathPlannerAuto("2P_SLR-F4-CS2R-C4"));
     m_autoChooser.addOption("2P_SLR-F4-CS2R-D4", new PathPlannerAuto("2P_SLR-F4-CS2R-D4"));
 
-    /* Test Routines */
-    m_autoChooser.addOption("Forward", new PathPlannerAuto("Forward"));
-    m_autoChooser.addOption("Forward 180", new PathPlannerAuto("Forward 180"));
-    m_autoChooser.addOption("Reverse", new PathPlannerAuto("Reverse"));
-    m_autoChooser.addOption("Reverse 180", new PathPlannerAuto("Reverse 180"));
-    m_autoChooser.addOption("Diagonal", new PathPlannerAuto("Diagonal"));
-    m_autoChooser.addOption("Diagonal 180", new PathPlannerAuto("Diagonal 180"));
-    m_autoChooser.addOption("Curve", new PathPlannerAuto("Curve"));
-    m_autoChooser.addOption("Curve 180", new PathPlannerAuto("Curve 180"));
     /* Characterization Routines */
     m_autoChooser.addOption(
         "Drive Feedforward Characterization",
@@ -331,32 +320,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-
-    Logger.recordOutput(
-        "FieldPoses/CoralStation/CS1L", FieldConstants.CORAL_STATION_POSES.get("CS1L"));
-    Logger.recordOutput(
-        "FieldPoses/CoralStation/CS1C", FieldConstants.CORAL_STATION_POSES.get("CS1C"));
-    Logger.recordOutput(
-        "FieldPoses/CoralStation/CS1R", FieldConstants.CORAL_STATION_POSES.get("CS1R"));
-    Logger.recordOutput(
-        "FieldPoses/CoralStation/CS2L", FieldConstants.CORAL_STATION_POSES.get("CS2L"));
-    Logger.recordOutput(
-        "FieldPoses/CoralStation/CS2C", FieldConstants.CORAL_STATION_POSES.get("CS2C"));
-    Logger.recordOutput(
-        "FieldPoses/CoralStation/CS2R", FieldConstants.CORAL_STATION_POSES.get("CS2R"));
-
-    Logger.recordOutput("FieldPoses/Reef/A", FieldConstants.BRANCH_POSES.get("A"));
-    Logger.recordOutput("FieldPoses/Reef/B", FieldConstants.BRANCH_POSES.get("B"));
-    Logger.recordOutput("FieldPoses/Reef/C", FieldConstants.BRANCH_POSES.get("C"));
-    Logger.recordOutput("FieldPoses/Reef/D", FieldConstants.BRANCH_POSES.get("D"));
-    Logger.recordOutput("FieldPoses/Reef/E", FieldConstants.BRANCH_POSES.get("E"));
-    Logger.recordOutput("FieldPoses/Reef/F", FieldConstants.BRANCH_POSES.get("F"));
-    Logger.recordOutput("FieldPoses/Reef/G", FieldConstants.BRANCH_POSES.get("G"));
-    Logger.recordOutput("FieldPoses/Reef/H", FieldConstants.BRANCH_POSES.get("H"));
-    Logger.recordOutput("FieldPoses/Reef/I", FieldConstants.BRANCH_POSES.get("I"));
-    Logger.recordOutput("FieldPoses/Reef/J", FieldConstants.BRANCH_POSES.get("J"));
-    Logger.recordOutput("FieldPoses/Reef/K", FieldConstants.BRANCH_POSES.get("K"));
-    Logger.recordOutput("FieldPoses/Reef/L", FieldConstants.BRANCH_POSES.get("L"));
   }
 
   /**

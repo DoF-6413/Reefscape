@@ -121,6 +121,14 @@ public class SuperstructureCommands {
   public static Command score(AEE aee, CEE cee, Funnel funnel) {
     return SuperstructureCommands.setSpeeds(
         aee, cee, funnel, AEEConstants.SCORE_PERCENT_SPEED, CEEConstants.SCORE_PERCENT_SPEED, 0);
+
+    // return SuperstructureCommands.setSpeeds(
+    //     aee,
+    //     cee,
+    //     funnel,
+    //     SuperstructureState.AEESpeed,
+    //     SuperstructureState.CEESpeed,
+    //     SuperstructureState.funnelSpeed);
   }
 
   /* ~~~~~~~~~~~~~~~~~~~~ CORAL ~~~~~~~~~~~~~~~~~~~~~~~~~ */
