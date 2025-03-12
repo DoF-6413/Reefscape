@@ -188,41 +188,52 @@ public class RobotContainer {
             "G",
             4));
     m_autoChooser.addOption(
-        "Deadreakon 1P L1",
-        AutoCommands.deadreakonOnePiece(
+        "Deadreckon 1P L1",
+        AutoCommands.deadreckonOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
             m_AEESubsystem,
             m_CEESubsystem,
             m_funnelSubsystem,
-            0.2,
+            0.4,
             1));
     m_autoChooser.addOption(
-        "Deadreakon 1P L2",
-        AutoCommands.deadreakonOnePiece(
+        "Deadreckon 1P L2",
+        AutoCommands.deadreckonOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
             m_AEESubsystem,
             m_CEESubsystem,
             m_funnelSubsystem,
-            0.2,
+            0.4,
             2));
     m_autoChooser.addOption(
-        "Deadreakon 1P L3",
-        AutoCommands.deadreakonOnePiece(
+        "Deadreckon 1P L3",
+        AutoCommands.deadreckonOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
             m_AEESubsystem,
             m_CEESubsystem,
             m_funnelSubsystem,
-            0.2,
+            0.4,
             3));
     m_autoChooser.addOption(
-        "Deadreakon 1P L4",
-        AutoCommands.deadreakonOnePiece(
+        "Deadreckon 1P L4",
+        AutoCommands.deadreckonOnePiece(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem,
+            0.4,
+            4));
+    m_autoChooser.addOption(
+        "Unethical 1.5P L4",
+        AutoCommands.unethicalOneAndHalfPiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
@@ -438,14 +449,33 @@ public class RobotContainer {
     /* Scoring commands */
     // Score
     m_driverController
-        .rightTrigger()
+        .rightBumper()
         .onTrue(
-            SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem)
-                .until(m_driverController.rightTrigger().negate())
-                .withName("Score"));
+            new InstantCommand(
+                () -> m_CEESubsystem.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED),
+                m_CEESubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  m_CEESubsystem.setPercentSpeed(0);
+                  m_AEESubsystem.setPercentSpeed(0);
+                },
+                m_AEESubsystem,
+                m_CEESubsystem))
+        .and(
+            m_auxButtonBoard.axisGreaterThan(
+                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  m_CEESubsystem.setPercentSpeed(0);
+                  m_AEESubsystem.setPercentSpeed(AEEConstants.SCORE_PERCENT_SPEED);
+                },
+                m_AEESubsystem,
+                m_CEESubsystem));
     // Intaking
     m_driverController
-        .rightBumper()
+        .rightTrigger()
         .onTrue(
             SuperstructureCommands.intakeCoral(
                     m_periscopeSubsystem,
@@ -453,7 +483,7 @@ public class RobotContainer {
                     m_AEESubsystem,
                     m_CEESubsystem,
                     m_funnelSubsystem)
-                .until(m_driverController.rightBumper().negate())
+                .until(m_driverController.rightTrigger().negate())
                 .withName("CoralIntake"))
         .onFalse(
             SuperstructureCommands.zero(
@@ -467,7 +497,8 @@ public class RobotContainer {
     m_driverController
         .back()
         .onTrue(
-            new InstantCommand(() -> m_periscopeSubsystem.resetPosition(0), m_periscopeSubsystem));
+            new InstantCommand(() -> m_periscopeSubsystem.resetPosition(0), m_periscopeSubsystem)
+                .ignoringDisable(true));
   }
 
   /** Aux Button Board Controls */
@@ -575,11 +606,15 @@ public class RobotContainer {
                 m_funnelSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
-                m_AEESubsystem,
-                m_CEESubsystem,
-                m_funnelSubsystem));
+                    m_periscopeSubsystem,
+                    m_algaePivotSubsystem,
+                    m_AEESubsystem,
+                    m_CEESubsystem,
+                    m_funnelSubsystem)
+                .andThen(
+                    Commands.runOnce(
+                        () -> m_AEESubsystem.setPercentSpeed(AEEConstants.INTAKE_PERCENT_SPEED),
+                        m_AEESubsystem)));
     // Zero mechanisms
     m_auxButtonBoard
         .axisGreaterThan(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID, 0.5)

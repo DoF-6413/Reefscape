@@ -261,12 +261,7 @@ public class SuperstructureCommands {
             SuperstructureState.algaePivotAngle)
         .alongWith(
             SuperstructureCommands.setSpeeds(
-                aee,
-                cee,
-                funnel,
-                SuperstructureState.AEESpeed,
-                SuperstructureState.CEESpeed,
-                SuperstructureState.funnelSpeed));
+                aee, cee, funnel, AEEConstants.INTAKE_PERCENT_SPEED, 0, 0));
   }
 
   /**
@@ -289,12 +284,7 @@ public class SuperstructureCommands {
             SuperstructureState.algaePivotAngle)
         .alongWith(
             SuperstructureCommands.setSpeeds(
-                aee,
-                cee,
-                funnel,
-                SuperstructureState.AEESpeed,
-                SuperstructureState.CEESpeed,
-                SuperstructureState.funnelSpeed));
+                aee, cee, funnel, AEEConstants.INTAKE_PERCENT_SPEED, 0, 0));
   }
 
   /**

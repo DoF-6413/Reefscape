@@ -7,7 +7,9 @@ package frc.robot.Subsystems.Periscope;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
@@ -21,6 +23,9 @@ public class Periscope extends SubsystemBase {
   private final ElevatorFeedforward m_feedforward;
   private double m_prevSetpoint = 0.0;
   private boolean m_enablePID = true;
+
+  private final Timer m_zeroTimer = new Timer();
+  private boolean hasZeroed = false;
 
   /**
    * This constructs a new {@link Periscope} instance.
@@ -74,21 +79,30 @@ public class Periscope extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
-    // if (m_inputs.isHallEffectSensorTriggered[0]
-    //     && m_inputs.heightMeters < Units.inchesToMeters(3)
-    //     && m_inputs.currentDraw[0] > 30) {
-    //   this.resetPosition(0);
-    // }
+    if (m_inputs.isHallEffectSensorTriggered[0]
+        && m_inputs.heightMeters < Units.inchesToMeters(3)
+        && m_inputs.currentDraw[0] > 25) {
+      this.resetPosition(0);
+    }
+
+    // The feedforward calculates over 11 volts unless the a gain is changed with the tunable
+    // values. This is needed so that changes the gains doesn't have to be done every time
+    var feedforwardVolts =
+        m_feedforward.calculateWithVelocities(
+            m_profiledPIDController.getConstraints().maxVelocity,
+            m_profiledPIDController.getConstraints().maxVelocity);
 
     if (DriverStation.isDisabled()) {
-      this.setPosition(0);
+      // Don't apply feedforward if disabled
+      feedforwardVolts = 0.0;
     }
 
     if (m_enablePID) {
+      // Apply correct feedforward calculation if it's wrong (it should remain constant since max
+      // velocity doesn't change)
+      if (feedforwardVolts > 1) feedforwardVolts = 0.2496000000000002;
       // Calculate voltage based on PID and Feedforward controllers
-      this.setVoltage(
-          m_profiledPIDController.calculate(m_inputs.heightMeters)
-              + m_feedforward.calculate(m_profiledPIDController.getConstraints().maxVelocity));
+      this.setVoltage(m_profiledPIDController.calculate(m_inputs.heightMeters) + feedforwardVolts);
 
       // Enable and update tunable PID & Feedforward gains through SmartDashboard
       if (SmartDashboard.getBoolean("PIDFF_Tuning/Periscope/EnableTuning", false)) {

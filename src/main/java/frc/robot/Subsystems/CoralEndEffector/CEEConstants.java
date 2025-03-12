@@ -9,14 +9,14 @@ public class CEEConstants {
   /** Gear reduction of 3:1 for the CEE motor */
   public static final double GEAR_RATIO = 3.0 / 1.0;
   /** DIO port of the Beam Break, on the roboRIO */
-  public static final int BEAM_BREAK_DIO_PORT = 0;
+  public static final int BEAM_BREAK_DIO_PORT = 2;
 
   /**
    * Set the inversion status of the CEE to false, making Counterclockwise the positive direction
    */
   public static final boolean IS_INVERTED = false;
   /** Current limit, in amps for the CEE motor */
-  public static final int CUR_LIM_A = 20;
+  public static final int CUR_LIM_A = 30;
   /** Time in seconds to wait after beam break before stopping the CEE motor */
   public static final double BEAM_BREAK_DELAY = 0.0; // TODO: Update
   // Velocities

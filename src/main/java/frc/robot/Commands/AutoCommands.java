@@ -268,11 +268,17 @@ public class AutoCommands {
                 PathfindingCommands.pathfindToBranch(
                     branch, PathPlannerConstants.DEFAULT_WALL_DISTANCE_M),
                 SuperstructureCommands.positionsToL4(periscope, algaePivot, cee)))
-        .andThen(Commands.waitSeconds(TIME_BETWEEN_ACTIONS).andThen(coralPosition));
+        .andThen(Commands.waitSeconds(TIME_BETWEEN_ACTIONS))
+        .andThen(coralPosition)
+        .andThen(Commands.waitSeconds(TIME_BETWEEN_ACTIONS))
+        .andThen(
+            PathfindingCommands.pathfindToClosestCoralStation(
+                drive, PathPlannerConstants.DEFAULT_WALL_DISTANCE_M, () -> false));
   }
 
   /**
-   * 1 Piece auto for scoring a specified CORAL on the G or H BRANCHES.
+   * 1 Piece auto for scoring a specified CORAL on the G or H BRANCHES. Doesn't use Vision (only
+   * percent speed of the DT) to move the robot.
    *
    * @param drive {@link Drive} subsystem
    * @param periscope {@link Periscope} subsystem
@@ -282,9 +288,9 @@ public class AutoCommands {
    * @param funnel {@link Funnel} subsystem
    * @param driveSpeed Percent speed of the Drivetrain
    * @param coralLevel CORAL level to score
-   * @return {@link Command} that runs the deadreakoned 1 piece auto.
+   * @return {@link Command} that runs the deadreckoned 1 piece auto.
    */
-  public static Command deadreakonOnePiece(
+  public static Command deadreckonOnePiece(
       Drive drive,
       Periscope periscope,
       AlgaePivot algaePivot,
@@ -329,5 +335,76 @@ public class AutoCommands {
                 Commands.runOnce(() -> drive.setRaw(0, 0, 0), drive),
                 Commands.runOnce(
                     () -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)));
+  }
+
+  /**
+   * 1.5 Piece auto for scoring a specified CORAL on the G or H BRANCHES. Uses deadre
+   *
+   * @param drive {@link Drive} subsystem
+   * @param periscope {@link Periscope} subsystem
+   * @param algaePivot {@link AlgaePivot} subsystem
+   * @param aee {@link AEE} subsystem
+   * @param cee {@link CEE} subsystem
+   * @param funnel {@link Funnel} subsystem
+   * @param driveSpeed Percent speed of the Drivetrain
+   * @param coralLevel CORAL level to score
+   * @return {@link Command} that runs the deadreckoned 1 piece auto.
+   */
+  public static Command unethicalOneAndHalfPiece(
+      Drive drive,
+      Periscope periscope,
+      AlgaePivot algaePivot,
+      AEE aee,
+      CEE cee,
+      Funnel funnel,
+      double driveSpeed,
+      int coralLevel) {
+    final double DRIVE_TIME_SEC = 4;
+    final double TIME_BETWEEN_ACTIONS = 1;
+    final Command coralPosition;
+    switch (coralLevel) {
+      case 1:
+        coralPosition = SuperstructureCommands.positionsToL1(periscope, algaePivot);
+        break;
+
+      case 2:
+        coralPosition = SuperstructureCommands.positionsToL2Coral(periscope, algaePivot, aee);
+        break;
+
+      case 3:
+        coralPosition = SuperstructureCommands.positionsToL3Coral(periscope, algaePivot, aee);
+        break;
+
+      case 4:
+        coralPosition = SuperstructureCommands.positionsToL4(periscope, algaePivot, cee);
+        break;
+
+      default:
+        coralPosition = SuperstructureCommands.positionsToL1(periscope, algaePivot);
+        break;
+    }
+
+    return Commands.runOnce(() -> drive.zeroYaw(), drive)
+        .andThen(
+            Commands.parallel(
+                DriveCommands.fieldRelativeDriveAtAngle(
+                        drive, () -> driveSpeed, () -> 0, () -> Rotation2d.kZero)
+                    .withTimeout(DRIVE_TIME_SEC),
+                coralPosition))
+        .andThen(
+            Commands.parallel(
+                Commands.runOnce(() -> drive.setRaw(0, 0, 0), drive),
+                Commands.runOnce(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)))
+        .andThen(Commands.waitSeconds(TIME_BETWEEN_ACTIONS))
+        .andThen(
+            Commands.parallel(
+                PathfindingCommands.pathfindToClosestCoralStation(
+                    drive, PathPlannerConstants.DEFAULT_WALL_DISTANCE_M, () -> false),
+                SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel)
+                    .andThen(
+                        Commands.waitSeconds(TIME_BETWEEN_ACTIONS)
+                            .andThen(
+                                SuperstructureCommands.intakeCoral(
+                                    periscope, algaePivot, aee, cee, funnel)))));
   }
 }
