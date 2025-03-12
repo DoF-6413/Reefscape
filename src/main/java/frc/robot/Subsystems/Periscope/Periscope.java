@@ -9,7 +9,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
@@ -23,9 +22,6 @@ public class Periscope extends SubsystemBase {
   private final ElevatorFeedforward m_feedforward;
   private double m_prevSetpoint = 0.0;
   private boolean m_enablePID = true;
-
-  private final Timer m_zeroTimer = new Timer();
-  private boolean hasZeroed = false;
 
   /**
    * This constructs a new {@link Periscope} instance.

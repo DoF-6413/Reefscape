@@ -54,24 +54,6 @@ public class PathfindingCommands {
             // robot
             elementRotation.plus(isFront ? Rotation2d.k180deg : Rotation2d.kZero));
 
-    // var goalPose =
-    //     new Pose2d(
-    //         // Multiply the x by cos and y by sin of the field element angle so that the hypot
-    //         // (field element to robot)
-    //         // is the desired distance away from the field element
-    //         elementPose.getX()
-    //             + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters)
-    //                 * elementRotation.getCos()
-    //             + (strafeOffsetMeters * elementRotation.getSin()),
-    //         elementPose.getY()
-    //             + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters)
-    //                 * elementRotation.getSin()
-    //             + (strafeOffsetMeters * elementRotation.getCos()),
-    //         // Rotate by 180 as the field elements' angles are rotated 180 degrees relative to
-    // the
-    //         // robot
-    //         elementRotation.plus(isFront ? Rotation2d.k180deg : Rotation2d.kZero));
-
     return AutoBuilder.pathfindToPoseFlipped(
         goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
   }

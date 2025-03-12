@@ -176,6 +176,17 @@ public class RobotContainer {
             m_CEESubsystem,
             m_funnelSubsystem));
     m_autoChooser.addOption(
+        "Deadreckon 1P L4",
+        AutoCommands.deadreckonOnePiece(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem,
+            0.4,
+            4));
+    m_autoChooser.addOption(
         "1P_SLC-G4 (Pathfinding)",
         AutoCommands.pathfindingAutoOnePiece(
             m_driveSubsystem,
@@ -221,17 +232,6 @@ public class RobotContainer {
             0.4,
             3));
     m_autoChooser.addOption(
-        "Deadreckon 1P L4",
-        AutoCommands.deadreckonOnePiece(
-            m_driveSubsystem,
-            m_periscopeSubsystem,
-            m_algaePivotSubsystem,
-            m_AEESubsystem,
-            m_CEESubsystem,
-            m_funnelSubsystem,
-            0.4,
-            4));
-    m_autoChooser.addOption(
         "Unethical 1.5P L4",
         AutoCommands.unethicalOneAndHalfPiece(
             m_driveSubsystem,
@@ -265,58 +265,58 @@ public class RobotContainer {
     m_autoChooser.addOption("1P_SLR-E4", new PathPlannerAuto("1P_SLR-E4"));
     m_autoChooser.addOption("1P_SLR-F1", new PathPlannerAuto("1P_SLR-F1"));
     m_autoChooser.addOption("1P_SLR-F4", new PathPlannerAuto("1P_SLR-F4"));
-    // 2 Piece
-    // SLL
-    m_autoChooser.addOption("2P_SLL-IJ1-CS1L-L4", new PathPlannerAuto("2P_SLL-IJ1-CS1L-L4"));
-    m_autoChooser.addOption("2P_SLL-IJ1-CS1L-K4", new PathPlannerAuto("2P_SLL-IJ1-CS1L-K4"));
-    m_autoChooser.addOption("2P_SLL-IJ1-CS1L-A4", new PathPlannerAuto("2P_SLL-IJ1-CS1L-A4"));
-    m_autoChooser.addOption("2P_SLL-I1-CS1L-L4", new PathPlannerAuto("2P_SLL-I1-CS1L-L4"));
-    m_autoChooser.addOption("2P_SLL-I1-CS1L-K4", new PathPlannerAuto("2P_SLL-I1-CS1L-K4"));
-    m_autoChooser.addOption("2P_SLL-I1-CS1L-A4", new PathPlannerAuto("2P_SLL-I1-CS1L-A4"));
-    m_autoChooser.addOption("2P_SLL-I4-CS1L-L4", new PathPlannerAuto("2P_SLL-I4-CS1L-L4"));
-    m_autoChooser.addOption("2P_SLL-I4-CS1L-K4", new PathPlannerAuto("2P_SLL-I4-CS1L-K4"));
-    m_autoChooser.addOption("2P_SLL-I4-CS1L-A4", new PathPlannerAuto("2P_SLL-I4-CS1L-A4"));
-    m_autoChooser.addOption("2P_SLL-J1-CS1L-L4", new PathPlannerAuto("2P_SLL-J1-CS1L-L4"));
-    m_autoChooser.addOption("2P_SLL-J1-CS1L-K4", new PathPlannerAuto("2P_SLL-J1-CS1L-K4"));
-    m_autoChooser.addOption("2P_SLL-J1-CS1L-A4", new PathPlannerAuto("2P_SLL-J1-CS1L-A4"));
-    m_autoChooser.addOption("2P_SLL-J4-CS1L-L4", new PathPlannerAuto("2P_SLL-J4-CS1L-L4"));
-    m_autoChooser.addOption("2P_SLL-J4-CS1L-K4", new PathPlannerAuto("2P_SLL-J4-CS1L-K4"));
-    m_autoChooser.addOption("2P_SLL-J4-CS1L-A4", new PathPlannerAuto("2P_SLL-J4-CS1L-A4"));
-    // SLC
-    m_autoChooser.addOption("2P_SLC-GH1-CS1L-L4", new PathPlannerAuto("2P_SLC-GH1-CS1L-L4"));
-    m_autoChooser.addOption("2P_SLC-GH1-CS1L-K4", new PathPlannerAuto("2P_SLC-GH1-CS1L-K4"));
-    m_autoChooser.addOption("2P_SLC-GH1-CS1L-A4", new PathPlannerAuto("2P_SLC-GH1-CS1L-A4"));
-    m_autoChooser.addOption("2P_SLC-GH1-CS2R-B4", new PathPlannerAuto("2P_SLC-GH1-CS2R-B4"));
-    m_autoChooser.addOption("2P_SLC-GH1-CS2R-C4", new PathPlannerAuto("2P_SLC-GH1-CS2R-C4"));
-    m_autoChooser.addOption("2P_SLC-GH1-CS2R-D4", new PathPlannerAuto("2P_SLC-GH1-CS2R-D4"));
-    m_autoChooser.addOption("2P_SLC-G1-CS2R-B4", new PathPlannerAuto("2P_SLC-G1-CS2R-B4"));
-    m_autoChooser.addOption("2P_SLC-G1-CS2R-C4", new PathPlannerAuto("2P_SLC-G1-CS2R-C4"));
-    m_autoChooser.addOption("2P_SLC-G1-CS2R-D4", new PathPlannerAuto("2P_SLC-G1-CS2R-D4"));
-    m_autoChooser.addOption("2P_SLC-G4-CS2R-B4", new PathPlannerAuto("2P_SLC-G4-CS2R-B4"));
-    m_autoChooser.addOption("2P_SLC-G4-CS2R-C4", new PathPlannerAuto("2P_SLC-G4-CS2R-C4"));
-    m_autoChooser.addOption("2P_SLC-G4-CS2R-D4", new PathPlannerAuto("2P_SLC-G4-CS2R-D4"));
-    m_autoChooser.addOption("2P_SLC-H1-CS1L-L4", new PathPlannerAuto("2P_SLC-H1-CS1L-L4"));
-    m_autoChooser.addOption("2P_SLC-H1-CS1L-K4", new PathPlannerAuto("2P_SLC-H1-CS1L-K4"));
-    m_autoChooser.addOption("2P_SLC-H1-CS1L-A4", new PathPlannerAuto("2P_SLC-H1-CS1L-A4"));
-    m_autoChooser.addOption("2P_SLC-H4-CS1L-L4", new PathPlannerAuto("2P_SLC-H4-CS1L-L4"));
-    m_autoChooser.addOption("2P_SLC-H4-CS1L-K4", new PathPlannerAuto("2P_SLC-H4-CS1L-K4"));
-    m_autoChooser.addOption("2P_SLC-H4-CS1L-A4", new PathPlannerAuto("2P_SLC-H4-CS1L-A4"));
-    // SLR
-    m_autoChooser.addOption("2P_SLR-EF1-CS2R-B4", new PathPlannerAuto("2P_SLR-EF1-CS2R-B4"));
-    m_autoChooser.addOption("2P_SLR-EF1-CS2R-C4", new PathPlannerAuto("2P_SLR-EF1-CS2R-C4"));
-    m_autoChooser.addOption("2P_SLR-EF1-CS2R-D4", new PathPlannerAuto("2P_SLR-EF1-CS2R-D4"));
-    m_autoChooser.addOption("2P_SLR-E1-CS2R-B4", new PathPlannerAuto("2P_SLR-E1-CS2R-B4"));
-    m_autoChooser.addOption("2P_SLR-E1-CS2R-C4", new PathPlannerAuto("2P_SLR-E1-CS2R-C4"));
-    m_autoChooser.addOption("2P_SLR-E1-CS2R-D4", new PathPlannerAuto("2P_SLR-E1-CS2R-D4"));
-    m_autoChooser.addOption("2P_SLR-E4-CS2R-B4", new PathPlannerAuto("2P_SLR-E4-CS2R-B4"));
-    m_autoChooser.addOption("2P_SLR-E4-CS2R-C4", new PathPlannerAuto("2P_SLR-E4-CS2R-C4"));
-    m_autoChooser.addOption("2P_SLR-E4-CS2R-D4", new PathPlannerAuto("2P_SLR-E4-CS2R-D4"));
-    m_autoChooser.addOption("2P_SLR-F1-CS2R-B4", new PathPlannerAuto("2P_SLR-F1-CS2R-B4"));
-    m_autoChooser.addOption("2P_SLR-F1-CS2R-C4", new PathPlannerAuto("2P_SLR-F1-CS2R-C4"));
-    m_autoChooser.addOption("2P_SLR-F1-CS2R-D4", new PathPlannerAuto("2P_SLR-F1-CS2R-D4"));
-    m_autoChooser.addOption("2P_SLR-F4-CS2R-B4", new PathPlannerAuto("2P_SLR-F4-CS2R-B4"));
-    m_autoChooser.addOption("2P_SLR-F4-CS2R-C4", new PathPlannerAuto("2P_SLR-F4-CS2R-C4"));
-    m_autoChooser.addOption("2P_SLR-F4-CS2R-D4", new PathPlannerAuto("2P_SLR-F4-CS2R-D4"));
+    // // 2 Piece
+    // // SLL
+    // m_autoChooser.addOption("2P_SLL-IJ1-CS1L-L4", new PathPlannerAuto("2P_SLL-IJ1-CS1L-L4"));
+    // m_autoChooser.addOption("2P_SLL-IJ1-CS1L-K4", new PathPlannerAuto("2P_SLL-IJ1-CS1L-K4"));
+    // m_autoChooser.addOption("2P_SLL-IJ1-CS1L-A4", new PathPlannerAuto("2P_SLL-IJ1-CS1L-A4"));
+    // m_autoChooser.addOption("2P_SLL-I1-CS1L-L4", new PathPlannerAuto("2P_SLL-I1-CS1L-L4"));
+    // m_autoChooser.addOption("2P_SLL-I1-CS1L-K4", new PathPlannerAuto("2P_SLL-I1-CS1L-K4"));
+    // m_autoChooser.addOption("2P_SLL-I1-CS1L-A4", new PathPlannerAuto("2P_SLL-I1-CS1L-A4"));
+    // m_autoChooser.addOption("2P_SLL-I4-CS1L-L4", new PathPlannerAuto("2P_SLL-I4-CS1L-L4"));
+    // m_autoChooser.addOption("2P_SLL-I4-CS1L-K4", new PathPlannerAuto("2P_SLL-I4-CS1L-K4"));
+    // m_autoChooser.addOption("2P_SLL-I4-CS1L-A4", new PathPlannerAuto("2P_SLL-I4-CS1L-A4"));
+    // m_autoChooser.addOption("2P_SLL-J1-CS1L-L4", new PathPlannerAuto("2P_SLL-J1-CS1L-L4"));
+    // m_autoChooser.addOption("2P_SLL-J1-CS1L-K4", new PathPlannerAuto("2P_SLL-J1-CS1L-K4"));
+    // m_autoChooser.addOption("2P_SLL-J1-CS1L-A4", new PathPlannerAuto("2P_SLL-J1-CS1L-A4"));
+    // m_autoChooser.addOption("2P_SLL-J4-CS1L-L4", new PathPlannerAuto("2P_SLL-J4-CS1L-L4"));
+    // m_autoChooser.addOption("2P_SLL-J4-CS1L-K4", new PathPlannerAuto("2P_SLL-J4-CS1L-K4"));
+    // m_autoChooser.addOption("2P_SLL-J4-CS1L-A4", new PathPlannerAuto("2P_SLL-J4-CS1L-A4"));
+    // // SLC
+    // m_autoChooser.addOption("2P_SLC-GH1-CS1L-L4", new PathPlannerAuto("2P_SLC-GH1-CS1L-L4"));
+    // m_autoChooser.addOption("2P_SLC-GH1-CS1L-K4", new PathPlannerAuto("2P_SLC-GH1-CS1L-K4"));
+    // m_autoChooser.addOption("2P_SLC-GH1-CS1L-A4", new PathPlannerAuto("2P_SLC-GH1-CS1L-A4"));
+    // m_autoChooser.addOption("2P_SLC-GH1-CS2R-B4", new PathPlannerAuto("2P_SLC-GH1-CS2R-B4"));
+    // m_autoChooser.addOption("2P_SLC-GH1-CS2R-C4", new PathPlannerAuto("2P_SLC-GH1-CS2R-C4"));
+    // m_autoChooser.addOption("2P_SLC-GH1-CS2R-D4", new PathPlannerAuto("2P_SLC-GH1-CS2R-D4"));
+    // m_autoChooser.addOption("2P_SLC-G1-CS2R-B4", new PathPlannerAuto("2P_SLC-G1-CS2R-B4"));
+    // m_autoChooser.addOption("2P_SLC-G1-CS2R-C4", new PathPlannerAuto("2P_SLC-G1-CS2R-C4"));
+    // m_autoChooser.addOption("2P_SLC-G1-CS2R-D4", new PathPlannerAuto("2P_SLC-G1-CS2R-D4"));
+    // m_autoChooser.addOption("2P_SLC-G4-CS2R-B4", new PathPlannerAuto("2P_SLC-G4-CS2R-B4"));
+    // m_autoChooser.addOption("2P_SLC-G4-CS2R-C4", new PathPlannerAuto("2P_SLC-G4-CS2R-C4"));
+    // m_autoChooser.addOption("2P_SLC-G4-CS2R-D4", new PathPlannerAuto("2P_SLC-G4-CS2R-D4"));
+    // m_autoChooser.addOption("2P_SLC-H1-CS1L-L4", new PathPlannerAuto("2P_SLC-H1-CS1L-L4"));
+    // m_autoChooser.addOption("2P_SLC-H1-CS1L-K4", new PathPlannerAuto("2P_SLC-H1-CS1L-K4"));
+    // m_autoChooser.addOption("2P_SLC-H1-CS1L-A4", new PathPlannerAuto("2P_SLC-H1-CS1L-A4"));
+    // m_autoChooser.addOption("2P_SLC-H4-CS1L-L4", new PathPlannerAuto("2P_SLC-H4-CS1L-L4"));
+    // m_autoChooser.addOption("2P_SLC-H4-CS1L-K4", new PathPlannerAuto("2P_SLC-H4-CS1L-K4"));
+    // m_autoChooser.addOption("2P_SLC-H4-CS1L-A4", new PathPlannerAuto("2P_SLC-H4-CS1L-A4"));
+    // // SLR
+    // m_autoChooser.addOption("2P_SLR-EF1-CS2R-B4", new PathPlannerAuto("2P_SLR-EF1-CS2R-B4"));
+    // m_autoChooser.addOption("2P_SLR-EF1-CS2R-C4", new PathPlannerAuto("2P_SLR-EF1-CS2R-C4"));
+    // m_autoChooser.addOption("2P_SLR-EF1-CS2R-D4", new PathPlannerAuto("2P_SLR-EF1-CS2R-D4"));
+    // m_autoChooser.addOption("2P_SLR-E1-CS2R-B4", new PathPlannerAuto("2P_SLR-E1-CS2R-B4"));
+    // m_autoChooser.addOption("2P_SLR-E1-CS2R-C4", new PathPlannerAuto("2P_SLR-E1-CS2R-C4"));
+    // m_autoChooser.addOption("2P_SLR-E1-CS2R-D4", new PathPlannerAuto("2P_SLR-E1-CS2R-D4"));
+    // m_autoChooser.addOption("2P_SLR-E4-CS2R-B4", new PathPlannerAuto("2P_SLR-E4-CS2R-B4"));
+    // m_autoChooser.addOption("2P_SLR-E4-CS2R-C4", new PathPlannerAuto("2P_SLR-E4-CS2R-C4"));
+    // m_autoChooser.addOption("2P_SLR-E4-CS2R-D4", new PathPlannerAuto("2P_SLR-E4-CS2R-D4"));
+    // m_autoChooser.addOption("2P_SLR-F1-CS2R-B4", new PathPlannerAuto("2P_SLR-F1-CS2R-B4"));
+    // m_autoChooser.addOption("2P_SLR-F1-CS2R-C4", new PathPlannerAuto("2P_SLR-F1-CS2R-C4"));
+    // m_autoChooser.addOption("2P_SLR-F1-CS2R-D4", new PathPlannerAuto("2P_SLR-F1-CS2R-D4"));
+    // m_autoChooser.addOption("2P_SLR-F4-CS2R-B4", new PathPlannerAuto("2P_SLR-F4-CS2R-B4"));
+    // m_autoChooser.addOption("2P_SLR-F4-CS2R-C4", new PathPlannerAuto("2P_SLR-F4-CS2R-C4"));
+    // m_autoChooser.addOption("2P_SLR-F4-CS2R-D4", new PathPlannerAuto("2P_SLR-F4-CS2R-D4"));
 
     /* Characterization Routines */
     m_autoChooser.addOption(
@@ -492,6 +492,25 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem));
+    // Outtake
+    m_driverController
+        .x()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  m_funnelSubsystem.setPercentSpeed(FunnelConstants.OUTTAKE_PERCENT_SPEED);
+                  m_CEESubsystem.setPercentSpeed(CEEConstants.OUTTAKE_PERCENT_SPEED);
+                },
+                m_funnelSubsystem,
+                m_CEESubsystem))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  m_funnelSubsystem.setPercentSpeed(0);
+                  m_CEESubsystem.setPercentSpeed(0);
+                },
+                m_funnelSubsystem,
+                m_CEESubsystem));
 
     /* Misc */
     m_driverController

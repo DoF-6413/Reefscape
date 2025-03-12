@@ -51,7 +51,7 @@ public class PeriscopeConstants {
   /** Height position of the Periscope for reaching L2 */
   public static final double L2_HEIGHT_M = Units.inchesToMeters(19.57 - SPACER_HEIGHT_DIFF_IN);
   /** Height position of the Periscope for reaching L3 */
-  public static final double L3_HEIGHT_M = Units.inchesToMeters(33.33 - SPACER_HEIGHT_DIFF_IN);
+  public static final double L3_HEIGHT_M = Units.inchesToMeters(34.83 - SPACER_HEIGHT_DIFF_IN);
   /** Height position of the Periscope for reaching L4 */
   public static final double L4_HEIGHT_M = MAX_HEIGHT_M;
   /** Height position of the Periscope for aligning with the Funnel at the CORAL STATION */
