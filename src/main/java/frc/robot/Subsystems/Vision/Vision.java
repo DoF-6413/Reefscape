@@ -13,13 +13,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class Vision extends SubsystemBase {
@@ -28,9 +25,9 @@ public class Vision extends SubsystemBase {
   private final VisionConsumer m_consumer;
 
   // Vision pose estimation
-  private final PhotonPoseEstimator[] m_photonPoseEstimators;
+  // private final PhotonPoseEstimator[] m_photonPoseEstimators;
   private List<Pose2d> m_estimatedPoses = new LinkedList<>();
-  private Matrix<N3, N1> m_stdDevs = VecBuilder.fill(0, 0, 0);
+  private Matrix<N3, N1> m_stdDevs = VecBuilder.fill(0.5, 0.5, 1000000);
   private double m_stdDevCoeff = 0.0;
 
   /**
@@ -53,17 +50,18 @@ public class Vision extends SubsystemBase {
 
     // Initialize loggers and Vision Pose Estimators based on number of cameras
     m_inputs = new VisionIOInputsAutoLogged[m_io.length];
-    m_photonPoseEstimators = new PhotonPoseEstimator[m_io.length];
-    for (int i = 0; i < m_io.length; i++) {
-      m_inputs[i] = new VisionIOInputsAutoLogged();
-      m_photonPoseEstimators[i] =
-          new PhotonPoseEstimator(
-              FieldConstants.APRILTAG_FIELD_LAYOUT,
-              PoseStrategy.LOWEST_AMBIGUITY,
-              VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
-      Logger.recordOutput(
-          "Camera/" + VisionConstants.CAMERA_NAMES[i], VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
-    }
+    m_inputs[0] = new VisionIOInputsAutoLogged();
+    // m_photonPoseEstimators = new PhotonPoseEstimator[m_io.length];
+    // for (int i = 0; i < m_io.length; i++) {
+    //   m_inputs[i] = new VisionIOInputsAutoLogged();
+    //   m_photonPoseEstimators[i] =
+    //       new PhotonPoseEstimator(
+    //           FieldConstants.APRILTAG_FIELD_LAYOUT,
+    //           PoseStrategy.LOWEST_AMBIGUITY,
+    //           VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
+    Logger.recordOutput(
+        "Camera/" + VisionConstants.CAMERA_NAMES[2], VisionConstants.CAMERA_ROBOT_OFFSETS[2]);
+    // }
   }
 
   @Override
@@ -72,73 +70,86 @@ public class Vision extends SubsystemBase {
     for (int i = 0; i < m_inputs.length; i++) {
       // Update and log inputs
       m_io[i].updateInputs(m_inputs[i]);
-      Logger.processInputs("Vision/" + VisionConstants.CAMERA_NAMES[i], m_inputs[i]);
+      Logger.processInputs("Vision/" + VisionConstants.CAMERA_NAMES[2], m_inputs[i]);
 
-      // Check results and add available and unambiguous Vision measurements to list
-      var currentResult = getPipelineResult(i);
-      if (!currentResult.hasTargets())
-        continue; // Move to next camera update iteration if no AprilTags seen
-      var target = currentResult.getBestTarget();
-      if (target.getFiducialId() >= 1
-          && target.getFiducialId() <= 22
-          && target.getPoseAmbiguity() > 0.0
-          && target.getPoseAmbiguity() <= 0.2) {
-        var estimatedPose = m_photonPoseEstimators[i].update(currentResult);
-        if (estimatedPose.isEmpty())
-          continue; // Move to next camera update iteration if no position is estimated
-        m_estimatedPoses.add(estimatedPose.get().estimatedPose.toPose2d());
-        // Record estimated pose
-        Logger.recordOutput(
-            "Odometry/Vision/EstimatedPoses/" + VisionConstants.CAMERA_NAMES[i],
-            estimatedPose.get().estimatedPose.toPose2d());
+      //   // Check results and add available and unambiguous Vision measurements to list
+      //   var currentResult = getPipelineResult(i);
+      //   if (!currentResult.hasTargets())
+      //     continue; // Move to next camera update iteration if no AprilTags seen
+      //   var target = currentResult.getBestTarget();
+      //   if (target.getFiducialId() >= 1
+      //       && target.getFiducialId() <= 22
+      //       && target.getPoseAmbiguity() > 0.0
+      //       && target.getPoseAmbiguity() <= 0.2) {
+      //     var estimatedPose = m_photonPoseEstimators[i].update(currentResult);
+      //     if (estimatedPose.isEmpty())
+      //       continue; // Move to next camera update iteration if no position is estimated
+      //     m_estimatedPoses.add(estimatedPose.get().estimatedPose.toPose2d());
+      //     // Record estimated pose
+      //     Logger.recordOutput(
+      //         "Odometry/Vision/EstimatedPoses/" + VisionConstants.CAMERA_NAMES[i],
+      //         estimatedPose.get().estimatedPose.toPose2d());
 
-        // Calculate standard deviations for current pipeline results
-        double averageTagDistance = 0.0;
-        var allResults = m_io[i].getAllPipelineResults();
-        int tagCount = allResults.size();
-        if (allResults.size() == 0)
-          continue; // Move to next camera update iteration if no results present
-        for (PhotonPipelineResult result : allResults) {
-          if (!result.hasTargets()) continue; // Move to next result iteration if no AprilTags seen
-          averageTagDistance +=
-              Math.hypot(
-                  result.getBestTarget().getBestCameraToTarget().getX(),
-                  result.getBestTarget().getBestCameraToTarget().getY());
-        }
-        m_stdDevCoeff += (Math.pow(averageTagDistance, 2) / tagCount);
-      }
+      //     // Calculate standard deviations for current pipeline results
+      //     double averageTagDistance = 0.0;
+      //     var allResults = m_io[i].getAllPipelineResults();
+      //     int tagCount = allResults.size();
+      //     if (allResults.size() == 0)
+      //       continue; // Move to next camera update iteration if no results present
+      //     for (PhotonPipelineResult result : allResults) {
+      //       if (!result.hasTargets()) continue; // Move to next result iteration if no AprilTags
+      // seen
+      //       averageTagDistance +=
+      //           Math.hypot(
+      //               result.getBestTarget().getBestCameraToTarget().getX(),
+      //               result.getBestTarget().getBestCameraToTarget().getY());
+      //     }
+      //     m_stdDevCoeff += (Math.pow(averageTagDistance, 2) / tagCount);
+      // }
+      // }
+
+      // if (m_estimatedPoses.size() == 0)
+      //   return; // Move to next periodic iteration if no poses estimated
+
+      // /* Add Vision measurements to Swerve Pose Estimator in Drive through the VisionConsumer */
+      // if (m_estimatedPoses.size() > 1) {
+      //   // Create standard deviation matrix with averaged coefficient and reset cooefficient for
+      // next
+      //   // periodic iteration
+      //   m_stdDevs =
+      //       VecBuilder.fill(
+      //           VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff / m_inputs.length,
+      //           VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff / m_inputs.length,
+      //           VisionConstants.ANGULAR_STD_DEV_RAD * m_stdDevCoeff / m_inputs.length);
+      //   m_stdDevCoeff = 0.0;
+      //   // Average poses is both cameras see an AprilTag and clear pose list
+      //   var averagePose =
+      //       averageVisionPoses(m_estimatedPoses.toArray(new Pose2d[m_estimatedPoses.size()]));
+      //   m_consumer.accept(averagePose, m_inputs[0].timestampSec, m_stdDevs);
+      //   m_estimatedPoses.clear();
+      // } else {
+      //   // Create standard deviation matrix and reset cooefficient for next periodic iteration
+      //   m_stdDevs =
+      //       VecBuilder.fill(
+      //           VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff,
+      //           VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff,
+      //           VisionConstants.ANGULAR_STD_DEV_RAD * m_stdDevCoeff);
+      //   m_stdDevCoeff = 0.0;
+      //   // Use pose generated from the camera that saw an AprilTag and clear pose list
+      //   m_consumer.accept(m_estimatedPoses.get(0), m_inputs[0].timestampSec, m_stdDevs);
+      //   m_estimatedPoses.clear();
     }
-
-    if (m_estimatedPoses.size() == 0)
-      return; // Move to next periodic iteration if no poses estimated
-
-    /* Add Vision measurements to Swerve Pose Estimator in Drive through the VisionConsumer */
-    if (m_estimatedPoses.size() > 1) {
-      // Create standard deviation matrix with averaged coefficient and reset cooefficient for next
-      // periodic iteration
-      m_stdDevs =
-          VecBuilder.fill(
-              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff / m_inputs.length,
-              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff / m_inputs.length,
-              VisionConstants.ANGULAR_STD_DEV_RAD * m_stdDevCoeff / m_inputs.length);
-      m_stdDevCoeff = 0.0;
-      // Average poses is both cameras see an AprilTag and clear pose list
-      var averagePose =
-          averageVisionPoses(m_estimatedPoses.toArray(new Pose2d[m_estimatedPoses.size()]));
-      m_consumer.accept(averagePose, m_inputs[0].timestampSec, m_stdDevs);
-      m_estimatedPoses.clear();
-    } else {
-      // Create standard deviation matrix and reset cooefficient for next periodic iteration
-      m_stdDevs =
-          VecBuilder.fill(
-              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff,
-              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff,
-              VisionConstants.ANGULAR_STD_DEV_RAD * m_stdDevCoeff);
-      m_stdDevCoeff = 0.0;
-      // Use pose generated from the camera that saw an AprilTag and clear pose list
-      m_consumer.accept(m_estimatedPoses.get(0), m_inputs[0].timestampSec, m_stdDevs);
-      m_estimatedPoses.clear();
-    }
+    // if (RobotStateConstants.getMode() != RobotStateConstants.Mode.SIM) {
+    var llResults = m_io[0].getLimeLightResults();
+    System.out.println("Getting results");
+    // if (llResults.valid) {
+    var estimatedPose = llResults.getBotPose2d_wpiBlue();
+    if (estimatedPose == null) return;
+    System.out.println(estimatedPose.toString());
+    System.out.println("Applying pose estimation");
+    m_consumer.accept(estimatedPose, llResults.timestamp_LIMELIGHT_publish, m_stdDevs);
+    // }
+    // }
   }
 
   /**

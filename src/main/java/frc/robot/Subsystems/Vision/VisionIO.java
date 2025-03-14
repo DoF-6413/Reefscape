@@ -1,5 +1,6 @@
 package frc.robot.Subsystems.Vision;
 
+import frc.robot.Utils.LimelightHelpers.LimelightResults;
 import java.util.List;
 import org.littletonrobotics.junction.AutoLog;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -37,6 +38,10 @@ public interface VisionIO {
    * @return A list of all PhotonPipelineResults waiting in queue.
    */
   public default List<PhotonPipelineResult> getAllPipelineResults() {
+    return null;
+  }
+
+  public default LimelightResults getLimeLightResults() {
     return null;
   }
 }

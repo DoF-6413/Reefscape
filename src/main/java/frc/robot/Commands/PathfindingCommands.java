@@ -11,8 +11,6 @@ import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
-import frc.robot.Subsystems.Vision.Vision;
-import frc.robot.Subsystems.Vision.VisionConstants;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
@@ -73,36 +71,37 @@ public class PathfindingCommands {
    * @param stopTrigger {@link BooleanSupplier} with the condition to end the Pathfinding command.
    * @return {@link Command} that makes the robot follow a trajectory to in front of the AprilTag.
    */
-  public static Command pathfindToCurrentTag(
-      Drive drive, Vision vision, double wallDistanceMeters, BooleanSupplier stopTrigger) {
-    return Commands.run(
-        () -> {
-          /*
-           * Get ID of AprilTag currently seen by the front camera, if any. If an invalid ID is
-           * given the apriltagPose Optional will be empty
-           */
-          var apriltagPose =
-              FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(
-                  vision.getTagID(VisionConstants.CAMERA.FRONT.CAMERA_INDEX));
+  // public static Command pathfindToCurrentTag(
+  //     Drive drive, Vision vision, double wallDistanceMeters, BooleanSupplier stopTrigger) {
+  //   return Commands.run(
+  //       () -> {
+  //         /*
+  //          * Get ID of AprilTag currently seen by the front camera, if any. If an invalid ID is
+  //          * given the apriltagPose Optional will be empty
+  //          */
+  //         var apriltagPose =
+  //             FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(
+  //                 vision.getTagID(VisionConstants.CAMERA.FRONT.CAMERA_INDEX));
 
-          // If no valid tag returned then return a print messsage instead
-          if (apriltagPose.isEmpty()) {
-            Commands.print("Invalid AprilTag ID").until(stopTrigger).schedule();
-          } else {
+  //         // If no valid tag returned then return a print messsage instead
+  //         if (apriltagPose.isEmpty()) {
+  //           Commands.print("Invalid AprilTag ID").until(stopTrigger).schedule();
+  //         } else {
 
-            // Pathfind to BRANCH pose. This method returns a command to pathfind to in front of the
-            // BRANCH'S pose as to not drive into it.
-            PathfindingCommands.pathfindToFieldElement(
-                    apriltagPose.get().toPose2d(),
-                    wallDistanceMeters,
-                    PathPlannerConstants.ROBOT_MIDPOINT_TO_SUPERSTRUCTURE,
-                    true)
-                .until(stopTrigger)
-                .schedule();
-          }
-        },
-        drive);
-  }
+  //           // Pathfind to BRANCH pose. This method returns a command to pathfind to in front of
+  // the
+  //           // BRANCH'S pose as to not drive into it.
+  //           PathfindingCommands.pathfindToFieldElement(
+  //                   apriltagPose.get().toPose2d(),
+  //                   wallDistanceMeters,
+  //                   PathPlannerConstants.ROBOT_MIDPOINT_TO_SUPERSTRUCTURE,
+  //                   true)
+  //               .until(stopTrigger)
+  //               .schedule();
+  //         }
+  //       },
+  //       drive);
+  // }
 
   /**
    * Generates a trajectory for the robot to follow to the AprilTag corresponding to the ID inputed

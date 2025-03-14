@@ -76,8 +76,7 @@ public class Periscope extends SubsystemBase {
     Logger.processInputs("Periscope", m_inputs);
 
     if (m_inputs.isHallEffectSensorTriggered[0]
-        && m_inputs.heightMeters < Units.inchesToMeters(3)
-        && m_inputs.currentDraw[0] > 25) {
+        && m_inputs.heightMeters < Units.inchesToMeters(3)) {
       this.resetPosition(0);
     }
 
@@ -164,6 +163,18 @@ public class Periscope extends SubsystemBase {
     m_profiledPIDController.setGoal(heightMeters);
     m_profiledPIDController.setConstraints(
         new TrapezoidProfile.Constraints(PeriscopeConstants.MAX_VELOCITY_M_PER_SEC, acceleration));
+  }
+
+  /**
+   * Sets the position of the Periscope using a motion profiled PID controller.
+   *
+   * @param heightMeters Position of the Periscope in meters.
+   */
+  public void adjustHeight(double heightMeters) {
+    // Record and update setpoint
+    m_prevSetpoint = m_profiledPIDController.getGoal().position + heightMeters;
+    Logger.recordOutput("Superstructure/Setpoints/PeriscopeHeight", m_prevSetpoint);
+    m_profiledPIDController.setGoal(m_prevSetpoint);
   }
 
   /**

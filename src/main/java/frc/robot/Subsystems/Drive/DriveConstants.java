@@ -87,7 +87,7 @@ public final class DriveConstants {
    * An angle to offset the heading of the Gyro to be the desired Front side of the robot. The Front
    * side will be defined as the scoring side for this robot
    */
-  public static final double HEADING_OFFSET_RAD = 0;
+  public static final double HEADING_OFFSET_RAD = Math.PI;
   /**
    * Offset the absolute position of the CANcoders to orientate the wheels to the front of the robot
    * at 0 degrees

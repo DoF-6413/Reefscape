@@ -203,6 +203,7 @@ public class SuperstructureCommands {
             SuperstructureState.periscopeHeight,
             SuperstructureState.algaePivotAngle)
         .andThen(Commands.waitUntil(() -> SuperstructureState.atGoal(periscope, algaePivot)))
+        .andThen(Commands.waitSeconds(0.25))
         .andThen(Commands.runOnce(() -> cee.setPercentSpeed(-0.5), cee))
         .andThen(Commands.waitSeconds(0.075))
         .andThen(Commands.runOnce(() -> cee.setPercentSpeed(0), cee));

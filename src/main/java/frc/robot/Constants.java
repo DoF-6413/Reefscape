@@ -121,10 +121,10 @@ public final class Constants {
       REEF_IJ(3),
       REEF_KL(4),
       SWITCH_BRANCH(0), // Axis number
-      CLIMB_DEPLOY(0), // Axis number
-      CLIMB_RETRACT(1), // Axis number
-      SCORE(2),
-      GROUND_ALGAE(1);
+      CLIMB_DEPLOY(1),
+      CLIMB_RETRACT(2),
+      SCORE(1), // Axis number
+      GROUND_ALGAE(0); // Axis number
 
       public final int BUTTON_ID;
 

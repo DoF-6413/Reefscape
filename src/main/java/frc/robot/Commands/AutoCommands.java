@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlannerConstants;
+import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Algae.EndEffector.AEE;
 import frc.robot.Subsystems.Algae.Pivot.AlgaePivot;
 import frc.robot.Subsystems.CoralEndEffector.CEE;
@@ -324,10 +325,14 @@ public class AutoCommands {
     }
 
     return Commands.runOnce(() -> drive.zeroYaw(), drive)
+        .andThen(Commands.waitSeconds(0.5))
         .andThen(
             Commands.parallel(
                 DriveCommands.fieldRelativeDriveAtAngle(
-                        drive, () -> driveSpeed, () -> 0, () -> Rotation2d.kZero)
+                        drive,
+                        () -> RobotStateConstants.isRed() ? -driveSpeed : driveSpeed,
+                        () -> 0,
+                        () -> Rotation2d.kZero)
                     .withTimeout(DRIVE_TIME_SEC),
                 coralPosition))
         .andThen(
