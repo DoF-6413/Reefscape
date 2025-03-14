@@ -21,7 +21,7 @@ public class VisionIOLimelight implements VisionIO {
   public VisionIOLimelight(int index, Supplier<Pose2d> robotPoseSupplier) {
     System.out.println("[Init] Creating VisionIOLimelight " + VisionConstants.CAMERA_NAMES[index]);
 
-    // Configure limelight // TODO: configure in web GUI as well
+    // Configure limelight
     LimelightHelpers.setCameraPose_RobotSpace(
         "limelight",
         VisionConstants.CAMERA_ROBOT_OFFSETS[index].getX(),
@@ -48,6 +48,9 @@ public class VisionIOLimelight implements VisionIO {
     // Skip updates if no tags are seen
     if (megatag2.tagCount == 0) {
       inputs.hasTargets = false;
+      inputs.fiducialID = 0;
+      inputs.poseAmbiguity = -1;
+      inputs.limelightPose = null;
       return;
     }
 

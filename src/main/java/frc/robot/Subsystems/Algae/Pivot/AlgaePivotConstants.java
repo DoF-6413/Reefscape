@@ -39,6 +39,8 @@ public class AlgaePivotConstants {
   public static final double PROCESSOR_ANGLE_RAD = Units.degreesToRadians(-15);
   /** Angle (radians) of the ALGAE Pivot when removing ALGAE from the REEF */
   public static final double DEALGAE_ANGLE_RAD = Units.degreesToRadians(35);
+  /** Angle (radians) of the ALGAE Pivot when intaking ALGAE from the REEF */
+  public static final double ALGAE_INTAKE_ANGLE_RAD = 0;
 
   // PID CONSTANTS
   /**

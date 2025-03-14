@@ -29,7 +29,7 @@ public class CEEConstants {
   /** Scoring speed, open loop voltage control */
   public static final double SCORE_PERCENT_SPEED = 1.0;
   /** Intaking speed, open loop voltage control */
-  public static final double INTAKE_PERCENT_SPEED = 0.75;
+  public static final double INTAKE_PERCENT_SPEED = 0.5;
   /** Outtaking speed, open loop voltage control */
   public static final double OUTTAKE_PERCENT_SPEED = -0.75;
 

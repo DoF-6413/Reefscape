@@ -146,9 +146,7 @@ public class Vision extends SubsystemBase {
     if (RobotStateConstants.getMode() != RobotStateConstants.Mode.SIM) {
       var estimatedPose = m_inputs[0].limelightPose;
       if (estimatedPose == null) return;
-      System.out.println(estimatedPose.toString());
       m_consumer.accept(estimatedPose, Timer.getFPGATimestamp(), m_stdDevs);
-      System.out.println("Applied pose estimation");
     }
   }
 

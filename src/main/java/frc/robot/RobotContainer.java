@@ -5,6 +5,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -169,6 +170,8 @@ public class RobotContainer {
 
     /* Autonomous Routines */
     m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
+    // Leave
+    m_autoChooser.addOption("Leave", AutoCommands.leave(m_driveSubsystem, 0.4, 4));
     // Dynamic/Pathfinding Autos
     m_autoChooser.addOption(
         "Dynamic Pathfinding Auto",
@@ -517,11 +520,22 @@ public class RobotContainer {
                 m_CEESubsystem));
 
     /* Misc */
+    // Zero Periscope
     m_driverController
         .back()
         .onTrue(
             new InstantCommand(() -> m_periscopeSubsystem.resetPosition(0), m_periscopeSubsystem)
                 .ignoringDisable(true));
+    // Rumble when ready to auto align
+    m_auxButtonBoard
+        .button(OperatorConstants.BUTTON_BOARD.REEF_AB.BUTTON_ID)
+        .or(m_auxButtonBoard.button(OperatorConstants.BUTTON_BOARD.REEF_CD.BUTTON_ID))
+        .or(m_auxButtonBoard.button(OperatorConstants.BUTTON_BOARD.REEF_EF.BUTTON_ID))
+        .or(m_auxButtonBoard.button(OperatorConstants.BUTTON_BOARD.REEF_GH.BUTTON_ID))
+        .or(m_auxButtonBoard.button(OperatorConstants.BUTTON_BOARD.REEF_IJ.BUTTON_ID))
+        .or(m_auxButtonBoard.button(OperatorConstants.BUTTON_BOARD.REEF_KL.BUTTON_ID))
+        .onTrue(new InstantCommand(() -> m_driverController.setRumble(RumbleType.kBothRumble, 1)))
+        .onFalse(new InstantCommand(() -> m_driverController.setRumble(RumbleType.kBothRumble, 0)));
   }
 
   /** Aux Button Board Controls */
@@ -559,11 +573,15 @@ public class RobotContainer {
                 m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem))
         .onFalse(
             SuperstructureCommands.zero(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
-                m_AEESubsystem,
-                m_CEESubsystem,
-                m_funnelSubsystem))
+                    m_periscopeSubsystem,
+                    m_algaePivotSubsystem,
+                    m_AEESubsystem,
+                    m_CEESubsystem,
+                    m_funnelSubsystem)
+                .andThen(
+                    new InstantCommand(
+                        () -> m_AEESubsystem.setPercentSpeed(AEEConstants.INTAKE_PERCENT_SPEED),
+                        m_AEESubsystem)))
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID,
@@ -583,11 +601,15 @@ public class RobotContainer {
                 m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem))
         .onFalse(
             SuperstructureCommands.zero(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
-                m_AEESubsystem,
-                m_CEESubsystem,
-                m_funnelSubsystem))
+                    m_periscopeSubsystem,
+                    m_algaePivotSubsystem,
+                    m_AEESubsystem,
+                    m_CEESubsystem,
+                    m_funnelSubsystem)
+                .andThen(
+                    new InstantCommand(
+                        () -> m_AEESubsystem.setPercentSpeed(AEEConstants.INTAKE_PERCENT_SPEED),
+                        m_AEESubsystem)))
         .and(
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID,

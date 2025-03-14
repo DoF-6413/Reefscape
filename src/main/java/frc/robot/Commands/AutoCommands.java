@@ -277,6 +277,19 @@ public class AutoCommands {
                 drive, PathPlannerConstants.DEFAULT_WALL_DISTANCE_M, () -> false));
   }
 
+  public static Command leave(Drive drive, double driveSpeed, double driveTime) {
+    return Commands.runOnce(() -> drive.zeroYaw(), drive)
+        .andThen(Commands.waitSeconds(0.5))
+        .andThen(
+            Commands.parallel(
+                DriveCommands.fieldRelativeDriveAtAngle(
+                        drive,
+                        () -> RobotStateConstants.isRed() ? -driveSpeed : driveSpeed,
+                        () -> 0,
+                        () -> Rotation2d.kZero)
+                    .withTimeout(driveTime)));
+  }
+
   /**
    * 1 Piece auto for scoring a specified CORAL on the G or H BRANCHES. Doesn't use Vision (only
    * percent speed of the DT) to move the robot.

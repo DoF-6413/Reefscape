@@ -60,7 +60,7 @@ public class VisionConstants {
       new Transform3d(
           new Translation3d(
               Units.inchesToMeters(13), Units.inchesToMeters(-4.5), Units.inchesToMeters(5.5)),
-          new Rotation3d(Math.PI, Units.degreesToRadians(-20.42), 0)); // from pit whiteboard
+          new Rotation3d(Math.PI, Units.degreesToRadians(20.42), 0)); // from pit whiteboard
   /** Array of 3d transformations from the center of the robot to each camera location */
   public static final Transform3d[] CAMERA_ROBOT_OFFSETS = {
     FRONT_CAMERA_ROBOT_OFFSET, BACK_CAMERA_ROBOT_OFFSET, LIMELIGHT_ROBOT_OFFSET
