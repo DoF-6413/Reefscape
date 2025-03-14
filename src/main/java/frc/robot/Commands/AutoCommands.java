@@ -24,14 +24,13 @@ public class AutoCommands {
    * @param drive {@link Drive} subsystem
    * @param periscope {@link Periscope} subsystem
    * @param algaePivot {@link AlgaePivot} subsystem
-   * @param aee {@link AEE} subsystem
    * @param cee {@link CEE} subsystem
    * @param funnel {@link Funnel} subsystem
    * @return {@link Command} that runs the auto build from the options on the SmartDashboard
    *     choosers.
    */
   public static Command dynamicPathfindingAuto(
-      Drive drive, Periscope periscope, AlgaePivot algaePivot, AEE aee, CEE cee, Funnel funnel) {
+      Drive drive, Periscope periscope, AlgaePivot algaePivot, CEE cee, Funnel funnel) {
     // Constants
     final double DELAY_BETWEEN_ACTIONS = 0.25;
     final double CORAL_STATION_DELAY = 1;
@@ -54,9 +53,9 @@ public class AutoCommands {
     firstCoralLevel.addDefaultOption(
         "L1", SuperstructureCommands.positionsToL1(periscope, algaePivot));
     firstCoralLevel.addOption(
-        "L2", SuperstructureCommands.positionsToL2Coral(periscope, algaePivot, aee));
+        "L2", SuperstructureCommands.positionsToL2Coral(periscope, algaePivot));
     firstCoralLevel.addOption(
-        "L3", SuperstructureCommands.positionsToL3Coral(periscope, algaePivot, aee));
+        "L3", SuperstructureCommands.positionsToL3Coral(periscope, algaePivot));
     firstCoralLevel.addOption(
         "L4", SuperstructureCommands.positionsToL4(periscope, algaePivot, cee));
     LoggedDashboardChooser<Command> coralStation = new LoggedDashboardChooser<>("CORAL STATION");
@@ -101,9 +100,9 @@ public class AutoCommands {
         new LoggedDashboardChooser<>("Second CORAL Level");
     secondCoralLevel.addOption("L1", SuperstructureCommands.positionsToL1(periscope, algaePivot));
     secondCoralLevel.addDefaultOption(
-        "L2", SuperstructureCommands.positionsToL2Coral(periscope, algaePivot, aee));
+        "L2", SuperstructureCommands.positionsToL2Coral(periscope, algaePivot));
     secondCoralLevel.addOption(
-        "L3", SuperstructureCommands.positionsToL3Coral(periscope, algaePivot, aee));
+        "L3", SuperstructureCommands.positionsToL3Coral(periscope, algaePivot));
     secondCoralLevel.addOption(
         "L4", SuperstructureCommands.positionsToL4(periscope, algaePivot, cee));
 
@@ -139,23 +138,23 @@ public class AutoCommands {
                 PathfindingCommands.pathfindToBranch(firstBranch.get(), WALL_DISTANCE_M),
                 firstCoralLevel.get()))
         .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
-        .andThen(SuperstructureCommands.score(aee, cee, funnel))
+        .andThen(SuperstructureCommands.score(cee, funnel))
         .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
         .andThen(
             Commands.parallel(
                 coralStation.get(),
-                SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel)
+                SuperstructureCommands.zero(periscope, algaePivot, cee, funnel)
                     .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
                     .andThen(
                         SuperstructureCommands.intakeCoral(
-                            periscope, algaePivot, aee, cee, funnel))))
+                            periscope, algaePivot, cee, funnel))))
         .andThen(
             Commands.race(
                 Commands.waitSeconds(CORAL_STATION_DELAY),
                 Commands.waitUntil(() -> cee.isBeamBreakTriggered())))
         .andThen(Commands.parallel(secondBranch.get(), secondCoralLevel.get()))
         .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
-        .andThen(SuperstructureCommands.score(aee, cee, funnel));
+        .andThen(SuperstructureCommands.score(cee, funnel));
   }
 
   /**
@@ -164,7 +163,6 @@ public class AutoCommands {
    * @param drive {@link Drive} subsystem
    * @param periscope {@link Periscope} subsystem
    * @param algaePivot {@link AlgaePivot} subsystem
-   * @param aee {@link AEE} subsystem
    * @param cee {@link CEE} subsystem
    * @param funnel {@link Funnel} subsystem
    * @param startingPose {@link Pose2d} of the starting position
@@ -176,7 +174,6 @@ public class AutoCommands {
       Drive drive,
       Periscope periscope,
       AlgaePivot algaePivot,
-      AEE aee,
       CEE cee,
       Funnel funnel,
       Pose2d startingPose,
@@ -190,11 +187,11 @@ public class AutoCommands {
         break;
 
       case 2:
-        coralPosition = SuperstructureCommands.positionsToL2Coral(periscope, algaePivot, aee);
+        coralPosition = SuperstructureCommands.positionsToL2Coral(periscope, algaePivot);
         break;
 
       case 3:
-        coralPosition = SuperstructureCommands.positionsToL3Coral(periscope, algaePivot, aee);
+        coralPosition = SuperstructureCommands.positionsToL3Coral(periscope, algaePivot);
         break;
 
       case 4:
@@ -221,7 +218,6 @@ public class AutoCommands {
    * @param drive {@link Drive} subsystem
    * @param periscope {@link Periscope} subsystem
    * @param algaePivot {@link AlgaePivot} subsystem
-   * @param aee {@link AEE} subsystem
    * @param cee {@link CEE} subsystem
    * @param funnel {@link Funnel} subsystem
    * @param startingPose {@link Pose2d} of the starting position
@@ -233,7 +229,6 @@ public class AutoCommands {
       Drive drive,
       Periscope periscope,
       AlgaePivot algaePivot,
-      AEE aee,
       CEE cee,
       Funnel funnel,
       Pose2d startingPose,
@@ -247,11 +242,11 @@ public class AutoCommands {
         break;
 
       case 2:
-        coralPosition = SuperstructureCommands.positionsToL2Coral(periscope, algaePivot, aee);
+        coralPosition = SuperstructureCommands.positionsToL2Coral(periscope, algaePivot);
         break;
 
       case 3:
-        coralPosition = SuperstructureCommands.positionsToL3Coral(periscope, algaePivot, aee);
+        coralPosition = SuperstructureCommands.positionsToL3Coral(periscope, algaePivot);
         break;
 
       case 4:
@@ -284,7 +279,6 @@ public class AutoCommands {
    * @param drive {@link Drive} subsystem
    * @param periscope {@link Periscope} subsystem
    * @param algaePivot {@link AlgaePivot} subsystem
-   * @param aee {@link AEE} subsystem
    * @param cee {@link CEE} subsystem
    * @param funnel {@link Funnel} subsystem
    * @param driveSpeed Percent speed of the Drivetrain
@@ -295,7 +289,6 @@ public class AutoCommands {
       Drive drive,
       Periscope periscope,
       AlgaePivot algaePivot,
-      AEE aee,
       CEE cee,
       Funnel funnel,
       double driveSpeed,
@@ -308,11 +301,11 @@ public class AutoCommands {
         break;
 
       case 2:
-        coralPosition = SuperstructureCommands.positionsToL2Coral(periscope, algaePivot, aee);
+        coralPosition = SuperstructureCommands.positionsToL2Coral(periscope, algaePivot);
         break;
 
       case 3:
-        coralPosition = SuperstructureCommands.positionsToL3Coral(periscope, algaePivot, aee);
+        coralPosition = SuperstructureCommands.positionsToL3Coral(periscope, algaePivot);
         break;
 
       case 4:
@@ -348,7 +341,6 @@ public class AutoCommands {
    * @param drive {@link Drive} subsystem
    * @param periscope {@link Periscope} subsystem
    * @param algaePivot {@link AlgaePivot} subsystem
-   * @param aee {@link AEE} subsystem
    * @param cee {@link CEE} subsystem
    * @param funnel {@link Funnel} subsystem
    * @param driveSpeed Percent speed of the Drivetrain
@@ -359,7 +351,6 @@ public class AutoCommands {
       Drive drive,
       Periscope periscope,
       AlgaePivot algaePivot,
-      AEE aee,
       CEE cee,
       Funnel funnel,
       double driveSpeed,
@@ -373,11 +364,11 @@ public class AutoCommands {
         break;
 
       case 2:
-        coralPosition = SuperstructureCommands.positionsToL2Coral(periscope, algaePivot, aee);
+        coralPosition = SuperstructureCommands.positionsToL2Coral(periscope, algaePivot);
         break;
 
       case 3:
-        coralPosition = SuperstructureCommands.positionsToL3Coral(periscope, algaePivot, aee);
+        coralPosition = SuperstructureCommands.positionsToL3Coral(periscope, algaePivot);
         break;
 
       case 4:
@@ -405,11 +396,11 @@ public class AutoCommands {
             Commands.parallel(
                 PathfindingCommands.pathfindToClosestCoralStation(
                     drive, PathPlannerConstants.DEFAULT_WALL_DISTANCE_M, () -> false),
-                SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel)
+                SuperstructureCommands.zero(periscope, algaePivot, cee, funnel)
                     .andThen(
                         Commands.waitSeconds(TIME_BETWEEN_ACTIONS)
                             .andThen(
                                 SuperstructureCommands.intakeCoral(
-                                    periscope, algaePivot, aee, cee, funnel)))));
+                                    periscope, algaePivot, cee, funnel)))));
   }
 }

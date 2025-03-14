@@ -39,7 +39,7 @@ public class RobotContainer {
   private final Periscope m_periscopeSubsystem;
   private final Climber m_climberSubsystem;
   private final Funnel m_funnelSubsystem;
-  private final AEE m_AEESubsystem;
+//   private final AEE m_AEESubsystem;
   private final CEE m_CEESubsystem;
 
   // Utils
@@ -73,7 +73,7 @@ public class RobotContainer {
         m_periscopeSubsystem = new Periscope(new PeriscopeIOTalonFX());
         m_climberSubsystem = new Climber(new ClimberIOTalonFX());
         m_funnelSubsystem = new Funnel(new FunnelIOSparkMax());
-        m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
+        // m_AEESubsystem = new AEE(new AEEIOSparkMax() {});
         m_CEESubsystem = new CEE(new CEEIOSparkMax());
         m_visionSubsystem =
             new Vision(
@@ -97,7 +97,7 @@ public class RobotContainer {
         m_periscopeSubsystem = new Periscope(new PeriscopeIOSim());
         m_climberSubsystem = new Climber(new ClimberIOSim());
         m_funnelSubsystem = new Funnel(new FunnelIOSim());
-        m_AEESubsystem = new AEE(new AEEIOSim() {});
+        // m_AEESubsystem = new AEE(new AEEIOSim() {});
         m_CEESubsystem = new CEE(new CEEIOSim());
         m_visionSubsystem =
             new Vision(
@@ -123,69 +123,69 @@ public class RobotContainer {
         m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
         m_climberSubsystem = new Climber(new ClimberIO() {});
         m_funnelSubsystem = new Funnel(new FunnelIO() {});
-        m_AEESubsystem = new AEE(new AEEIO() {});
+        // m_AEESubsystem = new AEE(new AEEIO() {});
         m_CEESubsystem = new CEE(new CEEIO() {});
         m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
         break;
     }
 
     /* PathPlanner Commands */
-    NamedCommands.registerCommand(
-        "Zero_Superstructure",
-        SuperstructureCommands.zero(
-            m_periscopeSubsystem,
-            m_algaePivotSubsystem,
-            m_AEESubsystem,
-            m_CEESubsystem,
-            m_funnelSubsystem));
-    NamedCommands.registerCommand(
-        "Position_L1",
-        SuperstructureCommands.positionsToL1(m_periscopeSubsystem, m_algaePivotSubsystem));
-    NamedCommands.registerCommand(
-        "Position_L2_CORAL",
-        SuperstructureCommands.positionsToL2Coral(
-            m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem));
-    NamedCommands.registerCommand(
-        "Position_L3_CORAL",
-        SuperstructureCommands.positionsToL3Coral(
-            m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem));
-    NamedCommands.registerCommand(
-        "Position_L4",
-        SuperstructureCommands.positionsToL4(
-            m_periscopeSubsystem, m_algaePivotSubsystem, m_CEESubsystem));
-    NamedCommands.registerCommand(
-        "Score", SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
-    NamedCommands.registerCommand(
-        "Intake_CORAL",
-        SuperstructureCommands.intakeCoral(
-            m_periscopeSubsystem,
-            m_algaePivotSubsystem,
-            m_AEESubsystem,
-            m_CEESubsystem,
-            m_funnelSubsystem));
-    NamedCommands.registerCommand(
-        "CEE_Out",
-        Commands.runOnce(() -> m_CEESubsystem.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED)));
+    // NamedCommands.registerCommand(
+    //     "Zero_Superstructure",
+    //     SuperstructureCommands.zero(
+    //         m_periscopeSubsystem,
+    //         m_algaePivotSubsystem,
+    //         m_AEESubsystem,
+    //         m_CEESubsystem,
+    //         m_funnelSubsystem));
+    // NamedCommands.registerCommand(
+    //     "Position_L1",
+    //     SuperstructureCommands.positionsToL1(m_periscopeSubsystem, m_algaePivotSubsystem));
+    // NamedCommands.registerCommand(
+    //     "Position_L2_CORAL",
+    //     SuperstructureCommands.positionsToL2Coral(
+    //         m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem));
+    // NamedCommands.registerCommand(
+    //     "Position_L3_CORAL",
+    //     SuperstructureCommands.positionsToL3Coral(
+    //         m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem));
+    // NamedCommands.registerCommand(
+    //     "Position_L4",
+    //     SuperstructureCommands.positionsToL4(
+    //         m_periscopeSubsystem, m_algaePivotSubsystem, m_CEESubsystem));
+    // NamedCommands.registerCommand(
+    //     "Score", SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+    // NamedCommands.registerCommand(
+    //     "Intake_CORAL",
+    //     SuperstructureCommands.intakeCoral(
+    //         m_periscopeSubsystem,
+    //         m_algaePivotSubsystem,
+    //         m_AEESubsystem,
+    //         m_CEESubsystem,
+    //         m_funnelSubsystem));
+    // NamedCommands.registerCommand(
+    //     "CEE_Out",
+    //     Commands.runOnce(() -> m_CEESubsystem.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED)));
 
     /* Autonomous Routines */
     m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
     // Dynamic/Pathfinding Autos
-    m_autoChooser.addOption(
-        "Dynamic Pathfinding Auto",
-        AutoCommands.dynamicPathfindingAuto(
-            m_driveSubsystem,
-            m_periscopeSubsystem,
-            m_algaePivotSubsystem,
-            m_AEESubsystem,
-            m_CEESubsystem,
-            m_funnelSubsystem));
+    // m_autoChooser.addOption(
+    //     "Dynamic Pathfinding Auto",
+    //     AutoCommands.dynamicPathfindingAuto(
+    //         m_driveSubsystem,
+    //         m_periscopeSubsystem,
+    //         m_algaePivotSubsystem,
+    //         m_AEESubsystem,
+    //         m_CEESubsystem,
+    //         m_funnelSubsystem));
     m_autoChooser.addOption(
         "Deadreckon 1P L4",
         AutoCommands.deadreckonOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
-            m_AEESubsystem,
+            
             m_CEESubsystem,
             m_funnelSubsystem,
             0.4,
@@ -196,7 +196,7 @@ public class RobotContainer {
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
-            m_AEESubsystem,
+            
             m_CEESubsystem,
             m_funnelSubsystem,
             PathPlannerConstants.STARTING_LINE_CENTER,
@@ -208,7 +208,7 @@ public class RobotContainer {
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
-            m_AEESubsystem,
+            
             m_CEESubsystem,
             m_funnelSubsystem,
             0.4,
@@ -219,7 +219,7 @@ public class RobotContainer {
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
-            m_AEESubsystem,
+            
             m_CEESubsystem,
             m_funnelSubsystem,
             0.4,
@@ -230,7 +230,7 @@ public class RobotContainer {
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
-            m_AEESubsystem,
+            
             m_CEESubsystem,
             m_funnelSubsystem,
             0.4,
@@ -241,7 +241,7 @@ public class RobotContainer {
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
-            m_AEESubsystem,
+            
             m_CEESubsystem,
             m_funnelSubsystem,
             0.4,
@@ -460,23 +460,10 @@ public class RobotContainer {
                 m_CEESubsystem))
         .onFalse(
             new InstantCommand(
-                () -> {
-                  m_CEESubsystem.setPercentSpeed(0);
-                  m_AEESubsystem.setPercentSpeed(0);
-                },
-                m_AEESubsystem,
-                m_CEESubsystem))
-        .and(
-            m_auxButtonBoard.axisGreaterThan(
-                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  m_CEESubsystem.setPercentSpeed(0);
-                  m_AEESubsystem.setPercentSpeed(AEEConstants.SCORE_PERCENT_SPEED);
-                },
-                m_AEESubsystem,
+                () -> 
+                  m_CEESubsystem.setPercentSpeed(0),
                 m_CEESubsystem));
+
     // Intaking
     m_driverController
         .rightTrigger()
@@ -484,7 +471,7 @@ public class RobotContainer {
             SuperstructureCommands.intakeCoral(
                     m_periscopeSubsystem,
                     m_algaePivotSubsystem,
-                    m_AEESubsystem,
+                    
                     m_CEESubsystem,
                     m_funnelSubsystem)
                 .until(m_driverController.rightTrigger().negate())
@@ -493,7 +480,7 @@ public class RobotContainer {
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem));
     // Outtake
@@ -530,7 +517,7 @@ public class RobotContainer {
     /* Score */
     m_auxButtonBoard
         .axisLessThan(OperatorConstants.BUTTON_BOARD.SCORE.BUTTON_ID, -0.5)
-        .onTrue(SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+        .onTrue(SuperstructureCommands.score( m_CEESubsystem, m_funnelSubsystem));
 
     /* CORAL and ALGAE */
     // L1 or PROCESSOR
@@ -541,7 +528,7 @@ public class RobotContainer {
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .and(
@@ -556,12 +543,12 @@ public class RobotContainer {
         .button(OperatorConstants.BUTTON_BOARD.L2.BUTTON_ID)
         .onTrue(
             SuperstructureCommands.positionsToL2Coral(
-                m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem))
+                m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .and(
@@ -572,7 +559,7 @@ public class RobotContainer {
             SuperstructureCommands.intakeL2Algae(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem));
     // L3 CORAL or ALGAE
@@ -580,12 +567,12 @@ public class RobotContainer {
         .button(OperatorConstants.BUTTON_BOARD.L3.BUTTON_ID)
         .onTrue(
             SuperstructureCommands.positionsToL3Coral(
-                m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem))
+                m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .and(
@@ -596,7 +583,7 @@ public class RobotContainer {
             SuperstructureCommands.intakeL3Algae(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem));
     // L4 or NET
@@ -609,7 +596,7 @@ public class RobotContainer {
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .and(
@@ -624,20 +611,16 @@ public class RobotContainer {
             SuperstructureCommands.intakeGroundAlgae(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                     m_periscopeSubsystem,
                     m_algaePivotSubsystem,
-                    m_AEESubsystem,
+                    
                     m_CEESubsystem,
-                    m_funnelSubsystem)
-                .andThen(
-                    Commands.runOnce(
-                        () -> m_AEESubsystem.setPercentSpeed(AEEConstants.INTAKE_PERCENT_SPEED),
-                        m_AEESubsystem)));
+                    m_funnelSubsystem));
     // Adjust Periscope Height
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
@@ -917,7 +900,7 @@ public class RobotContainer {
     /* Score */
     m_auxController
         .rightTrigger()
-        .onTrue(SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+        .onTrue(SuperstructureCommands.score( m_CEESubsystem, m_funnelSubsystem));
 
     /* CORAL and ALGAE */
     // L1 or PROCESSOR
@@ -928,7 +911,7 @@ public class RobotContainer {
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .and(m_auxController.leftBumper()) // Run ALGAE position if switch is toggled
@@ -940,12 +923,12 @@ public class RobotContainer {
         .x()
         .onTrue(
             SuperstructureCommands.positionsToL2Coral(
-                m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem))
+                m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .and(m_auxController.leftBumper()) // Run ALGAE position if switch is toggled
@@ -953,7 +936,7 @@ public class RobotContainer {
             SuperstructureCommands.intakeL2Algae(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem));
     // L3 CORAL or ALGAE
@@ -961,12 +944,12 @@ public class RobotContainer {
         .b()
         .onTrue(
             SuperstructureCommands.positionsToL3Coral(
-                m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem))
+                m_periscopeSubsystem, m_algaePivotSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .and(m_auxController.leftBumper()) // Run ALGAE position if switch is toggled
@@ -974,7 +957,7 @@ public class RobotContainer {
             SuperstructureCommands.intakeL3Algae(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem));
     // L4 or NET
@@ -987,7 +970,7 @@ public class RobotContainer {
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .and(m_auxController.leftBumper()) // Run ALGAE position if switch is toggled
@@ -999,14 +982,14 @@ public class RobotContainer {
             SuperstructureCommands.intakeGroundAlgae(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem));
     // CORAL Intake
@@ -1016,14 +999,14 @@ public class RobotContainer {
             SuperstructureCommands.intakeCoral(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .onFalse(
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem));
     // Zero mechanisms
@@ -1033,7 +1016,7 @@ public class RobotContainer {
             SuperstructureCommands.zero(
                 m_periscopeSubsystem,
                 m_algaePivotSubsystem,
-                m_AEESubsystem,
+                
                 m_CEESubsystem,
                 m_funnelSubsystem));
   }
@@ -1058,7 +1041,6 @@ public class RobotContainer {
     // m_periscopeSubsystem.enableBrakeMode(enable);
     m_climberSubsystem.enableBrakeMode(enable);
     // m_funnelSubsystem.enableBrakeMode(enable);
-    m_AEESubsystem.enableBrakeMode(enable);
     m_CEESubsystem.enableBrakeMode(enable);
   }
 }
