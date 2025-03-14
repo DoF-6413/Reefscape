@@ -12,7 +12,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +29,7 @@ public class Vision extends SubsystemBase {
   // Vision pose estimation
   // private final PhotonPoseEstimator[] m_photonPoseEstimators;
   private List<Pose2d> m_estimatedPoses = new LinkedList<>();
-  private Matrix<N3, N1> m_stdDevs = VecBuilder.fill(0.5, 0.5, 1000000);
+  private Matrix<N3, N1> m_stdDevs = VecBuilder.fill(0.7, 0.7, 1000000);
   private double m_stdDevCoeff = 0.0;
 
   /**
@@ -139,17 +141,15 @@ public class Vision extends SubsystemBase {
       //   m_consumer.accept(m_estimatedPoses.get(0), m_inputs[0].timestampSec, m_stdDevs);
       //   m_estimatedPoses.clear();
     }
-    // if (RobotStateConstants.getMode() != RobotStateConstants.Mode.SIM) {
-    var llResults = m_io[0].getLimeLightResults();
-    System.out.println("Getting results");
-    // if (llResults.valid) {
-    var estimatedPose = llResults.getBotPose2d_wpiBlue();
-    if (estimatedPose == null) return;
-    System.out.println(estimatedPose.toString());
-    System.out.println("Applying pose estimation");
-    m_consumer.accept(estimatedPose, llResults.timestamp_LIMELIGHT_publish, m_stdDevs);
-    // }
-    // }
+
+    // Update pose estimator from limelight
+    if (RobotStateConstants.getMode() != RobotStateConstants.Mode.SIM) {
+      var estimatedPose = m_inputs[0].limelightPose;
+      if (estimatedPose == null) return;
+      System.out.println(estimatedPose.toString());
+      m_consumer.accept(estimatedPose, Timer.getFPGATimestamp(), m_stdDevs);
+      System.out.println("Applied pose estimation");
+    }
   }
 
   /**

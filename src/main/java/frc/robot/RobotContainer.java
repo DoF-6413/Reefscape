@@ -80,7 +80,9 @@ public class RobotContainer {
                 m_driveSubsystem::addVisionMeasurement,
                 // new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_INDEX),
                 // new VisionIOPhotonVision(VisionConstants.CAMERA.BACK.CAMERA_INDEX)
-                new VisionIOLimelight(VisionConstants.CAMERA.LIMELIGHT.CAMERA_INDEX));
+                new VisionIOLimelight(
+                    VisionConstants.CAMERA.LIMELIGHT.CAMERA_INDEX,
+                    m_driveSubsystem::getCurrentPose2d));
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
