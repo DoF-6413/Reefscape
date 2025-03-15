@@ -41,7 +41,7 @@ public class PeriscopeConstants {
    * Height difference from the bottom position and the new resting position from the spacers in
    * inches
    */
-  public static final double SPACER_HEIGHT_DIFF_IN = 2.4375;
+  public static final double SPACER_HEIGHT_DIFF_IN = 1.9375;
   /** Minimum height of the Periscope, resting/default position */
   public static final double MIN_HEIGHT_M = 0.0;
   /** Max height of the Periscope in meters */

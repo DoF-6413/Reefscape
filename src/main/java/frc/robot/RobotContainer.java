@@ -536,6 +536,10 @@ public class RobotContainer {
         .or(m_auxButtonBoard.button(OperatorConstants.BUTTON_BOARD.REEF_KL.BUTTON_ID))
         .onTrue(new InstantCommand(() -> m_driverController.setRumble(RumbleType.kBothRumble, 1)))
         .onFalse(new InstantCommand(() -> m_driverController.setRumble(RumbleType.kBothRumble, 0)));
+    // Stop in X
+    m_driverController
+        .b()
+        .whileTrue(new InstantCommand(() -> m_driveSubsystem.stopWithX(), m_driveSubsystem));
   }
 
   /** Aux Button Board Controls */

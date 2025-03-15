@@ -55,7 +55,7 @@ public final class DriveConstants {
   /** Inversion status for the Turn motor, makes Clockwise the positive direction */
   public static final boolean TURN_IS_INVERTED = true;
   /** Current limiting in amps */
-  public static final int CUR_LIM_A = 60;
+  public static final int CUR_LIM_A = 40;
   /** Enables the current limit */
   public static final boolean ENABLE_CUR_LIM = true;
   /** Refresh signals of the TalonFX and CANcoder 50 times a second (every 0.02 second) */

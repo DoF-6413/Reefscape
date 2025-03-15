@@ -201,6 +201,19 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  public void stop() {
+    this.runVelocity(new ChassisSpeeds());
+  }
+
+  public void stopWithX() {
+    Rotation2d[] headings = new Rotation2d[4];
+    for (int i = 0; i < 4; i++) {
+      headings[i] = DriveConstants.getModuleTranslations()[i].getAngle();
+    }
+    m_swerveDriveKinematics.resetHeadings(headings);
+    stop();
+  }
+
   /* ~~~~~~~~~~~~~~~~~~ Chassis and Modules ~~~~~~~~~~~~~~~~~~ */
 
   /**
