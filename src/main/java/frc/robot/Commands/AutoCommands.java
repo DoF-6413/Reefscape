@@ -341,18 +341,20 @@ public class AutoCommands {
         .andThen(Commands.waitSeconds(0.5))
         .andThen(
             Commands.parallel(
-                DriveCommands.fieldRelativeDriveAtAngle(
+                    DriveCommands.fieldRelativeDriveAtAngle(
                         drive,
                         () -> RobotStateConstants.isRed() ? -driveSpeed : driveSpeed,
                         () -> 0,
-                        () -> Rotation2d.kZero)
-                    .withTimeout(DRIVE_TIME_SEC),
-                coralPosition))
+                        () -> Rotation2d.kZero),
+                    coralPosition)
+                .withDeadline(Commands.waitSeconds(4)))
         .andThen(
-            Commands.parallel(
-                Commands.runOnce(() -> drive.setRaw(0, 0, 0), drive),
-                Commands.runOnce(
-                    () -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)));
+            Commands.sequence(
+                Commands.runOnce(() -> drive.setRaw(0, 0, 0), drive)
+                    .alongWith(
+                        Commands.run(
+                                () -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
+                            )));
   }
 
   /**
