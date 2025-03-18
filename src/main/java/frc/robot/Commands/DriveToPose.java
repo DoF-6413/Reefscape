@@ -16,84 +16,93 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class DriveToPose extends Command {
-  private final Drive drive;
-  private final Supplier<Pose2d> target;
+  private final Drive m_drive;
+  private final Supplier<Pose2d> m_targetPose;
 
-  private final ProfiledPIDController driveController =
+  private final ProfiledPIDController m_linearController =
       new ProfiledPIDController(
-          1.0,
+          2.0,
           0.0,
           0.0,
-          new TrapezoidProfile.Constraints(DriveConstants.MAX_LINEAR_SPEED_M_PER_S, 0.0));
-  private final ProfiledPIDController thetaController =
+          new TrapezoidProfile.Constraints(DriveConstants.MAX_LINEAR_SPEED_M_PER_S, 3.0));
+  private final ProfiledPIDController m_angularController =
       new ProfiledPIDController(
-          1.0,
+          4.0,
           0.0,
           0.0,
-          new TrapezoidProfile.Constraints(DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S, 0.0));
+          new TrapezoidProfile.Constraints(
+              DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S, 2 * Math.PI));
 
-  private Translation2d lastSetpointTranslation = Translation2d.kZero;
-  private double driveErrorAbs = 0.0;
-  private double thetaErrorAbs = 0.0;
-  private boolean running = false;
-  private Supplier<Pose2d> robot;
+  private Translation2d m_lastSetpointTranslation = Translation2d.kZero;
+  private double m_linearErrorAbs = 0.0;
+  private double m_angularErrorAbs = 0.0;
+  private boolean m_running = false;
+  private Supplier<Pose2d> m_robotPose;
 
-  private Supplier<Translation2d> linearFF = () -> Translation2d.kZero;
-  private DoubleSupplier omegaFF = () -> 0.0;
+  private Supplier<Translation2d> m_linearFF = () -> Translation2d.kZero;
+  private DoubleSupplier m_angularFF = () -> 0.0;
 
+  /**
+   * A {@link Command} that drives the robot to a specified {@link Pose2d}. This runs based off two
+   * trapezoidal {@link ProfiledPIDController} for linear and angular movement.
+   *
+   * @param drive {@link Drive} subsystem
+   * @param target Goal end pose of the robot as a {@link Pose2d}
+   */
   public DriveToPose(Drive drive, Supplier<Pose2d> target) {
-    this.drive = drive;
-    this.target = target;
-    robot = () -> drive.getCurrentPose2d();
+    this.m_drive = drive;
+    this.m_targetPose = target;
+    m_robotPose = () -> drive.getCurrentPose2d();
 
     // Enable continuous input for theta controller
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    m_angularController.enableContinuousInput(-Math.PI, Math.PI);
 
     addRequirements(drive);
   }
 
   @Override
   public void initialize() {
-    Pose2d currentPose = robot.get();
-    ChassisSpeeds fieldVelocity = drive.getChassisSpeeds();
+    Pose2d currentPose = m_robotPose.get();
+    ChassisSpeeds fieldVelocity = m_drive.getChassisSpeeds();
     Translation2d linearFieldVelocity =
         new Translation2d(fieldVelocity.vxMetersPerSecond, fieldVelocity.vyMetersPerSecond);
-    driveController.reset(
-        currentPose.getTranslation().getDistance(target.get().getTranslation()),
+    m_linearController.reset(
+        currentPose.getTranslation().getDistance(m_targetPose.get().getTranslation()),
         Math.min(
             0.0,
             -linearFieldVelocity
                 .rotateBy(
-                    target
+                    m_targetPose
                         .get()
                         .getTranslation()
                         .minus(currentPose.getTranslation())
                         .getAngle()
                         .unaryMinus())
                 .getX()));
-    thetaController.reset(
+    m_angularController.reset(
         currentPose.getRotation().getRadians(), fieldVelocity.omegaRadiansPerSecond);
-    lastSetpointTranslation = currentPose.getTranslation();
+    m_lastSetpointTranslation = currentPose.getTranslation();
   }
 
   @Override
   public void execute() {
-    running = true;
+    m_running = true;
 
     // Get current pose and target pose
-    Pose2d currentPose = robot.get();
-    Pose2d targetPose = target.get();
+    Pose2d currentPose = m_robotPose.get();
+    Pose2d targetPose = m_targetPose.get();
 
-    // Calculate drive speed
+    // Calculate linear speed
     double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
-    driveErrorAbs = currentDistance;
-    driveController.reset(
-        lastSetpointTranslation.getDistance(targetPose.getTranslation()),
-        driveController.getSetpoint().velocity);
-    double driveVelocityScalar =
-        driveController.getSetpoint().velocity + driveController.calculate(driveErrorAbs, 0.0);
-    if (currentDistance < driveController.getPositionTolerance()) driveVelocityScalar = 0.0;
-    lastSetpointTranslation =
+    m_linearErrorAbs = currentDistance;
+    m_linearController.reset(
+        m_lastSetpointTranslation.getDistance(targetPose.getTranslation()),
+        m_linearController.getSetpoint().velocity);
+    double linearVelocityScalar =
+        m_linearController.getSetpoint().velocity
+            + m_linearController.calculate(m_linearErrorAbs, 0.0);
+    if (currentDistance < m_linearController.getPositionTolerance()) linearVelocityScalar = 0.0;
+    m_lastSetpointTranslation =
         new Pose2d(
                 targetPose.getTranslation(),
                 new Rotation2d(
@@ -101,78 +110,81 @@ public class DriveToPose extends Command {
                         currentPose.getTranslation().getY() - targetPose.getTranslation().getY(),
                         currentPose.getTranslation().getX() - targetPose.getTranslation().getX())))
             .transformBy(
-                new Transform2d(driveController.getSetpoint().position, 0.0, Rotation2d.kZero))
+                new Transform2d(m_linearController.getSetpoint().position, 0.0, Rotation2d.kZero))
             .getTranslation();
 
     // Calculate theta speed
     double thetaVelocity =
-        thetaController.getSetpoint().velocity
-            + thetaController.calculate(
+        m_angularController.getSetpoint().velocity
+            + m_angularController.calculate(
                 currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
-    thetaErrorAbs =
+    m_angularErrorAbs =
         Math.abs(currentPose.getRotation().minus(targetPose.getRotation()).getRadians());
-    if (thetaErrorAbs < thetaController.getPositionTolerance()) thetaVelocity = 0.0;
+    if (m_angularErrorAbs < m_angularController.getPositionTolerance()) thetaVelocity = 0.0;
 
-    Translation2d driveVelocity =
+    Translation2d linearVelocity =
         new Pose2d(
                 Translation2d.kZero,
                 new Rotation2d(
                     Math.atan2(
                         currentPose.getTranslation().getY() - targetPose.getTranslation().getY(),
                         currentPose.getTranslation().getX() - targetPose.getTranslation().getX())))
-            .transformBy(new Transform2d(driveVelocityScalar, 0.0, Rotation2d.kZero))
+            .transformBy(new Transform2d(linearVelocityScalar, 0.0, Rotation2d.kZero))
             .getTranslation();
 
     // Scale feedback velocities by input ff
-    final double linearS = linearFF.get().getNorm() * 3.0;
-    final double thetaS = Math.abs(omegaFF.getAsDouble()) * 3.0;
-    driveVelocity =
-        driveVelocity.interpolate(
-            linearFF.get().times(DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S), linearS);
+    final double linearS = m_linearFF.get().getNorm() * 3.0;
+    final double thetaS = Math.abs(m_angularFF.getAsDouble()) * 3.0;
+    linearVelocity =
+        linearVelocity.interpolate(
+            m_linearFF.get().times(DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S), linearS);
     thetaVelocity =
         MathUtil.interpolate(
             thetaVelocity,
-            omegaFF.getAsDouble() * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
+            m_angularFF.getAsDouble() * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
             thetaS);
 
     // Command speeds
-    drive.runVelocity(
+    m_drive.runVelocity(
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            driveVelocity.getX(), driveVelocity.getY(), thetaVelocity, currentPose.getRotation()));
+            linearVelocity.getX(),
+            linearVelocity.getY(),
+            thetaVelocity,
+            currentPose.getRotation()));
 
     // Log data
     Logger.recordOutput("DriveToPose/DistanceMeasured", currentDistance);
-    Logger.recordOutput("DriveToPose/DistanceSetpoint", driveController.getSetpoint().position);
+    Logger.recordOutput("DriveToPose/DistanceSetpoint", m_linearController.getSetpoint().position);
     Logger.recordOutput("DriveToPose/ThetaMeasured", currentPose.getRotation().getRadians());
-    Logger.recordOutput("DriveToPose/ThetaSetpoint", thetaController.getSetpoint().position);
+    Logger.recordOutput("DriveToPose/ThetaSetpoint", m_angularController.getSetpoint().position);
     Logger.recordOutput(
         "DriveToPose/Setpoint",
         new Pose2d[] {
           new Pose2d(
-              lastSetpointTranslation,
-              Rotation2d.fromRadians(thetaController.getSetpoint().position))
+              m_lastSetpointTranslation,
+              Rotation2d.fromRadians(m_angularController.getSetpoint().position))
         });
     Logger.recordOutput("DriveToPose/Goal", new Pose2d[] {targetPose});
   }
 
   @Override
   public void end(boolean interrupted) {
-    drive.stop();
-    running = false;
+    m_drive.stop();
+    m_running = false;
     // Clear logs
-    Logger.recordOutput("DriveToPose/Setpoint", new Pose2d[] {});
-    Logger.recordOutput("DriveToPose/Goal", new Pose2d[] {});
+    // Logger.recordOutput("DriveToPose/Setpoint", new Pose2d[] {});
+    // Logger.recordOutput("DriveToPose/Goal", new Pose2d[] {});
   }
 
   /** Checks if the robot is stopped at the final pose. */
   public boolean atGoal() {
-    return running && driveController.atGoal() && thetaController.atGoal();
+    return m_running && m_linearController.atGoal() && m_angularController.atGoal();
   }
 
   /** Checks if the robot pose is within the allowed drive and theta tolerances. */
-  public boolean withinTolerance(double driveTolerance, Rotation2d thetaTolerance) {
-    return running
-        && Math.abs(driveErrorAbs) < driveTolerance
-        && Math.abs(thetaErrorAbs) < thetaTolerance.getRadians();
+  public boolean withinTolerance(double linearTolerance, Rotation2d angularTolerance) {
+    return m_running
+        && Math.abs(m_linearErrorAbs) < linearTolerance
+        && Math.abs(m_angularErrorAbs) < angularTolerance.getRadians();
   }
 }

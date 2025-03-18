@@ -40,6 +40,8 @@ public class CEE extends SubsystemBase {
     SmartDashboard.putNumber("PIDFF_Tuning/CEE/KP", CEEConstants.KP);
     SmartDashboard.putNumber("PIDFF_Tuning/CEE/KI", CEEConstants.KI);
     SmartDashboard.putNumber("PIDFF_Tuning/CEE/KD", CEEConstants.KD);
+
+    SmartDashboard.putBoolean("BeamBreak", false);
   }
 
   @Override
@@ -138,6 +140,7 @@ public class CEE extends SubsystemBase {
    * @return {@code true} if the sensor has been triggered, {@code false} if not.
    */
   public boolean isBeamBreakTriggered() {
-    return m_inputs.isbeamBreaksTriggered;
+    // return m_inputs.isbeamBreaksTriggered;
+    return SmartDashboard.getBoolean("BeamBreak", false);
   }
 }

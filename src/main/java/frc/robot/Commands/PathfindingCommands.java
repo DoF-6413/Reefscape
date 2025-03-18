@@ -43,8 +43,7 @@ public class PathfindingCommands {
     double hypotAngle =
         Math.atan2(strafeOffsetMeters, (DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters);
     // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on top
-    // of
-    // the specified field element's pose
+    // of the specified field element's pose
     var goalPose =
         new Pose2d(
             // Multiply the x by cos and y by sin of the field element angle so that the hypot
@@ -57,11 +56,53 @@ public class PathfindingCommands {
             // robot
             elementRotation.plus(isFront ? Rotation2d.k180deg : Rotation2d.kZero));
 
-    // return AutoBuilder.pathfindToPoseFlipped(
-    //         goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0)
-    return new DriveToPose(drive, () -> goalPose)
+    return AutoBuilder.pathfindToPoseFlipped(
+            goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0)
         .alongWith(
-            Commands.runOnce(() -> Logger.recordOutput("Vision/Pathfinding/Goal_Pose", goalPose)));
+            Commands.runOnce(() -> Logger.recordOutput("Vision/Pathfinding/GoalPose", goalPose)));
+  }
+
+  /**
+   * Generates a trajectory for the robot to follow to a specified field element with an additional
+   * distance translation. The trajectory will automatically be rotated to the red alliance.
+   *
+   * @param elementPose {@link Pose2d} of the element to pathfind to.
+   * @param wallDistanceMeters Distance from the field element in meters.
+   * @param strafeOffsetMeters Left/right offset of the robot relative to the field element.
+   *     Nesessary depending on mechanism in use
+   * @param isFront {@code true} if to rotate goal pose by 180 for the front of the robot, {@code
+   *     false} if to align with the back of the robot
+   * @return {@link Command} that makes the robot follow a trajectory to in front of the field
+   *     element.
+   */
+  public static DriveToPose driveToFieldElement(
+      Drive drive,
+      Pose2d elementPose,
+      double wallDistanceMeters,
+      double strafeOffsetMeters,
+      boolean isFront) {
+    // Calculate distance from the elements pose to the desired location of the center of the robot
+    var elementRotation = elementPose.getRotation();
+    double hypot =
+        Math.hypot((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters, strafeOffsetMeters);
+    double hypotAngle =
+        Math.atan2(strafeOffsetMeters, (DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters);
+
+    // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on top
+    // of the specified field element's pose
+    var goalPose =
+        new Pose2d(
+            // Multiply the x by cos and y by sin of the field element angle so that the hypot
+            // (field element to robot)
+            // is the desired distance away from the field element
+            elementPose.getX() + hypot * Math.cos(elementRotation.getRadians() + hypotAngle),
+            elementPose.getY() + hypot * Math.sin(elementRotation.getRadians() + hypotAngle),
+            // Rotate by 180 as the field elements' angles are rotated 180 degrees relative to
+            // the robot
+            elementRotation.plus(isFront ? Rotation2d.k180deg : Rotation2d.kZero));
+
+    return new DriveToPose(
+        drive, () -> RobotStateConstants.isRed() ? FieldConstants.poseToRed(goalPose) : goalPose);
   }
 
   /**
@@ -166,6 +207,24 @@ public class PathfindingCommands {
   }
 
   /**
+   * Generates a trajectory for the robot to follow to a specified REEF BRANCH with an additional
+   * distance translation. The trajectory will automatically be rotated to the red alliance.
+   *
+   * @param branchLetter Letter corresponding to BRANCH to pathfind to.
+   * @param wallDistanceMeters Distance from the REEF wall in meters.
+   * @return {@link Command} that makes the robot follow a trajectory to in front of the BRANCH.
+   */
+  public static DriveToPose driveToBranch(
+      Drive drive, String branchLetter, double wallDistanceMeters) {
+    return PathfindingCommands.driveToFieldElement(
+        drive,
+        FieldConstants.BRANCH_POSES.get(branchLetter),
+        wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_M,
+        PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
+        true);
+  }
+
+  /**
    * Generates a trajectory for the robot to follow to the nearest BRANCH. The trajectory will
    * automatically be rotated to the Red alliance.
    *
@@ -179,7 +238,7 @@ public class PathfindingCommands {
    * @return {@link Command} that makes the robot follow a trajectory to in front of the nearest
    *     BRANCH.
    */
-  public static Command pathfindToClosestBranch(
+  public static Command driveToClosestBranch(
       Drive drive, double wallDistanceMeters, BooleanSupplier stopTrigger) {
 
     return Commands.run(
@@ -250,7 +309,7 @@ public class PathfindingCommands {
 
           // Pathfind to BRANCH pose. This method returns a command to pathfind to in front of the
           // BRANCH'S pose as to not drive into it.
-          PathfindingCommands.pathfindToFieldElement(
+          PathfindingCommands.driveToFieldElement(
                   drive,
                   FieldConstants.BRANCH_POSES.get(branchLetter),
                   wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_M,
@@ -278,8 +337,8 @@ public class PathfindingCommands {
   public static Command pathfindToClosestCoralStation(
       Drive drive, double wallDistanceMeters, BooleanSupplier stopTrigger) {
     // Initialize CORAL STATIONS based on alliance color
-    String csLeft = RobotStateConstants.isRed() ? "CS2C" : "CS1C";
-    String csRight = RobotStateConstants.isRed() ? "CS1C" : "CS2C";
+    String csLeft = RobotStateConstants.isRed() ? "CS2L" : "CS1R";
+    String csRight = RobotStateConstants.isRed() ? "CS1R" : "CS2L";
     return Commands.run(
         () -> {
           if (drive.getCurrentPose2d().getY() > FieldConstants.FIELD_WIDTH / 2) {
@@ -299,6 +358,52 @@ public class PathfindingCommands {
                     FieldConstants.CORAL_STATION_POSES.get(csRight),
                     wallDistanceMeters,
                     -PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
+                    false)
+                .until(stopTrigger)
+                .schedule();
+          }
+        },
+        drive);
+  }
+
+  /**
+   * Generates a trajectory for the robot to follow to the nearest CORAL STATION. The trajectory
+   * will automatically be rotated to the Red alliance.
+   *
+   * <p>Since a new trajectory is meant to be generated upon every button press, all the code must
+   * be inside of the return. This is done by returning a {@code Commands.run()} with a block of
+   * code inside of the lambda function for the {@link Runnable} parameter.
+   *
+   * @param drive {@link Drive} subsystem
+   * @param wallDistanceMeters Distance from the CS wall in meters.
+   * @param stopTrigger {@link BooleanSupplier} with the condition to end the Pathfinding command.
+   * @return {@link Command} that makes the robot follow a trajectory to in front of the nearest CS.
+   */
+  public static Command driveToClosestCoralStation(
+      Drive drive, double wallDistanceMeters, BooleanSupplier stopTrigger) {
+    // Initialize CORAL STATIONS based on alliance color
+    String csLeft = RobotStateConstants.isRed() ? "CS2L" : "CS1R";
+    String csRight = RobotStateConstants.isRed() ? "CS1R" : "CS2L";
+
+    return Commands.run(
+        () -> {
+          if (drive.getCurrentPose2d().getY() > FieldConstants.FIELD_WIDTH / 2) {
+            // Pathfind to the center of the CS to the left of the Driver Station
+            PathfindingCommands.driveToFieldElement(
+                    drive,
+                    FieldConstants.CORAL_STATION_POSES.get(csLeft),
+                    wallDistanceMeters,
+                    -PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
+                    false)
+                .until(stopTrigger)
+                .schedule();
+          } else {
+            // Pathfind to the center of the CS to the right of the Driver Station
+            PathfindingCommands.driveToFieldElement(
+                    drive,
+                    FieldConstants.CORAL_STATION_POSES.get(csRight),
+                    wallDistanceMeters,
+                    PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
                     false)
                 .until(stopTrigger)
                 .schedule();

@@ -142,6 +142,13 @@ public final class Constants {
 
   /** Field measurements */
   public final class FieldConstants {
+    /** Translates a Pose2d to the red alliance side */
+    public static Pose2d poseToRed(Pose2d pose) {
+      return new Pose2d(
+          FieldConstants.FIELD_LENGTH - pose.getX(),
+          FieldConstants.FIELD_WIDTH - pose.getY(),
+          pose.getRotation().plus(Rotation2d.k180deg));
+    }
     /** 3d field setup with the locations of the AprilTags loaded from WPILib JSON files */
     public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
         new AprilTagFieldLayout(
