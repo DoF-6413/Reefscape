@@ -18,6 +18,8 @@ public class GyroIOPigeon2 implements GyroIO {
 
   // Pigeon logged signals
   private final StatusSignal<Angle> m_yawDeg;
+  private final StatusSignal<Angle> m_rollDeg;
+  private final StatusSignal<Angle> m_pitchDeg;
   private final StatusSignal<AngularVelocity> m_yawVelocityDegPerSec;
 
   // PhoenixOdometryThread queues
@@ -44,6 +46,8 @@ public class GyroIOPigeon2 implements GyroIO {
 
     // Initialize IMU inputs and set update frequency to be every 0.01 seconds
     m_yawDeg = m_gyro.getYaw();
+    m_rollDeg = m_gyro.getRoll();
+    m_pitchDeg = m_gyro.getPitch();
     m_yawDeg.setUpdateFrequency(DriveConstants.ODOMETRY_UPDATE_FREQUENCY_HZ);
     m_yawVelocityDegPerSec = m_gyro.getAngularVelocityZWorld();
     m_yawVelocityDegPerSec.setUpdateFrequency(DriveConstants.UPDATE_FREQUENCY_HZ);
@@ -56,12 +60,23 @@ public class GyroIOPigeon2 implements GyroIO {
   @Override
   public void updateInputs(GyroIOInputs inputs) {
     // Update signals and check if they are recieved
-    inputs.connected = BaseStatusSignal.refreshAll(m_yawDeg, m_yawVelocityDegPerSec).isOK();
+    inputs.connected =
+        BaseStatusSignal.refreshAll(m_yawDeg, m_yawVelocityDegPerSec, m_pitchDeg, m_rollDeg).isOK();
     // Update logged inputs from IMU
     inputs.yawPositionRad =
         Rotation2d.fromRadians(
             MathUtil.angleModulus(
                 Units.degreesToRadians(m_yawDeg.getValueAsDouble())
+                    + DriveConstants.HEADING_OFFSET_RAD));
+    inputs.pitch =
+        Rotation2d.fromRadians(
+            MathUtil.angleModulus(
+                Units.degreesToRadians(m_pitchDeg.getValueAsDouble())
+                    + DriveConstants.HEADING_OFFSET_RAD));
+    inputs.roll =
+        Rotation2d.fromRadians(
+            MathUtil.angleModulus(
+                Units.degreesToRadians(m_rollDeg.getValueAsDouble())
                     + DriveConstants.HEADING_OFFSET_RAD));
     inputs.yawVelocityRadPerSec =
         Units.degreesToRadians(m_gyro.getAngularVelocityZWorld().getValueAsDouble());

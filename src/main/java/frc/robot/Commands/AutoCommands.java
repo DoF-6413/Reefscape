@@ -2,6 +2,7 @@ package frc.robot.Commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -66,37 +67,37 @@ public class AutoCommands {
     coralStation.addOption(
         "CS1L",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS1L"), WALL_DISTANCE_M, 0, false));
+            drive, FieldConstants.CORAL_STATION_POSES.get("CS1L"), WALL_DISTANCE_M, 0, false));
     coralStation.addOption(
         "CS1C",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS1C"), WALL_DISTANCE_M, 0, false));
+            drive, FieldConstants.CORAL_STATION_POSES.get("CS1C"), WALL_DISTANCE_M, 0, false));
     coralStation.addOption(
         "CS1R",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS1R"), WALL_DISTANCE_M, 0, false));
+            drive, FieldConstants.CORAL_STATION_POSES.get("CS1R"), WALL_DISTANCE_M, 0, false));
     coralStation.addOption(
         "CS2L",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS2L"), WALL_DISTANCE_M, 0, false));
+            drive, FieldConstants.CORAL_STATION_POSES.get("CS2L"), WALL_DISTANCE_M, 0, false));
     coralStation.addOption(
         "CS2C",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS2C"), WALL_DISTANCE_M, 0, false));
+            drive, FieldConstants.CORAL_STATION_POSES.get("CS2C"), WALL_DISTANCE_M, 0, false));
     coralStation.addOption(
         "CS2R",
         PathfindingCommands.pathfindToFieldElement(
-            FieldConstants.CORAL_STATION_POSES.get("CS2R"), WALL_DISTANCE_M, 0, false));
+            drive, FieldConstants.CORAL_STATION_POSES.get("CS2R"), WALL_DISTANCE_M, 0, false));
     LoggedDashboardChooser<Command> secondBranch = new LoggedDashboardChooser<>("Second BRANCH");
     secondBranch.addDefaultOption(
         "None (1.5P)",
         Commands.waitSeconds(15).alongWith(Commands.repeatingSequence(Commands.print("1.5P"))));
-    secondBranch.addOption("L", PathfindingCommands.pathfindToBranch("L", WALL_DISTANCE_M));
-    secondBranch.addOption("K", PathfindingCommands.pathfindToBranch("K", WALL_DISTANCE_M));
-    secondBranch.addOption("A", PathfindingCommands.pathfindToBranch("A", WALL_DISTANCE_M));
-    secondBranch.addOption("B", PathfindingCommands.pathfindToBranch("B", WALL_DISTANCE_M));
-    secondBranch.addOption("C", PathfindingCommands.pathfindToBranch("C", WALL_DISTANCE_M));
-    secondBranch.addOption("D", PathfindingCommands.pathfindToBranch("D", WALL_DISTANCE_M));
+    secondBranch.addOption("L", PathfindingCommands.pathfindToBranch(drive, "L", WALL_DISTANCE_M));
+    secondBranch.addOption("K", PathfindingCommands.pathfindToBranch(drive, "K", WALL_DISTANCE_M));
+    secondBranch.addOption("A", PathfindingCommands.pathfindToBranch(drive, "A", WALL_DISTANCE_M));
+    secondBranch.addOption("B", PathfindingCommands.pathfindToBranch(drive, "B", WALL_DISTANCE_M));
+    secondBranch.addOption("C", PathfindingCommands.pathfindToBranch(drive, "C", WALL_DISTANCE_M));
+    secondBranch.addOption("D", PathfindingCommands.pathfindToBranch(drive, "D", WALL_DISTANCE_M));
     LoggedDashboardChooser<Command> secondCoralLevel =
         new LoggedDashboardChooser<>("Second CORAL Level");
     secondCoralLevel.addOption("L1", SuperstructureCommands.positionsToL1(periscope, algaePivot));
@@ -136,7 +137,7 @@ public class AutoCommands {
             drive)
         .andThen(
             Commands.parallel(
-                PathfindingCommands.pathfindToBranch(firstBranch.get(), WALL_DISTANCE_M),
+                PathfindingCommands.pathfindToBranch(drive, firstBranch.get(), WALL_DISTANCE_M),
                 firstCoralLevel.get()))
         .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
         .andThen(SuperstructureCommands.score(aee, cee, funnel))
@@ -210,9 +211,14 @@ public class AutoCommands {
         .andThen(
             Commands.parallel(
                 PathfindingCommands.pathfindToBranch(
-                    branch, PathPlannerConstants.DEFAULT_WALL_DISTANCE_M),
-                SuperstructureCommands.positionsToL4(periscope, algaePivot, cee)))
-        .andThen(Commands.waitSeconds(TIME_BETWEEN_ACTIONS).andThen(coralPosition));
+                    drive, branch, PathPlannerConstants.DEFAULT_WALL_DISTANCE_M),
+                coralPosition.beforeStarting(Commands.waitSeconds(1))))
+        .andThen(
+            Commands.waitSeconds(TIME_BETWEEN_ACTIONS)
+                .andThen(
+                    Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
+                        .alongWith(
+                            Commands.run(() -> drive.runVelocity(new ChassisSpeeds()), drive))));
   }
 
   /**
@@ -267,7 +273,7 @@ public class AutoCommands {
         .andThen(
             Commands.parallel(
                 PathfindingCommands.pathfindToBranch(
-                    branch, PathPlannerConstants.DEFAULT_WALL_DISTANCE_M),
+                    drive, branch, PathPlannerConstants.DEFAULT_WALL_DISTANCE_M),
                 SuperstructureCommands.positionsToL4(periscope, algaePivot, cee)))
         .andThen(Commands.waitSeconds(TIME_BETWEEN_ACTIONS))
         .andThen(coralPosition)
@@ -349,11 +355,10 @@ public class AutoCommands {
                     coralPosition)
                 .withDeadline(Commands.waitSeconds(4)))
         .andThen(
-            Commands.sequence(
-                Commands.runOnce(() -> drive.setRaw(0, 0, 0), drive)
-                    .alongWith(
-                        Commands.run(
-                            () -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee))));
+            Commands.runOnce(() -> drive.setRaw(0, 0, 0), drive)
+                .alongWith(
+                    Commands.run(
+                        () -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)));
   }
 
   /**

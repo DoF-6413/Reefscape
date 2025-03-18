@@ -14,6 +14,7 @@ import frc.robot.Subsystems.Drive.DriveConstants;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
+import org.littletonrobotics.junction.Logger;
 
 /** The commands for on-the-fly trajectory following using PathPlanner's Pathfinding feature */
 public class PathfindingCommands {
@@ -31,7 +32,11 @@ public class PathfindingCommands {
    *     element.
    */
   public static Command pathfindToFieldElement(
-      Pose2d elementPose, double wallDistanceMeters, double strafeOffsetMeters, boolean isFront) {
+      Drive drive,
+      Pose2d elementPose,
+      double wallDistanceMeters,
+      double strafeOffsetMeters,
+      boolean isFront) {
     var elementRotation = elementPose.getRotation();
     double hypot =
         Math.hypot((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters, strafeOffsetMeters);
@@ -52,8 +57,11 @@ public class PathfindingCommands {
             // robot
             elementRotation.plus(isFront ? Rotation2d.k180deg : Rotation2d.kZero));
 
-    return AutoBuilder.pathfindToPoseFlipped(
-        goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+    // return AutoBuilder.pathfindToPoseFlipped(
+    //         goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0)
+    return new DriveToPose(drive, () -> goalPose)
+        .alongWith(
+            Commands.runOnce(() -> Logger.recordOutput("Vision/Pathfinding/Goal_Pose", goalPose)));
   }
 
   /**
@@ -147,31 +155,14 @@ public class PathfindingCommands {
    * @param wallDistanceMeters Distance from the REEF wall in meters.
    * @return {@link Command} that makes the robot follow a trajectory to in front of the BRANCH.
    */
-  public static Command pathfindToBranch(String branchLetter, double wallDistanceMeters) {
-    // Position of BRANCH corresponding to zone the robot is in
-    var branchPose = FieldConstants.BRANCH_POSES.get(branchLetter);
-
-    // Translated pose to send to Pathfinder, so that robot isn't commanded to go directly on top of
-    // the BRANCH
-    var goalPose =
-        new Pose2d(
-            // Multiply the x by cos and y by sin of the tag angle so that the hypot (tag to robot)
-            // is the desired distance away from the tag
-            branchPose.getX()
-                + ((DriveConstants.TRACK_WIDTH_M / 2)
-                        + FieldConstants.BRANCH_TO_WALL_X_M
-                        + wallDistanceMeters)
-                    * branchPose.getRotation().getCos(),
-            branchPose.getY()
-                + ((DriveConstants.TRACK_WIDTH_M / 2)
-                        + FieldConstants.BRANCH_TO_WALL_X_M
-                        + wallDistanceMeters)
-                    * branchPose.getRotation().getSin(),
-            // Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the robot
-            branchPose.getRotation().plus(Rotation2d.k180deg));
-
-    return AutoBuilder.pathfindToPoseFlipped(
-        goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+  public static Command pathfindToBranch(
+      Drive drive, String branchLetter, double wallDistanceMeters) {
+    return PathfindingCommands.pathfindToFieldElement(
+        drive,
+        FieldConstants.BRANCH_POSES.get(branchLetter),
+        wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_M,
+        PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
+        true);
   }
 
   /**
@@ -260,9 +251,10 @@ public class PathfindingCommands {
           // Pathfind to BRANCH pose. This method returns a command to pathfind to in front of the
           // BRANCH'S pose as to not drive into it.
           PathfindingCommands.pathfindToFieldElement(
+                  drive,
                   FieldConstants.BRANCH_POSES.get(branchLetter),
-                  wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_X_M,
-                  PathPlannerConstants.ROBOT_MIDPOINT_TO_SUPERSTRUCTURE,
+                  wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_M,
+                  PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
                   true)
               .until(stopTrigger)
               .schedule();
@@ -293,18 +285,20 @@ public class PathfindingCommands {
           if (drive.getCurrentPose2d().getY() > FieldConstants.FIELD_WIDTH / 2) {
             // Pathfind to the center of the CS to the left of the Driver Station
             PathfindingCommands.pathfindToFieldElement(
+                    drive,
                     FieldConstants.CORAL_STATION_POSES.get(csLeft),
                     wallDistanceMeters,
-                    -PathPlannerConstants.ROBOT_MIDPOINT_TO_SUPERSTRUCTURE,
+                    -PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
                     false)
                 .until(stopTrigger)
                 .schedule();
           } else {
             // Pathfind to the center of the CS to the right of the Driver Station
             PathfindingCommands.pathfindToFieldElement(
+                    drive,
                     FieldConstants.CORAL_STATION_POSES.get(csRight),
                     wallDistanceMeters,
-                    -PathPlannerConstants.ROBOT_MIDPOINT_TO_SUPERSTRUCTURE,
+                    -PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
                     false)
                 .until(stopTrigger)
                 .schedule();
