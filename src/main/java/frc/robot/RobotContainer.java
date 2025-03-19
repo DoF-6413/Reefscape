@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -263,6 +264,20 @@ public class RobotContainer {
             new String[] {"G", "C"},
             new int[] {4, 4},
             "CS2L"));
+    m_autoChooser.addOption(
+        "2P_SLC-H4-CS1R-L4",
+        AutoCommands.ridingDownStreamAuto(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem,
+            PathPlannerConstants.STARTING_LINE_CENTER,
+            2,
+            new String[] {"H", "L"},
+            new int[] {4, 4},
+            "CS1R"));
 
     /* Test Routines */
     m_autoChooser.addOption("2 Meter Test", new PathPlannerAuto("Forward"));
@@ -280,6 +295,8 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    SmartDashboard.putNumber("AEE Pivot Volts", 0);
   }
 
   /**
@@ -589,7 +606,9 @@ public class RobotContainer {
             m_auxButtonBoard.axisGreaterThan(
                 OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID,
                 0.5)) // Run ALGAE position if switch is toggled
-        .onTrue(SuperstructureCommands.positionsToNet(m_periscopeSubsystem, m_algaePivotSubsystem));
+        .onTrue(
+            SuperstructureCommands.positionsToNet(
+                m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem));
     // Ground ALGAE
     m_auxButtonBoard
         .axisGreaterThan(OperatorConstants.BUTTON_BOARD.GROUND_ALGAE.BUTTON_ID, 0.5)
@@ -978,7 +997,9 @@ public class RobotContainer {
                 m_CEESubsystem,
                 m_funnelSubsystem))
         .and(m_auxController.leftBumper()) // Run ALGAE position if switch is toggled
-        .onTrue(SuperstructureCommands.positionsToNet(m_periscopeSubsystem, m_algaePivotSubsystem));
+        .onTrue(
+            SuperstructureCommands.positionsToNet(
+                m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem));
     // Ground ALGAE
     m_auxController
         .rightBumper()
@@ -1023,6 +1044,27 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem));
+
+    m_auxController
+        .povUp()
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    m_algaePivotSubsystem.setVoltage(
+                        SmartDashboard.getNumber("AEE Pivot Volts", 0)),
+                m_algaePivotSubsystem))
+        .onFalse(
+            new InstantCommand(() -> m_algaePivotSubsystem.setVoltage(0), m_algaePivotSubsystem));
+    m_auxController
+        .povDown()
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    m_algaePivotSubsystem.setVoltage(
+                        -SmartDashboard.getNumber("AEE Pivot Volts", 0)),
+                m_algaePivotSubsystem))
+        .onFalse(
+            new InstantCommand(() -> m_algaePivotSubsystem.setVoltage(0), m_algaePivotSubsystem));
   }
 
   /**

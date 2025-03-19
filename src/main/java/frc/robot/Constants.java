@@ -360,8 +360,8 @@ public final class Constants {
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
         new PathConstraints(4, 2, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
     /** Default distance away from any wall when the robot is Pathfinding towards one */
-    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(6);
+    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(3);
     /** Distance from the center of the robot to the center of the Superstructure */
-    public static final double SUPERSTRUCTURE_OFFSET = Units.inchesToMeters(7);
+    public static final double SUPERSTRUCTURE_OFFSET = Units.inchesToMeters(-5);
   }
 }

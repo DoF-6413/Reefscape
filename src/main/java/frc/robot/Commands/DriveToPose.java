@@ -20,11 +20,7 @@ public class DriveToPose extends Command {
   private final Supplier<Pose2d> m_targetPose;
 
   private final ProfiledPIDController m_linearController =
-      new ProfiledPIDController(
-          2.0,
-          0.0,
-          0.0,
-          new TrapezoidProfile.Constraints(DriveConstants.MAX_LINEAR_SPEED_M_PER_S, 3.0));
+      new ProfiledPIDController(2.0, 0.0, 0.0, new TrapezoidProfile.Constraints(4, 1.5));
   private final ProfiledPIDController m_angularController =
       new ProfiledPIDController(
           4.0,

@@ -108,6 +108,13 @@ public class Periscope extends SubsystemBase {
   }
 
   /**
+   * @return Height of the Periscope in meters
+   */
+  public double getHeightMeters() {
+    return m_inputs.heightMeters;
+  }
+
+  /**
    * Sets the idle mode of the Periscope motors.
    *
    * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.

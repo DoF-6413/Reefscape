@@ -15,7 +15,7 @@ public class AlgaePivotConstants {
    */
   public static final boolean IS_INVERTED = true;
   /** Current limit for the NEO motor of the ALGAE Pivot */
-  public static final int CUR_LIM_A = 30;
+  public static final int CUR_LIM_A = 40;
   /** Offset to zero Absolute Encoder to be parallel with the Drivetraion belly pan, in rotations */
   public static final double ZERO_OFFSET_ROT = Units.radiansToRotations(4.039338805897648);
   /** Length of the ALGAE Pivot in meters */
@@ -30,17 +30,15 @@ public class AlgaePivotConstants {
   /** Maximum angle of the ALGAE Pivot in radians */
   public static final double MAX_ANGLE_RAD = Units.degreesToRadians(90);
   /** Angle (radians) of the ALGAE Pivot when trying to pickup ALGAE off the REEF */
-  public static final double REEF_ALGAE_ANGLE_RAD = Units.degreesToRadians(12.5);
+  public static final double REEF_ALGAE_ANGLE_RAD = Units.degreesToRadians(-5.0);
   /** Angle (radians) of the ALGAE Pivot when trying to pickup ALGAE off the ground */
-  public static final double GROUND_ALGAE_ANGLE_RAD = MIN_ANGLE_RAD;
+  public static final double GROUND_ALGAE_ANGLE_RAD = Units.degreesToRadians(-20);
   /** Angle (radians) of the ALGAE Pivot when trying to score ALGAE at the NET */
   public static final double NET_ANGLE_RAD = Units.degreesToRadians(45);
   /** Angle (radians) of the ALGAE Pivot when trying to score ALGAE at PROCESSOR */
   public static final double PROCESSOR_ANGLE_RAD = Units.degreesToRadians(-15);
   /** Angle (radians) of the ALGAE Pivot when removing ALGAE from the REEF */
   public static final double DEALGAE_ANGLE_RAD = Units.degreesToRadians(35);
-  /** Angle (radians) of the ALGAE Pivot when intaking ALGAE from the REEF */
-  public static final double ALGAE_INTAKE_ANGLE_RAD = 0;
 
   // PID CONSTANTS
   /**

@@ -3,7 +3,6 @@ package frc.robot.Commands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -272,14 +271,16 @@ public class AutoCommands {
       coralStation =
           Commands.waitSeconds(15).alongWith(Commands.repeatingSequence(Commands.print("1 Piece")));
     } else {
-      coralStation = PathfindingCommands.pathfindToFieldElement(drive, FieldConstants.CORAL_STATION_POSES.get(coralStationName), Units.inchesToMeters(3), 0, false);
+      coralStation =
+          PathfindingCommands.pathfindToFieldElement(
+              drive,
+              FieldConstants.CORAL_STATION_POSES.get(coralStationName),
+              Units.inchesToMeters(3),
+              0,
+              false);
     }
 
-    return Commands.runOnce(
-            () ->
-                drive.resetPose(
-                    startingPose),
-            drive)
+    return Commands.runOnce(() -> drive.resetPose(startingPose), drive)
         .andThen(
             Commands.parallel(
                 driveToBranches[0].withTimeout(2),
@@ -292,13 +293,15 @@ public class AutoCommands {
             Commands.parallel(
                 coralStation,
                 Commands.sequence(
-                    SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel).withTimeout(0.25),
+                    SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel)
+                        .withTimeout(0.25),
                     Commands.waitSeconds(0.5),
-                    SuperstructureCommands.intakeCoral(periscope, algaePivot, aee, cee, funnel).withTimeout(0.25))))
-        .andThen(Commands.waitUntil(()-> cee.isBeamBreakTriggered()))
+                    SuperstructureCommands.intakeCoral(periscope, algaePivot, aee, cee, funnel)
+                        .withTimeout(0.25))))
+        .andThen(Commands.waitUntil(() -> cee.isBeamBreakTriggered()))
         .andThen(
             Commands.parallel(
-                Commands.runOnce(()-> funnel.setPercentSpeed(0), funnel),
+                Commands.runOnce(() -> funnel.setPercentSpeed(0), funnel),
                 driveToBranches[1].withTimeout(2),
                 positionToCoral[1].beforeStarting(Commands.waitSeconds(0.25)).withTimeout(0.26)))
         .andThen(Commands.waitSeconds(0.25))
