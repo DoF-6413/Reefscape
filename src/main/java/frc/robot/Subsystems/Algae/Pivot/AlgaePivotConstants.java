@@ -24,7 +24,7 @@ public class AlgaePivotConstants {
   public static final double MASS_KG = Units.lbsToKilograms(6.8);
   // Angle positions
   /** Starting angle of the ALGAE Pivot in radians */
-  public static final double DEFAULT_ANGLE_RAD = Units.degreesToRadians(75);
+  public static final double DEFAULT_ANGLE_RAD = Units.degreesToRadians(65);
   /** Minimum angle of the ALGAE Pivot in radians */
   public static final double MIN_ANGLE_RAD = Units.degreesToRadians(-35);
   /** Maximum angle of the ALGAE Pivot in radians */
@@ -56,7 +56,6 @@ public class AlgaePivotConstants {
   public static double KS = 0.0;
   public static double KG = 0.5;
   public static double KV = 0.8;
-  // TODO: ALGAE affects KG tuning (can't go up w ALGAE in)
   /**
    * How many radians the angle of the ALGAE Pivot can be within its angle setpoint to be considered
    * at the setpoint

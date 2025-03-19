@@ -211,7 +211,7 @@ public class AutoCommands {
     return Commands.runOnce(() -> drive.resetPose(startingPose), drive)
         .andThen(
             Commands.parallel(
-                    PathfindingCommands.pathfindToBranch(
+                    PathfindingCommands.driveToBranch(
                         drive, branch, PathPlannerConstants.DEFAULT_WALL_DISTANCE_M),
                     coralPosition.beforeStarting(Commands.waitSeconds(0.25)))
                 .withTimeout(2))
@@ -222,7 +222,24 @@ public class AutoCommands {
                         .alongWith(Commands.run(() -> drive.stop(), drive))));
   }
 
-  public static Command ridingDownStreamAuto(
+  /**
+   * Two CORAL auto that uses vision auto alignment and PathPlanner's Pathfinder for driving
+   * segments
+   *
+   * @param drive {@link Drive} subsystem
+   * @param periscope {@link Periscope} subsystem
+   * @param algaePivot {@link AlgaePivot} subsystem
+   * @param aee {@link AEE} subsystem
+   * @param cee {@link CEE} subsystem
+   * @param funnel {@link Funnel} subsystem
+   * @param startingPose {@link Pose2d} of the start pose
+   * @param pieces Number of CORAL to be scored (1 or 2)
+   * @param branches BRANCHES to score at, in order
+   * @param coralLevels CORAL Levels to score, in order
+   * @param coralStationName CORAL STATION to go to
+   * @return {@link Command} that runs the 1 or 2 Piece auto routine
+   */
+  public static Command pathfindingTwoPiece(
       Drive drive,
       Periscope periscope,
       AlgaePivot algaePivot,
@@ -446,8 +463,15 @@ public class AutoCommands {
         .andThen(
             Commands.runOnce(() -> drive.setRaw(0, 0, 0), drive)
                 .alongWith(
-                    Commands.run(
-                        () -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)));
+                    Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)))
+        .andThen(Commands.waitSeconds(1))
+        .andThen(
+            DriveCommands.fieldRelativeDrive(
+                    drive,
+                    () -> RobotStateConstants.isRed() ? driveSpeed : -driveSpeed,
+                    () -> 0,
+                    () -> 0)
+                .withTimeout(2));
   }
 
   /**

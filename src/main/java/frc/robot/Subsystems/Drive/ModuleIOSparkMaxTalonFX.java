@@ -31,6 +31,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   private final TalonFX m_driveTalonFX;
   private final VelocityVoltage m_driveController = new VelocityVoltage(0);
   private final TalonFXConfiguration m_driveConfig = new TalonFXConfiguration();
+  private double m_currentLimit;
 
   // Turn motor, absolute encoder, controller, and configurator
   private final SparkMax m_turnSparkMax;
@@ -76,6 +77,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         m_turnCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.FRONT_LEFT.CAN_ID, "Drivetrain");
         m_absEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.FRONT_LEFT.OFFSET;
+        m_currentLimit = 50;
         break;
 
       case 1:
@@ -85,6 +87,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         m_turnCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.FRONT_RIGHT.CAN_ID, "Drivetrain");
         m_absEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.FRONT_RIGHT.OFFSET;
+        m_currentLimit = DriveConstants.CUR_LIM_A;
         break;
 
       case 2:
@@ -94,6 +97,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         m_turnCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.BACK_LEFT.CAN_ID, "Drivetrain");
         m_absEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.BACK_LEFT.OFFSET;
+        m_currentLimit = 20;
         break;
 
       case 3:
@@ -103,6 +107,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         m_turnCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.BACK_RIGHT.CAN_ID, "Drivetrain");
         m_absEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.BACK_RIGHT.OFFSET;
+        m_currentLimit = 20;
         break;
 
       default:
@@ -122,9 +127,9 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     // TalonFX current limit configurations
     m_driveConfig
         .CurrentLimits
-        .withSupplyCurrentLimit(DriveConstants.CUR_LIM_A)
+        .withSupplyCurrentLimit(m_currentLimit)
         .withSupplyCurrentLimitEnable(DriveConstants.ENABLE_CUR_LIM)
-        .withStatorCurrentLimit(DriveConstants.CUR_LIM_A)
+        .withStatorCurrentLimit(m_currentLimit)
         .withStatorCurrentLimitEnable(DriveConstants.ENABLE_CUR_LIM);
 
     // TalonFX PID and Feedforward gains configuration

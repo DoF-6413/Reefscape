@@ -45,7 +45,7 @@ public class PeriscopeConstants {
   /** Minimum height of the Periscope, resting/default position */
   public static final double MIN_HEIGHT_M = 0.0;
   /** Max height of the Periscope in meters */
-  public static final double MAX_HEIGHT_M = Units.inchesToMeters(57.5);
+  public static final double MAX_HEIGHT_M = Units.inchesToMeters(58);
   /** Height position of the Periscope for reaching L1 */
   public static final double L1_HEIGHT_M = Units.inchesToMeters(8.18 - SPACER_HEIGHT_DIFF_IN);
   /** Height position of the Periscope for reaching L2 */

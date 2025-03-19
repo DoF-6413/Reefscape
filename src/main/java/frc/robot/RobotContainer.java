@@ -2,7 +2,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -17,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.AutoCommands;
 import frc.robot.Commands.DriveCommands;
-import frc.robot.Commands.DriveToPose;
 import frc.robot.Commands.PathfindingCommands;
 import frc.robot.Commands.SuperstructureCommands;
 import frc.robot.Constants.OperatorConstants;
@@ -252,7 +250,7 @@ public class RobotContainer {
     // 2 Piece
     m_autoChooser.addOption(
         "2P_SLC-G4-CS2L-C4",
-        AutoCommands.ridingDownStreamAuto(
+        AutoCommands.pathfindingTwoPiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
@@ -266,7 +264,7 @@ public class RobotContainer {
             "CS2L"));
     m_autoChooser.addOption(
         "2P_SLC-H4-CS1R-L4",
-        AutoCommands.ridingDownStreamAuto(
+        AutoCommands.pathfindingTwoPiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
             m_algaePivotSubsystem,
@@ -278,6 +276,20 @@ public class RobotContainer {
             new String[] {"H", "L"},
             new int[] {4, 4},
             "CS1R"));
+    // m_autoChooser.addOption(
+    //     "1P_SLC-G4",
+    //     AutoCommands.ridingDownStreamAuto(
+    //         m_driveSubsystem,
+    //         m_periscopeSubsystem,
+    //         m_algaePivotSubsystem,
+    //         m_AEESubsystem,
+    //         m_CEESubsystem,
+    //         m_funnelSubsystem,
+    //         PathPlannerConstants.STARTING_LINE_CENTER,
+    //         1,
+    //         new String[] {"G", "L"},
+    //         new int[] {4, 4},
+    //         "CS1R"));
 
     /* Test Routines */
     m_autoChooser.addOption("2 Meter Test", new PathPlannerAuto("Forward"));
@@ -496,14 +508,9 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> m_driverController.setRumble(RumbleType.kBothRumble, 1)))
         .onFalse(new InstantCommand(() -> m_driverController.setRumble(RumbleType.kBothRumble, 0)));
     // Stop in X
-    // m_driverController
-    //     .b()
-    //     .whileTrue(new InstantCommand(() -> m_driveSubsystem.stopWithX(), m_driveSubsystem));
     m_driverController
         .b()
-        .onTrue(
-            new DriveToPose(m_driveSubsystem, () -> new Pose2d(2, 2, Rotation2d.k180deg))
-                .until(m_driverController.b().negate()));
+        .whileTrue(new InstantCommand(() -> m_driveSubsystem.stopWithX(), m_driveSubsystem));
   }
 
   /** Aux Button Board Controls */
@@ -512,7 +519,13 @@ public class RobotContainer {
     /* Score */
     m_auxButtonBoard
         .axisLessThan(OperatorConstants.BUTTON_BOARD.SCORE.BUTTON_ID, -0.5)
-        .onTrue(SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
+        .onTrue(
+            new InstantCommand(
+                () -> m_CEESubsystem.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED),
+                m_CEESubsystem))
+        .onFalse(
+            SuperstructureCommands.setSpeeds(
+                m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem, 0, 0, 0));
 
     /* CORAL and ALGAE */
     // L1 or PROCESSOR
@@ -541,6 +554,17 @@ public class RobotContainer {
                 m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem))
         .onFalse(
             SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem))
+        .and(
+            m_auxButtonBoard.axisGreaterThan(
+                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID,
+                0.5)) // Run ALGAE position if switch is toggled
+        .onTrue(
+            SuperstructureCommands.intakeL2Algae(
                     m_periscopeSubsystem,
                     m_algaePivotSubsystem,
                     m_AEESubsystem,
@@ -549,18 +573,7 @@ public class RobotContainer {
                 .andThen(
                     new InstantCommand(
                         () -> m_AEESubsystem.setPercentSpeed(AEEConstants.INTAKE_PERCENT_SPEED),
-                        m_AEESubsystem)))
-        .and(
-            m_auxButtonBoard.axisGreaterThan(
-                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID,
-                0.5)) // Run ALGAE position if switch is toggled
-        .onTrue(
-            SuperstructureCommands.intakeL2Algae(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
-                m_AEESubsystem,
-                m_CEESubsystem,
-                m_funnelSubsystem));
+                        m_AEESubsystem)));
     // L3 CORAL or ALGAE
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.L3.BUTTON_ID)
@@ -569,6 +582,17 @@ public class RobotContainer {
                 m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem))
         .onFalse(
             SuperstructureCommands.zero(
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem))
+        .and(
+            m_auxButtonBoard.axisGreaterThan(
+                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID,
+                0.5)) // Run ALGAE position if switch is toggled
+        .onTrue(
+            SuperstructureCommands.intakeL3Algae(
                     m_periscopeSubsystem,
                     m_algaePivotSubsystem,
                     m_AEESubsystem,
@@ -577,18 +601,7 @@ public class RobotContainer {
                 .andThen(
                     new InstantCommand(
                         () -> m_AEESubsystem.setPercentSpeed(AEEConstants.INTAKE_PERCENT_SPEED),
-                        m_AEESubsystem)))
-        .and(
-            m_auxButtonBoard.axisGreaterThan(
-                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID,
-                0.5)) // Run ALGAE position if switch is toggled
-        .onTrue(
-            SuperstructureCommands.intakeL3Algae(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
-                m_AEESubsystem,
-                m_CEESubsystem,
-                m_funnelSubsystem));
+                        m_AEESubsystem)));
     // L4 or NET
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.L4_NET.BUTTON_ID)
