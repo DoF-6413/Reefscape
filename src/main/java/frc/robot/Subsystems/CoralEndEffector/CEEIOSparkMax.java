@@ -62,7 +62,7 @@ public class CEEIOSparkMax implements CEEIO {
 
     // Update logged inputs from the Beam Breaks. 0 = entrance, 1 = exit
     // If sensor is NOT broken, returns true, so invert value to match logged variable
-    inputs.isbeamBreaksTriggered = m_beamBreak.get();
+    inputs.isbeamBreaksTriggered = !m_beamBreak.get();
   }
 
   @Override

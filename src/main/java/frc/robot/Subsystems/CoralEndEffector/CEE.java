@@ -40,6 +40,8 @@ public class CEE extends SubsystemBase {
     SmartDashboard.putNumber("PIDFF_Tuning/CEE/KP", CEEConstants.KP);
     SmartDashboard.putNumber("PIDFF_Tuning/CEE/KI", CEEConstants.KI);
     SmartDashboard.putNumber("PIDFF_Tuning/CEE/KD", CEEConstants.KD);
+
+    SmartDashboard.putBoolean("BeamBreak", false);
   }
 
   @Override

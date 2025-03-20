@@ -121,10 +121,10 @@ public final class Constants {
       REEF_IJ(3),
       REEF_KL(4),
       SWITCH_BRANCH(0), // Axis number
-      CLIMB_DEPLOY(0), // Axis number
-      CLIMB_RETRACT(1), // Axis number
-      SCORE(2),
-      GROUND_ALGAE(1);
+      CLIMB_DEPLOY(1),
+      CLIMB_RETRACT(2),
+      SCORE(1), // Axis number
+      GROUND_ALGAE(0); // Axis number
 
       public final int BUTTON_ID;
 
@@ -142,6 +142,13 @@ public final class Constants {
 
   /** Field measurements */
   public final class FieldConstants {
+    /** Translates a Pose2d to the red alliance side */
+    public static Pose2d poseToRed(Pose2d pose) {
+      return new Pose2d(
+          FieldConstants.FIELD_LENGTH - pose.getX(),
+          FieldConstants.FIELD_WIDTH - pose.getY(),
+          pose.getRotation().plus(Rotation2d.k180deg));
+    }
     /** 3d field setup with the locations of the AprilTags loaded from WPILib JSON files */
     public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT =
         new AprilTagFieldLayout(
@@ -182,7 +189,7 @@ public final class Constants {
      */
     public static final Pose2d[] CENTER_FACES = new Pose2d[6];
     /** Distance from the BRANCH to the REEF face wall in meters */
-    public static final double BRANCH_TO_WALL_X_M = Units.inchesToMeters(7);
+    public static final double BRANCH_TO_WALL_M = Units.inchesToMeters(11);
 
     /** A Map that links the CORAL STATION names to its position on the field as a {@link Pose2d} */
     public static final Map<String, Pose2d> CORAL_STATION_POSES = new HashMap<>();
@@ -310,7 +317,7 @@ public final class Constants {
     public static final double TRANSLATION_KP = 5.0;
     public static final double TRANSLATION_KD = 0.0;
     public static final double ROTATION_KP = 4.5;
-    public static final double ROTATION_KD = 0.0; // tuning
+    public static final double ROTATION_KD = 0.0;
     /** Coefficient of friction between wheels and the carpet */
     public static final double WHEEL_FRICTION_COEFF = 0.7;
     /** Swerve Module configuartion for PathPlanner */
@@ -351,10 +358,10 @@ public final class Constants {
     /* Pathfinding */
     /** Max translational and rotational velocity and acceleration used for Pathfinding */
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
-        new PathConstraints(3, 2, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
+        new PathConstraints(4, 2, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
     /** Default distance away from any wall when the robot is Pathfinding towards one */
-    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(6);
+    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(1.5);
     /** Distance from the center of the robot to the center of the Superstructure */
-    public static final double ROBOT_MIDPOINT_TO_SUPERSTRUCTURE = Units.inchesToMeters(5);
+    public static final double SUPERSTRUCTURE_OFFSET = Units.inchesToMeters(8.5);
   }
 }

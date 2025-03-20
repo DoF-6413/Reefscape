@@ -30,7 +30,7 @@ public class Vision extends SubsystemBase {
   // Vision pose estimation
   private final PhotonPoseEstimator[] m_photonPoseEstimators;
   private List<Pose2d> m_estimatedPoses = new LinkedList<>();
-  private Matrix<N3, N1> m_stdDevs = VecBuilder.fill(0, 0, 0);
+  private Matrix<N3, N1> m_stdDevs = VecBuilder.fill(0.7, 0.7, 1000000);
   private double m_stdDevCoeff = 0.0;
 
   /**
@@ -72,7 +72,7 @@ public class Vision extends SubsystemBase {
     for (int i = 0; i < m_inputs.length; i++) {
       // Update and log inputs
       m_io[i].updateInputs(m_inputs[i]);
-      Logger.processInputs("Vision/" + VisionConstants.CAMERA_NAMES[i], m_inputs[i]);
+      Logger.processInputs("Vision/" + VisionConstants.CAMERA_NAMES[2], m_inputs[i]);
 
       // Check results and add available and unambiguous Vision measurements to list
       var currentResult = getPipelineResult(i);
@@ -99,7 +99,8 @@ public class Vision extends SubsystemBase {
         if (allResults.size() == 0)
           continue; // Move to next camera update iteration if no results present
         for (PhotonPipelineResult result : allResults) {
-          if (!result.hasTargets()) continue; // Move to next result iteration if no AprilTags seen
+          if (!result.hasTargets()) continue; // Move to next result iteration if no AprilTags
+          // seen
           averageTagDistance +=
               Math.hypot(
                   result.getBestTarget().getBestCameraToTarget().getX(),
@@ -114,7 +115,8 @@ public class Vision extends SubsystemBase {
 
     /* Add Vision measurements to Swerve Pose Estimator in Drive through the VisionConsumer */
     if (m_estimatedPoses.size() > 1) {
-      // Create standard deviation matrix with averaged coefficient and reset cooefficient for next
+      // Create standard deviation matrix with averaged coefficient and reset cooefficient for
+      // next
       // periodic iteration
       m_stdDevs =
           VecBuilder.fill(
@@ -139,6 +141,13 @@ public class Vision extends SubsystemBase {
       m_consumer.accept(m_estimatedPoses.get(0), m_inputs[0].timestampSec, m_stdDevs);
       m_estimatedPoses.clear();
     }
+
+    // Update pose estimator from limelight
+    // if (RobotStateConstants.getMode() != RobotStateConstants.Mode.SIM) {
+    //   var estimatedPose = m_inputs[0].limelightPose;
+    //   if (estimatedPose == null) return;
+    //   m_consumer.accept(estimatedPose, Timer.getFPGATimestamp(), m_stdDevs);
+    // }
   }
 
   /**

@@ -1,5 +1,7 @@
 package frc.robot.Subsystems.Vision;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.Utils.LimelightHelpers.LimelightResults;
 import java.util.List;
 import org.littletonrobotics.junction.AutoLog;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -24,6 +26,8 @@ public interface VisionIO {
      * trustworthy and anything > 0.2 shouldn't be used
      */
     public double poseAmbiguity = 0.0;
+    /** Estimated robot pose from the limelight */
+    public Pose2d limelightPose = new Pose2d();
   }
 
   /**
@@ -37,6 +41,13 @@ public interface VisionIO {
    * @return A list of all PhotonPipelineResults waiting in queue.
    */
   public default List<PhotonPipelineResult> getAllPipelineResults() {
+    return null;
+  }
+
+  /**
+   * @return Target information from the Limelight
+   */
+  public default LimelightResults getLimeLightResults() {
     return null;
   }
 }

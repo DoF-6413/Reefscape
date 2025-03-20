@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.HeadingControllerConstants;
-import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
 import java.text.DecimalFormat;
@@ -71,8 +70,8 @@ public class DriveCommands {
 
           // Determine alliance color
           boolean isRed =
-              RobotStateConstants.getAlliance().isPresent()
-                  && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red;
+              DriverStation.getAlliance().isPresent()
+                  && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
 
           /* If on the red alliance, rotate speeds by 180 degrees so that straight out from the red driver station is forward */
           drive.runVelocity(
@@ -169,8 +168,8 @@ public class DriveCommands {
 
               // Determine alliance color
               boolean isRed =
-                  RobotStateConstants.getAlliance().isPresent()
-                      && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red;
+                  DriverStation.getAlliance().isPresent()
+                      && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
 
               /* If on the red alliance, rotate speeds by 180 degrees so that straight out from the red driver station is forward */
               drive.runVelocity(

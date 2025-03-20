@@ -55,7 +55,7 @@ public final class DriveConstants {
   /** Inversion status for the Turn motor, makes Clockwise the positive direction */
   public static final boolean TURN_IS_INVERTED = true;
   /** Current limiting in amps */
-  public static final int CUR_LIM_A = 60;
+  public static final int CUR_LIM_A = 40;
   /** Enables the current limit */
   public static final boolean ENABLE_CUR_LIM = true;
   /** Refresh signals of the TalonFX and CANcoder 50 times a second (every 0.02 second) */
@@ -69,7 +69,7 @@ public final class DriveConstants {
    * Proportion of error from Drive relative encoder readings to actual distance travelled by the
    * wheel due to the bolts holding down the tread
    */
-  public static final double WHEEL_RADIUS_ERROR_COEFF = 1 - 0.050793;
+  public static final double WHEEL_RADIUS_ERROR_COEFF = 1 - 0.034925;
   /** Radius of the wheel in meters */
   public static final double WHEEL_RADIUS_M = Units.inchesToMeters(2) * WHEEL_RADIUS_ERROR_COEFF;
   /** Side length of the robot in meters */
@@ -87,7 +87,7 @@ public final class DriveConstants {
    * An angle to offset the heading of the Gyro to be the desired Front side of the robot. The Front
    * side will be defined as the scoring side for this robot
    */
-  public static final double HEADING_OFFSET_RAD = 0;
+  public static final double HEADING_OFFSET_RAD = Math.PI;
   /**
    * Offset the absolute position of the CANcoders to orientate the wheels to the front of the robot
    * at 0 degrees
