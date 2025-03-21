@@ -463,7 +463,8 @@ public class AutoCommands {
         .andThen(
             Commands.runOnce(() -> drive.setRaw(0, 0, 0), drive)
                 .alongWith(
-                    Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)))
+                    Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
+                        .withTimeout(1)))
         .andThen(Commands.waitSeconds(1))
         .andThen(
             DriveCommands.fieldRelativeDrive(

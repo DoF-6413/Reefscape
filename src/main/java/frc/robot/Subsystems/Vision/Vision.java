@@ -59,7 +59,7 @@ public class Vision extends SubsystemBase {
       m_photonPoseEstimators[i] =
           new PhotonPoseEstimator(
               FieldConstants.APRILTAG_FIELD_LAYOUT,
-              PoseStrategy.LOWEST_AMBIGUITY,
+              PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
               VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
       Logger.recordOutput(
           "Camera/" + VisionConstants.CAMERA_NAMES[i], VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
