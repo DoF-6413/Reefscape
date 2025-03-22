@@ -1,7 +1,6 @@
 package frc.robot.Subsystems.Vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import frc.robot.Utils.LimelightHelpers.LimelightResults;
 import java.util.List;
 import org.littletonrobotics.junction.AutoLog;
@@ -30,7 +29,7 @@ public interface VisionIO {
     /** Estimated robot pose from the limelight */
     public Pose2d limelightPose = new Pose2d();
 
-    public Transform3d multitagPose;
+    // public Transform3d multitagPose;
   }
 
   /**

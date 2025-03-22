@@ -97,6 +97,9 @@ public final class Constants {
             * ROBOT_WEIGHT_KG
             * ((DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M)
                 + (DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M));
+
+    /** CAN ID of the Power Distribution Hub */
+    public static final int PDH_CAN_ID = 1;
   }
 
   /** Controller ports */

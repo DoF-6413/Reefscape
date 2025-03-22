@@ -29,6 +29,7 @@ import frc.robot.Subsystems.Drive.*;
 import frc.robot.Subsystems.Funnel.*;
 import frc.robot.Subsystems.Periscope.*;
 import frc.robot.Subsystems.Vision.*;
+import frc.robot.Utils.PDH;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -46,6 +47,7 @@ public class RobotContainer {
 
   // Utils
   private final Vision m_visionSubsystem;
+  private final PDH m_pdh;
 
   // Controllers
   private final CommandXboxController m_driverController =
@@ -80,7 +82,8 @@ public class RobotContainer {
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
-                new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_INDEX));
+                // new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_INDEX));
+                new VisionIO() {});
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -127,6 +130,9 @@ public class RobotContainer {
         break;
     }
 
+    // Utils
+    m_pdh = new PDH();
+
     /* PathPlanner Commands */
     NamedCommands.registerCommand(
         "Zero_Superstructure",
@@ -156,11 +162,12 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Intake_CORAL",
         SuperstructureCommands.intakeCoral(
-            m_periscopeSubsystem,
-            m_algaePivotSubsystem,
-            m_AEESubsystem,
-            m_CEESubsystem,
-            m_funnelSubsystem));
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem)
+            .alongWith(new InstantCommand(() -> m_pdh.enableSwitchable(true))));
     NamedCommands.registerCommand(
         "CEE_Out",
         Commands.runOnce(() -> m_CEESubsystem.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED)));
@@ -428,6 +435,14 @@ public class RobotContainer {
                 },
                 m_AEESubsystem,
                 m_CEESubsystem));
+    // L1 Score // TODO: Test and verify doesnt conflict with binding above
+    m_driverController
+        .rightBumper()
+        .and(m_auxButtonBoard.button(OperatorConstants.BUTTON_BOARD.L1_PROCESSOR.BUTTON_ID))
+        .onTrue(
+            new InstantCommand(
+                () -> m_CEESubsystem.setPercentSpeed(CEEConstants.SCORE_L1_PERCENT_SPEED),
+                m_CEESubsystem));
     // Intaking
     m_driverController
         .rightTrigger()
@@ -438,15 +453,17 @@ public class RobotContainer {
                     m_AEESubsystem,
                     m_CEESubsystem,
                     m_funnelSubsystem)
+                .alongWith(new InstantCommand(() -> m_pdh.enableSwitchable(true)))
                 .until(m_driverController.rightTrigger().negate())
                 .withName("CoralIntake"))
         .onFalse(
             SuperstructureCommands.zero(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
-                m_AEESubsystem,
-                m_CEESubsystem,
-                m_funnelSubsystem));
+                    m_periscopeSubsystem,
+                    m_algaePivotSubsystem,
+                    m_AEESubsystem,
+                    m_CEESubsystem,
+                    m_funnelSubsystem)
+                .alongWith(new InstantCommand(() -> m_pdh.enableSwitchable(false))));
     // Outtake
     m_driverController
         .x()

@@ -36,7 +36,7 @@ public class VisionIOPhotonVision implements VisionIO {
         inputs.target = result.getBestTarget();
         inputs.fiducialID = result.getBestTarget().getFiducialId();
         inputs.poseAmbiguity = result.getBestTarget().getPoseAmbiguity();
-        inputs.multitagPose = result.getMultiTagResult().get().estimatedPose.best;
+        // inputs.multitagPose = result.getMultiTagResult().get().estimatedPose.best;
       } else {
         // Update values to default if no AprilTag is seen
         inputs.target = null;
