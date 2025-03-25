@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -82,8 +81,8 @@ public class RobotContainer {
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
-                // new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_INDEX));
-                new VisionIO() {});
+                new VisionIOPhotonVision(VisionConstants.CAMERA.FRONT.CAMERA_INDEX));
+                // new VisionIO() {});
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -103,13 +102,13 @@ public class RobotContainer {
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
-                // new VisionIOSim(
-                //     VisionConstants.CAMERA.FRONT.CAMERA_INDEX,
-                // m_driveSubsystem::getCurrentPose2d),
-                // new VisionIOSim(
-                //     VisionConstants.CAMERA.BACK.CAMERA_INDEX,
-                // m_driveSubsystem::getCurrentPose2d))
-                new VisionIO() {});
+                new VisionIOSim(
+                    VisionConstants.CAMERA.FRONT.CAMERA_INDEX,
+                m_driveSubsystem::getCurrentPose2d),
+                new VisionIOSim(
+                    VisionConstants.CAMERA.BACK.CAMERA_INDEX,
+                m_driveSubsystem::getCurrentPose2d));
+                // new VisionIO() {});
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -291,8 +290,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-
-    SmartDashboard.putNumber("AEE Pivot Volts", 0);
   }
 
   /**
@@ -435,7 +432,7 @@ public class RobotContainer {
                 },
                 m_AEESubsystem,
                 m_CEESubsystem));
-    // L1 Score // TODO: Test and verify doesnt conflict with binding above
+    // L1 Score
     m_driverController
         .rightBumper()
         .and(m_auxButtonBoard.button(OperatorConstants.BUTTON_BOARD.L1_PROCESSOR.BUTTON_ID))
@@ -1051,27 +1048,6 @@ public class RobotContainer {
                 m_AEESubsystem,
                 m_CEESubsystem,
                 m_funnelSubsystem));
-
-    m_auxController
-        .povUp()
-        .onTrue(
-            new InstantCommand(
-                () ->
-                    m_algaePivotSubsystem.setVoltage(
-                        SmartDashboard.getNumber("AEE Pivot Volts", 0)),
-                m_algaePivotSubsystem))
-        .onFalse(
-            new InstantCommand(() -> m_algaePivotSubsystem.setVoltage(0), m_algaePivotSubsystem));
-    m_auxController
-        .povDown()
-        .onTrue(
-            new InstantCommand(
-                () ->
-                    m_algaePivotSubsystem.setVoltage(
-                        -SmartDashboard.getNumber("AEE Pivot Volts", 0)),
-                m_algaePivotSubsystem))
-        .onFalse(
-            new InstantCommand(() -> m_algaePivotSubsystem.setVoltage(0), m_algaePivotSubsystem));
   }
 
   /**
