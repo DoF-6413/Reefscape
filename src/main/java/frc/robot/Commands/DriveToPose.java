@@ -56,6 +56,22 @@ public class DriveToPose extends Command {
     addRequirements(drive);
   }
 
+  /**
+   * A {@link Command} that drives the robot to a specified {@link Pose2d}. This runs based off two
+   * trapezoidal {@link ProfiledPIDController} for linear and angular movement.
+   *
+   * @param drive {@link Drive} subsystem
+   * @param target Goal end pose of the robot as a {@link Pose2d}
+   * @param maxVelocity Maximum linear velocity of the Drive
+   * @param maxAcceleration Maximum linear accelration of the Drive
+   */
+  public DriveToPose(
+      Drive drive, Supplier<Pose2d> target, double maxVelocity, double maxAcceleration) {
+    this(drive, target);
+    m_linearController.setConstraints(
+        new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+  }
+
   @Override
   public void initialize() {
     Pose2d currentPose = m_robotPose.get();
