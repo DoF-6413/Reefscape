@@ -2,12 +2,15 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -15,8 +18,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Commands.AutoCommands;
 import frc.robot.Commands.DriveCommands;
+import frc.robot.Commands.DriveToPose;
 import frc.robot.Commands.PathfindingCommands;
 import frc.robot.Commands.SuperstructureCommands;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
@@ -288,6 +293,12 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    SmartDashboard.putNumber("DriveToPose/kP", 0);
+    SmartDashboard.putNumber("DriveToPose/kI", 0);
+    SmartDashboard.putNumber("DriveToPose/kD", 0);
+    SmartDashboard.putNumber("DriveToPose/Velocity", 0);
+    SmartDashboard.putNumber("DriveToPose/Acceleration", 0);
   }
 
   /**
@@ -386,14 +397,34 @@ public class RobotContainer {
 
     /* Pathfinding */
     // Closest REEF BRANCH
+    // m_driverController
+    //     .y()
+    //     .onTrue(
+    //         PathfindingCommands.driveToClosestBranch(
+    //                 m_driveSubsystem,
+    //                 PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
+    //                 m_driverController.y().negate())
+    //             .withName("PathfindToBranch"));
     m_driverController
         .y()
         .onTrue(
-            PathfindingCommands.driveToClosestBranch(
+            new DriveToPose(
                     m_driveSubsystem,
-                    PathPlannerConstants.DEFAULT_WALL_DISTANCE_M,
-                    m_driverController.y().negate())
-                .withName("PathfindToBranch"));
+                    () ->
+                        new Pose2d(
+                            FieldConstants.APRILTAG_FIELD_LAYOUT
+                                .getTagPose(18)
+                                .get()
+                                .getTranslation()
+                                .toTranslation2d()
+                                .plus(new Translation2d(-1, 0)),
+                            Rotation2d.kZero),
+                    () -> SmartDashboard.getNumber("DriveToPose/kP", 0),
+                    () -> SmartDashboard.getNumber("DriveToPose/kI", 0),
+                    () -> SmartDashboard.getNumber("DriveToPose/kD", 0),
+                    () -> SmartDashboard.getNumber("DriveToPose/Velocity", 0),
+                    () -> SmartDashboard.getNumber("DriveToPose/Acceleration", 0))
+                .until(m_driverController.y().negate()));
     // Closest CORAL STATION
     m_driverController
         .leftBumper()

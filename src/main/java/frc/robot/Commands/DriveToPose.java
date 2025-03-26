@@ -20,7 +20,7 @@ public class DriveToPose extends Command {
   private final Supplier<Pose2d> m_targetPose;
 
   private final ProfiledPIDController m_linearController =
-      new ProfiledPIDController(2.0, 0.0, 0.0, new TrapezoidProfile.Constraints(2, 0.75));
+      new ProfiledPIDController(4.0, 0.0, 0.0, new TrapezoidProfile.Constraints(2.25, 1));
   private final ProfiledPIDController m_angularController =
       new ProfiledPIDController(
           4.0,
@@ -70,6 +70,29 @@ public class DriveToPose extends Command {
     this(drive, target);
     m_linearController.setConstraints(
         new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+  }
+
+  /**
+   * A {@link Command} that drives the robot to a specified {@link Pose2d}. This runs based off two
+   * trapezoidal {@link ProfiledPIDController} for linear and angular movement.
+   *
+   * @param drive {@link Drive} subsystem
+   * @param target Goal end pose of the robot as a {@link Pose2d}
+   * @param maxVelocity Maximum linear velocity of the Drive
+   * @param maxAcceleration Maximum linear accelration of the Drive
+   */
+  public DriveToPose(
+      Drive drive,
+      Supplier<Pose2d> target,
+      DoubleSupplier kP,
+      DoubleSupplier kI,
+      DoubleSupplier kD,
+      DoubleSupplier maxVelocity,
+      DoubleSupplier maxAcceleration) {
+    this(drive, target);
+    m_linearController.setPID(kP.getAsDouble(), kI.getAsDouble(), kD.getAsDouble());
+    m_linearController.setConstraints(
+        new TrapezoidProfile.Constraints(maxVelocity.getAsDouble(), maxAcceleration.getAsDouble()));
   }
 
   @Override
