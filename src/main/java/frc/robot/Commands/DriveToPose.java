@@ -36,9 +36,6 @@ public class DriveToPose extends Command {
   private boolean m_running = false;
   private Supplier<Pose2d> m_robotPose;
 
-  private Supplier<Translation2d> m_linearFF = () -> Translation2d.kZero;
-  private DoubleSupplier m_angularFF = () -> 0.0;
-
   /**
    * A {@link Command} that drives the robot to a specified {@link Pose2d}. This runs based off two
    * trapezoidal {@link ProfiledPIDController} for linear and angular movement.
@@ -55,45 +52,6 @@ public class DriveToPose extends Command {
     m_angularController.enableContinuousInput(-Math.PI, Math.PI);
 
     addRequirements(drive);
-  }
-
-  /**
-   * A {@link Command} that drives the robot to a specified {@link Pose2d}. This runs based off two
-   * trapezoidal {@link ProfiledPIDController} for linear and angular movement.
-   *
-   * @param drive {@link Drive} subsystem
-   * @param target Goal end pose of the robot as a {@link Pose2d}
-   * @param maxVelocity Maximum linear velocity of the Drive
-   * @param maxAcceleration Maximum linear accelration of the Drive
-   */
-  public DriveToPose(
-      Drive drive, Supplier<Pose2d> target, double maxVelocity, double maxAcceleration) {
-    this(drive, target);
-    m_linearController.setConstraints(
-        new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
-  }
-
-  /**
-   * A {@link Command} that drives the robot to a specified {@link Pose2d}. This runs based off two
-   * trapezoidal {@link ProfiledPIDController} for linear and angular movement.
-   *
-   * @param drive {@link Drive} subsystem
-   * @param target Goal end pose of the robot as a {@link Pose2d}
-   * @param maxVelocity Maximum linear velocity of the Drive
-   * @param maxAcceleration Maximum linear accelration of the Drive
-   */
-  public DriveToPose(
-      Drive drive,
-      Supplier<Pose2d> target,
-      DoubleSupplier kP,
-      DoubleSupplier kI,
-      DoubleSupplier kD,
-      DoubleSupplier maxVelocity,
-      DoubleSupplier maxAcceleration) {
-    this(drive, target);
-    m_linearController.setPID(kP.getAsDouble(), kI.getAsDouble(), kD.getAsDouble());
-    m_linearController.setConstraints(
-        new TrapezoidProfile.Constraints(maxVelocity.getAsDouble(), maxAcceleration.getAsDouble()));
   }
 
   @Override
@@ -168,25 +126,13 @@ public class DriveToPose extends Command {
             .transformBy(new Transform2d(linearVelocityScalar, 0.0, Rotation2d.kZero))
             .getTranslation();
 
-    // Scale feedback velocities by input ff
-    final double linearS = m_linearFF.get().getNorm() * 3.0;
-    final double thetaS = Math.abs(m_angularFF.getAsDouble()) * 3.0;
-    linearVelocity =
-        linearVelocity.interpolate(
-            m_linearFF.get().times(DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S), linearS);
-    thetaVelocity =
-        MathUtil.interpolate(
-            thetaVelocity,
-            m_angularFF.getAsDouble() * DriveConstants.MAX_ANGULAR_SPEED_RAD_PER_S,
-            thetaS);
-
     // Command speeds
     m_drive.runVelocity(
         ChassisSpeeds.fromFieldRelativeSpeeds(
             linearVelocity.getX(),
             linearVelocity.getY(),
             thetaVelocity,
-            currentPose.getRotation()));
+            drive.getRobotHeading()));
 
     // Log data
     Logger.recordOutput("DriveToPose/DistanceMeasured", currentDistance);
@@ -212,6 +158,12 @@ public class DriveToPose extends Command {
     // Logger.recordOutput("DriveToPose/Goal", new Pose2d[] {});
   }
 
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return this.atGoal();
+  }
+
   /** Checks if the robot is stopped at the final pose. */
   public boolean atGoal() {
     return m_running && m_linearController.atGoal() && m_angularController.atGoal();
@@ -224,5 +176,55 @@ public class DriveToPose extends Command {
             m_running
                 && Math.abs(m_linearErrorAbs) < linearTolerance
                 && Math.abs(m_angularErrorAbs) < angularTolerance.getRadians());
+  }
+
+  /** 
+  * Sets the maximum linear velocity and acceleration
+  *
+  * @param velocity Linear velocity in meters per second
+  * @param acceleration Linear acceleration in meters per second squared
+  * @return Itself to chain methods
+  */
+  public DriveToPose withLinearMovement(double velocity, double acceleration) {
+    m_linearController.setConstraints(new Trapezoidal.Constraints(velocity, acceleration));
+    return this;
+  }
+
+  /** 
+  * Sets the maximum angular velocity and acceleration
+  *
+  * @param velocity Angular velocity in meters per second
+  * @param acceleration Angular acceleration in meters per second squared
+  * @return Itself to chain methods
+  */
+  public DriveToPose withAngularMovement(double velocity, double acceleration) {
+    m_angularController.setConstraints(new Trapezoidal.Constraints(velocity, acceleration));
+    return this;
+  }
+
+  /** 
+  * Sets the PID gains of the linear PID controller
+  *
+  * @param kP Porportional gain
+  * @param kI Integral gain
+  * @param kD Derivative gain
+  * @return Itself to chain methods
+  */
+  public DriveToPose withLinearPID(double kP, double kI, double kD) {
+    m_linearController.setPID(kP, kI, kD);
+    return this;
+  }
+
+  /** 
+  * Sets the PID gains of the angular PID controller
+  *
+  * @param kP Porportional gain
+  * @param kI Integral gain
+  * @param kD Derivative gain
+  * @return Itself to chain methods
+  */
+  public DriveToPose withAngularPID(double kP, double kI, double kD) {
+    m_angularController.setPID(kP, kI, kD);
+    return this;
   }
 }
