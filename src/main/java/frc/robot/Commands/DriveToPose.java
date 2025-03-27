@@ -1,6 +1,5 @@
 package frc.robot.Commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -8,11 +7,11 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -21,7 +20,7 @@ public class DriveToPose extends Command {
   private final Supplier<Pose2d> m_targetPose;
 
   private final ProfiledPIDController m_linearController =
-      new ProfiledPIDController(4.0, 0.0, 0.0, new TrapezoidProfile.Constraints(2, 1.25));
+      new ProfiledPIDController(4.0, 0.0, 0.0, new TrapezoidProfile.Constraints(4, 2.5));
   private final ProfiledPIDController m_angularController =
       new ProfiledPIDController(
           4.0,
@@ -76,6 +75,8 @@ public class DriveToPose extends Command {
     m_angularController.reset(
         currentPose.getRotation().getRadians(), fieldVelocity.omegaRadiansPerSecond);
     m_lastSetpointTranslation = currentPose.getTranslation();
+    m_linearController.setTolerance(Units.inchesToMeters(0.5));
+    m_angularController.setTolerance(Units.degreesToRadians(1));
   }
 
   @Override
@@ -132,7 +133,7 @@ public class DriveToPose extends Command {
             linearVelocity.getX(),
             linearVelocity.getY(),
             thetaVelocity,
-            drive.getRobotHeading()));
+            m_drive.getRobotHeading()));
 
     // Log data
     Logger.recordOutput("DriveToPose/DistanceMeasured", currentDistance);
@@ -158,10 +159,12 @@ public class DriveToPose extends Command {
     // Logger.recordOutput("DriveToPose/Goal", new Pose2d[] {});
   }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return this.atGoal();
+  /**
+   * Finishes the scheduled command when the goal is reached with the given tolerance. Default
+   * tolerance is 0.5 inches (linear) and 1 degree (angular)
+   */
+  public ParallelRaceGroup finishAtGoal() {
+    return this.until(() -> atGoal());
   }
 
   /** Checks if the robot is stopped at the final pose. */
@@ -178,53 +181,66 @@ public class DriveToPose extends Command {
                 && Math.abs(m_angularErrorAbs) < angularTolerance.getRadians());
   }
 
-  /** 
-  * Sets the maximum linear velocity and acceleration
-  *
-  * @param velocity Linear velocity in meters per second
-  * @param acceleration Linear acceleration in meters per second squared
-  * @return Itself to chain methods
-  */
+  /**
+   * Sets the maximum linear velocity and acceleration
+   *
+   * @param velocity Linear velocity in meters per second
+   * @param acceleration Linear acceleration in meters per second squared
+   * @return Itself to chain methods
+   */
   public DriveToPose withLinearMovement(double velocity, double acceleration) {
-    m_linearController.setConstraints(new Trapezoidal.Constraints(velocity, acceleration));
+    m_linearController.setConstraints(new TrapezoidProfile.Constraints(velocity, acceleration));
     return this;
   }
 
-  /** 
-  * Sets the maximum angular velocity and acceleration
-  *
-  * @param velocity Angular velocity in meters per second
-  * @param acceleration Angular acceleration in meters per second squared
-  * @return Itself to chain methods
-  */
+  /**
+   * Sets the maximum angular velocity and acceleration
+   *
+   * @param velocity Angular velocity in meters per second
+   * @param acceleration Angular acceleration in meters per second squared
+   * @return Itself to chain methods
+   */
   public DriveToPose withAngularMovement(double velocity, double acceleration) {
-    m_angularController.setConstraints(new Trapezoidal.Constraints(velocity, acceleration));
+    m_angularController.setConstraints(new TrapezoidProfile.Constraints(velocity, acceleration));
     return this;
   }
 
-  /** 
-  * Sets the PID gains of the linear PID controller
-  *
-  * @param kP Porportional gain
-  * @param kI Integral gain
-  * @param kD Derivative gain
-  * @return Itself to chain methods
-  */
+  /**
+   * Sets the PID gains of the linear PID controller
+   *
+   * @param kP Porportional gain
+   * @param kI Integral gain
+   * @param kD Derivative gain
+   * @return Itself to chain methods
+   */
   public DriveToPose withLinearPID(double kP, double kI, double kD) {
     m_linearController.setPID(kP, kI, kD);
     return this;
   }
 
-  /** 
-  * Sets the PID gains of the angular PID controller
-  *
-  * @param kP Porportional gain
-  * @param kI Integral gain
-  * @param kD Derivative gain
-  * @return Itself to chain methods
-  */
+  /**
+   * Sets the PID gains of the angular PID controller
+   *
+   * @param kP Porportional gain
+   * @param kI Integral gain
+   * @param kD Derivative gain
+   * @return Itself to chain methods
+   */
   public DriveToPose withAngularPID(double kP, double kI, double kD) {
     m_angularController.setPID(kP, kI, kD);
+    return this;
+  }
+
+  /**
+   * Sets the position tolerance of the PID controllers
+   *
+   * @param linearTolerance Tolerance of the linear controller in meters
+   * @param angularTolerance Tolerance of the angular controller in radians
+   * @return Itself to chain methods
+   */
+  public DriveToPose withTolerance(double linearTolerance, double angularTolerance) {
+    m_linearController.setTolerance(linearTolerance);
+    m_angularController.setTolerance(linearTolerance);
     return this;
   }
 }

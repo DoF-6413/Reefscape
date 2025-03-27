@@ -226,11 +226,14 @@ public class PathfindingCommands {
   public static DriveToPose driveToBranch(
       Drive drive, String branchLetter, double wallDistanceMeters) {
     return PathfindingCommands.driveToFieldElement(
-        drive,
-        FieldConstants.BRANCH_POSES.get(branchLetter),
-        wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_M,
-        PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
-        true);
+            drive,
+            FieldConstants.BRANCH_POSES.get(branchLetter),
+            wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_M,
+            PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
+            true)
+        .withLinearMovement(
+            DriveConstants.AUTO_ALIGN_BRANCH_VELOCITY_M_PER_S,
+            DriveConstants.AUTO_ALIGN_BRANCH_ACCELERATION_M_PER_S2);
   }
 
   /**

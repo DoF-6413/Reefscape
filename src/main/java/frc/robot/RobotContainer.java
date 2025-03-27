@@ -107,11 +107,13 @@ public class RobotContainer {
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
-                new VisionIOSim(
-                    VisionConstants.CAMERA.FRONT.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d),
-                new VisionIOSim(
-                    VisionConstants.CAMERA.BACK.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d));
-        // new VisionIO() {});
+                // new VisionIOSim(
+                //     VisionConstants.CAMERA.FRONT.CAMERA_INDEX,
+                // m_driveSubsystem::getCurrentPose2d),
+                // new VisionIOSim(
+                //     VisionConstants.CAMERA.BACK.CAMERA_INDEX,
+                // m_driveSubsystem::getCurrentPose2d));
+                new VisionIO() {});
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -164,12 +166,11 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Intake_CORAL",
         SuperstructureCommands.intakeCoral(
-                m_periscopeSubsystem,
-                m_algaePivotSubsystem,
-                m_AEESubsystem,
-                m_CEESubsystem,
-                m_funnelSubsystem)
-            .alongWith(new InstantCommand(() -> m_pdh.enableSwitchable(true))));
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem));
     NamedCommands.registerCommand(
         "CEE_Out",
         Commands.runOnce(() -> m_CEESubsystem.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED)));
@@ -201,7 +202,7 @@ public class RobotContainer {
             0.4,
             4));
     m_autoChooser.addOption(
-        "1P_SLC-G4 (Pathfinding)",
+        "1P_SLC-G4",
         AutoCommands.pathfindingAutoOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
@@ -213,7 +214,31 @@ public class RobotContainer {
             "G",
             4));
     m_autoChooser.addOption(
-        "1P_SLR-F4 (Pathfinding)",
+        "1P_SLC-H4",
+        AutoCommands.pathfindingAutoOnePiece(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem,
+            PathPlannerConstants.STARTING_LINE_CENTER,
+            "H",
+            4));
+    m_autoChooser.addOption(
+        "1P_SLR-E4",
+        AutoCommands.pathfindingAutoOnePiece(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem,
+            PathPlannerConstants.STARTING_LINE_RIGHT,
+            "E",
+            4));
+    m_autoChooser.addOption(
+        "1P_SLR-F4",
         AutoCommands.pathfindingAutoOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
@@ -225,7 +250,7 @@ public class RobotContainer {
             "F",
             4));
     m_autoChooser.addOption(
-        "1P_SLL-I4 (Pathfinding)",
+        "1P_SLL-I4",
         AutoCommands.pathfindingAutoOnePiece(
             m_driveSubsystem,
             m_periscopeSubsystem,
@@ -235,6 +260,18 @@ public class RobotContainer {
             m_funnelSubsystem,
             PathPlannerConstants.STARTING_LINE_LEFT,
             "I",
+            4));
+    m_autoChooser.addOption(
+        "1P_SLL-J4",
+        AutoCommands.pathfindingAutoOnePiece(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem,
+            PathPlannerConstants.STARTING_LINE_LEFT,
+            "J",
             4));
     m_autoChooser.addOption(
         "Unethical 1.5P L4",
@@ -258,7 +295,6 @@ public class RobotContainer {
             m_CEESubsystem,
             m_funnelSubsystem,
             PathPlannerConstants.STARTING_LINE_CENTER,
-            2,
             new String[] {"G", "C"},
             new int[] {4, 4},
             "CS2L"));
@@ -272,7 +308,6 @@ public class RobotContainer {
             m_CEESubsystem,
             m_funnelSubsystem,
             PathPlannerConstants.STARTING_LINE_CENTER,
-            2,
             new String[] {"H", "L"},
             new int[] {4, 4},
             "CS1R"));
@@ -294,11 +329,11 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    SmartDashboard.putNumber("DriveToPose/kP", 0);
-    SmartDashboard.putNumber("DriveToPose/kI", 0);
-    SmartDashboard.putNumber("DriveToPose/kD", 0);
-    SmartDashboard.putNumber("DriveToPose/Velocity", 0);
-    SmartDashboard.putNumber("DriveToPose/Acceleration", 0);
+    SmartDashboard.putNumber("PIDFF_Tuning/DriveToPose/kP", 0);
+    SmartDashboard.putNumber("PIDFF_Tuning/DriveToPose/kI", 0);
+    SmartDashboard.putNumber("PIDFF_Tuning/DriveToPose/kD", 0);
+    SmartDashboard.putNumber("PIDFF_Tuning/DriveToPose/Velocity", 0);
+    SmartDashboard.putNumber("PIDFF_Tuning/DriveToPose/Acceleration", 0);
   }
 
   /**
@@ -418,21 +453,21 @@ public class RobotContainer {
                                 .getTranslation()
                                 .toTranslation2d()
                                 .plus(new Translation2d(-1, 0)),
-                            Rotation2d.kZero),
-                    () -> SmartDashboard.getNumber("DriveToPose/kP", 0),
-                    () -> SmartDashboard.getNumber("DriveToPose/kI", 0),
-                    () -> SmartDashboard.getNumber("DriveToPose/kD", 0),
-                    () -> SmartDashboard.getNumber("DriveToPose/Velocity", 0),
-                    () -> SmartDashboard.getNumber("DriveToPose/Acceleration", 0))
+                            Rotation2d.kZero))
+                .withLinearPID(
+                    SmartDashboard.getNumber("PIDFF_Tuning/DriveToPose/kP", 0),
+                    SmartDashboard.getNumber("PIDFF_Tuning/DriveToPose/kI", 0),
+                    SmartDashboard.getNumber("PIDFF_Tuning/DriveToPose/kD", 0))
+                .withLinearMovement(
+                    SmartDashboard.getNumber("PIDFF_Tuning/DriveToPose/Velocity", 0),
+                    SmartDashboard.getNumber("PIDFF_Tuning/DriveToPose/Acceleration", 0))
                 .until(m_driverController.y().negate()));
     // Closest CORAL STATION
     m_driverController
         .leftBumper()
         .onTrue(
             PathfindingCommands.driveToClosestCoralStation(
-                m_driveSubsystem,
-                Units.inchesToMeters(3),
-                m_driverController.leftBumper().negate()));
+                m_driveSubsystem, 0, m_driverController.leftBumper().negate()));
 
     /* Scoring commands */
     // Score
@@ -479,17 +514,15 @@ public class RobotContainer {
                     m_AEESubsystem,
                     m_CEESubsystem,
                     m_funnelSubsystem)
-                .alongWith(new InstantCommand(() -> m_pdh.enableSwitchable(true)))
                 .until(m_driverController.rightTrigger().negate())
                 .withName("CoralIntake"))
         .onFalse(
             SuperstructureCommands.zero(
-                    m_periscopeSubsystem,
-                    m_algaePivotSubsystem,
-                    m_AEESubsystem,
-                    m_CEESubsystem,
-                    m_funnelSubsystem)
-                .alongWith(new InstantCommand(() -> m_pdh.enableSwitchable(false))));
+                m_periscopeSubsystem,
+                m_algaePivotSubsystem,
+                m_AEESubsystem,
+                m_CEESubsystem,
+                m_funnelSubsystem));
     // Outtake
     m_driverController
         .x()

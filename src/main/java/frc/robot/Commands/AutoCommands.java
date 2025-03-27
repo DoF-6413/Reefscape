@@ -211,9 +211,8 @@ public class AutoCommands {
     return Commands.runOnce(() -> drive.resetPose(startingPose), drive)
         .andThen(
             Commands.parallel(
-                PathfindingCommands.driveToBranch(drive, branch, 0)
-                    .withinTolerance(0.05, Rotation2d.fromDegrees(3)),
-                coralPosition.withTimeout(2).beforeStarting(Commands.waitSeconds(1))))
+                PathfindingCommands.driveToBranch(drive, branch, 0),
+                coralPosition.withTimeout(0.5).beforeStarting(Commands.waitSeconds(1))))
         .andThen(
             Commands.waitSeconds(TIME_BETWEEN_ACTIONS)
                 .andThen(
@@ -246,15 +245,14 @@ public class AutoCommands {
       CEE cee,
       Funnel funnel,
       Pose2d startingPose,
-      int pieces,
       String[] branches,
       int[] coralLevels,
       String coralStationName) {
-    Command[] driveToBranches = new Command[pieces];
-    Command[] positionToCoral = new Command[pieces];
+    Command[] driveToBranches = new Command[2];
+    Command[] positionToCoral = new Command[2];
     Command coralStation;
 
-    for (int i = 0; i < pieces; i++) {
+    for (int i = 0; i < 2; i++) {
       driveToBranches[i] =
           PathfindingCommands.driveToBranch(
               drive, branches[i], PathPlannerConstants.DEFAULT_WALL_DISTANCE_M);
@@ -283,18 +281,9 @@ public class AutoCommands {
       }
     }
 
-    if (pieces == 1) {
-      coralStation =
-          Commands.waitSeconds(15).alongWith(Commands.repeatingSequence(Commands.print("1 Piece")));
-    } else {
-      coralStation =
-          PathfindingCommands.pathfindToFieldElement(
-              drive,
-              FieldConstants.CORAL_STATION_POSES.get(coralStationName),
-              Units.inchesToMeters(3),
-              0,
-              false);
-    }
+    coralStation =
+        PathfindingCommands.pathfindToFieldElement(
+            drive, FieldConstants.CORAL_STATION_POSES.get(coralStationName), 0, 0, false);
 
     return Commands.runOnce(() -> drive.resetPose(startingPose), drive)
         .andThen(
@@ -458,7 +447,7 @@ public class AutoCommands {
                         () -> 0,
                         () -> Rotation2d.kZero),
                     coralPosition)
-                .withDeadline(Commands.waitSeconds(4)))
+                .withDeadline(Commands.waitSeconds(DRIVE_TIME_SEC)))
         .andThen(
             Commands.runOnce(() -> drive.setRaw(0, 0, 0), drive)
                 .alongWith(
