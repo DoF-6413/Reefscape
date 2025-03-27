@@ -211,10 +211,9 @@ public class AutoCommands {
     return Commands.runOnce(() -> drive.resetPose(startingPose), drive)
         .andThen(
             Commands.parallel(
-                    PathfindingCommands.driveToBranch(
-                        drive, branch, PathPlannerConstants.DEFAULT_WALL_DISTANCE_M),
-                    coralPosition.beforeStarting(Commands.waitSeconds(0.25)))
-                .withTimeout(2))
+                PathfindingCommands.driveToBranch(drive, branch, 0)
+                    .withinTolerance(0.05, Rotation2d.fromDegrees(3)),
+                coralPosition.withTimeout(2).beforeStarting(Commands.waitSeconds(1))))
         .andThen(
             Commands.waitSeconds(TIME_BETWEEN_ACTIONS)
                 .andThen(

@@ -422,16 +422,12 @@ public class PathfindingCommands {
   }
 
   public static Command alignToBranch(Drive drive, int reefTag, String branch) {
-    // return PathfindingCommands.pathfindToAprilTag(drive, reefTag, 1, true)
-    //     .andThen(
-    //         Commands.waitUntil(
-    //             () ->
-    //                 drive.getChassisSpeeds().vxMetersPerSecond < 0.25
-    //                     && drive.getChassisSpeeds().vyMetersPerSecond < 0.25))
-    //     .andThen(
-    return PathfindingCommands.driveToBranch(drive, branch, 0)
-        .alongWith(
-            Commands.repeatingSequence(
-                Commands.print("Precision Alignment").alongWith(Commands.waitSeconds(0.25))));
+    return PathfindingCommands.pathfindToAprilTag(drive, reefTag, 0.75, true)
+        .andThen(
+            Commands.waitUntil(
+                () ->
+                    drive.getChassisSpeeds().vxMetersPerSecond < 0.1
+                        && drive.getChassisSpeeds().vyMetersPerSecond < 0.1))
+        .andThen(PathfindingCommands.driveToBranch(drive, branch, 0));
   }
 }

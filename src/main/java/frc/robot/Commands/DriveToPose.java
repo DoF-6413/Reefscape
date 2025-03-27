@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
 import java.util.function.DoubleSupplier;
@@ -20,7 +21,7 @@ public class DriveToPose extends Command {
   private final Supplier<Pose2d> m_targetPose;
 
   private final ProfiledPIDController m_linearController =
-      new ProfiledPIDController(4.0, 0.0, 0.0, new TrapezoidProfile.Constraints(2.25, 1));
+      new ProfiledPIDController(4.0, 0.0, 0.0, new TrapezoidProfile.Constraints(2, 1.25));
   private final ProfiledPIDController m_angularController =
       new ProfiledPIDController(
           4.0,
@@ -217,9 +218,11 @@ public class DriveToPose extends Command {
   }
 
   /** Checks if the robot pose is within the allowed drive and theta tolerances. */
-  public boolean withinTolerance(double linearTolerance, Rotation2d angularTolerance) {
-    return m_running
-        && Math.abs(m_linearErrorAbs) < linearTolerance
-        && Math.abs(m_angularErrorAbs) < angularTolerance.getRadians();
+  public ParallelRaceGroup withinTolerance(double linearTolerance, Rotation2d angularTolerance) {
+    return this.until(
+        () ->
+            m_running
+                && Math.abs(m_linearErrorAbs) < linearTolerance
+                && Math.abs(m_angularErrorAbs) < angularTolerance.getRadians());
   }
 }
