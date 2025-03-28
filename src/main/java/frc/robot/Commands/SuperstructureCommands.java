@@ -232,7 +232,7 @@ public class SuperstructureCommands {
                 SuperstructureState.AEESpeed,
                 SuperstructureState.CEESpeed,
                 SuperstructureState.funnelSpeed))
-        .andThen(Commands.waitUntil(() -> cee.isBeamBreakTriggered()))
+        .andThen(Commands.waitUntil(() -> cee.isBeamBreakExitTriggered()&& !cee.isBeamBreakEntranceTriggered()))
         // .andThen(Commands.waitSeconds(CEEConstants.BEAM_BREAK_DELAY))
         .andThen(Commands.runOnce(() -> cee.setVoltage(0), cee));
   }
