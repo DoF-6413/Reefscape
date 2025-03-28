@@ -2,7 +2,6 @@ package frc.robot.Commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -36,7 +35,7 @@ public class AutoCommands {
     // Constants
     final double DELAY_BETWEEN_ACTIONS = 0.25;
     final double CORAL_STATION_DELAY = 3;
-    final double WALL_DISTANCE_M = Units.inchesToMeters(3);
+    final double WALL_DISTANCE_M = 0;
 
     // Choosers to build the auto
     LoggedDashboardChooser<Pose2d> startingPose = new LoggedDashboardChooser<>("Starting Pose");
@@ -136,9 +135,8 @@ public class AutoCommands {
             drive)
         .andThen(
             Commands.parallel(
-                    PathfindingCommands.driveToBranch(drive, firstBranch.get(), WALL_DISTANCE_M),
-                    firstCoralLevel.get())
-                .withTimeout(2.0))
+                PathfindingCommands.driveToBranch(drive, firstBranch.get(), WALL_DISTANCE_M),
+                firstCoralLevel.get()))
         .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
         .andThen(SuperstructureCommands.score(aee, cee, funnel))
         .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
@@ -208,16 +206,23 @@ public class AutoCommands {
         break;
     }
 
-    return Commands.runOnce(() -> drive.resetPose(startingPose), drive)
-        .andThen(
-            Commands.parallel(
-                PathfindingCommands.driveToBranch(drive, branch, 0),
-                coralPosition.withTimeout(0.5).beforeStarting(Commands.waitSeconds(1))))
+    // return Commands.runOnce(() -> drive.resetPose(startingPose), drive)
+    // .andThen(
+    return Commands.parallel(
+            PathfindingCommands.driveToBranch(drive, branch, 0).finishAtGoal().withTimeout(5),
+            coralPosition.withTimeout(0.5).beforeStarting(Commands.waitSeconds(1)))
         .andThen(
             Commands.waitSeconds(TIME_BETWEEN_ACTIONS)
                 .andThen(
-                    Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
-                        .alongWith(Commands.run(() -> drive.stop(), drive))));
+                    Commands.runOnce(
+                            () -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
+                        .alongWith(Commands.runOnce(() -> drive.stop(), drive))))
+        .andThen(
+            Commands.waitSeconds(TIME_BETWEEN_ACTIONS * 2)
+                .andThen(
+                    DriveCommands.robotRelativeDrive(drive, () -> -0.5, () -> 0, () -> 0)
+                        .withTimeout(TIME_BETWEEN_ACTIONS)))
+        .andThen(SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel));
   }
 
   /**
@@ -248,14 +253,12 @@ public class AutoCommands {
       String[] branches,
       int[] coralLevels,
       String coralStationName) {
-    Command[] driveToBranches = new Command[2];
+    DriveToPose[] driveToBranches = new DriveToPose[2];
     Command[] positionToCoral = new Command[2];
     Command coralStation;
 
     for (int i = 0; i < 2; i++) {
-      driveToBranches[i] =
-          PathfindingCommands.driveToBranch(
-              drive, branches[i], PathPlannerConstants.DEFAULT_WALL_DISTANCE_M);
+      driveToBranches[i] = PathfindingCommands.driveToBranch(drive, branches[i], 0);
       switch (coralLevels[i]) {
         case 1:
           positionToCoral[i] = SuperstructureCommands.positionsToL1(periscope, algaePivot);
@@ -285,15 +288,17 @@ public class AutoCommands {
         PathfindingCommands.pathfindToFieldElement(
             drive, FieldConstants.CORAL_STATION_POSES.get(coralStationName), 0, 0, false);
 
-    return Commands.runOnce(() -> drive.resetPose(startingPose), drive)
-        .andThen(
-            Commands.parallel(
-                driveToBranches[0].withTimeout(2),
-                positionToCoral[0].beforeStarting(Commands.waitSeconds(0.25)).withTimeout(0.26)))
+    // return Commands.runOnce(() -> drive.resetPose(startingPose), drive)
+    // .andThen(
+    return Commands.parallel(
+            driveToBranches[0].finishAtGoal(),
+            positionToCoral[0].withTimeout(0.25).beforeStarting(Commands.waitSeconds(0.25)))
         .andThen(Commands.waitSeconds(0.25))
         .andThen(
             Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
                 .withTimeout(0.25))
+        .andThen(
+            DriveCommands.robotRelativeDrive(drive, () -> -0.5, () -> 0, () -> 0).withTimeout(0.5))
         .andThen(
             Commands.parallel(
                 coralStation,
@@ -303,16 +308,21 @@ public class AutoCommands {
                     Commands.waitSeconds(0.5),
                     SuperstructureCommands.intakeCoral(periscope, algaePivot, aee, cee, funnel)
                         .withTimeout(0.25))))
-        .andThen(Commands.waitUntil(() -> cee.isBeamBreakTriggered()))
+        .andThen(
+            Commands.race(
+                Commands.waitUntil(() -> cee.isBeamBreakTriggered()), Commands.waitSeconds(3)))
         .andThen(
             Commands.parallel(
                 Commands.runOnce(() -> funnel.setPercentSpeed(0), funnel),
-                driveToBranches[1].withTimeout(2),
-                positionToCoral[1].beforeStarting(Commands.waitSeconds(0.25)).withTimeout(0.26)))
+                driveToBranches[1].finishAtGoal(),
+                positionToCoral[1].withTimeout(0.25).beforeStarting(Commands.waitSeconds(0.25))))
         .andThen(Commands.waitSeconds(0.25))
         .andThen(
-            Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
-                .withTimeout(0.25));
+            Commands.runOnce(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
+                .withTimeout(0.25))
+        .andThen(
+            DriveCommands.robotRelativeDrive(drive, () -> 0.25, () -> 0, () -> 0).withTimeout(0.5))
+        .andThen(SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel));
   }
 
   /**
