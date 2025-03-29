@@ -206,22 +206,32 @@ public class AutoCommands {
         break;
     }
 
-    // return Commands.runOnce(() -> drive.resetPose(startingPose), drive)
-    // .andThen(
-    return Commands.parallel(
-            PathfindingCommands.driveToBranch(drive, branch, 0).finishAtGoal().withTimeout(5),
-            coralPosition.withTimeout(0.5).beforeStarting(Commands.waitSeconds(1)))
+    return Commands.runOnce(
+            () -> {
+              // Update robot pose if it hasn't been updated by the Vision already
+              if (drive.getCurrentPose2d().getX() == 0.0) {
+                drive.resetPose(startingPose);
+              }
+            },
+            drive)
         .andThen(
-            Commands.waitSeconds(TIME_BETWEEN_ACTIONS)
-                .andThen(
-                    Commands.runOnce(
-                            () -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
-                        .alongWith(Commands.runOnce(() -> drive.stop(), drive))))
+            Commands.parallel(
+                // Algin to the BRANCH and raise the Periscope
+                PathfindingCommands.driveToBranch(drive, branch, 0)
+                    .finishAtGoal()
+                    .withTimeout(5), // TODO: Test timout with side autos
+                coralPosition.withTimeout(0.5).beforeStarting(Commands.waitSeconds(1))))
+        .andThen(Commands.waitSeconds(TIME_BETWEEN_ACTIONS))
         .andThen(
-            Commands.waitSeconds(TIME_BETWEEN_ACTIONS * 2)
-                .andThen(
-                    DriveCommands.robotRelativeDrive(drive, () -> -0.5, () -> 0, () -> 0)
-                        .withTimeout(TIME_BETWEEN_ACTIONS)))
+            // Stop and score the CORAL
+            Commands.parallel(
+                Commands.runOnce(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee),
+                Commands.runOnce(() -> drive.stop(), drive)))
+        .andThen(Commands.waitSeconds(TIME_BETWEEN_ACTIONS * 2))
+        .andThen(
+            // Move backward and zero the Superstructure to avoid touching the CORAL
+            DriveCommands.robotRelativeDrive(drive, () -> -0.5, () -> 0, () -> 0)
+                .withTimeout(TIME_BETWEEN_ACTIONS))
         .andThen(SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel));
   }
 
@@ -253,9 +263,9 @@ public class AutoCommands {
       String[] branches,
       int[] coralLevels,
       String coralStationName) {
-    DriveToPose[] driveToBranches = new DriveToPose[2];
-    Command[] positionToCoral = new Command[2];
-    Command coralStation;
+    final DriveToPose[] driveToBranches = new DriveToPose[2];
+    final Command[] positionToCoral = new Command[2];
+    final Command coralStation;
 
     for (int i = 0; i < 2; i++) {
       driveToBranches[i] = PathfindingCommands.driveToBranch(drive, branches[i], 0);
@@ -288,11 +298,19 @@ public class AutoCommands {
         PathfindingCommands.pathfindToFieldElement(
             drive, FieldConstants.CORAL_STATION_POSES.get(coralStationName), 0, 0, false);
 
-    // return Commands.runOnce(() -> drive.resetPose(startingPose), drive)
-    // .andThen(
-    return Commands.parallel(
-            driveToBranches[0].finishAtGoal(),
-            positionToCoral[0].withTimeout(0.25).beforeStarting(Commands.waitSeconds(0.25)))
+    return Commands.runOnce(
+            () -> {
+              // Update robot pose if it hasn't been updated by the Vision already
+              if (drive.getCurrentPose2d().getX() == 0.0) {
+                drive.resetPose(startingPose);
+              }
+            },
+            drive)
+        .andThen(
+            Commands.parallel(
+                // Drive to the BRANCH and raise the Periscope
+                driveToBranches[0].finishAtGoal(),
+                positionToCoral[0].withTimeout(0.25).beforeStarting(Commands.waitSeconds(0.25))))
         .andThen(Commands.waitSeconds(0.25))
         .andThen(
             Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)

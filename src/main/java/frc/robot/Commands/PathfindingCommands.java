@@ -162,32 +162,6 @@ public class PathfindingCommands {
    */
   public static Command pathfindToAprilTag(
       Drive drive, int tagID, double wallDistanceMeters, boolean isFront) {
-    // // Get the 2d pose of the AprilTag associated with the inputed ID
-    // var apriltagPose = FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tagID).get().toPose2d();
-    // /*
-    //  * The goal pose is the end position for the center of the robot. Transforming by half the
-    // track
-    //  * width will leave the robot right up against the tag and any additional distance can be
-    // added
-    //  */
-    // var goalPose =
-    //     new Pose2d(
-    //         /*
-    //          * Multiply the x by cos and y by sin of the tag angle so that the hypot (tag to
-    // robot)
-    //          * is the desired distance away from the tag
-    //          */
-    //         apriltagPose.getX()
-    //             + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters)
-    //                 * apriltagPose.getRotation().getCos(),
-    //         apriltagPose.getY()
-    //             + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters)
-    //                 * apriltagPose.getRotation().getSin(),
-    //         // Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the robot
-    //         apriltagPose.getRotation().plus(Rotation2d.k180deg));
-
-    // return AutoBuilder.pathfindToPoseFlipped(
-    //     goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
     return pathfindToFieldElement(
         drive,
         FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tagID).get().toPose2d(),
