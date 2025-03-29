@@ -59,6 +59,7 @@ public class Vision extends SubsystemBase {
               FieldConstants.APRILTAG_FIELD_LAYOUT,
               PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
               VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
+      m_photonPoseEstimators[i].setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
       Logger.recordOutput(
           "Camera/" + VisionConstants.CAMERA_NAMES[i], VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
     }

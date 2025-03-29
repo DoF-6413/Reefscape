@@ -19,7 +19,10 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PathPlannerConstants;
@@ -50,6 +53,7 @@ public class Drive extends SubsystemBase {
 
   // Swerve Pose Estimator Objects
   private final SwerveDrivePoseEstimator m_swervePoseEstimator;
+  private final Field2d m_field = new Field2d();
 
   // Odometry reading lock
   static final Lock odometryLock = new ReentrantLock();
@@ -111,6 +115,39 @@ public class Drive extends SubsystemBase {
     m_swervePoseEstimator =
         new SwerveDrivePoseEstimator(
             m_swerveDriveKinematics, m_robotHeading, this.getModulePositions(), new Pose2d());
+
+    // Put Swerve states data onto the Dashboard
+    SmartDashboard.putData(
+        "Swerve Drive",
+        new Sendable() {
+          @Override
+          public void initSendable(SendableBuilder builder) {
+            builder.setSmartDashboardType("SwerveDrive");
+
+            builder.addDoubleProperty(
+                "Front Left Angle", () -> m_modules[0].getAngle().getRadians(), null);
+            builder.addDoubleProperty(
+                "Front Left Velocity", () -> m_modules[0].getVelocityMetersPerSec(), null);
+
+            builder.addDoubleProperty(
+                "Front Right Angle", () -> m_modules[1].getAngle().getRadians(), null);
+            builder.addDoubleProperty(
+                "Front Right Velocity", () -> m_modules[1].getVelocityMetersPerSec(), null);
+
+            builder.addDoubleProperty(
+                "Back Left Angle", () -> m_modules[2].getAngle().getRadians(), null);
+            builder.addDoubleProperty(
+                "Back Left Velocity", () -> m_modules[2].getVelocityMetersPerSec(), null);
+
+            builder.addDoubleProperty(
+                "Back Right Angle", () -> m_modules[3].getAngle().getRadians(), null);
+            builder.addDoubleProperty(
+                "Back Right Velocity", () -> m_modules[3].getVelocityMetersPerSec(), null);
+
+            builder.addDoubleProperty("Robot Angle", () -> m_robotHeading.getRadians(), null);
+          }
+        });
+    m_field.setRobotPose(this.getCurrentPose2d());
 
     // Tunable PID & Feedforward gains
     SmartDashboard.putBoolean("PIDFF_Tuning/Drive/EnableTuning", false);
@@ -179,7 +216,9 @@ public class Drive extends SubsystemBase {
       // Apply odometry update
       m_swervePoseEstimator.updateWithTime(sampleTimestamps[i], m_robotHeading, wheelPositions);
 
-      Logger.recordOutput("Odometry/EstimatedPose", m_swervePoseEstimator.getEstimatedPosition());
+      Logger.recordOutput("Odometry/EstimatedPose", this.getCurrentPose2d());
+      m_field.setRobotPose(this.getCurrentPose2d());
+      SmartDashboard.putData(m_field);
     }
 
     // Enable and update tunable PID and Feedforward gains through SmartDashboard

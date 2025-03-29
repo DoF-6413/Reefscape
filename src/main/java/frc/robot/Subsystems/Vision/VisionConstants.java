@@ -7,13 +7,13 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 /**
- * Constant values for the Vision subsystem. Index 0 refers to the Front camera (scoring side) and
- * index 1 refers to the Back camera (intake side)
+ * Constant values for the Vision subsystem. Index 0 refers to the Front Left camera (on Module 0),
+ * index 1 refers to the Front Right camera (on Module 1), and index 2 refers to the Limelight
  */
 public class VisionConstants {
   public enum CAMERA {
-    FRONT(0),
-    BACK(1),
+    LEFT(0),
+    RIGHT(1),
     LIMELIGHT(2);
 
     public final int CAMERA_INDEX;
@@ -24,32 +24,36 @@ public class VisionConstants {
   }
 
   /** Names of cameras on PhotonVision and NetworkTables */
-  public static final String[] CAMERA_NAMES = {"Front", "Back", "limelight"};
+  public static final String[] CAMERA_NAMES = {"Front_Left", "Front_Right", "limelight"};
 
   /**
-   * 3d offset of the center of the robot to the Front camera.
+   * 3d offset of the center of the robot to the Front Left camera.
    *
    * <p>WPI coordinate system z is camera y offset and vice versa. Same for pitch and yaw
    */
-  private static final Transform3d FRONT_CAMERA_ROBOT_OFFSET =
-      new Transform3d(
-          new Translation3d(
-              Units.inchesToMeters(13.291508),
-              Units.inchesToMeters(4.816861),
-              Units.inchesToMeters(5.625)),
-          new Rotation3d(Math.PI / 2, 0, Units.degreesToRadians(35)));
+  private static final Transform3d
+      LEFT_CAMERA_ROBOT_OFFSET = // TODO: Update with new camera offsets once they are mounted and
+          // in use
+          new Transform3d(
+              new Translation3d(
+                  Units.inchesToMeters(13.291508), // 12.447
+                  Units.inchesToMeters(4.816861), // 6.234
+                  Units.inchesToMeters(5.625)), // 10.297
+              new Rotation3d(Math.PI / 2, 0, Units.degreesToRadians(35))); // 90, 45, 35
   /**
-   * 3d offset of the center of the robot to the Back camera.
+   * 3d offset of the center of the robot to the Front Right camera.
    *
    * <p>WPI coordinate system z is camera offset
    */
-  private static final Transform3d BACK_CAMERA_ROBOT_OFFSET =
-      new Transform3d(
-          new Translation3d(
-              Units.inchesToMeters(-13.291508),
-              Units.inchesToMeters(4.816861),
-              Units.inchesToMeters(5.55)),
-          new Rotation3d(Math.PI / 2, Math.PI, Units.degreesToRadians(-35)));
+  private static final Transform3d
+      RIGHT_CAMERA_ROBOT_OFFSET = // TODO: Update with new camera offsets once they are mounted and
+          // in use
+          new Transform3d(
+              new Translation3d(
+                  Units.inchesToMeters(-13.291508), // 12.447
+                  Units.inchesToMeters(4.816861), // 6.234
+                  Units.inchesToMeters(5.55)), // -10.297
+              new Rotation3d(Math.PI / 2, Math.PI, Units.degreesToRadians(-35))); // 90, -45, 35
 
   /**
    * 3d offset from the center of the robot to the limelight.
@@ -60,16 +64,11 @@ public class VisionConstants {
       new Transform3d(
           new Translation3d(
               Units.inchesToMeters(13), Units.inchesToMeters(-4.5), Units.inchesToMeters(5.5)),
-          new Rotation3d(Math.PI, Units.degreesToRadians(20.42), 0)); // from pit whiteboard
+          new Rotation3d(Math.PI, Units.degreesToRadians(20.42), 0));
   /** Array of 3d transformations from the center of the robot to each camera location */
   public static final Transform3d[] CAMERA_ROBOT_OFFSETS = {
-    FRONT_CAMERA_ROBOT_OFFSET, BACK_CAMERA_ROBOT_OFFSET, LIMELIGHT_ROBOT_OFFSET
+    LEFT_CAMERA_ROBOT_OFFSET, RIGHT_CAMERA_ROBOT_OFFSET, LIMELIGHT_ROBOT_OFFSET
   };
-
-  /** Baseline standard deviation for proccessed AprilTag translation in meters */
-  public static final double LINEAR_STD_DEV_M = 0.1;
-  /** Baseline standard deviation for proccessed AprilTag rotation in radians */
-  public static final double ANGULAR_STD_DEV_RAD = 0.1;
 
   // SIM CONSTANTS
   /** Pixel width of resolution real cameras are set to */

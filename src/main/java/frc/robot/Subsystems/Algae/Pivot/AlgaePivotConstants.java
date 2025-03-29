@@ -44,14 +44,14 @@ public class AlgaePivotConstants {
   /**
    * KP represents the constant multiplied by the current error from setpoint (Proportional Error)
    */
-  public static double KP = 2.1;
+  public static double KP = 1.5;
   /**
    * KI represents the constant multiplied by the integral of the error from setpoint (Integral
    * Error)
    */
   public static double KI = 0.0;
   /** KD represents the constant multiplied by the change in error over time (Derivative Error) */
-  public static double KD = 0.2;
+  public static double KD = 0.1;
 
   public static double KS = 0.0;
   public static double KG = 0.5;

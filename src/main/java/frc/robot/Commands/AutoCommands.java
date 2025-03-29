@@ -206,6 +206,21 @@ public class AutoCommands {
         break;
     }
 
+    final int reefAprilTagID;
+    if (branch == "A" || branch == "B") {
+      reefAprilTagID = 18;
+    } else if (branch == "C" || branch == "D") {
+      reefAprilTagID = 17;
+    } else if (branch == "E" || branch == "F") {
+      reefAprilTagID = 22;
+    } else if (branch == "G" || branch == "H") {
+      reefAprilTagID = 21;
+    } else if (branch == "I" || branch == "J") {
+      reefAprilTagID = 20;
+    } else {
+      reefAprilTagID = 19;
+    }
+
     return Commands.runOnce(
             () -> {
               // Update robot pose if it hasn't been updated by the Vision already
@@ -217,8 +232,7 @@ public class AutoCommands {
         .andThen(
             Commands.parallel(
                 // Algin to the BRANCH and raise the Periscope
-                PathfindingCommands.driveToBranch(drive, branch, 0)
-                    .finishAtGoal()
+                PathfindingCommands.alignToBranch(drive, reefAprilTagID, branch)
                     .withTimeout(5), // TODO: Test timout with side autos
                 coralPosition.withTimeout(0.5).beforeStarting(Commands.waitSeconds(1))))
         .andThen(Commands.waitSeconds(TIME_BETWEEN_ACTIONS))

@@ -166,7 +166,26 @@ public class PathfindingCommands {
         drive,
         FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tagID).get().toPose2d(),
         wallDistanceMeters,
-        Units.inchesToMeters(6),
+        Units.inchesToMeters(6), // TODO: Change once new cameras are mounted and in use
+        isFront);
+  }
+
+  /**
+   * Drives the robot to the pose of the AprilTag. The pose is adjusted so that the robot is
+   * commanded to go in front of the AprilTag not directly on top of it. AprilTag IDs inputed should
+   * only be of the blue side as the pose will be automatically transformed to the red side.
+   *
+   * @param tagID Integer of the AprilTag ID of the desired AprilTag to align to (blue side only).
+   * @param wallDistanceMeters Distance in front of the AprilTag for the robot to end up.
+   * @return {@link Command} that makes the robot follow a trajectory to in front of the AprilTag.
+   */
+  public static DriveToPose driveToAprilTag(
+      Drive drive, int tagID, double wallDistanceMeters, boolean isFront) {
+    return driveToFieldElement(
+        drive,
+        FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tagID).get().toPose2d(),
+        wallDistanceMeters,
+        Units.inchesToMeters(6), // TODO: Change once new cameras are mounted and in use
         isFront);
   }
 
@@ -398,8 +417,21 @@ public class PathfindingCommands {
         drive);
   }
 
+  /**
+   * Auto alginment command that drives the robot to in front of the REEF and then to the BRANCH.
+   * This allows the robot to get a good reading from the AprilTag before the final adjustment to
+   * the BRANCH. AprilTags given should only be for the blue side as they will be automatically
+   * transformed to the red side.
+   *
+   * @param drive {@link Drive} subsystem
+   * @param reefTag Integer of the REEF face's AprilTag number (blue side)
+   * @param branch String of the BRANCH to algin to
+   * @return {@link Command} that carries out the auto alignment driving sequence.
+   */
   public static Command alignToBranch(Drive drive, int reefTag, String branch) {
-    return PathfindingCommands.pathfindToAprilTag(drive, reefTag, 0.75, true)
+    return PathfindingCommands.driveToAprilTag(drive, reefTag, 0.75, true)
+        .withTolerance(0.075, Units.degreesToRadians(3))
+        .finishAtGoal()
         .andThen(
             Commands.waitUntil(
                 () ->
