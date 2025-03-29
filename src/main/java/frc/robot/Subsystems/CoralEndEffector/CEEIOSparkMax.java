@@ -50,7 +50,6 @@ public class CEEIOSparkMax implements CEEIO {
     // Initialize Beam Breaks
     m_beamBreakExit = new DigitalInput(CEEConstants.BEAM_BREAK_EXIT_DIO_PORT);
     m_beamBreakEntrance = new DigitalInput(CEEConstants.BEAM_BREAK_ENTRANCE_DIO_PORT);
-    
   }
 
   @Override
@@ -63,10 +62,10 @@ public class CEEIOSparkMax implements CEEIO {
         Units.rotationsPerMinuteToRadiansPerSecond(m_relativeEncoder.getVelocity())
             / CEEConstants.GEAR_RATIO;
 
-    // Update logged inputs from the Beam Breaks. 
+    // Update logged inputs from the Beam Breaks.
     // If sensor is NOT broken, returns true, so invert value to match logged variable
-    inputs.isbeamBreakExitTriggered = !m_beamBreakExit.get();
-    inputs.isbeamBreakEntranceTriggered = !m_beamBreakEntrance.get();
+    inputs.isBeamBreakExitTriggered = !m_beamBreakExit.get();
+    inputs.isBeamBreakEntranceTriggered = !m_beamBreakEntrance.get();
   }
 
   @Override

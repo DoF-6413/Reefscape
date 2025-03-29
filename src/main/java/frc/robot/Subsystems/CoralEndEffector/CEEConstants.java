@@ -11,7 +11,8 @@ public class CEEConstants {
   /** DIO port of the Beam Break Exit, on the roboRIO */
   public static final int BEAM_BREAK_EXIT_DIO_PORT = 2;
   /** DIO port of the Beam Break Entrance, on the roboRIO */
-  public static final int BEAM_BREAK_ENTRANCE_DIO_PORT = (int)(Math.random()*5) + 2; //TODO: Find the actual port
+  public static final int BEAM_BREAK_ENTRANCE_DIO_PORT =
+      (int) (Math.random() * 5) + 2; // TODO: Find the actual port
 
   /**
    * Set the inversion status of the CEE to false, making Counterclockwise the positive direction
