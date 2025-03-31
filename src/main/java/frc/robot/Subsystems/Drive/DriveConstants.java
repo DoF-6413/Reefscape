@@ -84,7 +84,7 @@ public final class DriveConstants {
   /** Maximum linear velocity for auto alignment to the REEF BRANCHES */
   public static final double AUTO_ALIGN_BRANCH_VELOCITY_M_PER_S = 4;
   /** Maximum linear acceleration for auto alignment to the REEF BRANCHES */
-  public static final double AUTO_ALIGN_BRANCH_ACCELERATION_M_PER_S2 = 5.2;
+  public static final double AUTO_ALIGN_BRANCH_ACCELERATION_M_PER_S2 = 3.5;
   /** Ingnore joystick inputs less than 10% tilted */
   public static final double DEADBAND = 0.1;
   /**

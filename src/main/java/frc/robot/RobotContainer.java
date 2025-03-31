@@ -310,6 +310,19 @@ public class RobotContainer {
             new String[] {"H", "L"},
             new int[] {4, 4},
             "CS1R"));
+    m_autoChooser.addOption(
+        "2P_SLR-E4-CS2L-C4",
+        AutoCommands.pathfindingTwoPiece(
+            m_driveSubsystem,
+            m_periscopeSubsystem,
+            m_algaePivotSubsystem,
+            m_AEESubsystem,
+            m_CEESubsystem,
+            m_funnelSubsystem,
+            PathPlannerConstants.STARTING_LINE_CENTER,
+            new String[] {"E", "C"},
+            new int[] {4, 4},
+            "CS2L"));
 
     /* Test Routines */
     m_autoChooser.addOption("2 Meter Test", new PathPlannerAuto("Forward"));
@@ -562,7 +575,17 @@ public class RobotContainer {
     // Stop in X
     m_driverController
         .b()
-        .whileTrue(new InstantCommand(() -> m_driveSubsystem.stopWithX(), m_driveSubsystem));
+        // .whileTrue(new InstantCommand(() -> m_driveSubsystem.stopWithX(), m_driveSubsystem));
+        .onTrue(
+            Commands.runOnce(
+                () ->
+                    System.out.println(
+                        FieldConstants.APRILTAG_FIELD_LAYOUT
+                            .getTagPose(22)
+                            .get()
+                            .toPose2d()
+                            .getTranslation()
+                            .getDistance(new Translation2d(5.39, 3.17)))));
   }
 
   /** Aux Button Board Controls */

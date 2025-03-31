@@ -230,11 +230,14 @@ public class AutoCommands {
             },
             drive)
         .andThen(
-            Commands.parallel(
-                // Algin to the BRANCH and raise the Periscope
-                PathfindingCommands.alignToBranch(drive, reefAprilTagID, branch)
-                    .withTimeout(5), // TODO: Test timout with side autos
-                coralPosition.withTimeout(0.5).beforeStarting(Commands.waitSeconds(1))))
+            Commands.sequence(
+                    // Algin to the BRANCH and raise the Periscope
+                    PathfindingCommands.pathfindToAprilTag(drive, reefAprilTagID, 0.75, true),
+                    Commands.parallel(
+                        PathfindingCommands.driveToBranch(drive, branch, 0).finishAtGoal(),
+                        coralPosition.withTimeout(0.5)))
+                .withTimeout(10) // TODO: Test timout with side autos
+            )
         .andThen(Commands.waitSeconds(TIME_BETWEEN_ACTIONS))
         .andThen(
             // Stop and score the CORAL
@@ -279,7 +282,7 @@ public class AutoCommands {
       String coralStationName) {
     final DriveToPose[] driveToBranches = new DriveToPose[2];
     final Command[] positionToCoral = new Command[2];
-    final Command coralStation;
+    final DriveToPose coralStation;
 
     for (int i = 0; i < 2; i++) {
       driveToBranches[i] = PathfindingCommands.driveToBranch(drive, branches[i], 0);
@@ -309,51 +312,94 @@ public class AutoCommands {
     }
 
     coralStation =
-        PathfindingCommands.pathfindToFieldElement(
+        PathfindingCommands.driveToFieldElement(
             drive, FieldConstants.CORAL_STATION_POSES.get(coralStationName), 0, 0, false);
 
-    return Commands.runOnce(
-            () -> {
-              // Update robot pose if it hasn't been updated by the Vision already
-              if (drive.getCurrentPose2d().getX() == 0.0) {
-                drive.resetPose(startingPose);
-              }
-            },
-            drive)
+    final int reefAprilTagID;
+    if (branches[1] == "A" || branches[1] == "B") {
+      reefAprilTagID = 18;
+    } else if (branches[1] == "C" || branches[1] == "D") {
+      reefAprilTagID = 17;
+    } else if (branches[1] == "E" || branches[1] == "F") {
+      reefAprilTagID = 22;
+    } else if (branches[1] == "G" || branches[1] == "H") {
+      reefAprilTagID = 21;
+    } else if (branches[1] == "I" || branches[1] == "J") {
+      reefAprilTagID = 20;
+    } else {
+      reefAprilTagID = 19;
+    }
+
+    // return Commands.runOnce(
+    //         () -> {
+    //           // Update robot pose if it hasn't been updated by the Vision already
+    //           if (drive.getCurrentPose2d().getX() == 0.0) {
+    //             drive.resetPose(startingPose);
+    //           }
+    //         },
+    //         drive)
+    //     .andThen(
+    //         Commands.parallel(
+    //             // Drive to the BRANCH and raise the Periscope
+    //             driveToBranches[0].finishAtGoal(),
+    //             positionToCoral[0].withTimeout(0.25).beforeStarting(Commands.waitSeconds(0.25))))
+    //     .andThen(Commands.waitSeconds(0.25))
+    //     .andThen(
+    //         Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
+    //             .withTimeout(0.25))
+    //     .andThen(
+    //         DriveCommands.robotRelativeDrive(drive, () -> -0.5, () -> 0, () ->
+    // 0).withTimeout(0.5))
+    //     .andThen(
+    //         Commands.parallel(
+    //             coralStation,
+    //             Commands.sequence(
+    //                 SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel)
+    //                     .withTimeout(0.25),
+    //                 Commands.waitSeconds(0.5),
+    //                 SuperstructureCommands.intakeCoral(periscope, algaePivot, aee, cee, funnel)
+    //                     .withTimeout(0.25))))
+    //     .andThen(
+    //         Commands.race(
+    //             Commands.waitUntil(() -> cee.isBeamBreakTriggered()), Commands.waitSeconds(3)))
+    //     .andThen(
+    //         Commands.parallel(
+    //             Commands.runOnce(() -> funnel.setPercentSpeed(0), funnel),
+    //             driveToBranches[1].finishAtGoal(),
+    //             positionToCoral[1].withTimeout(0.25).beforeStarting(Commands.waitSeconds(0.25))))
+    //     .andThen(Commands.waitSeconds(0.25))
+    //     .andThen(
+    //         Commands.runOnce(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
+    //             .withTimeout(0.25))
+    //     .andThen(
+    //         DriveCommands.robotRelativeDrive(drive, () -> 0.25, () -> 0, () ->
+    // 0).withTimeout(0.5))
+    //     .andThen(SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel));
+    return AutoCommands.pathfindingAutoOnePiece(
+            drive,
+            periscope,
+            algaePivot,
+            aee,
+            cee,
+            funnel,
+            startingPose,
+            branches[0],
+            coralLevels[0])
         .andThen(
             Commands.parallel(
-                // Drive to the BRANCH and raise the Periscope
-                driveToBranches[0].finishAtGoal(),
-                positionToCoral[0].withTimeout(0.25).beforeStarting(Commands.waitSeconds(0.25))))
-        .andThen(Commands.waitSeconds(0.25))
+                Commands.deadline(
+                    Commands.waitUntil(() -> cee.isBeamBreakTriggered()),
+                    coralStation.finishAtGoal()),
+                SuperstructureCommands.intakeCoral(periscope, algaePivot, aee, cee, funnel)))
         .andThen(
-            Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
-                .withTimeout(0.25))
+            Commands.sequence(
+                PathfindingCommands.pathfindToAprilTag(drive, reefAprilTagID, 1.5, true),
+                Commands.parallel(positionToCoral[1], driveToBranches[1].finishAtGoal())))
+        .andThen(Commands.waitSeconds(0.5))
+        .andThen(Commands.runOnce(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee))
+        .andThen(Commands.waitSeconds(0.5))
         .andThen(
             DriveCommands.robotRelativeDrive(drive, () -> -0.5, () -> 0, () -> 0).withTimeout(0.5))
-        .andThen(
-            Commands.parallel(
-                coralStation,
-                Commands.sequence(
-                    SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel)
-                        .withTimeout(0.25),
-                    Commands.waitSeconds(0.5),
-                    SuperstructureCommands.intakeCoral(periscope, algaePivot, aee, cee, funnel)
-                        .withTimeout(0.25))))
-        .andThen(
-            Commands.race(
-                Commands.waitUntil(() -> cee.isBeamBreakTriggered()), Commands.waitSeconds(3)))
-        .andThen(
-            Commands.parallel(
-                Commands.runOnce(() -> funnel.setPercentSpeed(0), funnel),
-                driveToBranches[1].finishAtGoal(),
-                positionToCoral[1].withTimeout(0.25).beforeStarting(Commands.waitSeconds(0.25))))
-        .andThen(Commands.waitSeconds(0.25))
-        .andThen(
-            Commands.runOnce(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
-                .withTimeout(0.25))
-        .andThen(
-            DriveCommands.robotRelativeDrive(drive, () -> 0.25, () -> 0, () -> 0).withTimeout(0.5))
         .andThen(SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel));
   }
 

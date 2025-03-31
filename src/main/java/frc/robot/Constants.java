@@ -365,6 +365,6 @@ public final class Constants {
     /** Default distance away from any wall when the robot is Pathfinding towards one */
     public static final double DEFAULT_WALL_DISTANCE_M = 0;
     /** Distance from the center of the robot to the center of the Superstructure */
-    public static final double SUPERSTRUCTURE_OFFSET = Units.inchesToMeters(8.5);
+    public static final double SUPERSTRUCTURE_OFFSET = Units.inchesToMeters(7.5);
   }
 }

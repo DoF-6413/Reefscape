@@ -430,13 +430,14 @@ public class PathfindingCommands {
    */
   public static Command alignToBranch(Drive drive, int reefTag, String branch) {
     return PathfindingCommands.driveToAprilTag(drive, reefTag, 0.75, true)
-        .withTolerance(0.075, Units.degreesToRadians(3))
+        .withLinearPID(2, 0, 0)
+        .withTolerance(0.15, Units.degreesToRadians(5))
         .finishAtGoal()
         .andThen(
             Commands.waitUntil(
                 () ->
-                    drive.getChassisSpeeds().vxMetersPerSecond < 0.1
-                        && drive.getChassisSpeeds().vyMetersPerSecond < 0.1))
+                    drive.getChassisSpeeds().vxMetersPerSecond < 0.2
+                        && drive.getChassisSpeeds().vyMetersPerSecond < 0.2))
         .andThen(PathfindingCommands.driveToBranch(drive, branch, 0));
   }
 }
