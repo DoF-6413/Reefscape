@@ -235,7 +235,6 @@ public class SuperstructureCommands {
         .andThen(
             Commands.waitUntil(
                 () -> cee.isBeamBreakExitTriggered() && !cee.isBeamBreakEntranceTriggered()))
-        // .andThen(Commands.waitSeconds(CEEConstants.BEAM_BREAK_DELAY))
         .andThen(Commands.runOnce(() -> cee.setVoltage(0), cee));
   }
 
