@@ -439,7 +439,13 @@ public class RobotContainer {
     m_driverController
         .a()
         .onTrue(
-            new InstantCommand(() -> m_driveSubsystem.zeroYaw(), m_driveSubsystem)
+            new InstantCommand(
+                    () ->
+                        m_driveSubsystem.resetPose(
+                            new Pose2d(
+                                m_driveSubsystem.getCurrentPose2d().getTranslation(),
+                                Rotation2d.kZero)),
+                    m_driveSubsystem)
                 .withName("ZeroYaw"));
 
     /* Pathfinding */

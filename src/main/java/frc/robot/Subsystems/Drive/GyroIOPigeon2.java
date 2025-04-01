@@ -68,16 +68,6 @@ public class GyroIOPigeon2 implements GyroIO {
             MathUtil.angleModulus(
                 Units.degreesToRadians(m_yawDeg.getValueAsDouble())
                     + DriveConstants.HEADING_OFFSET_RAD));
-    inputs.pitch =
-        Rotation2d.fromRadians(
-            MathUtil.angleModulus(
-                Units.degreesToRadians(m_pitchDeg.getValueAsDouble())
-                    + DriveConstants.HEADING_OFFSET_RAD));
-    inputs.roll =
-        Rotation2d.fromRadians(
-            MathUtil.angleModulus(
-                Units.degreesToRadians(m_rollDeg.getValueAsDouble())
-                    + DriveConstants.HEADING_OFFSET_RAD));
     inputs.yawVelocityRadPerSec =
         Units.degreesToRadians(m_gyro.getAngularVelocityZWorld().getValueAsDouble());
 

@@ -99,14 +99,6 @@ public class SuperstructureCommands {
   public static Command score(AEE aee, CEE cee, Funnel funnel) {
     return SuperstructureCommands.setSpeeds(
         aee, cee, funnel, AEEConstants.SCORE_PERCENT_SPEED, CEEConstants.SCORE_PERCENT_SPEED, 0);
-
-    // return SuperstructureCommands.setSpeeds(
-    //     aee,
-    //     cee,
-    //     funnel,
-    //     SuperstructureState.AEESpeed,
-    //     SuperstructureState.CEESpeed,
-    //     SuperstructureState.funnelSpeed);
   }
 
   /* ~~~~~~~~~~~~~~~~~~~~ CORAL ~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -207,7 +199,6 @@ public class SuperstructureCommands {
                 SuperstructureState.CEESpeed,
                 SuperstructureState.funnelSpeed))
         .andThen(Commands.waitUntil(() -> cee.isBeamBreakTriggered()))
-        // .andThen(Commands.waitSeconds(CEEConstants.BEAM_BREAK_DELAY))
         .andThen(Commands.runOnce(() -> cee.setVoltage(0), cee));
   }
 

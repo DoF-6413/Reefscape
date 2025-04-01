@@ -216,6 +216,7 @@ public class Drive extends SubsystemBase {
       // Apply odometry update
       m_swervePoseEstimator.updateWithTime(sampleTimestamps[i], m_robotHeading, wheelPositions);
 
+      // Log robot odometry
       Logger.recordOutput("Odometry/EstimatedPose", this.getCurrentPose2d());
       m_field.setRobotPose(this.getCurrentPose2d());
       SmartDashboard.putData(m_field);
@@ -240,15 +241,18 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  /** Stops all the Drivetrain motors */
   public void stop() {
     this.runVelocity(new ChassisSpeeds());
   }
 
+  /** Stops all the Drivetrain motors and puts them in an X shape */
   public void stopWithX() {
     Rotation2d[] headings = new Rotation2d[4];
     for (int i = 0; i < 4; i++) {
       headings[i] = DriveConstants.getModuleTranslations()[i].getAngle();
     }
+
     m_swerveDriveKinematics.resetHeadings(headings);
     stop();
   }
@@ -265,7 +269,7 @@ public class Drive extends SubsystemBase {
   public void runVelocity(ChassisSpeeds speeds) {
     // Convert ChassisSpeeds to SwerveModuleStates, these will be the setpoints for the Drive and
     // Turn motors
-    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, RobotStateConstants.LOOP_PERIODIC_SEC);
     SwerveModuleState[] setpointStates =
         m_swerveDriveKinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
@@ -421,9 +425,10 @@ public class Drive extends SubsystemBase {
    */
   public void addVisionMeasurement(
       Pose2d visionPoseEstimation, double timestampSec, Matrix<N3, N1> visionStdDevs) {
-    var visionPoseGyroRot =
-        new Pose2d(visionPoseEstimation.getTranslation(), this.getRobotHeading());
-    m_swervePoseEstimator.addVisionMeasurement(visionPoseGyroRot, timestampSec, visionStdDevs);
+    m_swervePoseEstimator.addVisionMeasurement(
+        new Pose2d(visionPoseEstimation.getTranslation(), m_robotHeading),
+        timestampSec,
+        visionStdDevs);
   }
 
   /* ~~~~~~~~~~~~~~~~~~ Wheel Radius Characterization ~~~~~~~~~~~~~~~~~~ */
