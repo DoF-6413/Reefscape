@@ -28,9 +28,11 @@ public class CEEConstants {
   public static final double INTAKE_VELOCITY_RAD_PER_SEC =
       Units.rotationsPerMinuteToRadiansPerSecond(1000);
   /** Scoring speed, open loop voltage control */
-  public static final double SCORE_PERCENT_SPEED = 1.0;
+  public static final double SCORE_PERCENT_SPEED = 0.6;
+  /** Scoring speed, open loop voltage control */
+  public static final double SCORE_L1_PERCENT_SPEED = 0.3;
   /** Intaking speed, open loop voltage control */
-  public static final double INTAKE_PERCENT_SPEED = 0.5;
+  public static final double INTAKE_PERCENT_SPEED = 0.8;
   /** Outtaking speed, open loop voltage control */
   public static final double OUTTAKE_PERCENT_SPEED = -0.75;
 

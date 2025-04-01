@@ -220,10 +220,7 @@ public class SuperstructureCommands {
       Periscope periscope, AlgaePivot algaePivot, AEE aee, CEE cee, Funnel funnel) {
     SuperstructureState.objective(SuperstructureState.Objective.CORAL_INTAKE);
     return SuperstructureCommands.setPositions(
-            periscope,
-            algaePivot,
-            SuperstructureState.periscopeHeight,
-            SuperstructureState.algaePivotAngle)
+            periscope, algaePivot, Units.inchesToMeters(-1.5), SuperstructureState.algaePivotAngle)
         .alongWith(
             setSpeeds(
                 aee,

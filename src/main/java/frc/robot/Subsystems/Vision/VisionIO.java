@@ -28,6 +28,8 @@ public interface VisionIO {
     public double poseAmbiguity = 0.0;
     /** Estimated robot pose from the limelight */
     public Pose2d limelightPose = new Pose2d();
+
+    // public Transform3d multitagPose;
   }
 
   /**

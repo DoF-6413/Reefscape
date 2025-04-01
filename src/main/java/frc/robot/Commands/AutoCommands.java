@@ -154,9 +154,7 @@ public class AutoCommands {
         .andThen(
             Commands.race(
                 Commands.waitSeconds(CORAL_STATION_DELAY),
-                Commands.waitUntil(
-                        () -> cee.isBeamBreakExitTriggered() && !cee.isBeamBreakEntranceTriggered())
-                    .withTimeout(CORAL_STATION_DELAY)))
+                Commands.waitUntil(() -> cee.isBeamBreakTriggered())))
         .andThen(Commands.parallel(secondBranch.get(), secondCoralLevel.get()))
         .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
         .andThen(SuperstructureCommands.score(aee, cee, funnel));
@@ -317,9 +315,7 @@ public class AutoCommands {
                     Commands.waitSeconds(0.5),
                     SuperstructureCommands.intakeCoral(periscope, algaePivot, aee, cee, funnel)
                         .withTimeout(0.25))))
-        .andThen(
-            Commands.waitUntil(
-                () -> cee.isBeamBreakExitTriggered() && !cee.isBeamBreakEntranceTriggered()))
+        .andThen(Commands.waitUntil(() -> cee.isBeamBreakTriggered()))
         .andThen(
             Commands.parallel(
                 Commands.runOnce(() -> funnel.setPercentSpeed(0), funnel),
@@ -467,7 +463,8 @@ public class AutoCommands {
         .andThen(
             Commands.runOnce(() -> drive.setRaw(0, 0, 0), drive)
                 .alongWith(
-                    Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)))
+                    Commands.run(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)
+                        .withTimeout(1)))
         .andThen(Commands.waitSeconds(1))
         .andThen(
             DriveCommands.fieldRelativeDrive(

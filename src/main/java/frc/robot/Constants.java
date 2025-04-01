@@ -97,6 +97,9 @@ public final class Constants {
             * ROBOT_WEIGHT_KG
             * ((DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M)
                 + (DriveConstants.TRACK_WIDTH_M * DriveConstants.TRACK_WIDTH_M));
+
+    /** CAN ID of the Power Distribution Hub */
+    public static final int PDH_CAN_ID = 1;
   }
 
   /** Controller ports */
@@ -360,7 +363,7 @@ public final class Constants {
     public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
         new PathConstraints(4, 2, Units.degreesToRadians(515.65), Units.degreesToRadians(262.82));
     /** Default distance away from any wall when the robot is Pathfinding towards one */
-    public static final double DEFAULT_WALL_DISTANCE_M = Units.inchesToMeters(1.5);
+    public static final double DEFAULT_WALL_DISTANCE_M = 0;
     /** Distance from the center of the robot to the center of the Superstructure */
     public static final double SUPERSTRUCTURE_OFFSET = Units.inchesToMeters(8.5);
   }
