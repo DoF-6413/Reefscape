@@ -640,49 +640,43 @@ public class RobotContainer {
     // Adjust Periscope Height
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
+        .and(m_auxButtonBoard.axisLessThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
         .onTrue(
             new InstantCommand(
                 () -> m_periscopeSubsystem.adjustHeight(Units.inchesToMeters(1)),
                 m_periscopeSubsystem));
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.CLIMB_RETRACT.BUTTON_ID)
+        .and(m_auxButtonBoard.axisLessThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
         .onTrue(
             new InstantCommand(
                 () -> m_periscopeSubsystem.adjustHeight(Units.inchesToMeters(-1)),
                 m_periscopeSubsystem));
-    // Zero mechanisms
-    // m_auxButtonBoard
-    //     .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
-    //     .onTrue(
-    //         SuperstructureCommands.zero(
-    //             m_periscopeSubsystem,
-    //             m_algaePivotSubsystem,
-    //             m_AEESubsystem,
-    //             m_CEESubsystem,
-    //             m_funnelSubsystem));
 
     /* ~~~~~~~~~~~~~~~~~~~~ Climb ~~~~~~~~~~~~~~~~~~~~ */
     // Deploy Climber
-    // m_auxButtonBoard
-    //     .axisGreaterThan(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID, 0.5)
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () ->
-    //                 m_climberSubsystem.setVoltage(
-    //                     RobotStateConstants.MAX_VOLTAGE * ClimberConstants.DEPLOY_PERCENT_SPEED),
-    //             m_climberSubsystem))
-    //     .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
-    // // // Retract Climber
-    // m_auxButtonBoard
-    //     .axisLessThan(OperatorConstants.BUTTON_BOARD.CLIMB_RETRACT.BUTTON_ID, -0.5)
-    //     .onTrue(
-    //         new InstantCommand(
-    //             () ->
-    //                 m_climberSubsystem.setVoltage(
-    //                     RobotStateConstants.MAX_VOLTAGE *
-    // ClimberConstants.RETRACT_PERCENT_SPEED),
-    //             m_climberSubsystem))
-    //     .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
+    m_auxButtonBoard
+        .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
+        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    m_climberSubsystem.setVoltage(
+                        RobotStateConstants.MAX_VOLTAGE * ClimberConstants.DEPLOY_PERCENT_SPEED),
+                m_climberSubsystem))
+        .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
+    // Retract Climber
+    m_auxButtonBoard
+    .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
+    .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
+        .onTrue(
+            new InstantCommand(
+                () ->
+                    m_climberSubsystem.setVoltage(
+                        RobotStateConstants.MAX_VOLTAGE *
+    ClimberConstants.RETRACT_PERCENT_SPEED),
+                m_climberSubsystem))
+        .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
 
     /* ~~~~~~~~~~~~~~~~~~~~ Pathfinding Selection ~~~~~~~~~~~~~~~~~~~~ */
     // REEF Face AB

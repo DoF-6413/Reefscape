@@ -11,13 +11,13 @@ public interface ClimberIO {
   @AutoLog
   public static class ClimberIOInputs {
     /** Whether a signal is being recieved by the Climber motor or not */
-    public boolean isConnected = false;
+    public boolean[] isConnected = {false, false};
     /** Voltage applied to the Climber motor */
-    public double appliedVoltage = 0.0;
+    public double[] appliedVoltage = {0.0, 0.0};
     /** Current draw of the Climber motor in amps */
-    public double currentAmps = 0.0;
+    public double[] currentAmps = {0.0, 0.0};
     /** Tempature of the Climber motor in celsius */
-    public double tempCelsius = 0.0;
+    public double[] tempCelsius = {0.0, 0.0};
     /** Angular position of the Climber in radians */
     public double positionRad = 0.0;
     /** Velocity of the Climber in radians per second */
