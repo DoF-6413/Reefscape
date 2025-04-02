@@ -58,7 +58,7 @@ public class Robot extends LoggedRobot {
     switch (RobotStateConstants.currentMode) {
       case REAL:
         // Running on a real robot, log to a USB stick
-        Logger.addDataReceiver(new WPILOGWriter("/media/sda1"));
+        Logger.addDataReceiver(new WPILOGWriter("/U/logs"));
         Logger.addDataReceiver(new NT4Publisher());
         break;
 
@@ -87,7 +87,7 @@ public class Robot extends LoggedRobot {
      * 4: Functionality: 0 = working, 1 = WIP, 2 = doesn't work
      */
 
-    SmartDashboard.putString("Version Number", "33.63.44.1");
+    SmartDashboard.putString("Version Number", "33.63.45.1");
 
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 

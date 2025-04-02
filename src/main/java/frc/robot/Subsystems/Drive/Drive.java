@@ -269,7 +269,8 @@ public class Drive extends SubsystemBase {
   public void runVelocity(ChassisSpeeds speeds) {
     // Convert ChassisSpeeds to SwerveModuleStates, these will be the setpoints for the Drive and
     // Turn motors
-    ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, RobotStateConstants.LOOP_PERIODIC_SEC);
+    ChassisSpeeds discreteSpeeds =
+        ChassisSpeeds.discretize(speeds, RobotStateConstants.LOOP_PERIODIC_SEC);
     SwerveModuleState[] setpointStates =
         m_swerveDriveKinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
