@@ -108,11 +108,13 @@ public class RobotContainer {
         m_visionSubsystem =
             new Vision(
                 m_driveSubsystem::addVisionMeasurement,
-                new VisionIOSim(
-                    VisionConstants.CAMERA.LEFT.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d),
-                new VisionIOSim(
-                    VisionConstants.CAMERA.RIGHT.CAMERA_INDEX, m_driveSubsystem::getCurrentPose2d));
-        // new VisionIO() {});
+                // new VisionIOSim(
+                //     VisionConstants.CAMERA.LEFT.CAMERA_INDEX,
+                // m_driveSubsystem::getCurrentPose2d),
+                // new VisionIOSim(
+                //     VisionConstants.CAMERA.RIGHT.CAMERA_INDEX,
+                // m_driveSubsystem::getCurrentPose2d));
+                new VisionIO() {});
         break;
         // Replayed robot, disables all IO implementations
       default:

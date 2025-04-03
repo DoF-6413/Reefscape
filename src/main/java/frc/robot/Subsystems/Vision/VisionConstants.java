@@ -31,25 +31,25 @@ public class VisionConstants {
    *
    * <p>WPI coordinate system z is camera y offset and vice versa. Same for pitch and yaw
    */
-  private static final Transform3d LEFT_CAMERA_ROBOT_OFFSET = // TODO: Verify 3D rotation angles
+  private static final Transform3d LEFT_CAMERA_ROBOT_OFFSET =
       new Transform3d(
           new Translation3d(
               Units.inchesToMeters(12.447), // 12.447
               Units.inchesToMeters(6.234), // 6.234
               Units.inchesToMeters(10.297)), // 10.297
-          new Rotation3d(Math.PI / 2, Units.degreesToRadians(45), Units.degreesToRadians(35)));
+          new Rotation3d(Math.PI / 2, Units.degreesToRadians(15), Units.degreesToRadians(35)));
   /**
    * 3d offset of the center of the robot to the Front Right camera.
    *
    * <p>WPI coordinate system z is camera offset
    */
-  private static final Transform3d RIGHT_CAMERA_ROBOT_OFFSET = // TODO: Verify 3D rotation angles
+  private static final Transform3d RIGHT_CAMERA_ROBOT_OFFSET =
       new Transform3d(
           new Translation3d(
               Units.inchesToMeters(-13.291508), // 12.447
               Units.inchesToMeters(4.816861), // 6.234
               Units.inchesToMeters(5.55)), // -10.297
-          new Rotation3d(Math.PI / 2, Units.degreesToRadians(-45), Units.degreesToRadians(-35)));
+          new Rotation3d(Math.PI / 2, Units.degreesToRadians(-15), Units.degreesToRadians(-35)));
 
   /**
    * 3d offset from the center of the robot to the limelight.
