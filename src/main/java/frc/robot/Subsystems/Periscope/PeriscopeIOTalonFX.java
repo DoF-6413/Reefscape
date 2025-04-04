@@ -123,7 +123,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
       inputs.tempCelsius[i] = m_tempCelsius[i].getValueAsDouble();
       inputs.positionRot[i] = m_positionRot[i].getValueAsDouble();
     }
-    // Update logged inputs for the entire Periscope
+    // Update logged inputs for the Periscope mechanism
     inputs.heightMeters =
         Units.rotationsToRadians(m_positionRot[0].getValueAsDouble())
             / PeriscopeConstants.GEAR_RATIO

@@ -24,8 +24,8 @@ public class ClimberIOSim implements ClimberIO {
     m_armSim =
         new SingleJointedArmSim(
             LinearSystemId.createSingleJointedArmSystem(
-                DCMotor.getKrakenX60(1), ClimberConstants.MOI_KG_M2, ClimberConstants.GEAR_RATIO),
-            DCMotor.getKrakenX60(1),
+                DCMotor.getKrakenX60(2), ClimberConstants.MOI_KG_M2, ClimberConstants.GEAR_RATIO),
+            DCMotor.getKrakenX60(2),
             ClimberConstants.GEAR_RATIO,
             ClimberConstants.LENGTH_M,
             ClimberConstants.MIN_ANGLE_RAD,
@@ -40,9 +40,9 @@ public class ClimberIOSim implements ClimberIO {
     m_armSim.update(RobotStateConstants.LOOP_PERIODIC_SEC);
 
     // Update logged inputs from simulated arm system
-    inputs.isConnected = true;
-    inputs.appliedVoltage = m_voltage;
-    inputs.currentAmps = Math.abs(m_armSim.getCurrentDrawAmps());
+    inputs.isConnected = new boolean[] {true, true};
+    inputs.appliedVoltage = new double[] {m_voltage, m_voltage};
+    inputs.currentAmps = new double[] {Math.abs(m_armSim.getCurrentDrawAmps()), Math.abs(m_armSim.getCurrentDrawAmps())};
     inputs.positionRad = m_armSim.getAngleRads();
     inputs.velocityRadPerSec = m_armSim.getVelocityRadPerSec();
   }

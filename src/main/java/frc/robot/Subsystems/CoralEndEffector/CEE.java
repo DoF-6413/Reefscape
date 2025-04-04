@@ -139,8 +139,18 @@ public class CEE extends SubsystemBase {
    *
    * @return {@code true} if the sensor has been triggered, {@code false} if not.
    */
-  public boolean isBeamBreakTriggered() {
-    return m_inputs.isbeamBreaksTriggered;
+  public boolean isBeamBreakEntranceTriggered() {
+    return m_inputs.isBeamBreakEntranceTriggered;
+    // return SmartDashboard.getBoolean("BeamBreak", false); // for sim
+  }
+
+  /**
+   * Triggered means that the beam break is broken (an object is in between the sensor).
+   *
+   * @return {@code true} if the sensor has been triggered, {@code false} if not.
+   */
+  public boolean isBeamBreakExitTriggered() {
+    return m_inputs.isBeamBreakExitTriggered;
     // return SmartDashboard.getBoolean("BeamBreak", false); // for sim
   }
 }

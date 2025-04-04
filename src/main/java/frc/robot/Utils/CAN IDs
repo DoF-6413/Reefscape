@@ -18,7 +18,8 @@ CAN IDs for the Final Robot
 15 - Periscope TalonFX (Left)
 16 - Periscope TalonFX (Right)
 17 - Funnel NEO
-18 - Climber TalonFX
+18 - Climber Lead TalonFX
 19 - CEE NEO550
 20 - AEE Pivot NEO
 21 - AEE NEO
+22 - Climber Follower TalonFX

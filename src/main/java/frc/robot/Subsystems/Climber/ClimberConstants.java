@@ -5,13 +5,19 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public final class ClimberConstants {
   /** CAN ID for the first Climber motor */
-  public static final int CAN_ID = 18;
+  public static final int LEAD_CAN_ID = 18;
+  /** CAN ID for the second Climber motor */
+  public static final int FOLLOWER_CAN_ID = 22;
   /** Gear reduction of 9:1 for the Climber */
   public static final double GEAR_RATIO = 9.0 / 1.0;
   /**
    * Set the inversion of the Climber motor to false, making Counterclockwise the positive direction
    */
   public static final boolean IS_INVERTED = false;
+  /**
+   * Sets the inversion status of the follower Climber motor to false, making it follow the lead's direction
+   */
+  public static final boolean INVERT_FOLLOWER = false;
   /** Current limit of 60 amps for the Climber motor */
   public static final int STALL_CUR_LIM_A = 100;
   /** Current limit of 120 amps for the Climber motor */

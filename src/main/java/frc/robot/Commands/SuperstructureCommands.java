@@ -198,7 +198,9 @@ public class SuperstructureCommands {
                 SuperstructureState.AEESpeed,
                 SuperstructureState.CEESpeed,
                 SuperstructureState.funnelSpeed))
-        .andThen(Commands.waitUntil(() -> cee.isBeamBreakTriggered()))
+        .andThen(
+            Commands.waitUntil(
+                () -> cee.isBeamBreakExitTriggered() && !cee.isBeamBreakEntranceTriggered()))
         .andThen(Commands.runOnce(() -> cee.setVoltage(0), cee));
   }
 
