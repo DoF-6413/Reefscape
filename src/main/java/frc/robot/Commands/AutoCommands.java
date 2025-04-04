@@ -34,7 +34,7 @@ public class AutoCommands {
       Drive drive, Periscope periscope, AlgaePivot algaePivot, AEE aee, CEE cee, Funnel funnel) {
     // Constants
     final double DELAY_BETWEEN_ACTIONS = 0.25;
-    final double CORAL_STATION_DELAY = 3;
+    final double CORAL_STATION_TIMEOUT = 3;
     final double WALL_DISTANCE_M = 0;
 
     // Choosers to build the auto
@@ -86,19 +86,17 @@ public class AutoCommands {
         "CS2R",
         PathfindingCommands.pathfindToFieldElement(
             drive, FieldConstants.CORAL_STATION_POSES.get("CS2R"), WALL_DISTANCE_M, 0, false));
-    LoggedDashboardChooser<DriveToPose> secondBranch =
-        new LoggedDashboardChooser<>("Second BRANCH");
+    LoggedDashboardChooser<Command> secondBranch = new LoggedDashboardChooser<>("Second BRANCH");
     secondBranch.addDefaultOption(
         "None (1.5P)",
-        new DriveToPose(drive, () -> drive.getCurrentPose2d())
-            .withLinearPID(0, 0, 0)
-            .withAngularPID(0, 0, 0));
-    secondBranch.addOption("L", PathfindingCommands.driveToBranch(drive, "L", WALL_DISTANCE_M));
-    secondBranch.addOption("K", PathfindingCommands.driveToBranch(drive, "K", WALL_DISTANCE_M));
-    secondBranch.addOption("A", PathfindingCommands.driveToBranch(drive, "A", WALL_DISTANCE_M));
-    secondBranch.addOption("B", PathfindingCommands.driveToBranch(drive, "B", WALL_DISTANCE_M));
-    secondBranch.addOption("C", PathfindingCommands.driveToBranch(drive, "C", WALL_DISTANCE_M));
-    secondBranch.addOption("D", PathfindingCommands.driveToBranch(drive, "D", WALL_DISTANCE_M));
+        Commands.waitSeconds(15)
+            .alongWith(Commands.print("1.5P").andThen(Commands.waitSeconds(1)).repeatedly()));
+    secondBranch.addOption("L", PathfindingCommands.alignToBranch(drive, "L"));
+    secondBranch.addOption("K", PathfindingCommands.alignToBranch(drive, "K"));
+    secondBranch.addOption("A", PathfindingCommands.alignToBranch(drive, "A"));
+    secondBranch.addOption("B", PathfindingCommands.alignToBranch(drive, "B"));
+    secondBranch.addOption("C", PathfindingCommands.alignToBranch(drive, "C"));
+    secondBranch.addOption("D", PathfindingCommands.alignToBranch(drive, "D"));
     LoggedDashboardChooser<Command> secondCoralLevel =
         new LoggedDashboardChooser<>("Second CORAL Level");
     secondCoralLevel.addOption("L1", SuperstructureCommands.positionsToL1(periscope, algaePivot));
@@ -127,17 +125,22 @@ public class AutoCommands {
 
     return Commands.runOnce(
         () -> {
+          // Update options
           startingPose.periodic();
           firstBranch.periodic();
           firstCoralLevel.periodic();
           coralStation.periodic();
           secondBranch.periodic();
           secondCoralLevel.periodic();
-          drive.resetPose(startingPose.get());
 
+          // Reset odometry if not updated by Vision already
+          if (drive.getCurrentPose2d().getX() == 0.0) {
+            drive.resetPose(startingPose.get());
+          }
+
+          // Schedule the auto command  
           Commands.parallel(
-                  PathfindingCommands.driveToBranch(drive, firstBranch.get(), WALL_DISTANCE_M)
-                      .finishAtGoal(),
+                  PathfindingCommands.alignToBranch(drive, firstBranch.get()),
                   firstCoralLevel.get(),
                   Commands.print("Aligning to first CORAL"))
               .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
@@ -145,24 +148,29 @@ public class AutoCommands {
                   SuperstructureCommands.score(aee, cee, funnel)
                       .alongWith(Commands.print("Scoring first CORAL")))
               .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
+              .andThen(DriveCommands.robotRelativeDrive(drive, ()-> -0.5, ()-> 0.0, ()->
+              0.0).withTimeout(DELAY_BETWEEN_ACTIONS)) // TODO: add if necessary
               .andThen(
                   Commands.parallel(
                       coralStation.get(),
                       SuperstructureCommands.zero(periscope, algaePivot, aee, cee, funnel)
-                          .withTimeout(0.5)
+                          // TODO: test w/o timeout
                           .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))
                           .andThen(
                               SuperstructureCommands.intakeCoral(
-                                      periscope, algaePivot, aee, cee, funnel)
-                                  .withTimeout(0.5)),
+                                  periscope,
+                                  algaePivot,
+                                  aee,
+                                  cee,
+                                  funnel)), // TODO: test w/o timeout
                       Commands.print("Going to CORAL STATION")))
               .andThen(
                   Commands.race(
-                      Commands.waitSeconds(CORAL_STATION_DELAY),
+                      Commands.waitSeconds(CORAL_STATION_TIMEOUT),
                       Commands.waitUntil(() -> cee.isBeamBreakTriggered())))
               .andThen(
                   Commands.parallel(
-                      secondBranch.get().finishAtGoal(),
+                      secondBranch.get(),
                       secondCoralLevel.get(),
                       Commands.print("Aligning to second BRANCH")))
               .andThen(Commands.waitSeconds(DELAY_BETWEEN_ACTIONS))

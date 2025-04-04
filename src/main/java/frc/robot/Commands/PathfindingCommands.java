@@ -428,8 +428,23 @@ public class PathfindingCommands {
    * @param branch String of the BRANCH to algin to
    * @return {@link Command} that carries out the auto alignment driving sequence.
    */
-  public static Command alignToBranch(Drive drive, int reefTag, String branch) {
-    return PathfindingCommands.driveToAprilTag(drive, reefTag, 0.75, true)
+  public static Command alignToBranch(Drive drive, String branch) {
+    final int reefAprilTagID;
+    if (branch == "A" || branch == "B") {
+      reefAprilTagID = 18;
+    } else if (branch == "C" || branch == "D") {
+      reefAprilTagID = 17;
+    } else if (branch == "E" || branch == "F") {
+      reefAprilTagID = 22;
+    } else if (branch == "G" || branch == "H") {
+      reefAprilTagID = 21;
+    } else if (branch == "I" || branch == "J") {
+      reefAprilTagID = 20;
+    } else {
+      reefAprilTagID = 19;
+    }
+
+    return PathfindingCommands.driveToAprilTag(drive, reefAprilTagID, 0.75, true)
         .withLinearPID(2, 0, 0)
         .withTolerance(0.15, Units.degreesToRadians(5))
         .finishAtGoal()
@@ -438,6 +453,8 @@ public class PathfindingCommands {
                 () ->
                     drive.getChassisSpeeds().vxMetersPerSecond < 0.2
                         && drive.getChassisSpeeds().vyMetersPerSecond < 0.2))
-        .andThen(PathfindingCommands.driveToBranch(drive, branch, 0));
+        .andThen(
+            PathfindingCommands.driveToBranch(drive, branch, 0)
+                .finishAtGoal()); // TODO: test with finish at goal
   }
 }
