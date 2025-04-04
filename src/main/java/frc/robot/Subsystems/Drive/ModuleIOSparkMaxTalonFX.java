@@ -1,6 +1,7 @@
 package frc.robot.Subsystems.Drive;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -22,7 +23,11 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Filesystem;
+import frc.robot.Constants;
 import frc.robot.Constants.RobotStateConstants;
+
+import java.io.File;
 import java.util.Queue;
 
 /** ModuleIO implementation for the real mode of the robot */
@@ -32,6 +37,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
   private final VelocityVoltage m_driveController = new VelocityVoltage(0);
   private final TalonFXConfiguration m_driveConfig = new TalonFXConfiguration();
   private double m_currentLimit;
+  private final Orchestra m_orchestra = new Orchestra();
 
   // Turn motor, absolute encoder, controller, and configurator
   private final SparkMax m_turnSparkMax;
@@ -199,6 +205,21 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     // Use higher frequency (250 Hz) for position signals or more accurate odometry
     BaseStatusSignal.setUpdateFrequencyForAll(
         DriveConstants.ODOMETRY_UPDATE_FREQUENCY_HZ, m_drivePositionRot, m_absEncoderPositionRot);
+        
+    // Use the  Driver Talons to create an Orchestra
+    m_orchestra.addInstrument(m_driveTalonFX,0);
+
+    // Load the MIDI file to reproduce in the orchestra
+    var status =
+        m_orchestra.loadMusic(
+            Filesystem.getDeployDirectory()
+                .toPath()
+                .resolve("orchestra" + File.separator + Constants.CHOOSED_SONG)
+                .toString());
+    if (!status.isOK()) {
+      System.out.println("cant load music");
+      System.out.println("Status: " + status.toString());
+    }
   }
 
   @Override
@@ -323,4 +344,21 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
     // Apply configuration
     m_driveTalonFX.getConfigurator().apply(m_driveConfig);
   }
+
+  /**
+   * Starts the music for each individual module.
+   */
+  @Override
+    public void startMusic() {
+        m_orchestra.play();
+  }
+    /**
+     * Stops the music for each individual module.
+     */
+    @Override
+    public void stopMusic() {
+        m_orchestra.stop();
+    }
+
+  
 }

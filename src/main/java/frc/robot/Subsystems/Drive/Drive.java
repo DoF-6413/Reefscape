@@ -518,4 +518,15 @@ public class Drive extends SubsystemBase {
       this.setTurnPID(DriveConstants.TURN_KP, DriveConstants.TURN_KI, DriveConstants.TURN_KD);
     }
   }
+
+  public void startMusic() {
+    for (int i = 0; i < m_modules.length; i++) {
+      m_modules[i].startMusic();
+    }
+  }
+  public void stopMusic() {
+    for (int i = 0; i < m_modules.length; i++) {
+      m_modules[i].stopMusic();
+    }
+  }
 }

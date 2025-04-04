@@ -266,4 +266,11 @@ public class Module {
     m_io.setDriveVoltage(output);
     m_io.setTurnVoltage(m_turnPID.calculate(getAngle().getRadians(), 0)); // Setpoint at 0 degrees
   }
+
+  public void startMusic() {
+    m_io.startMusic();
+  }
+  public void stopMusic() {
+    m_io.stopMusic();
+  }
 }

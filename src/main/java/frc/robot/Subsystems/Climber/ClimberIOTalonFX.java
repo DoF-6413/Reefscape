@@ -1,6 +1,9 @@
 package frc.robot.Subsystems.Climber;
 
+import java.io.File;
+
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -13,12 +16,16 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Filesystem;
+import frc.robot.Constants;
 import frc.robot.Constants.RobotStateConstants;
 
 public class ClimberIOTalonFX implements ClimberIO {
   // Motor, controller, and configurator
   private final TalonFX m_talonFX;
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
+  private final Orchestra m_orchestra = new Orchestra();
+
 
   // Climber motor's logged signals
   private StatusSignal<Voltage> m_appliedVolts;
@@ -80,6 +87,21 @@ public class ClimberIOTalonFX implements ClimberIO {
     m_currentAmps.setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
     m_tempCelsius = m_talonFX.getDeviceTemp();
     m_tempCelsius.setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
+
+    // Use the TalonFX to create an Orchestra
+    m_orchestra.addInstrument(m_talonFX,1);
+
+    // Load the MIDI file to reproduce in the orchestra
+    var status =
+        m_orchestra.loadMusic(
+            Filesystem.getDeployDirectory()
+                .toPath()
+                .resolve("orchestra" + File.separator + Constants.CHOOSED_SONG)
+                .toString());
+    if (!status.isOK()) {
+      System.out.println("cant load music");
+      System.out.println("Status: " + status.toString());
+    }
   }
 
   @Override
@@ -110,4 +132,20 @@ public class ClimberIOTalonFX implements ClimberIO {
     m_talonFX.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
+  
+  /**
+   * Starts the music for each individual module.
+   */
+  @Override
+    public void startMusic() {
+        m_orchestra.play();
+  }
+    /**
+     * Stops the music for each individual module.
+     */
+    @Override
+    public void stopMusic() {
+        m_orchestra.stop();
+    }
+
 }

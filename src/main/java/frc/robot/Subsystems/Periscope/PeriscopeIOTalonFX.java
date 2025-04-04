@@ -1,6 +1,9 @@
 package frc.robot.Subsystems.Periscope;
 
+import java.io.File;
+
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -15,6 +18,8 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Filesystem;
+import frc.robot.Constants;
 import frc.robot.Constants.RobotStateConstants;
 
 public class PeriscopeIOTalonFX implements PeriscopeIO {
@@ -23,6 +28,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
   private final TalonFX m_followerTalonFX;
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
   private final DigitalInput[] m_hallEffectSensors = new DigitalInput[2];
+  private final Orchestra m_orchestra = new Orchestra();
 
   // Periscope motors' logged signals
   private StatusSignal<Voltage>[] m_appliedVolts = new StatusSignal[2];
@@ -31,6 +37,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
   private StatusSignal<Angle>[] m_positionRot = new StatusSignal[2]; // Rotations
   private StatusSignal<AngularVelocity>[] m_velocityRotPerSec =
       new StatusSignal[2]; // Rotations per second
+
 
   /**
    * This constructs a new {@link PeriscopeIOTalonFX} instance.
@@ -102,6 +109,23 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     m_currentAmps[1].setUpdateFrequency(PeriscopeConstants.UPDATE_FREQUENCY_HZ);
     m_tempCelsius[1] = m_followerTalonFX.getDeviceTemp();
     m_tempCelsius[1].setUpdateFrequency(PeriscopeConstants.UPDATE_FREQUENCY_HZ);
+
+       
+    // Use the TalonFX to create an Orchestra
+    m_orchestra.addInstrument(m_followerTalonFX,1);
+    m_orchestra.addInstrument(m_leadTalonFX,1);
+
+    // Load the MIDI file to reproduce in the orchestra
+    var status =
+        m_orchestra.loadMusic(
+            Filesystem.getDeployDirectory()
+                .toPath()
+                .resolve("orchestra" + File.separator + Constants.CHOOSED_SONG)
+                .toString());
+    if (!status.isOK()) {
+      System.out.println("cant load music");
+      System.out.println("Status: " + status.toString());
+    }
   }
 
   @Override
@@ -159,4 +183,21 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     double positionRot = Units.radiansToRotations(heightMeters / PeriscopeConstants.SPOOL_RADIUS_M);
     m_leadTalonFX.setPosition(positionRot);
   }
+  
+  /**
+   * Starts the music for each individual module.
+   */
+  @Override
+    public void startMusic() {
+        m_orchestra.play();
+  }
+    /**
+     * Stops the music for each individual module.
+     */
+    @Override
+    public void stopMusic() {
+        m_orchestra.stop();
+    }
+
+ 
 }

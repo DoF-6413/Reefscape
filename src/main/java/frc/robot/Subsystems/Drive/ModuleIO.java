@@ -103,4 +103,14 @@ public interface ModuleIO {
    * @param kV Velocity gain value.
    */
   public default void setDriveFF(double kS, double kV) {}
+
+  /**
+   * Starts the music for each individual module.
+   */
+  public default void startMusic() {}
+
+  /**
+   * Stops the music for each individual module.
+   */
+  public default void stopMusic() {}
 }

@@ -53,4 +53,14 @@ public interface PeriscopeIO {
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed).
    */
   public default void setVoltage(double volts) {}
+  
+  /**
+   * Starts the music for each individual module.
+   */
+  public default void startMusic() {}
+
+  /**
+   * Stops the music for each individual module.
+   */
+  public default void stopMusic() {}
 }

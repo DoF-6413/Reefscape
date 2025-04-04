@@ -296,4 +296,11 @@ public class Periscope extends SubsystemBase {
           PeriscopeConstants.KA);
     }
   }
+
+  public void startMusic() {
+    m_io.startMusic();
+  }
+  public void stopMusic() {
+    m_io.stopMusic();
+  }
 }

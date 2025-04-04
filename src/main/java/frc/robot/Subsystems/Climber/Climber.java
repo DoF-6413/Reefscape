@@ -115,4 +115,10 @@ public class Climber extends SubsystemBase {
       this.setPID(ClimberConstants.KP, ClimberConstants.KI, ClimberConstants.KD);
     }
   }
+  public void startMusic() {
+    m_io.startMusic();
+  }
+  public void stopMusic() {
+    m_io.stopMusic();
+  }
 }

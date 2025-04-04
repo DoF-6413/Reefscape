@@ -367,4 +367,21 @@ public final class Constants {
     /** Distance from the center of the robot to the center of the Superstructure */
     public static final double SUPERSTRUCTURE_OFFSET = Units.inchesToMeters(8.5);
   }
+  /* Orchestra constants */
+  public static final String[] SONG_NAMES = {
+    "badApple.chrp",
+    "rickroll.chrp",
+    "GiornoTheme.chrp",
+    "megalovania.chrp",
+    "WiiSportsTheme.chrp",
+    "binksSake.chrp",
+    "stereoMadness.chrp",
+    "renaiCirculation.chrp",
+    "kawaikuteGomen.chrp"
+  };
+
+  /** Randomly selected song from the list of songs */
+  public static final String CHOOSED_SONG = SONG_NAMES[(int)Math.random()*SONG_NAMES.length];
+  
+
 }

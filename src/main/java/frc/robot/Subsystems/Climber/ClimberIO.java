@@ -51,4 +51,14 @@ public interface ClimberIO {
    * @param enable Sets brake mode on true, coast on false
    */
   public default void setBrakeMode(boolean enable) {}
+  
+  /**
+   * Starts the music for each individual module.
+   */
+  public default void startMusic() {}
+
+  /**
+   * Stops the music for each individual module.
+   */
+  public default void stopMusic() {}
 }
