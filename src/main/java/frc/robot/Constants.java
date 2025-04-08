@@ -350,13 +350,13 @@ public final class Constants {
     /** {@link Pose2d} of the left starting line pose for autos */
     public static final Pose2d STARTING_LINE_LEFT =
         RobotStateConstants.isRed()
-            ? new Pose2d(10.266, 5.326, Rotation2d.kZero)
-            : new Pose2d(7.265, 5.326, Rotation2d.k180deg);
+            ? new Pose2d(10.266, 5.326, Rotation2d.fromDegrees(45))
+            : new Pose2d(7.265, 5.326, Rotation2d.fromDegrees(-135));
     /** {@link Pose2d} of the right starting line pose for autos */
     public static final Pose2d STARTING_LINE_RIGHT =
         RobotStateConstants.isRed()
-            ? new Pose2d(10.266, 4.041, Rotation2d.kZero)
-            : new Pose2d(7.265, 2.874, Rotation2d.k180deg);
+            ? new Pose2d(10.266, 4.041, Rotation2d.fromDegrees(-45))
+            : new Pose2d(7.265, 2.874, Rotation2d.fromDegrees(135));
 
     /* Pathfinding */
     /** Max translational and rotational velocity and acceleration used for Pathfinding */
@@ -365,7 +365,7 @@ public final class Constants {
     /** Default distance away from any wall when the robot is Pathfinding towards one */
     public static final double DEFAULT_WALL_DISTANCE_M = 0;
     /** Distance from the center of the robot to the center of the Superstructure */
-    public static final double SUPERSTRUCTURE_OFFSET = Units.inchesToMeters(8.5);
+    public static final double SUPERSTRUCTURE_OFFSET = Units.inchesToMeters(7.5);
   }
   /* Orchestra constants */
   public static final String[] SONG_NAMES = {

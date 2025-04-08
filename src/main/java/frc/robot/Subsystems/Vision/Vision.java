@@ -20,7 +20,6 @@ import java.util.List;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.targeting.PhotonPipelineResult;
 
 public class Vision extends SubsystemBase {
   private final VisionIO[] m_io;
@@ -30,8 +29,7 @@ public class Vision extends SubsystemBase {
   // Vision pose estimation
   private final PhotonPoseEstimator[] m_photonPoseEstimators;
   private List<Pose2d> m_estimatedPoses = new LinkedList<>();
-  private Matrix<N3, N1> m_stdDevs = VecBuilder.fill(0.7, 0.7, 1000000);
-  private double m_stdDevCoeff = 0.0;
+  private Matrix<N3, N1> m_stdDevs = VecBuilder.fill(0.5, 0.5, 1000000);
 
   /**
    * Constructs a new {@link Vision} instance.
@@ -61,6 +59,7 @@ public class Vision extends SubsystemBase {
               FieldConstants.APRILTAG_FIELD_LAYOUT,
               PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
               VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
+      m_photonPoseEstimators[i].setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
       Logger.recordOutput(
           "Camera/" + VisionConstants.CAMERA_NAMES[i], VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
     }
@@ -72,41 +71,33 @@ public class Vision extends SubsystemBase {
     for (int i = 0; i < m_inputs.length; i++) {
       // Update and log inputs
       m_io[i].updateInputs(m_inputs[i]);
-      Logger.processInputs("Vision/" + VisionConstants.CAMERA_NAMES[2], m_inputs[i]);
+      Logger.processInputs("Vision/" + VisionConstants.CAMERA_NAMES[i], m_inputs[i]);
 
       // Check results and add available and unambiguous Vision measurements to list
-      var currentResult = getPipelineResult(i);
+      var currentResult = m_inputs[i].pipelineResult;
       if (!currentResult.hasTargets())
         continue; // Move to next camera update iteration if no AprilTags seen
-      var target = currentResult.getBestTarget();
-      if (target.getFiducialId() >= 1
-          && target.getFiducialId() <= 22
-          && target.getPoseAmbiguity() > 0.0
-          && target.getPoseAmbiguity() <= 0.2) {
-        var estimatedPose = m_photonPoseEstimators[i].update(currentResult);
-        if (estimatedPose.isEmpty())
-          continue; // Move to next camera update iteration if no position is estimated
-        m_estimatedPoses.add(estimatedPose.get().estimatedPose.toPose2d());
+      var optionalEstimatedPose = m_photonPoseEstimators[i].update(currentResult);
+      if (optionalEstimatedPose.isEmpty())
+        continue; // Move to next camera update iteration if no position is estimated
+      var estimatedPose = optionalEstimatedPose.get().estimatedPose.toPose2d();
+      double ambiguity =
+          (currentResult.targets.size() == 1)
+              ? currentResult.getBestTarget().getPoseAmbiguity()
+              : currentResult.getMultiTagResult().get().estimatedPose.ambiguity;
+      if (
+      // Ensure pose is trustworthy and within field bounds in order to be used
+      ambiguity >= 0.0
+          && ambiguity <= 0.2
+          && estimatedPose.getX() >= 0.0
+          && estimatedPose.getX() <= FieldConstants.FIELD_LENGTH
+          && estimatedPose.getY() >= 0.0
+          && estimatedPose.getY() <= FieldConstants.FIELD_WIDTH) {
+
+        m_estimatedPoses.add(estimatedPose);
         // Record estimated pose
         Logger.recordOutput(
-            "Odometry/Vision/EstimatedPoses/" + VisionConstants.CAMERA_NAMES[i],
-            estimatedPose.get().estimatedPose.toPose2d());
-
-        // Calculate standard deviations for current pipeline results
-        double averageTagDistance = 0.0;
-        var allResults = m_io[i].getAllPipelineResults();
-        int tagCount = allResults.size();
-        if (allResults.size() == 0)
-          continue; // Move to next camera update iteration if no results present
-        for (PhotonPipelineResult result : allResults) {
-          if (!result.hasTargets()) continue; // Move to next result iteration if no AprilTags
-          // seen
-          averageTagDistance +=
-              Math.hypot(
-                  result.getBestTarget().getBestCameraToTarget().getX(),
-                  result.getBestTarget().getBestCameraToTarget().getY());
-        }
-        m_stdDevCoeff += (Math.pow(averageTagDistance, 2) / tagCount);
+            "Odometry/Vision/EstimatedPoses/" + VisionConstants.CAMERA_NAMES[i], estimatedPose);
       }
     }
 
@@ -115,28 +106,12 @@ public class Vision extends SubsystemBase {
 
     /* Add Vision measurements to Swerve Pose Estimator in Drive through the VisionConsumer */
     if (m_estimatedPoses.size() > 1) {
-      // Create standard deviation matrix with averaged coefficient and reset cooefficient for
-      // next
-      // periodic iteration
-      m_stdDevs =
-          VecBuilder.fill(
-              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff / m_inputs.length,
-              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff / m_inputs.length,
-              VisionConstants.ANGULAR_STD_DEV_RAD * m_stdDevCoeff / m_inputs.length);
-      m_stdDevCoeff = 0.0;
       // Average poses is both cameras see an AprilTag and clear pose list
       var averagePose =
           averageVisionPoses(m_estimatedPoses.toArray(new Pose2d[m_estimatedPoses.size()]));
       m_consumer.accept(averagePose, m_inputs[0].timestampSec, m_stdDevs);
       m_estimatedPoses.clear();
     } else {
-      // Create standard deviation matrix and reset cooefficient for next periodic iteration
-      m_stdDevs =
-          VecBuilder.fill(
-              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff,
-              VisionConstants.LINEAR_STD_DEV_M * m_stdDevCoeff,
-              VisionConstants.ANGULAR_STD_DEV_RAD * m_stdDevCoeff);
-      m_stdDevCoeff = 0.0;
       // Use pose generated from the camera that saw an AprilTag and clear pose list
       m_consumer.accept(m_estimatedPoses.get(0), m_inputs[0].timestampSec, m_stdDevs);
       m_estimatedPoses.clear();
@@ -151,21 +126,13 @@ public class Vision extends SubsystemBase {
   }
 
   /**
-   * @param index Camera index.
-   * @return PhotonPipelineResult containing latest data calculated by PhotonVision.
-   */
-  public PhotonPipelineResult getPipelineResult(int index) {
-    return m_inputs[index].pipelineResult;
-  }
-
-  /**
    * Retrieves the latest pipeline and checks if an AprilTag is seen to determine the ID returned.
    *
    * @param index Camera index.
    * @return ID of AprilTag currently seen, -1 if none seen.
    */
   public int getTagID(int index) {
-    var result = this.getPipelineResult(index);
+    var result = m_inputs[index].pipelineResult;
     if (!result.hasTargets()) return -1;
     return result.getBestTarget().getFiducialId();
   }

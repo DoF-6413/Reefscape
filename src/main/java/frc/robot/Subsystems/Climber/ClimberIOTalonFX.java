@@ -6,6 +6,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -22,17 +23,18 @@ import frc.robot.Constants.RobotStateConstants;
 
 public class ClimberIOTalonFX implements ClimberIO {
   // Motor, controller, and configurator
-  private final TalonFX m_talonFX;
+  private final TalonFX m_leadTalonFX;
+  private final TalonFX m_followerTalonFX;
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
   private final Orchestra m_orchestra = new Orchestra();
 
 
   // Climber motor's logged signals
-  private StatusSignal<Voltage> m_appliedVolts;
-  private StatusSignal<Current> m_currentAmps;
-  private StatusSignal<Temperature> m_tempCelsius;
-  private StatusSignal<Angle> m_positionRot; // Rotations
-  private StatusSignal<AngularVelocity> m_velocityRotPerSec; // Rotations per second
+  private StatusSignal<Voltage>[] m_appliedVolts = new StatusSignal[2];
+  private StatusSignal<Current>[] m_currentAmps = new StatusSignal[2];
+  private StatusSignal<Temperature>[] m_tempCelsius = new StatusSignal[2];
+  private StatusSignal<Angle>[] m_positionRot = new StatusSignal[2]; // Rotations
+  private StatusSignal<AngularVelocity>[] m_velocityRotPerSec = new StatusSignal[2]; // Rotations per second
 
   /**
    * Constructs a new {@link ClimberIOTalonFX} instance.
@@ -43,8 +45,10 @@ public class ClimberIOTalonFX implements ClimberIO {
   public ClimberIOTalonFX() {
     System.out.println("[Init] ClimberIOTalonFX");
 
-    // Initialize the motor
-    m_talonFX = new TalonFX(ClimberConstants.CAN_ID);
+    // Initialize the motors
+    m_leadTalonFX = new TalonFX(ClimberConstants.LEAD_CAN_ID);
+    m_followerTalonFX = new TalonFX(ClimberConstants.FOLLOWER_CAN_ID);
+    m_followerTalonFX.setControl(new Follower(ClimberConstants.LEAD_CAN_ID, ClimberConstants.INVERT_FOLLOWER));
 
     // Motor configuration
     m_motorConfig
@@ -55,6 +59,13 @@ public class ClimberIOTalonFX implements ClimberIO {
                 : InvertedValue.Clockwise_Positive)
         .withNeutralMode(NeutralModeValue.Brake)
         .withControlTimesyncFreqHz(ClimberConstants.UPDATE_FREQUENCY_HZ);
+      m_leadTalonFX.setPosition(0.0);
+      m_leadTalonFX.optimizeBusUtilization();
+      m_leadTalonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
+      m_followerTalonFX.setPosition(0.0);
+      m_followerTalonFX.optimizeBusUtilization();
+      m_followerTalonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
+
 
     // Current limit configuration
     m_motorConfig
@@ -64,72 +75,64 @@ public class ClimberIOTalonFX implements ClimberIO {
         .withStatorCurrentLimit(ClimberConstants.STALL_CUR_LIM_A)
         .withStatorCurrentLimitEnable(ClimberConstants.ENABLE_CUR_LIM);
 
-    // Reset position
-    m_talonFX.setPosition(0.0);
-
-    // Optimize CAN bus usage, disable all signals aside from those refreshed in code
-    m_talonFX.optimizeBusUtilization();
-
-    // Timeout CAN after 500 seconds
-    m_talonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
-
     // Apply configurations
-    m_talonFX.getConfigurator().apply(m_motorConfig);
+    m_leadTalonFX.getConfigurator().apply(m_motorConfig);
 
     // Initialize logged signals
-    m_positionRot = m_talonFX.getPosition();
-    m_positionRot.setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
-    m_velocityRotPerSec = m_talonFX.getVelocity();
-    m_velocityRotPerSec.setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
-    m_appliedVolts = m_talonFX.getMotorVoltage();
-    m_appliedVolts.setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
-    m_currentAmps = m_talonFX.getStatorCurrent();
-    m_currentAmps.setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
-    m_tempCelsius = m_talonFX.getDeviceTemp();
-    m_tempCelsius.setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
-
-    // Use the TalonFX to create an Orchestra
-    m_orchestra.addInstrument(m_talonFX,1);
-
-    // Load the MIDI file to reproduce in the orchestra
-    var status =
-        m_orchestra.loadMusic(
-            Filesystem.getDeployDirectory()
-                .toPath()
-                .resolve("orchestra" + File.separator + Constants.CHOOSED_SONG)
-                .toString());
-    if (!status.isOK()) {
-      System.out.println("cant load music");
-      System.out.println("Status: " + status.toString());
-    }
+    // Lead
+    m_positionRot[0] = m_leadTalonFX.getPosition();
+    m_positionRot[0].setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
+    m_velocityRotPerSec[0] = m_leadTalonFX.getVelocity();
+    m_velocityRotPerSec[0].setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
+    m_appliedVolts[0] = m_leadTalonFX.getMotorVoltage();
+    m_appliedVolts[0].setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
+    m_currentAmps[0] = m_leadTalonFX.getStatorCurrent();
+    m_currentAmps[0].setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
+    m_tempCelsius[0] = m_leadTalonFX.getDeviceTemp();
+    m_tempCelsius[0].setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
+    // Follower
+    m_positionRot[1] = m_followerTalonFX.getPosition();
+    m_positionRot[1].setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
+    m_velocityRotPerSec[1] = m_followerTalonFX.getVelocity();
+    m_velocityRotPerSec[1].setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
+    m_appliedVolts[1] = m_followerTalonFX.getMotorVoltage();
+    m_appliedVolts[1].setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
+    m_currentAmps[1] = m_followerTalonFX.getStatorCurrent();
+    m_currentAmps[1].setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
+    m_tempCelsius[1] = m_followerTalonFX.getDeviceTemp();
+    m_tempCelsius[1].setUpdateFrequency(ClimberConstants.UPDATE_FREQUENCY_HZ);
   }
 
   @Override
   public void updateInputs(ClimberIOInputs inputs) {
+    // Updated logged inputs from each motor
+    for (int i = 0; i < 2; i++) {
     // Update signals and check if they are recieved
-    inputs.isConnected =
+    inputs.isConnected[i] =
         BaseStatusSignal.refreshAll(
-                m_positionRot, m_velocityRotPerSec, m_appliedVolts, m_currentAmps, m_tempCelsius)
+                m_positionRot[i], m_velocityRotPerSec[i], m_appliedVolts[i], m_currentAmps[i], m_tempCelsius[i])
             .isOK();
     // Update logged inputs from motor
-    inputs.appliedVoltage = m_appliedVolts.getValueAsDouble();
-    inputs.currentAmps = m_currentAmps.getValueAsDouble();
-    inputs.tempCelsius = m_tempCelsius.getValueAsDouble();
-    inputs.positionRad =
-        Units.rotationsToRadians(m_positionRot.getValueAsDouble()) / ClimberConstants.GEAR_RATIO;
-    inputs.velocityRadPerSec =
-        Units.rotationsToRadians(m_velocityRotPerSec.getValueAsDouble())
-            / ClimberConstants.GEAR_RATIO;
+    inputs.appliedVoltage[i] = m_appliedVolts[i].getValueAsDouble();
+    inputs.currentAmps[i] = m_currentAmps[i].getValueAsDouble();
+    inputs.tempCelsius[i] = m_tempCelsius[i].getValueAsDouble();
+  }
+  // Update logged inputs of the Climber mechanism
+  inputs.positionRad =
+      Units.rotationsToRadians(m_positionRot[0].getValueAsDouble()) / ClimberConstants.GEAR_RATIO;
+  inputs.velocityRadPerSec =
+      Units.rotationsToRadians(m_velocityRotPerSec[0].getValueAsDouble())
+          / ClimberConstants.GEAR_RATIO;
   }
 
   @Override
   public void enableBrakeMode(boolean enable) {
-    m_talonFX.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+    m_leadTalonFX.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 
   @Override
   public void setVoltage(double volts) {
-    m_talonFX.setVoltage(
+    m_leadTalonFX.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
   

@@ -1,8 +1,6 @@
 package frc.robot.Subsystems.Vision;
 
-import java.util.List;
 import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
 
 public class VisionIOPhotonVision implements VisionIO {
   protected final PhotonCamera m_camera;
@@ -36,7 +34,6 @@ public class VisionIOPhotonVision implements VisionIO {
         inputs.target = result.getBestTarget();
         inputs.fiducialID = result.getBestTarget().getFiducialId();
         inputs.poseAmbiguity = result.getBestTarget().getPoseAmbiguity();
-        // inputs.multitagPose = result.getMultiTagResult().get().estimatedPose.best;
       } else {
         // Update values to default if no AprilTag is seen
         inputs.target = null;
@@ -44,10 +41,5 @@ public class VisionIOPhotonVision implements VisionIO {
         inputs.poseAmbiguity = 0.0;
       }
     }
-  }
-
-  @Override
-  public List<PhotonPipelineResult> getAllPipelineResults() {
-    return m_camera.getAllUnreadResults();
   }
 }

@@ -41,13 +41,13 @@ public class PeriscopeConstants {
    * Height difference from the bottom position and the new resting position from the spacers in
    * inches
    */
-  public static final double SPACER_HEIGHT_DIFF_IN = 1.9375;
+  public static final double SPACER_HEIGHT_DIFF_IN = 0; // TODO: find new values :((((
   /** Minimum height of the Periscope, resting/default position */
   public static final double MIN_HEIGHT_M = 0.0;
   /** Max height of the Periscope in meters */
   public static final double MAX_HEIGHT_M = Units.inchesToMeters(58);
   /** Height position of the Periscope for reaching L1 */
-  public static final double L1_HEIGHT_M = Units.inchesToMeters(13.242499999999998);
+  public static final double L1_HEIGHT_M = Units.inchesToMeters(9.242499999999998);
   /** Height position of the Periscope for reaching L2 */
   public static final double L2_HEIGHT_M = Units.inchesToMeters(19.57 - SPACER_HEIGHT_DIFF_IN);
   /** Height position of the Periscope for intaking L2 ALGAE */

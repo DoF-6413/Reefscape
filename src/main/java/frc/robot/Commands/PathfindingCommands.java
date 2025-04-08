@@ -12,8 +12,6 @@ import frc.robot.Constants.RobotStateConstants;
 import frc.robot.Subsystems.Drive.Drive;
 import frc.robot.Subsystems.Drive.DriveConstants;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-import java.util.function.IntSupplier;
 import org.littletonrobotics.junction.Logger;
 
 /** The commands for on-the-fly trajectory following using PathPlanner's Pathfinding feature */
@@ -66,6 +64,7 @@ public class PathfindingCommands {
    * Generates a trajectory for the robot to follow to a specified field element with an additional
    * distance translation. The trajectory will automatically be rotated to the red alliance.
    *
+   * @param drive {@link Drive} subsystem
    * @param elementPose {@link Pose2d} of the element to pathfind to.
    * @param wallDistanceMeters Distance from the field element in meters.
    * @param strafeOffsetMeters Left/right offset of the robot relative to the field element.
@@ -161,31 +160,33 @@ public class PathfindingCommands {
    * @param wallDistanceMeters Distance in front of the AprilTag for the robot to end up.
    * @return {@link Command} that makes the robot follow a trajectory to in front of the AprilTag.
    */
-  public static Command pathfindToAprilTag(IntSupplier tagID, DoubleSupplier wallDistanceMeters) {
-    // Get the 2d pose of the AprilTag associated with the inputed ID
-    var apriltagPose =
-        FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tagID.getAsInt()).get().toPose2d();
-    /*
-     * The goal pose is the end position for the center of the robot. Transforming by half the track
-     * width will leave the robot right up against the tag and any additional distance can be added
-     */
-    var goalPose =
-        new Pose2d(
-            /*
-             * Multiply the x by cos and y by sin of the tag angle so that the hypot (tag to robot)
-             * is the desired distance away from the tag
-             */
-            apriltagPose.getX()
-                + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters.getAsDouble())
-                    * apriltagPose.getRotation().getCos(),
-            apriltagPose.getY()
-                + ((DriveConstants.TRACK_WIDTH_M / 2) + wallDistanceMeters.getAsDouble())
-                    * apriltagPose.getRotation().getSin(),
-            // Rotate by 180 as the AprilTag angles are rotated 180 degrees relative to the robot
-            apriltagPose.getRotation().plus(Rotation2d.k180deg));
+  public static Command pathfindToAprilTag(
+      Drive drive, int tagID, double wallDistanceMeters, boolean isFront) {
+    return pathfindToFieldElement(
+        drive,
+        FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tagID).get().toPose2d(),
+        wallDistanceMeters,
+        Units.inchesToMeters(6), // TODO: Change once new cameras are mounted and in use
+        isFront);
+  }
 
-    return AutoBuilder.pathfindToPoseFlipped(
-        goalPose, PathPlannerConstants.DEFAULT_PATH_CONSTRAINTS, 0);
+  /**
+   * Drives the robot to the pose of the AprilTag. The pose is adjusted so that the robot is
+   * commanded to go in front of the AprilTag not directly on top of it. AprilTag IDs inputed should
+   * only be of the blue side as the pose will be automatically transformed to the red side.
+   *
+   * @param tagID Integer of the AprilTag ID of the desired AprilTag to align to (blue side only).
+   * @param wallDistanceMeters Distance in front of the AprilTag for the robot to end up.
+   * @return {@link Command} that makes the robot follow a trajectory to in front of the AprilTag.
+   */
+  public static DriveToPose driveToAprilTag(
+      Drive drive, int tagID, double wallDistanceMeters, boolean isFront) {
+    return driveToFieldElement(
+        drive,
+        FieldConstants.APRILTAG_FIELD_LAYOUT.getTagPose(tagID).get().toPose2d(),
+        wallDistanceMeters,
+        Units.inchesToMeters(6), // TODO: Change once new cameras are mounted and in use
+        isFront);
   }
 
   /**
@@ -210,6 +211,7 @@ public class PathfindingCommands {
    * Generates a trajectory for the robot to follow to a specified REEF BRANCH with an additional
    * distance translation. The trajectory will automatically be rotated to the red alliance.
    *
+   * @param drive {@link Drive} subsystem
    * @param branchLetter Letter corresponding to BRANCH to pathfind to.
    * @param wallDistanceMeters Distance from the REEF wall in meters.
    * @return {@link Command} that makes the robot follow a trajectory to in front of the BRANCH.
@@ -217,11 +219,14 @@ public class PathfindingCommands {
   public static DriveToPose driveToBranch(
       Drive drive, String branchLetter, double wallDistanceMeters) {
     return PathfindingCommands.driveToFieldElement(
-        drive,
-        FieldConstants.BRANCH_POSES.get(branchLetter),
-        wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_M,
-        PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
-        true);
+            drive,
+            FieldConstants.BRANCH_POSES.get(branchLetter),
+            wallDistanceMeters + FieldConstants.BRANCH_TO_WALL_M,
+            PathPlannerConstants.SUPERSTRUCTURE_OFFSET,
+            true)
+        .withLinearMovement(
+            DriveConstants.AUTO_ALIGN_BRANCH_VELOCITY_M_PER_S,
+            DriveConstants.AUTO_ALIGN_BRANCH_ACCELERATION_M_PER_S2);
   }
 
   /**
@@ -410,5 +415,46 @@ public class PathfindingCommands {
           }
         },
         drive);
+  }
+
+  /**
+   * Auto alginment command that drives the robot to in front of the REEF and then to the BRANCH.
+   * This allows the robot to get a good reading from the AprilTag before the final adjustment to
+   * the BRANCH. AprilTags given should only be for the blue side as they will be automatically
+   * transformed to the red side.
+   *
+   * @param drive {@link Drive} subsystem
+   * @param reefTag Integer of the REEF face's AprilTag number (blue side)
+   * @param branch String of the BRANCH to algin to
+   * @return {@link Command} that carries out the auto alignment driving sequence.
+   */
+  public static Command alignToBranch(Drive drive, String branch) {
+    final int reefAprilTagID;
+    if (branch == "A" || branch == "B") {
+      reefAprilTagID = 18;
+    } else if (branch == "C" || branch == "D") {
+      reefAprilTagID = 17;
+    } else if (branch == "E" || branch == "F") {
+      reefAprilTagID = 22;
+    } else if (branch == "G" || branch == "H") {
+      reefAprilTagID = 21;
+    } else if (branch == "I" || branch == "J") {
+      reefAprilTagID = 20;
+    } else {
+      reefAprilTagID = 19;
+    }
+
+    return PathfindingCommands.driveToAprilTag(drive, reefAprilTagID, 0.75, true)
+        .withLinearPID(2, 0, 0)
+        .withTolerance(0.15, Units.degreesToRadians(5))
+        .finishAtGoal()
+        .andThen(
+            Commands.waitUntil(
+                () ->
+                    drive.getChassisSpeeds().vxMetersPerSecond < 0.2
+                        && drive.getChassisSpeeds().vyMetersPerSecond < 0.2))
+        .andThen(
+            PathfindingCommands.driveToBranch(drive, branch, 0)
+                .finishAtGoal()); // TODO: test with finish at goal
   }
 }

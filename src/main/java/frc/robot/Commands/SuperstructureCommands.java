@@ -58,29 +58,6 @@ public class SuperstructureCommands {
         aee,
         cee,
         funnel);
-    // switch (SuperstructureState.currentObjective) {
-    //   case L1, L2_CORAL, L3_CORAL:
-    //     return Commands.runOnce(() -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED),
-    // cee);
-
-    //   case L4:
-    //     return Commands.runOnce(() -> cee.setPercentSpeed(-0.5), cee)
-    //         .andThen(
-    //             Commands.waitSeconds(0.25)
-    //                 .andThen(
-    //                     Commands.runOnce(
-    //                         () -> cee.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED), cee)));
-    //   default:
-    //     return Commands.runOnce(
-    //         () -> {
-    //           aee.setPercentSpeed(aeeSpeed);
-    //           cee.setPercentSpeed(ceeSpeed);
-    //           funnel.setPercentSpeed(funnelSpeed);
-    //         },
-    //         aee,
-    //         cee,
-    //         funnel);
-    // }
   }
 
   /**
@@ -122,14 +99,6 @@ public class SuperstructureCommands {
   public static Command score(AEE aee, CEE cee, Funnel funnel) {
     return SuperstructureCommands.setSpeeds(
         aee, cee, funnel, AEEConstants.SCORE_PERCENT_SPEED, CEEConstants.SCORE_PERCENT_SPEED, 0);
-
-    // return SuperstructureCommands.setSpeeds(
-    //     aee,
-    //     cee,
-    //     funnel,
-    //     SuperstructureState.AEESpeed,
-    //     SuperstructureState.CEESpeed,
-    //     SuperstructureState.funnelSpeed);
   }
 
   /* ~~~~~~~~~~~~~~~~~~~~ CORAL ~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -229,8 +198,9 @@ public class SuperstructureCommands {
                 SuperstructureState.AEESpeed,
                 SuperstructureState.CEESpeed,
                 SuperstructureState.funnelSpeed))
-        .andThen(Commands.waitUntil(() -> cee.isBeamBreakTriggered()))
-        // .andThen(Commands.waitSeconds(CEEConstants.BEAM_BREAK_DELAY))
+        .andThen(
+            Commands.waitUntil(
+                () -> cee.isBeamBreakExitTriggered() && !cee.isBeamBreakEntranceTriggered()))
         .andThen(Commands.runOnce(() -> cee.setVoltage(0), cee));
   }
 

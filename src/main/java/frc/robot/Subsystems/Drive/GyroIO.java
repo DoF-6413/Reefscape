@@ -18,9 +18,6 @@ public interface GyroIO {
     public double[] odometryYawTimestamps = new double[] {};
     /** Queued yaw position readings */
     public Rotation2d[] odometryYawPositions = new Rotation2d[] {};
-
-    public Rotation2d pitch = new Rotation2d();
-    public Rotation2d roll = new Rotation2d();
   }
 
   /**
