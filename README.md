@@ -92,8 +92,6 @@ chore#[Issue#]-[name]:
 - **Utils**
   - PathPlanner
     - Used in autos to follow a path
-  - PIDController
-    - Custom DoF PID Controller class
   - PoseEstimator
     - Calculates pose based on sensors
 - Other (not in a folder)
