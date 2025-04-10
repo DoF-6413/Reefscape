@@ -15,10 +15,11 @@ Code base for FRC Team 6413's 2025 Reefscape Robot Code
   - Use Credential Manager to Log Out of Github through Windows
   - Log out of Slack, Github, Google, and anything else
 
-   Beta Numbers
- - first number = issue #
- - second number = # of commits
- - third number = functionality (0 = works as intended, 1 = WIP, 2 = doesn't work)
+   Version Number
+ - first number = Number of pushes (commits) to Dev
+ - second number = Issue number
+ - third number = Commit number (of this branch)
+ - fourth number = Functionality: 0 = working, 1 = WIP, 2 = doesn't work 
 
 For example, on the branch associated with issue 7, with 18 commits, which is still in development should look like: "7.18.1"
 
