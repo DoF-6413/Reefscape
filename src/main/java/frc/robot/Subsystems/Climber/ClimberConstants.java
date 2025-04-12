@@ -15,7 +15,8 @@ public final class ClimberConstants {
    */
   public static final boolean IS_INVERTED = false;
   /**
-   * Sets the inversion status of the follower Climber motor to false, making it follow the lead's direction
+   * Sets the inversion status of the follower Climber motor to false, making it follow the lead's
+   * direction
    */
   public static final boolean INVERT_FOLLOWER = false;
   /** Current limit of 60 amps for the Climber motor */

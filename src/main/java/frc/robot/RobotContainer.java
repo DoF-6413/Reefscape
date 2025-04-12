@@ -33,6 +33,7 @@ import frc.robot.Subsystems.Drive.*;
 import frc.robot.Subsystems.Funnel.*;
 import frc.robot.Subsystems.Periscope.*;
 import frc.robot.Subsystems.Vision.*;
+import frc.robot.Utils.Mechanisms2d;
 import frc.robot.Utils.PDH;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -52,6 +53,7 @@ public class RobotContainer {
   // Utils
   private final Vision m_visionSubsystem;
   private final PDH m_pdh;
+  private final Mechanisms2d m_mechanisms2d;
 
   // Controllers
   private final CommandXboxController m_driverController =
@@ -89,6 +91,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(VisionConstants.CAMERA.LEFT.CAMERA_INDEX));
         // new VisionIOPhotonVIsion(VisionConstants.CAMERA.RIGHT.CAMERA_INDEX);
         // new VisionIO() {});
+        m_mechanisms2d = new Mechanisms2d(m_periscopeSubsystem);
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -115,6 +118,7 @@ public class RobotContainer {
                 //     VisionConstants.CAMERA.RIGHT.CAMERA_INDEX,
                 // m_driveSubsystem::getCurrentPose2d));
                 new VisionIO() {});
+        m_mechanisms2d = new Mechanisms2d(m_periscopeSubsystem);
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -132,6 +136,7 @@ public class RobotContainer {
         m_AEESubsystem = new AEE(new AEEIO() {});
         m_CEESubsystem = new CEE(new CEEIO() {});
         m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
+        m_mechanisms2d = new Mechanisms2d(m_periscopeSubsystem);
         break;
     }
 
@@ -729,14 +734,18 @@ public class RobotContainer {
     // Adjust Periscope Height
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
-        .and(m_auxButtonBoard.axisLessThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
+        .and(
+            m_auxButtonBoard.axisLessThan(
+                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
         .onTrue(
             new InstantCommand(
                 () -> m_periscopeSubsystem.adjustHeight(Units.inchesToMeters(1)),
                 m_periscopeSubsystem));
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.CLIMB_RETRACT.BUTTON_ID)
-        .and(m_auxButtonBoard.axisLessThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
+        .and(
+            m_auxButtonBoard.axisLessThan(
+                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
         .onTrue(
             new InstantCommand(
                 () -> m_periscopeSubsystem.adjustHeight(Units.inchesToMeters(-1)),
@@ -746,7 +755,9 @@ public class RobotContainer {
     // Deploy Climber
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
-        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
+        .and(
+            m_auxButtonBoard.axisGreaterThan(
+                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
         .onTrue(
             new InstantCommand(
                 () ->
@@ -756,14 +767,15 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
     // Retract Climber
     m_auxButtonBoard
-    .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
-    .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
+        .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
+        .and(
+            m_auxButtonBoard.axisGreaterThan(
+                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
         .onTrue(
             new InstantCommand(
                 () ->
                     m_climberSubsystem.setVoltage(
-                        RobotStateConstants.MAX_VOLTAGE *
-    ClimberConstants.RETRACT_PERCENT_SPEED),
+                        RobotStateConstants.MAX_VOLTAGE * ClimberConstants.RETRACT_PERCENT_SPEED),
                 m_climberSubsystem))
         .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
 

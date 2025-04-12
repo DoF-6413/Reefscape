@@ -27,7 +27,8 @@ public class ClimberIOTalonFX implements ClimberIO {
   private StatusSignal<Current>[] m_currentAmps = new StatusSignal[2];
   private StatusSignal<Temperature>[] m_tempCelsius = new StatusSignal[2];
   private StatusSignal<Angle>[] m_positionRot = new StatusSignal[2]; // Rotations
-  private StatusSignal<AngularVelocity>[] m_velocityRotPerSec = new StatusSignal[2]; // Rotations per second
+  private StatusSignal<AngularVelocity>[] m_velocityRotPerSec =
+      new StatusSignal[2]; // Rotations per second
 
   /**
    * Constructs a new {@link ClimberIOTalonFX} instance.
@@ -41,7 +42,8 @@ public class ClimberIOTalonFX implements ClimberIO {
     // Initialize the motors
     m_leadTalonFX = new TalonFX(ClimberConstants.LEAD_CAN_ID);
     m_followerTalonFX = new TalonFX(ClimberConstants.FOLLOWER_CAN_ID);
-    m_followerTalonFX.setControl(new Follower(ClimberConstants.LEAD_CAN_ID, ClimberConstants.INVERT_FOLLOWER));
+    m_followerTalonFX.setControl(
+        new Follower(ClimberConstants.LEAD_CAN_ID, ClimberConstants.INVERT_FOLLOWER));
 
     // Motor configuration
     m_motorConfig
@@ -52,13 +54,12 @@ public class ClimberIOTalonFX implements ClimberIO {
                 : InvertedValue.Clockwise_Positive)
         .withNeutralMode(NeutralModeValue.Brake)
         .withControlTimesyncFreqHz(ClimberConstants.UPDATE_FREQUENCY_HZ);
-      m_leadTalonFX.setPosition(0.0);
-      m_leadTalonFX.optimizeBusUtilization();
-      m_leadTalonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
-      m_followerTalonFX.setPosition(0.0);
-      m_followerTalonFX.optimizeBusUtilization();
-      m_followerTalonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
-
+    m_leadTalonFX.setPosition(0.0);
+    m_leadTalonFX.optimizeBusUtilization();
+    m_leadTalonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
+    m_followerTalonFX.setPosition(0.0);
+    m_followerTalonFX.optimizeBusUtilization();
+    m_followerTalonFX.setExpiration(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC);
 
     // Current limit configuration
     m_motorConfig
@@ -100,22 +101,26 @@ public class ClimberIOTalonFX implements ClimberIO {
   public void updateInputs(ClimberIOInputs inputs) {
     // Updated logged inputs from each motor
     for (int i = 0; i < 2; i++) {
-    // Update signals and check if they are recieved
-    inputs.isConnected[i] =
-        BaseStatusSignal.refreshAll(
-                m_positionRot[i], m_velocityRotPerSec[i], m_appliedVolts[i], m_currentAmps[i], m_tempCelsius[i])
-            .isOK();
-    // Update logged inputs from motor
-    inputs.appliedVoltage[i] = m_appliedVolts[i].getValueAsDouble();
-    inputs.currentAmps[i] = m_currentAmps[i].getValueAsDouble();
-    inputs.tempCelsius[i] = m_tempCelsius[i].getValueAsDouble();
-  }
-  // Update logged inputs of the Climber mechanism
-  inputs.positionRad =
-      Units.rotationsToRadians(m_positionRot[0].getValueAsDouble()) / ClimberConstants.GEAR_RATIO;
-  inputs.velocityRadPerSec =
-      Units.rotationsToRadians(m_velocityRotPerSec[0].getValueAsDouble())
-          / ClimberConstants.GEAR_RATIO;
+      // Update signals and check if they are recieved
+      inputs.isConnected[i] =
+          BaseStatusSignal.refreshAll(
+                  m_positionRot[i],
+                  m_velocityRotPerSec[i],
+                  m_appliedVolts[i],
+                  m_currentAmps[i],
+                  m_tempCelsius[i])
+              .isOK();
+      // Update logged inputs from motor
+      inputs.appliedVoltage[i] = m_appliedVolts[i].getValueAsDouble();
+      inputs.currentAmps[i] = m_currentAmps[i].getValueAsDouble();
+      inputs.tempCelsius[i] = m_tempCelsius[i].getValueAsDouble();
+    }
+    // Update logged inputs of the Climber mechanism
+    inputs.positionRad =
+        Units.rotationsToRadians(m_positionRot[0].getValueAsDouble()) / ClimberConstants.GEAR_RATIO;
+    inputs.velocityRadPerSec =
+        Units.rotationsToRadians(m_velocityRotPerSec[0].getValueAsDouble())
+            / ClimberConstants.GEAR_RATIO;
   }
 
   @Override
