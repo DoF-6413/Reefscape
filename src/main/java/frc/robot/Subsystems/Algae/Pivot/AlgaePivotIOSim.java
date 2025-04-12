@@ -52,4 +52,8 @@ public class AlgaePivotIOSim implements AlgaePivotIO {
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE);
     m_armSim.setInputVoltage(m_voltage);
   }
+  @Override 
+  public void getAngleRad() {
+    m_armSim.getAngleRads();
+  }
 }

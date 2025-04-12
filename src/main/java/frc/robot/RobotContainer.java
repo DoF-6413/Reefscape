@@ -91,7 +91,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(VisionConstants.CAMERA.LEFT.CAMERA_INDEX));
         // new VisionIOPhotonVIsion(VisionConstants.CAMERA.RIGHT.CAMERA_INDEX);
         // new VisionIO() {});
-        m_mechanisms2d = new Mechanisms2d(m_periscopeSubsystem);
+        m_mechanisms2d = new Mechanisms2d(m_periscopeSubsystem, m_algaePivotSubsystem);
         break;
         // Sim robot, instantiates physics sim IO implementations
       case SIM:
@@ -118,7 +118,7 @@ public class RobotContainer {
                 //     VisionConstants.CAMERA.RIGHT.CAMERA_INDEX,
                 // m_driveSubsystem::getCurrentPose2d));
                 new VisionIO() {});
-        m_mechanisms2d = new Mechanisms2d(m_periscopeSubsystem);
+        m_mechanisms2d = new Mechanisms2d(m_periscopeSubsystem, m_algaePivotSubsystem);
         break;
         // Replayed robot, disables all IO implementations
       default:
@@ -136,7 +136,7 @@ public class RobotContainer {
         m_AEESubsystem = new AEE(new AEEIO() {});
         m_CEESubsystem = new CEE(new CEEIO() {});
         m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
-        m_mechanisms2d = new Mechanisms2d(m_periscopeSubsystem);
+        m_mechanisms2d = new Mechanisms2d(m_periscopeSubsystem, m_algaePivotSubsystem);
         break;
     }
 

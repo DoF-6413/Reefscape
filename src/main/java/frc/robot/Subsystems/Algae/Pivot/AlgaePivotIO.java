@@ -39,4 +39,6 @@ public interface AlgaePivotIO {
    * @param volts A value between -12 (full reverse speed) to 12 (full forward speed).
    */
   public default void setVoltage(double volts) {}
+
+  public default void getAngleRad(){}
 }

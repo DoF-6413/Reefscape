@@ -189,4 +189,7 @@ public class AlgaePivot extends SubsystemBase {
       this.setFF(AlgaePivotConstants.KS, AlgaePivotConstants.KG, AlgaePivotConstants.KV);
     }
   }
+  public double getAngleRad() {
+    return m_inputs.absPositionRad;
+  }
 }

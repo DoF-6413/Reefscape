@@ -77,4 +77,8 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
     m_sparkmax.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
   }
+  @Override
+  public void getAngleRad() {
+    m_absoluteEncoder.getPosition();
+  }
 }
