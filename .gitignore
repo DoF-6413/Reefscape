@@ -185,3 +185,9 @@ compile_commands.json
 
 # Version file
 src/main/java/frc/robot/BuildConstants.java
+
+# Visual Studio Code
+.vscode/
+
+# Local History for Visual Studio Code
+.history/
