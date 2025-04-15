@@ -102,11 +102,11 @@ chore#[Issue#]-[name]:
   - The Drive subsystem encompasses the Gyro, Odometry, and Pose Estimation utilities.
 
 - **Utils**
-- Other (not in a folder)
   - CAN IDs
     - A helpful reference of all the CAN IDs of the robot's electronics
   - Elastic
     - Configures Elastic dashboard layout
+- **Other**
   - Constants
     - Constants shared by all subsystems, related to the robot
     - Ex: controller port numbers, battery voltage, alliance (red/blue), etc.
