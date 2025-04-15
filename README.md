@@ -4,7 +4,7 @@ Code base for FRC Team 6413's 2025 Reefscape Robot Code
 ## Code Etiquette
   1. Comments on EVERYTHING (Commands, Constants, etc) <br/>
   2. Organize files properly in corresponding folders <br/>
-  3. Follow DoF [Naming Conventions](https://github.com/DoF-6413/Reefscape/edit/feat%2324-update-readme/README.md#naming-conventions) <br/>
+  3. Follow DoF [Naming Conventions](README.md#naming-conventions) <br/>
   4. Create Issues on Github for EVERY branch
      - add a description of what the branch should accomplish
      - 'Assignees': used to indicate who is working on what
