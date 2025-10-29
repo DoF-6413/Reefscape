@@ -97,7 +97,7 @@ public class Robot extends LoggedRobot {
 
     m_robotContainer = new RobotContainer();
 
-    m_robotContainer.zeroAll().schedule();
+    // m_robotContainer.zeroAll().schedule();
   }
 
   /** This function is called periodically during all modes. */
