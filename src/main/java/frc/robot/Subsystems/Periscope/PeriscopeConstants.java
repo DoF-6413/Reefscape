@@ -9,12 +9,10 @@ public class PeriscopeConstants {
   /** CAN ID for the second Periscope motor. This motor will use index 1 in any array */
   public static final int CAN_ID_RIGHT = 16;
   /**
-   * DIO ports of the 2 Hall Effect sensors on the Periscope. These sensor will serve as magnetic
-   * limit switches
-   *
-   * <p>4 - Bottom, 5 - Top
+   * DIO ports of the Hall Effect sensor on the Periscope. These sensor will serve as magnetic limit
+   * switches
    */
-  public static final int[] HALL_EFFECT_SENSORS_PORTS = {4, 5};
+  public static final int HALL_EFFECT_SENSORS_PORT = 4;
   /** Gear reduction of 38:12 for the Periscope */
   public static final double GEAR_RATIO = 38.0 / 12.0;
   /**
@@ -41,28 +39,27 @@ public class PeriscopeConstants {
    * Height difference from the bottom position and the new resting position from the spacers in
    * inches
    */
-  public static final double SPACER_HEIGHT_DIFF_IN = 0; // TODO: find new values :((((
+  public static final double SPACER_HEIGHT_DIFF_M = Units.inchesToMeters(0.5);
   /** Minimum height of the Periscope, resting/default position */
   public static final double MIN_HEIGHT_M = 0.0;
   /** Max height of the Periscope in meters */
-  public static final double MAX_HEIGHT_M = Units.inchesToMeters(58);
+  public static final double MAX_HEIGHT_M = Units.inchesToMeters(67);
   /** Height position of the Periscope for reaching L1 */
-  public static final double L1_HEIGHT_M = Units.inchesToMeters(9.242499999999998);
+  public static final double L1_HEIGHT_M = Units.inchesToMeters(23.48727733017911);
   /** Height position of the Periscope for reaching L2 */
-  public static final double L2_HEIGHT_M = Units.inchesToMeters(19.57 - SPACER_HEIGHT_DIFF_IN);
+  public static final double L2_HEIGHT_M = Units.inchesToMeters(26.48727733017911);
   /** Height position of the Periscope for intaking L2 ALGAE */
   public static final double L2_ALGAE_HEIGHT_M = Units.inchesToMeters(22.06998575818367);
   /** Height position of the Periscope for reaching L3 */
-  public static final double L3_HEIGHT_M =
-      Units.inchesToMeters(34.83 - SPACER_HEIGHT_DIFF_IN); // 29.513407287422694
+  public static final double L3_HEIGHT_M = Units.inchesToMeters(42.308153793068136);
   /** Height position of the Periscope for intaking L3 ALGAE */
   public static final double L3_ALGAE_HEIGHT_M = L2_ALGAE_HEIGHT_M + Units.inchesToMeters(15.26);
   /** Height position of the Periscope for reaching L4 */
-  public static final double L4_HEIGHT_M = MAX_HEIGHT_M;
+  public static final double L4_HEIGHT_M = MAX_HEIGHT_M - Units.inchesToMeters(2);
   /** Height position of the Periscope for aligning with the Funnel at the CORAL STATION */
-  public static final double CORAL_STATION_HEIGHT_M = MIN_HEIGHT_M;
+  public static final double CORAL_STATION_HEIGHT_M = Units.inchesToMeters(-8);
   /** Height position of the Periscope for reaching the PROCCESOR */
-  public static final double PROCESSOR_HEIGHT_M = Units.inchesToMeters(12);
+  public static final double PROCESSOR_HEIGHT_M = MIN_HEIGHT_M;
   /** Height position of the Periscope for reaching the NET */
   public static final double NET_HEIGHT_M = MAX_HEIGHT_M;
 
@@ -98,6 +95,8 @@ public class PeriscopeConstants {
    * at the setpoint
    */
   public static final double ERROR_TOLERANCE_M = Units.inchesToMeters(1.5);
+  /** How long until the PID loop is considered at the setpoint */
+  public static final double PID_LOOP_TIMEOUT_S = 2;
 
   // SIM CONSTANTS
   /** Simulate the pull of gravity in the elevator simulation */

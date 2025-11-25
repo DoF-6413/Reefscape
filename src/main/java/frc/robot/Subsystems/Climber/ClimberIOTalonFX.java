@@ -14,6 +14,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.RobotStateConstants;
 
 public class ClimberIOTalonFX implements ClimberIO {
@@ -21,6 +22,7 @@ public class ClimberIOTalonFX implements ClimberIO {
   private final TalonFX m_leadTalonFX;
   private final TalonFX m_followerTalonFX;
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
+  private final DigitalInput m_limitSwitch;
 
   // Climber motor's logged signals
   private StatusSignal<Voltage>[] m_appliedVolts = new StatusSignal[2];
@@ -39,11 +41,15 @@ public class ClimberIOTalonFX implements ClimberIO {
   public ClimberIOTalonFX() {
     System.out.println("[Init] ClimberIOTalonFX");
 
-    // Initialize the motors
+    // Initialize the motors and limit switch
     m_leadTalonFX = new TalonFX(ClimberConstants.LEAD_CAN_ID);
     m_followerTalonFX = new TalonFX(ClimberConstants.FOLLOWER_CAN_ID);
     m_followerTalonFX.setControl(
         new Follower(ClimberConstants.LEAD_CAN_ID, ClimberConstants.INVERT_FOLLOWER));
+<<<<<<< HEAD
+=======
+    m_limitSwitch = new DigitalInput(ClimberConstants.LIMIT_SWITCH_PORT);
+>>>>>>> b9102cc76935759d1f8003713d68906981a93c13
 
     // Motor configuration
     m_motorConfig
@@ -121,16 +127,25 @@ public class ClimberIOTalonFX implements ClimberIO {
     inputs.velocityRadPerSec =
         Units.rotationsToRadians(m_velocityRotPerSec[0].getValueAsDouble())
             / ClimberConstants.GEAR_RATIO;
+<<<<<<< HEAD
   }
 
   @Override
   public void enableBrakeMode(boolean enable) {
     m_leadTalonFX.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+=======
+    inputs.limitSwitch = !m_limitSwitch.get();
+>>>>>>> b9102cc76935759d1f8003713d68906981a93c13
   }
 
   @Override
   public void setVoltage(double volts) {
     m_leadTalonFX.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+  }
+
+  @Override
+  public void enableBrakeMode(boolean enable) {
+    m_leadTalonFX.setNeutralMode(enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 }

@@ -23,7 +23,7 @@ public interface PeriscopeIO {
     /** Rotational velocity of the Periscope drum in radians per second */
     public double velocityRadPerSec = 0.0;
     /** If the Hall effect (magnetic limit switch) sensor is triggered */
-    public boolean[] isHallEffectSensorTriggered = {false, false};
+    public boolean isHallEffectSensorTriggered = false;
   }
 
   /**
@@ -39,6 +39,8 @@ public interface PeriscopeIO {
    * @param enable {@code true} to enable brake mode, {@code false} to enable coast mode.
    */
   public default void enableBrakeMode(boolean enable) {}
+
+  public default void stop() {}
 
   /**
    * Sets the position of the Periscope motors in meters.

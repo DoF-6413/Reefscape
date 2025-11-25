@@ -17,8 +17,8 @@ public class CEEIOSparkMax implements CEEIO {
   private final SparkMax m_sparkmax;
   private final RelativeEncoder m_relativeEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
-  private final DigitalInput m_beamBreakExit;
   private final DigitalInput m_beamBreakEntrance;
+  private final DigitalInput m_beamBreakExit;
 
   /**
    * Constructs a new {@link CEEIOSparkMax} instance.
@@ -36,7 +36,8 @@ public class CEEIOSparkMax implements CEEIO {
     m_config
         .inverted(CEEConstants.IS_INVERTED)
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(CEEConstants.CUR_LIM_A);
+        .smartCurrentLimit(CEEConstants.CUR_LIM_A)
+        .secondaryCurrentLimit(40);
 
     // setCANTimeout arguments in miliseconds so multiply by 1000 to convert sec to milisec
     m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);

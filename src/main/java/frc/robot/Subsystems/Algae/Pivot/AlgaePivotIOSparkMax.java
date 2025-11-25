@@ -1,6 +1,7 @@
 package frc.robot.Subsystems.Algae.Pivot;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -14,6 +15,7 @@ import frc.robot.Constants.RobotStateConstants;
 public class AlgaePivotIOSparkMax implements AlgaePivotIO {
   // Motor, encoder, and configurator
   private final SparkMax m_sparkmax;
+  private final RelativeEncoder m_relativeEncoder;
   private final AbsoluteEncoder m_absoluteEncoder;
   private final SparkMaxConfig m_config = new SparkMaxConfig();
 
@@ -29,7 +31,8 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
     // Initialize the SPARK MAX with a NEO (brushless) motor
     m_sparkmax = new SparkMax(AlgaePivotConstants.CAN_ID, MotorType.kBrushless);
 
-    // Initialize absolute encoder
+    // Initialize encoders
+    m_relativeEncoder = m_sparkmax.getEncoder();
     m_absoluteEncoder = m_sparkmax.getAbsoluteEncoder();
 
     // SPARK MAX configurations
@@ -40,20 +43,24 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
     // setCANTimeout arguments in miliseconds so multiple by 1000 to convert sec to miliseconds
     m_sparkmax.setCANTimeout(RobotStateConstants.CAN_CONFIG_TIMEOUT_SEC * 1000);
 
-    // Absolute Encoder configurations
+    // Encoder configurations
     m_config
         .absoluteEncoder
         .zeroOffset(AlgaePivotConstants.ZERO_OFFSET_ROT)
-        .inverted(AlgaePivotConstants.IS_INVERTED);
+        .inverted(!AlgaePivotConstants.IS_INVERTED);
+    m_config.encoder.positionConversionFactor(1 / AlgaePivotConstants.GEAR_RATIO);
 
     // Apply configuration
     m_sparkmax.configure(m_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_relativeEncoder.setPosition(m_absoluteEncoder.getPosition());
   }
 
   @Override
   public void updateInputs(AlgaePivotIOInputs inputs) {
     // Update logged inputs from the motor
     inputs.appliedVoltage = m_sparkmax.getAppliedOutput() * m_sparkmax.getBusVoltage();
+    inputs.relativePositionRad =
+        MathUtil.angleModulus(Units.rotationsToRadians(m_relativeEncoder.getPosition()));
     inputs.absPositionRad =
         MathUtil.angleModulus(Units.rotationsToRadians(m_absoluteEncoder.getPosition()));
     inputs.velocityRadPerSec =
@@ -76,5 +83,10 @@ public class AlgaePivotIOSparkMax implements AlgaePivotIO {
   public void setVoltage(double volts) {
     m_sparkmax.setVoltage(
         MathUtil.clamp(volts, -RobotStateConstants.MAX_VOLTAGE, RobotStateConstants.MAX_VOLTAGE));
+  }
+
+  @Override
+  public void resetRelativeEncoder() {
+    m_relativeEncoder.setPosition(m_absoluteEncoder.getPosition());
   }
 }

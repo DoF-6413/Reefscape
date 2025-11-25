@@ -22,9 +22,9 @@ public class VisionIOSim extends VisionIOPhotonVision {
    * @param index Camera index
    * @param currentPose Pose2d supplier of the robot's current position from Pose Estimator
    */
-  public VisionIOSim(int index, Supplier<Pose2d> currentPose) {
-    super(index);
-    System.out.println("[Init] Creating VisionIOSim " + VisionConstants.CAMERA_NAMES[index]);
+  public VisionIOSim(String camera, Supplier<Pose2d> currentPose) {
+    super(camera);
+    System.out.println("[Init] Creating VisionIOSim " + camera);
 
     // Initialize simulated camera
     var camProp = new SimCameraProperties();
@@ -38,9 +38,9 @@ public class VisionIOSim extends VisionIOPhotonVision {
     m_cameraSim = new PhotonCameraSim(super.m_camera, camProp);
 
     // Initilze Vision system simulation
-    m_sim = new VisionSystemSim(VisionConstants.CAMERA_NAMES[index]);
+    m_sim = new VisionSystemSim(camera);
     m_sim.addAprilTags(FieldConstants.APRILTAG_FIELD_LAYOUT);
-    m_sim.addCamera(m_cameraSim, VisionConstants.CAMERA_ROBOT_OFFSETS[index]);
+    m_sim.addCamera(m_cameraSim, VisionConstants.CAMERA_OFFSETS.get(camera));
 
     // Get current position from Pose Estimator
     m_currentPose = currentPose;

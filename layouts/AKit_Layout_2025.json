@@ -43,7 +43,6 @@
             "/SmartDashboard/PIDFF/Periscope",
             "/SmartDashboard/PIDFF_Tuning_Tuning",
             "/SmartDashboard/PIDFF_Tuning_Tuning/Climber",
-            "/SmartDashboard/PIDFF_Tuning",
             "/SmartDashboard/A",
             "/SmartDashboard/A/ ",
             "/AdvantageKit/RealOutputs/Branches",
@@ -80,18 +79,47 @@
             "/AdvantageKit/RealOutputs/Superstructure/Setpoints",
             "/AdvantageKit/Periscope/AppliedVolts",
             "/AdvantageKit/Vision",
-            "/AdvantageKit/CEE",
             "/AdvantageKit/CEE/IsbeamBreaksTriggered",
-            "/AdvantageKit/Algae Pivot",
             "/AdvantageKit/RealOutputs/Odometry/Vision",
             "/AdvantageKit/RealOutputs/Odometry/Vision/EstimatedPoses/Front",
             "/AdvantageKit/RealOutputs/Odometry/EstimatedPose",
             "/AdvantageKit/RealOutputs/Odometry/Vision/EstimatedPoses",
-            "/SmartDashboard",
-            "/AdvantageKit/RealOutputs/FieldPoses",
             "/AdvantageKit/RealOutputs/FieldPoses/Reef",
             "/AdvantageKit/RealOutputs/FieldPoses/CoralStation",
-            "/AdvantageKit/Periscope/IsHallEffectSensorTriggered"
+            "/AdvantageKit/Periscope/IsHallEffectSensorTriggered",
+            "/AdvantageKit/Vision/limelight",
+            "/SmartDashboard/PIDFF_Tuning/Periscope",
+            "/limelight/targetpose_robotspace",
+            "/limelight/rawfiducials",
+            "/limelight/botpose",
+            "/AdvantageKit/RealOutputs/Odometry/EstimatedPose/translation",
+            "/AdvantageKit/RealOutputs/Vision/Pathfinding",
+            "/AdvantageKit/RealOutputs/DriveToPose",
+            "/AdvantageKit/Vision/Front/Target/best_camera_to_target/rotation",
+            "/AdvantageKit/Vision/Front/Target/best_camera_to_target/rotation/q",
+            "/SmartDashboard/DriveToPose",
+            "/SmartDashboard/PIDFF_Tuning",
+            "/AdvantageKit/Vision/Front_Left",
+            "/SmartDashboard",
+            "/RealOutputs",
+            "/RealOutputs/LoggedRobot",
+            "/SystemStats",
+            "/AdvantageKit/PowerDistribution",
+            "/AdvantageKit/CEE",
+            "/SmartDashboard/SetVoltage",
+            "/AdvantageKit/Algae Pivot",
+            "/AdvantageKit/RealOutputs/Superstructure/Setpoints/ALGAEPivot",
+            "/AdvantageKit/Climber",
+            "/AdvantageKit/Climber/CurrentAmps",
+            "/AdvantageKit/Climber/AppliedVoltage",
+            "/AdvantageKit/Climber/IsConnected",
+            "/AdvantageKit/Periscope",
+            "/SmartDashboard/Setpoints",
+            "/photonvision/Front_Left",
+            "/photonvision/Front_Right",
+            "/AdvantageKit/RealOutputs/Logger",
+            "/SmartDashboard/Sim",
+            "/SmartDashboard/PIDFF_Tuning/ALGAE_Pivot"
           ]
         },
         "tabs": {
@@ -114,7 +142,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Drive/Module0/DriveVelocityRadPerSec",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#2b66a2",
                       "size": "normal"
@@ -124,7 +152,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Drive/Module1/DriveVelocityRadPerSec",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#af2437",
                       "size": "normal"
@@ -134,7 +162,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Drive/Module2/DriveVelocityRadPerSec",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#e5b31b",
                       "size": "normal"
@@ -144,7 +172,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Drive/Module3/DriveVelocityRadPerSec",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#3b875a",
                       "size": "normal"
@@ -156,7 +184,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Drive/Module0/DriveCurrentAmps",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#2b66a2",
                       "size": "normal"
@@ -166,7 +194,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Drive/Module1/DriveCurrentAmps",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#af2437",
                       "size": "normal"
@@ -176,7 +204,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Drive/Module2/DriveCurrentAmps",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#e5b31b",
                       "size": "normal"
@@ -186,7 +214,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Drive/Module3/DriveCurrentAmps",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#3b875a",
                       "size": "normal"
@@ -198,7 +226,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/Drive/Module0/DriveIsConnected",
                     "logType": "Boolean",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#2b66a2"
                     }
@@ -207,7 +235,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/Drive/Module1/DriveIsConnected",
                     "logType": "Boolean",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#af2437"
                     }
@@ -216,7 +244,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/Drive/Module2/DriveIsConnected",
                     "logType": "Boolean",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#e5b31b"
                     }
@@ -225,7 +253,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/Drive/Module3/DriveIsConnected",
                     "logType": "Boolean",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#3b875a"
                     }
@@ -377,7 +405,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/Drive/Module0/AbsoluteEncoderIsConnected",
                     "logType": "Boolean",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#2b66a2"
                     }
@@ -386,7 +414,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/Drive/Module1/AbsoluteEncoderIsConnected",
                     "logType": "Boolean",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#af2437"
                     }
@@ -395,7 +423,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/Drive/Module2/AbsoluteEncoderIsConnected",
                     "logType": "Boolean",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#e5b31b"
                     }
@@ -404,7 +432,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/Drive/Module3/AbsoluteEncoderIsConnected",
                     "logType": "Boolean",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#3b875a"
                     }
@@ -484,9 +512,29 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/EstimatedPose/rotation/value",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#80588e",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Gyro/Roll/value",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#e48b32",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Gyro/Pitch/value",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#c0b487",
                       "size": "normal"
                     }
                   }
@@ -608,21 +656,31 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Algae Pivot/VelocityRadPerSec",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/Setpoints/ALGAEPivotAngle",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
-                      "color": "#af2437",
+                      "color": "#80588e",
                       "size": "normal"
                     }
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/Setpoints/ALGAEPivotAngle",
+                    "logKey": "NT:/AdvantageKit/Algae Pivot/RelativePositionRad",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
-                      "color": "#c0b487",
+                      "color": "#d993aa",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Algae Pivot/VelocityRadPerSec",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#af2437",
                       "size": "normal"
                     }
                   }
@@ -637,6 +695,16 @@
                       "color": "#e5b31b",
                       "size": "normal"
                     }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Algae Pivot/AppliedVoltage",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#c0b487",
+                      "size": "normal"
+                    }
                   }
                 ],
                 "discreteSources": [
@@ -647,6 +715,33 @@
                     "visible": false,
                     "options": {
                       "color": "#80588e"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/Algae Pivot/AppliedVoltage",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/Setpoints/ALGAEPivot/AtSetpointAngle",
+                    "logType": "Boolean",
+                    "visible": false,
+                    "options": {
+                      "color": "#3b875a"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/Setpoints/ALGAEPivot/AtGoalState",
+                    "logType": "Boolean",
+                    "visible": false,
+                    "options": {
+                      "color": "#858584"
                     }
                   }
                 ],
@@ -667,7 +762,7 @@
               },
               "controllerUUID": "aiq0v1a92ne1i6qtjh18lfgf0qwt24o8",
               "renderer": null,
-              "controlsHeight": 200
+              "controlsHeight": 206
             },
             {
               "type": 1,
@@ -709,11 +804,20 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/CEE/IsbeamBreaksTriggered",
+                    "logKey": "NT:/AdvantageKit/CEE/IsBeamBreakEntranceTriggered",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
                       "color": "#80588e"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/CEE/IsBeamBreakExitTriggered",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32"
                     }
                   }
                 ],
@@ -755,11 +859,21 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Climber/CurrentAmps",
+                    "logKey": "NT:/AdvantageKit/Climber/CurrentAmps/0",
                     "logType": "Number",
                     "visible": true,
                     "options": {
-                      "color": "#80588e",
+                      "color": "#e48b32",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Climber/CurrentAmps/1",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#c0b487",
                       "size": "normal"
                     }
                   }
@@ -768,7 +882,7 @@
                   {
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/Climber/IsConnected",
-                    "logType": "Boolean",
+                    "logType": "BooleanArray",
                     "visible": true,
                     "options": {
                       "color": "#2b66a2"
@@ -776,11 +890,20 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/Climber/TempCelsius",
-                    "logType": "Number",
+                    "logKey": "NT:/AdvantageKit/Climber/AppliedVoltage",
+                    "logType": "NumberArray",
                     "visible": true,
                     "options": {
                       "color": "#e5b31b"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/Climber/LimitSwitch",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e"
                     }
                   }
                 ],
@@ -801,7 +924,7 @@
               },
               "controllerUUID": "z3dd5qo3rftk0q9iwj6mug4z8bl3acyj",
               "renderer": null,
-              "controlsHeight": 200
+              "controlsHeight": 199
             },
             {
               "type": 1,
@@ -824,7 +947,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Funnel/CurrentAmps",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#2b66a2",
                       "size": "normal"
@@ -836,9 +959,18 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/Funnel/TempCelsius",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#af2437"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/Funnel/IsLEDsOn",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e"
                     }
                   }
                 ],
@@ -892,7 +1024,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Periscope/CurrentDraw/0",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#858584",
                       "size": "normal"
@@ -941,7 +1073,7 @@
                   },
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/Periscope/IsHallEffectSensorTriggered/0",
+                    "logKey": "NT:/AdvantageKit/Periscope/IsHallEffectSensorTriggered",
                     "logType": "Boolean",
                     "visible": true,
                     "options": {
@@ -984,7 +1116,7 @@
               },
               "controllerUUID": "nlfv2mh14kug38tkinnwe43izx7n88b8",
               "renderer": null,
-              "controlsHeight": 200
+              "controlsHeight": 204
             },
             {
               "type": 1,
@@ -1048,7 +1180,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/CEE/VelocityRadPerSec",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#c0b487"
                     }
@@ -1057,7 +1189,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/Funnel/VelocityRadPerSec",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#858584"
                     }
@@ -1098,7 +1230,7 @@
                   },
                   {
                     "type": "rotationOverrideLegacy",
-                    "logKey": "NT:/AdvantageKit/Gyro/YawPositionRad/value",
+                    "logKey": "NT:/AdvantageKit/Gyro/OdometryYawPositions/0/value",
                     "logType": "Number",
                     "visible": false,
                     "options": {
@@ -1107,18 +1239,18 @@
                   },
                   {
                     "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Vision/EstimatedPoses/Front",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Vision/EstimatedPoses/Front_Left",
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "color": "#00ff00"
+                      "color": "#ff00ff"
                     }
                   },
                   {
                     "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Vision/EstimatedPoses/Back",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Odometry/Vision/EstimatedPoses/Front_Right",
                     "logType": "Pose2d",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#ffff00"
                     }
@@ -1320,6 +1452,24 @@
                     "options": {}
                   },
                   {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/DriveToPose/Goal",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/DriveToPose/Setpoint",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff8c00"
+                    }
+                  },
+                  {
                     "type": "trajectoryLegacy",
                     "logKey": "NT:/AdvantageKit/LocalADStarAK/CurrentPathPoints",
                     "logType": "NumberArray",
@@ -1339,7 +1489,7 @@
               },
               "controllerUUID": "w8t71786q1mh6xmstboqznc65djizx1a",
               "renderer": null,
-              "controlsHeight": 200
+              "controlsHeight": 203
             },
             {
               "type": 9,
@@ -1383,7 +1533,7 @@
                     }
                   }
                 ],
-                "maxSpeed": 5.2,
+                "maxSpeed": 0.1,
                 "sizeX": 0.7366,
                 "sizeY": 0.7366,
                 "orientation": 0
@@ -1426,21 +1576,21 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/photonvision/Front/latencyMillis",
+                    "logKey": "NT:/photonvision/Front_Left/latencyMillis",
                     "logType": "Number",
                     "visible": true,
                     "options": {
-                      "color": "#80588e",
+                      "color": "#af2437",
                       "size": "normal"
                     }
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/photonvision/Back/latencyMillis",
+                    "logKey": "NT:/photonvision/Front_Right/latencyMillis",
                     "logType": "Number",
                     "visible": true,
                     "options": {
-                      "color": "#af2437",
+                      "color": "#80588e",
                       "size": "normal"
                     }
                   }
@@ -1477,7 +1627,7 @@
               "type": 5,
               "title": "Console",
               "controller": "NT:/AdvantageKit/RealOutputs/Console",
-              "controllerUUID": "lz5rek9sf1rqw14skjczu4gsdxy4xn0e",
+              "controllerUUID": "icv4g4rt4b7zch9ubawlyqwqbdu5n7z3",
               "renderer": {
                 "highlight": false
               },

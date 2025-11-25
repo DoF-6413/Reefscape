@@ -5,11 +5,11 @@
 package frc.robot.Subsystems.Algae.Pivot;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.RobotStateConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class AlgaePivot extends SubsystemBase {
@@ -17,7 +17,7 @@ public class AlgaePivot extends SubsystemBase {
   private final AlgaePivotIOInputsAutoLogged m_inputs = new AlgaePivotIOInputsAutoLogged();
 
   // PID controller
-  private final PIDController m_PIDController;
+  private final ProfiledPIDController m_PIDController;
   private final ArmFeedforward m_feedforward;
   private boolean m_enablePID = true;
 
@@ -38,20 +38,17 @@ public class AlgaePivot extends SubsystemBase {
 
     // Initialize PID Controller
     m_PIDController =
-        new PIDController(
-            RobotStateConstants.getMode() == RobotStateConstants.Mode.SIM
-                ? AlgaePivotConstants.KP_SIM
-                : AlgaePivotConstants.KP,
-            RobotStateConstants.getMode() == RobotStateConstants.Mode.SIM
-                ? AlgaePivotConstants.KI_SIM
-                : AlgaePivotConstants.KI,
-            RobotStateConstants.getMode() == RobotStateConstants.Mode.SIM
-                ? AlgaePivotConstants.KD_SIM
-                : AlgaePivotConstants.KD);
+        new ProfiledPIDController(
+            AlgaePivotConstants.KP,
+            AlgaePivotConstants.KI,
+            AlgaePivotConstants.KD,
+            new TrapezoidProfile.Constraints(
+                Units.degreesToRadians(AlgaePivotConstants.MAX_VELOCITY_DEG_PER_S),
+                Units.degreesToRadians(AlgaePivotConstants.MAX_ACCELERATION_DEG_PER_S2)));
     m_PIDController.setTolerance(AlgaePivotConstants.ERROR_TOLERANCE_RAD);
-    m_PIDController.setSetpoint(AlgaePivotConstants.DEFAULT_ANGLE_RAD);
+    m_PIDController.setGoal(AlgaePivotConstants.DEFAULT_ANGLE_RAD);
     m_feedforward =
-        new ArmFeedforward(AlgaePivotConstants.KS, AlgaePivotConstants.KG, AlgaePivotConstants.KD);
+        new ArmFeedforward(AlgaePivotConstants.KS, AlgaePivotConstants.KG, AlgaePivotConstants.KV);
 
     // Tunable PID gains
     SmartDashboard.putBoolean("PIDFF_Tuning/ALGAE_Pivot/EnableTuning", false);
@@ -61,30 +58,48 @@ public class AlgaePivot extends SubsystemBase {
     SmartDashboard.putNumber("PIDFF_Tuning/ALGAE_Pivot/KS", AlgaePivotConstants.KS);
     SmartDashboard.putNumber("PIDFF_Tuning/ALGAE_Pivot/KG", AlgaePivotConstants.KG);
     SmartDashboard.putNumber("PIDFF_Tuning/ALGAE_Pivot/KV", AlgaePivotConstants.KV);
+    SmartDashboard.putNumber(
+        "PIDFF_Tuning/ALGAE_Pivot/Max_Vel_Deg", AlgaePivotConstants.MAX_VELOCITY_DEG_PER_S);
+    SmartDashboard.putNumber(
+        "PIDFF_Tuning/ALGAE_Pivot/Max_Accel_Deg", AlgaePivotConstants.MAX_ACCELERATION_DEG_PER_S2);
     SmartDashboard.putBoolean("PIDFF_Tuning/ALGAE_Pivot/EnablePID", m_enablePID);
   }
 
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
-    // Update and log inputs
-    m_io.updateInputs(m_inputs);
-    Logger.processInputs("Algae Pivot", m_inputs);
+    // // Update and log inputs // TODO: test to reduce loop time
+    // m_io.updateInputs(m_inputs);
+    // Logger.processInputs("Algae Pivot", m_inputs);
 
-    // Control the ALGAE Pivot through the PID controller if enabled, open loop voltage control if
-    // disabled
-    if (SmartDashboard.getBoolean("PIDFF_Tuning/ALGAE_Pivot/EnablePID", m_enablePID)) {
-      // Calculate voltage based on PID controller
-      this.setVoltage(
-          m_PIDController.calculate(m_inputs.absPositionRad)
-              + m_feedforward.calculate(m_PIDController.getSetpoint(), Units.degreesToRadians(10)));
+    // if (DriverStation.isDisabled()) {
+    //   this.setAngle(m_inputs.absPositionRad);
+    //   this.setVoltage(0);
+    // }
 
-      // Enable and update tunable PID gains through SmartDashboard
-      if (SmartDashboard.getBoolean("PIDFF_Tuning/ALGAE_Pivot/EnableTuning", false)) {
-        this.updatePID();
-        this.updateFF();
-      }
-    }
+    // // Control the ALGAE Pivot through the PID controller if enabled, open loop voltage control
+    // if
+    // // disabled
+    // if (SmartDashboard.getBoolean("PIDFF_Tuning/ALGAE_Pivot/EnablePID", m_enablePID)) {
+    //   // Calculate voltage based on PID controller
+    //   this.setVoltage(
+    //       m_PIDController.calculate(m_inputs.absPositionRad)
+    //           + m_feedforward.calculate(
+    //               m_PIDController.getSetpoint().position,
+    // m_PIDController.getSetpoint().velocity));
+
+    //   Logger.recordOutput(
+    //       "Superstructure/Setpoints/ALGAEPivot/AtSetpointAngle", m_PIDController.atSetpoint());
+    //   Logger.recordOutput(
+    //       "Superstructure/Setpoints/ALGAEPivot/AtGoalState", m_PIDController.atGoal());
+
+    //   // Enable and update tunable PID gains through SmartDashboard
+    //   if (SmartDashboard.getBoolean("PIDFF_Tuning/ALGAE_Pivot/EnableTuning", false)) {
+    //     this.updatePID();
+    //     this.updateFF();
+    //     this.updateConstraints();
+    //   }
+    // }
   }
 
   /**
@@ -94,6 +109,10 @@ public class AlgaePivot extends SubsystemBase {
    */
   public void enableBrakeMode(boolean enable) {
     m_io.enableBrakeMode(enable);
+  }
+
+  public void resetRelativeEncoder() {
+    m_io.resetRelativeEncoder();
   }
 
   /**
@@ -113,7 +132,12 @@ public class AlgaePivot extends SubsystemBase {
    */
   public void setAngle(double setpoint) {
     Logger.recordOutput("Superstructure/Setpoints/ALGAEPivotAngle", setpoint);
-    m_PIDController.setSetpoint(setpoint);
+    m_PIDController.setGoal(setpoint);
+  }
+
+  public void setSetpoint(TrapezoidProfile.State state) {
+    Logger.recordOutput("Superstructure/Setpoints/ALGAEPivotAngle", state.position);
+    m_PIDController.setGoal(state);
   }
 
   /**
@@ -123,6 +147,10 @@ public class AlgaePivot extends SubsystemBase {
    */
   public boolean atSetpointAngle() {
     return m_PIDController.atSetpoint();
+  }
+
+  public boolean atGoalState() {
+    return m_PIDController.atGoal();
   }
 
   /**
@@ -140,6 +168,10 @@ public class AlgaePivot extends SubsystemBase {
     m_feedforward.setKs(kS);
     m_feedforward.setKg(kG);
     m_feedforward.setKv(kV);
+  }
+
+  public void setConstraints(double vel, double accel) {
+    m_PIDController.setConstraints(new TrapezoidProfile.Constraints(vel, accel));
   }
 
   /**
@@ -187,6 +219,29 @@ public class AlgaePivot extends SubsystemBase {
           SmartDashboard.getNumber("PIDFF_Tuning/ALGAE_Pivot/KV", AlgaePivotConstants.KV);
       // Sets the new gains
       this.setFF(AlgaePivotConstants.KS, AlgaePivotConstants.KG, AlgaePivotConstants.KV);
+    }
+  }
+
+  private void updateConstraints() {
+    // If any value on SmartDashboard changes, update the gains
+    if (AlgaePivotConstants.MAX_VELOCITY_DEG_PER_S
+            != SmartDashboard.getNumber(
+                "PIDFF_Tuning/ALGAE_Pivot/Max_Vel_Deg", AlgaePivotConstants.MAX_VELOCITY_DEG_PER_S)
+        || AlgaePivotConstants.MAX_ACCELERATION_DEG_PER_S2
+            != SmartDashboard.getNumber(
+                "PIDFF_Tuning/ALGAE_Pivot/Max_Accel_Deg",
+                AlgaePivotConstants.MAX_ACCELERATION_DEG_PER_S2)) {
+      AlgaePivotConstants.MAX_VELOCITY_DEG_PER_S =
+          SmartDashboard.getNumber(
+              "PIDFF_Tuning/ALGAE_Pivot/Max_Vel_Deg", AlgaePivotConstants.MAX_VELOCITY_DEG_PER_S);
+      AlgaePivotConstants.MAX_ACCELERATION_DEG_PER_S2 =
+          SmartDashboard.getNumber(
+              "PIDFF_Tuning/ALGAE_Pivot/Max_Accel_Deg",
+              AlgaePivotConstants.MAX_ACCELERATION_DEG_PER_S2);
+      // Sets the new gains
+      this.setConstraints(
+          Units.degreesToRadians(AlgaePivotConstants.MAX_VELOCITY_DEG_PER_S),
+          Units.degreesToRadians(AlgaePivotConstants.MAX_ACCELERATION_DEG_PER_S2));
     }
   }
 }
