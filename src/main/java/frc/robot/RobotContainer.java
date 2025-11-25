@@ -56,6 +56,7 @@ public class RobotContainer {
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
+  private final GenericHID m_driverJoystick = new GenericHID(5);
   private final CommandXboxController m_auxButtonBoard =
       new CommandXboxController(OperatorConstants.AUX_BUTTON_BOARD);
   private final CommandXboxController m_auxController =
@@ -362,6 +363,7 @@ public class RobotContainer {
     this.driverControllerBindings();
     this.auxButtonBoardBindings();
     this.auxControllerBindings();
+    this.driverJoystickControllerBindings();
   }
 
   /** Driver Controls */
@@ -596,6 +598,22 @@ public class RobotContainer {
                             .getDistance(new Translation2d(5.39, 3.17)))));
   }
 
+  private void driverJoystickControllerBindings () {
+    /* Driving with a joystick */
+    /* Default to field relative */
+    m_driveSubsystem.setDefaultCommand(
+        DriveCommands.fieldRelativeDrive(
+            m_driveSubsystem,
+             () -> m_driverJoystick.getRawAxis(1),
+             () -> m_driverJoystick.getRawAxis(2),
+             () -> m_driverJoystick.getRawAxis(3))
+        .withName("JoystickFieldRelativeDrive"));
+    /* Gyro */
+    // Resets Gyro heading, making the front side of the robot the new zero
+    m_driverJoystick
+        .b
+  }
+
   /** Aux Button Board Controls */
   public void auxButtonBoardBindings() {
     /* ~~~~~~~~~~~~~~~~~~~~ Superstructure ~~~~~~~~~~~~~~~~~~~~ */
@@ -729,14 +747,18 @@ public class RobotContainer {
     // Adjust Periscope Height
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
-        .and(m_auxButtonBoard.axisLessThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
+        .and(
+            m_auxButtonBoard.axisLessThan(
+                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
         .onTrue(
             new InstantCommand(
                 () -> m_periscopeSubsystem.adjustHeight(Units.inchesToMeters(1)),
                 m_periscopeSubsystem));
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.CLIMB_RETRACT.BUTTON_ID)
-        .and(m_auxButtonBoard.axisLessThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
+        .and(
+            m_auxButtonBoard.axisLessThan(
+                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
         .onTrue(
             new InstantCommand(
                 () -> m_periscopeSubsystem.adjustHeight(Units.inchesToMeters(-1)),
@@ -746,7 +768,9 @@ public class RobotContainer {
     // Deploy Climber
     m_auxButtonBoard
         .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
-        .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
+        .and(
+            m_auxButtonBoard.axisGreaterThan(
+                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
         .onTrue(
             new InstantCommand(
                 () ->
@@ -756,14 +780,15 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
     // Retract Climber
     m_auxButtonBoard
-    .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
-    .and(m_auxButtonBoard.axisGreaterThan(OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
+        .button(OperatorConstants.BUTTON_BOARD.CLIMB_DEPLOY.BUTTON_ID)
+        .and(
+            m_auxButtonBoard.axisGreaterThan(
+                OperatorConstants.BUTTON_BOARD.SWITCH_CORAL_ALGAE.BUTTON_ID, 0.5))
         .onTrue(
             new InstantCommand(
                 () ->
                     m_climberSubsystem.setVoltage(
-                        RobotStateConstants.MAX_VOLTAGE *
-    ClimberConstants.RETRACT_PERCENT_SPEED),
+                        RobotStateConstants.MAX_VOLTAGE * ClimberConstants.RETRACT_PERCENT_SPEED),
                 m_climberSubsystem))
         .onFalse(new InstantCommand(() -> m_climberSubsystem.setVoltage(0), m_climberSubsystem));
 

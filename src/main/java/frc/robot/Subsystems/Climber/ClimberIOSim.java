@@ -42,7 +42,10 @@ public class ClimberIOSim implements ClimberIO {
     // Update logged inputs from simulated arm system
     inputs.isConnected = new boolean[] {true, true};
     inputs.appliedVoltage = new double[] {m_voltage, m_voltage};
-    inputs.currentAmps = new double[] {Math.abs(m_armSim.getCurrentDrawAmps()), Math.abs(m_armSim.getCurrentDrawAmps())};
+    inputs.currentAmps =
+        new double[] {
+          Math.abs(m_armSim.getCurrentDrawAmps()), Math.abs(m_armSim.getCurrentDrawAmps())
+        };
     inputs.positionRad = m_armSim.getAngleRads();
     inputs.velocityRadPerSec = m_armSim.getVelocityRadPerSec();
   }
