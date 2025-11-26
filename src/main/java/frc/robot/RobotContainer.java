@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Commands.AutoCommands;
 import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.PathfindingCommands;
@@ -26,6 +27,10 @@ public class RobotContainer {
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
+  private final GenericHID m_joystickController =
+      new GenericHID(OperatorConstants.DRIVER_CONTROLLER);
+
+  private final JoystickButton gyroButton = new JoystickButton(m_joystickController, 4);
 
   // Autos
   private final LoggedDashboardChooser<Command> m_autoChooser =
@@ -98,7 +103,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
-    this.driverControllerBindings();
+    // this.driverControllerBindings();
+    this.joystickControllerBindings();
   }
 
   /** Driver Controls */
@@ -118,8 +124,8 @@ public class RobotContainer {
         .onTrue(
             DriveCommands.fieldRelativeDrive(
                     m_driveSubsystem,
-                    () -> -m_driverController.getLeftY(),
-                    () -> -m_driverController.getLeftX(),
+                    () -> m_driverController.getLeftY(),
+                    () -> m_driverController.getLeftX(),
                     () -> 0.8 * -m_driverController.getRightX())
                 .withName("FieldRelativeDrive"));
     // Lock robot heading to 0 degrees
@@ -225,6 +231,28 @@ public class RobotContainer {
         .whileTrue(
             new InstantCommand(() -> m_driveSubsystem.stopWithX(), m_driveSubsystem)
                 .withName("StopWithX"));
+  }
+
+  private void joystickControllerBindings() {
+    m_driveSubsystem.setDefaultCommand(
+        DriveCommands.fieldRelativeDrive(
+                m_driveSubsystem,
+                () -> m_joystickController.getRawAxis(1),
+                () -> m_joystickController.getRawAxis(0),
+                () -> -0.75 * m_joystickController.getRawAxis(2))
+            .withName("JoystickFieldRelativeDrive"));
+
+    gyroButton.onTrue(
+        // if (m_joystickController.getRawButton(4)) {
+        new InstantCommand(
+                () ->
+                    m_driveSubsystem.resetPose(
+                        new Pose2d(
+                            m_driveSubsystem.getCurrentPose2d().getTranslation(),
+                            RobotStateConstants.isRed() ? Rotation2d.k180deg : Rotation2d.kZero)),
+                m_driveSubsystem)
+            .ignoringDisable(true)
+            .withName("ZeroYaw"));
   }
 
   /**
