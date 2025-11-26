@@ -126,7 +126,7 @@ public class RobotContainer {
                     m_driveSubsystem,
                     () -> m_driverController.getLeftY(),
                     () -> m_driverController.getLeftX(),
-                    () -> 0.8 * -m_driverController.getRightX())
+                    () -> -0.8 * m_driverController.getRightX())
                 .withName("FieldRelativeDrive"));
     // Lock robot heading to 0 degrees
     m_driverController
