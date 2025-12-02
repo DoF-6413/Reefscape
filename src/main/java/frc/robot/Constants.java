@@ -80,8 +80,8 @@ public final class Constants {
           && RobotStateConstants.getAlliance().get() == DriverStation.Alliance.Red;
     }
 
-    /** After 500 seconds, the CAN times out */
-    public static final int CAN_CONFIG_TIMEOUT_SEC = 500;
+    /** After 30 seconds, the CAN times out */
+    public static final int CAN_CONFIG_TIMEOUT_SEC = 30;
 
     /** Every 20 ms, periodic commands loop */
     public static final double LOOP_PERIODIC_SEC = 0.02;
@@ -116,7 +116,7 @@ public final class Constants {
       L2(11),
       L3(10),
       L4_NET(9),
-      SWITCH_CORAL_ALGAE(1), // Axis number
+      // SWITCH_CORAL_ALGAE(1), // Axis number
       REEF_AB(5),
       REEF_CD(6),
       REEF_EF(7),
@@ -357,6 +357,11 @@ public final class Constants {
         RobotStateConstants.isRed()
             ? new Pose2d(10.266, 4.041, Rotation2d.fromDegrees(-45))
             : new Pose2d(7.265, 2.874, Rotation2d.fromDegrees(135));
+
+    public static final Pose2d STARTING_LINE_FAR_RIGHT =
+        RobotStateConstants.isRed()
+            ? new Pose2d(10.266, 7.450, Rotation2d.fromDegrees(-45))
+            : new Pose2d(7.265, 0.660, Rotation2d.fromDegrees(135));
 
     /* Pathfinding */
     /** Max translational and rotational velocity and acceleration used for Pathfinding */

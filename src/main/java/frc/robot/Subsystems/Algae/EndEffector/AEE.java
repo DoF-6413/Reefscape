@@ -4,19 +4,12 @@
 
 package frc.robot.Subsystems.Algae.EndEffector;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotStateConstants;
-import org.littletonrobotics.junction.Logger;
 
 public class AEE extends SubsystemBase {
   private final AEEIO m_io;
   private final AEEIOInputsAutoLogged m_inputs = new AEEIOInputsAutoLogged();
-
-  // PID Controller
-  private final PIDController m_PIDController;
-  private boolean m_enablePID = false;
 
   /**
    * Constructs a new ALGAE End Effector ({@link AEE}) instance.
@@ -31,34 +24,14 @@ public class AEE extends SubsystemBase {
 
     // Initialize the IO implementation
     m_io = io;
-
-    // Initialize the PID controller
-    m_PIDController = new PIDController(AEEConstants.KP, AEEConstants.KI, AEEConstants.KD);
-
-    // Tunable PID gains
-    SmartDashboard.putBoolean("PIDFF_Tuning/AEE/EnableTuning", false);
-    SmartDashboard.putNumber("PIDFF_Tuning/AEE/KP", AEEConstants.KP);
-    SmartDashboard.putNumber("PIDFF_Tuning/AEE/KI", AEEConstants.KI);
-    SmartDashboard.putNumber("PIDFF_Tuning/AEE/KD", AEEConstants.KD);
   }
 
   @Override
   // This method will be called once per scheduler run
   public void periodic() {
-    // Update and log inputs
-    m_io.updateInputs(m_inputs);
-    Logger.processInputs("AEE", m_inputs);
-
-    // Control the AEE through the PID controller if enabled, open loop voltage control if disabled
-    if (m_enablePID) {
-      // Calculate voltage based on PID controller
-      this.setVoltage(m_PIDController.calculate(m_inputs.velocityRadPerSec));
-
-      // Enable and update tunable PID gains through SmartDashboard
-      if (SmartDashboard.getBoolean("PIDFF_Tuning/AEE/EnableTuning", false)) {
-        this.updatePID();
-      }
-    }
+    // // Update and log inputs // TODO: test to reduce loop time
+    // m_io.updateInputs(m_inputs);
+    // Logger.processInputs("AEE", m_inputs);
   }
 
   /**
@@ -86,49 +59,5 @@ public class AEE extends SubsystemBase {
    */
   public void setPercentSpeed(double percent) {
     m_io.setVoltage(percent * RobotStateConstants.MAX_VOLTAGE);
-  }
-
-  /**
-   * Sets the setpoint of the AEE PID controller.
-   *
-   * @param setpoint Velocity in radians per second.
-   */
-  public void setVelocity(double setpoint) {
-    Logger.recordOutput("Superstructure/Setpoints/AEEVelocity", setpoint);
-    m_PIDController.setSetpoint(setpoint);
-  }
-
-  /**
-   * Sets the gains for the PID controller.
-   *
-   * @param kP Proportional gain value.
-   * @param kI Integral gain value.
-   * @param kD Derivative gain value.
-   */
-  public void setPID(double kP, double kI, double kD) {
-    m_PIDController.setPID(kP, kI, kD);
-  }
-
-  /**
-   * Enable closed loop PID control for the AEE.
-   *
-   * @param enable {@code true} to enable PID control, {@code false} to disable.
-   */
-  public void enablePID(boolean enable) {
-    m_enablePID = enable;
-  }
-
-  /** Update PID gains for the AEE motor from SmartDashboard inputs. */
-  private void updatePID() {
-    // If any value on SmartDashboard changes, update the gains
-    if (AEEConstants.KP != SmartDashboard.getNumber("PIDFF_Tuning/AEE/KP", AEEConstants.KP)
-        || AEEConstants.KI != SmartDashboard.getNumber("PIDFF_Tuning/AEE/KI", AEEConstants.KI)
-        || AEEConstants.KD != SmartDashboard.getNumber("PIDFF_Tuning/AEE/KD", AEEConstants.KD)) {
-      AEEConstants.KP = SmartDashboard.getNumber("PIDFF_Tuning/AEE/KP", AEEConstants.KP);
-      AEEConstants.KI = SmartDashboard.getNumber("PIDFF_Tuning/AEE/KI", AEEConstants.KI);
-      AEEConstants.KD = SmartDashboard.getNumber("PIDFF_Tuning/AEE/KD", AEEConstants.KD);
-      // Sets the new gains
-      this.setPID(AEEConstants.KP, AEEConstants.KI, AEEConstants.KD);
-    }
   }
 }

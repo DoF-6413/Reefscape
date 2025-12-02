@@ -77,7 +77,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         m_turnCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.FRONT_LEFT.CAN_ID, "Drivetrain");
         m_absEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.FRONT_LEFT.OFFSET;
-        m_currentLimit = 50;
+        m_currentLimit = DriveConstants.CUR_LIM_A;
         break;
 
       case 1:
@@ -97,7 +97,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         m_turnCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.BACK_LEFT.CAN_ID, "Drivetrain");
         m_absEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.BACK_LEFT.OFFSET;
-        m_currentLimit = 20;
+        m_currentLimit = DriveConstants.CUR_LIM_A;
         break;
 
       case 3:
@@ -107,7 +107,7 @@ public class ModuleIOSparkMaxTalonFX implements ModuleIO {
         m_turnCANcoder =
             new CANcoder(DriveConstants.ABSOLUTE_ENCODER.BACK_RIGHT.CAN_ID, "Drivetrain");
         m_absEncoderOffsetRad = DriveConstants.ABSOLUTE_ENCODER_OFFSET.BACK_RIGHT.OFFSET;
-        m_currentLimit = 20;
+        m_currentLimit = DriveConstants.CUR_LIM_A;
         break;
 
       default:

@@ -8,20 +8,23 @@ public final class ClimberConstants {
   public static final int LEAD_CAN_ID = 18;
   /** CAN ID for the second Climber motor */
   public static final int FOLLOWER_CAN_ID = 22;
+  /** DIO port of the limit switch */
+  public static final int LIMIT_SWITCH_PORT = 8;
   /** Gear reduction of 9:1 for the Climber */
-  public static final double GEAR_RATIO = 9.0 / 1.0;
+  public static final double GEAR_RATIO = 9.0 / 1.0; // TODO: Update
   /**
    * Set the inversion of the Climber motor to false, making Counterclockwise the positive direction
    */
   public static final boolean IS_INVERTED = false;
   /**
-   * Sets the inversion status of the follower Climber motor to false, making it follow the lead's direction
+   * Sets the inversion status of the follower Climber motor to false, making it follow the lead's
+   * direction
    */
   public static final boolean INVERT_FOLLOWER = false;
   /** Current limit of 60 amps for the Climber motor */
-  public static final int STALL_CUR_LIM_A = 100;
+  public static final int STALL_CUR_LIM_A = 20;
   /** Current limit of 120 amps for the Climber motor */
-  public static final int MAX_CURRENT_A = 120;
+  public static final int MAX_CURRENT_A = 20;
   /** Enable current limiting for the Climber motor */
   public static final boolean ENABLE_CUR_LIM = true;
   /** Refresh signals of the TalonFX 50 times a second (every 0.02 second) */
@@ -35,6 +38,12 @@ public final class ClimberConstants {
   public static final double DEPLOY_PERCENT_SPEED = 0.2;
   /** Percent speed for retracting the Climber to pull up the robot */
   public static final double RETRACT_PERCENT_SPEED = -0.2;
+  /** Voltage to deploy the Climber */
+  public static final double DEPLOY_VOLTAGE = -12;
+  /** Voltage to retract the Climber to pull up the robot */
+  public static final double RETRACT_VOLTAGE = 12;
+  /** Voltage to hold the robot up when climbed */
+  public static final double HOLDING_VOLTAGE = 1;
   // Angle positions
   /** Minimum (default) angle of the Climber in radians */
   public static final double MIN_ANGLE_RAD = Units.degreesToRadians(10);

@@ -75,8 +75,17 @@ public class Periscope extends SubsystemBase {
     m_io.updateInputs(m_inputs);
     Logger.processInputs("Periscope", m_inputs);
 
-    if (m_inputs.isHallEffectSensorTriggered[0]
-        && m_inputs.heightMeters < Units.inchesToMeters(3)) {
+    // Hall Effect zeroing
+
+    // if (m_inputs.isHallEffectSensorTriggered && m_inputs.heightMeters < Units.inchesToMeters(3))
+    // {
+    //   this.resetPosition(0);
+    // }
+
+    // Current zeroing
+    if (m_inputs.currentDraw[0] > 30
+        && m_inputs.heightMeters < Units.inchesToMeters(5)
+        && Math.abs(m_inputs.velocityMetersPerSec) < 0.1) {
       this.resetPosition(0);
     }
 
@@ -90,6 +99,8 @@ public class Periscope extends SubsystemBase {
     if (DriverStation.isDisabled()) {
       // Don't apply feedforward if disabled
       feedforwardVolts = 0.0;
+      this.setPosition(m_inputs.heightMeters);
+      this.stop();
     }
 
     if (m_enablePID) {
@@ -123,6 +134,10 @@ public class Periscope extends SubsystemBase {
     m_io.enableBrakeMode(enable);
   }
 
+  public void stop() {
+    m_io.stop();
+  }
+
   /**
    * Sets the position of the Periscope motors in meters.
    *
@@ -148,8 +163,18 @@ public class Periscope extends SubsystemBase {
    * @param index Port of the desired Hall Effect sensor to get the triggered status of.
    * @return {@code true} if the specified Hall Effect sensor triggered, {@code false} if not.
    */
-  public boolean isHallEffectSensorTriggered(int index) {
-    return m_inputs.isHallEffectSensorTriggered[index];
+  public boolean isHallEffectSensorTriggered() {
+    return m_inputs.isHallEffectSensorTriggered;
+  }
+
+  /**
+   * @return If the Periscope is stalling, below a certain height, and not moving then it is at the
+   *     bottom of its travel
+   */
+  public boolean isAtBottom() {
+    return (m_inputs.currentDraw[0] > 30
+        && m_inputs.heightMeters < Units.inchesToMeters(5)
+        && Math.abs(m_inputs.velocityMetersPerSec) < 0.1);
   }
 
   /**
@@ -161,7 +186,7 @@ public class Periscope extends SubsystemBase {
     // Compare new setpoint to previous to determine whether to lower acceleration or not
     var acceleration =
         (heightMeters < m_prevSetpoint)
-            ? PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2 / 6
+            ? PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2 / 4
             : PeriscopeConstants.MAX_ACCELERATION_M_PER_SEC2;
 
     // Record and update setpoint
