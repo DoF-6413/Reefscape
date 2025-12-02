@@ -239,7 +239,11 @@ public class RobotContainer {
                 m_driveSubsystem,
                 () -> m_joystickController.getRawAxis(1),
                 () -> m_joystickController.getRawAxis(0),
-                () -> -0.75 * m_joystickController.getRawAxis(2))
+                () ->
+                    -0.75
+                        * (Math.copySign(
+                            m_joystickController.getRawAxis(2) * m_joystickController.getRawAxis(2),
+                            m_joystickController.getRawAxis(2))))
             .withName("JoystickFieldRelativeDrive"));
 
     gyroButton.onTrue(
