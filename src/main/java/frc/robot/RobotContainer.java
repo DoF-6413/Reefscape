@@ -30,6 +30,7 @@ public class RobotContainer {
   private final GenericHID m_joystickController =
       new GenericHID(OperatorConstants.DRIVER_CONTROLLER);
 
+  // Joystick Buttons
   private final JoystickButton gyroButton = new JoystickButton(m_joystickController, 4);
 
   // Autos
@@ -103,8 +104,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
-    // this.driverControllerBindings();
-    this.joystickControllerBindings();
+    this.driverControllerBindings();
+    // this.joystickControllerBindings();
   }
 
   /** Driver Controls */
@@ -116,8 +117,32 @@ public class RobotContainer {
                 m_driveSubsystem,
                 () -> -m_driverController.getLeftY(),
                 () -> -m_driverController.getLeftX(),
-                () -> 0.8 * -m_driverController.getRightX())
+                () ->
+                    -.9
+                        * (Math.copySign(
+                            m_driverController.getRightX() * m_driverController.getRightX(),
+                            m_driverController.getRightX())))
             .withName("FieldRelativeDrive"));
+
+    // m_driveSubsystem.setDefaultCommand(
+    //     DriveCommands.fieldRelativeDrive(
+    //             m_driveSubsystem,
+    //             () ->
+    //                 -1
+    //                     * (Math.copySign(
+    //                         m_driverController.getLeftY() * m_driverController.getLeftY(),
+    //                         m_driverController.getLeftY())),
+    //             () ->
+    //                 -1
+    //                     * (Math.copySign(
+    //                         m_driverController.getLeftX() * m_driverController.getLeftX(),
+    //                         m_driverController.getLeftX())),
+    //             () ->
+    //                 -1
+    //                     * (Math.copySign(
+    //                         m_driverController.getRightX() * m_driverController.getRightX(),
+    //                         m_driverController.getRightX())))
+    //         .withName("FieldRelativeDriveRamped"));
     // Field relative
     m_driverController
         .rightStick()
@@ -247,7 +272,6 @@ public class RobotContainer {
             .withName("JoystickFieldRelativeDrive"));
 
     gyroButton.onTrue(
-        // if (m_joystickController.getRawButton(4)) {
         new InstantCommand(
                 () ->
                     m_driveSubsystem.resetPose(

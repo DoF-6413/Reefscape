@@ -12,7 +12,7 @@ public class PeriscopeConstants {
    * DIO ports of the Hall Effect sensor on the Periscope. These sensor will serve as magnetic limit
    * switches
    */
-  public static final int HALL_EFFECT_SENSORS_PORT = 4;
+  public static final int HALL_EFFECT_SENSORS_PORT = 0; // REVERT TO 4
   /** Gear reduction of 38:12 for the Periscope */
   public static final double GEAR_RATIO = 38.0 / 12.0;
   /**
