@@ -2,25 +2,26 @@
 Code base for FRC Team 6413's 2025 Reefscape Robot Code
 
 ## Code Etiquette
-  Comments on EVERYTHING (Commands, Constants, etc)
-  Organize files properly in corresponding folders
-  Follow naming conventions (reference section below)
-  Create Issues on Github for EVERY branch
-  - add a description of what the branch should accomplish
-  - 'Assignees': used to indicate who is working on what
-  - 'Labels': used to organize issues, add as necessary
-  - 'Development': link the branch to the issue
+  1. Comments on EVERYTHING (Commands, Constants, etc) <br/>
+  2. Organize files properly in corresponding folders <br/>
+  3. Follow DoF [Naming Conventions](README.md#naming-conventions) <br/>
+  4. Create Issues on Github for EVERY branch
+     - add a description of what the branch should accomplish
+     - 'Assignees': used to indicate who is working on what
+     - 'Labels': used to organize issues, add as necessary
+     - 'Development': link the branch to the issue
+     
+  6. Sign in, sign out!
+     - Use your designated folder and ssh key
+     - Log out of Slack, Github, Google, and anything else at the end of the day
 
-  LOG OUT when finished for the day
-  - Use Credential Manager to Log Out of Github through Windows
-  - Log out of Slack, Github, Google, and anything else
+  8. Version Number
+     - first number = Number of pushes (commits) to Dev
+     - second number = Issue number
+     - third number = Commit number (of this branch)
+     - fourth number = Functionality: 0 = working, 1 = WIP, 2 = doesn't work 
 
-   Beta Numbers
- - first number = issue #
- - second number = # of commits
- - third number = functionality (0 = works as intended, 1 = WIP, 2 = doesn't work)
-
-For example, on the branch associated with issue 7, with 18 commits, which is still in development should look like: "7.18.1"
+For example, with 6 commits to Dev, on the branch associated with issue 4 with 13 commits, which is completely functional (tested for consistency) should look like: "6.4.13.0"
 
 ## Branch Organization
 
@@ -63,37 +64,50 @@ chore#[Issue#]-[name]:
 - Branch name is all lowercase and hyphenated
 
 ## Naming Conventions
-- Folder and file names
+- Folder names
+  - Lower case at all times
+- File and Class names
   - CapitalizeEveryWordWithoutSpaces
-  - *unless it's a subsystem in Subsystems, which are all lowercase (ex: "arm", "utbintake")
 - Constants
   - ALL_CAPS_WITH_UNDERSCORES
-- Functions and variables
+- Functions and non-Class variables
   - camelCase (lowercase first word, capitalize first letter of all subsequent words, no spaces)
+- Class variables
+  - All class variables should begin with "m_" to denote they are a "member" of said class
 
 ## Folder/File Organization
 - **Commands**
-  - **Teleop Commands**
-    - Commands used for Teleop
-    - Ex: scoring AMP, intaking NOTE from SOURCE, run all Intakes, etc.
-  - **Zero Commands**
-    - Resets Actuator, Arm, Wrist, Shooter, and Feeder to their "zero" positions
+  - **Auto Commands**
+    - All of DoF's custom-built autonomous routines
+  - **Drive Commands**
+    - Includes different driving modes such as field-relative (default), robot-relative (used for certain autonomous routines), heading-locked, and automated routines we utilize such as feedforward and wheel radius characterizations.
+  - **Pathfinding Commands**
+    - The commands for on-the-fly trajectory following using PathPlanner's Pathfinding feature.
+  - **Superstructure Commands**
+    - Determines the state of the entire superstructure, or all the mechanisms not related to the drivetrain, typically including the elevator and end effectors
+
 - **Subsystems**
-  - Ex: Arm, Drive, Vision, etc.
+  - For 2025, DoF's official subsystems are denoted as follows:
+    - Periscope (PS) aka elevator
+    - ALGAE End Effector (AEE)
+    - CORAL End Effector (CEE)
+    - Funnel (FL)
+    - Climber (CL)
+  - The code for a typical subsystem is organized by 6328's AdvantageKit framework, as follows: 
   - [subsystem]
     - [Subsystem.java]: main class for subsystem, runs commands depending on passed in IO (sim or real), extends SubsystemBase
     - [Subsystem]Constants.java: subsystem-specific constants
     - [Subsystem]IO.java: interface for inputs and methods
     - [Subsystem]IOSim.java: simulation code for subsystem, implements [Subsystem]IO
     - [Subsystem]IO[Motor].java: real code for subsystem, implements [Subsystem]IO
+  - The Drive subsystem encompasses the Gyro, Odometry, and Pose Estimation utilities.
+
 - **Utils**
-  - PathPlanner
-    - Used in autos to follow a path
-  - PIDController
-    - Custom DoF PID Controller class
-  - PoseEstimator
-    - Calculates pose based on sensors
-- Other (not in a folder)
+  - CAN IDs
+    - A helpful reference of all the CAN IDs of the robot's electronics
+  - Elastic
+    - Configures Elastic dashboard layout
+- **Other**
   - Constants
     - Constants shared by all subsystems, related to the robot
     - Ex: controller port numbers, battery voltage, alliance (red/blue), etc.
@@ -106,20 +120,20 @@ chore#[Issue#]-[name]:
 
 ## Useful Git Bash Commands
 - git add .
-  - stages all code to prepare for commit and push
+  - Stages all code to prepare for commit and push
 - git commit -m "[Insert Message Here]"
-  - saves code locally with a msg of what was done to the code
+  - Saves code locally with a message of what was done to the code
 - git push
-  - pushes code to the cloud
+  - Pushes code to the cloud
 - git fetch
-  - tells laptop their are new changes
+  - Tells the laptop there are new changes
 - git pull
-  - puts new changes on laptop
+  - Puts new changes on laptop
   - git pull does git fetch
 - git pull origin Dev
-  - pulls changes from Dev
+  - Pulls changes from Dev
 - git merge (origin) Dev
-  - pulls ALL changes from Dev (no rebases)
+  - Pulls ALL changes from Dev (no rebases)
 - git checkout [branch name]
   - Changes your branch
 - git checkout -b [branch name]
