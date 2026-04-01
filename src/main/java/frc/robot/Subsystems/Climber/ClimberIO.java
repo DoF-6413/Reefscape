@@ -22,6 +22,8 @@ public interface ClimberIO {
     public double positionRad = 0.0;
     /** Velocity of the Climber in radians per second */
     public double velocityRadPerSec = 0.0;
+    /** Whether or not the limit switch is triggered */
+    public boolean limitSwitch = false;
   }
 
   /**

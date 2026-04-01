@@ -22,7 +22,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
   private final TalonFX m_leadTalonFX;
   private final TalonFX m_followerTalonFX;
   private final TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-  private final DigitalInput[] m_hallEffectSensors = new DigitalInput[2];
+  private final DigitalInput m_hallEffectSensors;
 
   // Periscope motors' logged signals
   private StatusSignal<Voltage>[] m_appliedVolts = new StatusSignal[2];
@@ -48,9 +48,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
         new Follower(PeriscopeConstants.CAN_ID_LEFT, PeriscopeConstants.INVERT_FOLLOWER));
 
     // Initialize the Hall Effect sensors
-    for (int i = 0; i < m_hallEffectSensors.length; i++) {
-      m_hallEffectSensors[i] = new DigitalInput(PeriscopeConstants.HALL_EFFECT_SENSORS_PORTS[i]);
-    }
+    m_hallEffectSensors = new DigitalInput(PeriscopeConstants.HALL_EFFECT_SENSORS_PORT);
 
     // Motor configuration
     m_motorConfig
@@ -134,9 +132,7 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
     inputs.velocityMetersPerSec = inputs.velocityRadPerSec * PeriscopeConstants.SPOOL_RADIUS_M;
 
     // Update logged inputs for each Hall Effect sensor
-    for (int i = 0; i < m_hallEffectSensors.length; i++) {
-      inputs.isHallEffectSensorTriggered[i] = !m_hallEffectSensors[i].get();
-    }
+    inputs.isHallEffectSensorTriggered = !m_hallEffectSensors.get();
   }
 
   @Override
@@ -152,6 +148,11 @@ public class PeriscopeIOTalonFX implements PeriscopeIO {
         enable ? NeutralModeValue.Brake : NeutralModeValue.Coast);
     // Apply configuration
     m_leadTalonFX.getConfigurator().apply(m_motorConfig);
+  }
+
+  @Override
+  public void stop() {
+    m_leadTalonFX.stopMotor();
   }
 
   @Override

@@ -6,7 +6,6 @@ package frc.robot.Subsystems.Drive;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
-import frc.robot.Utils.LocalADStarAK;
+// import frc.robot.Utils.LocalADSt
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.Logger;
@@ -109,7 +108,7 @@ public class Drive extends SubsystemBase {
         this);
     // Pathfinder by FRC 6328 that adds AdvantageKit logging functionality to PathPlanner's
     // Pathfinder
-    Pathfinding.setPathfinder(new LocalADStarAK());
+    // Pathfinding.setPathfinder(new LocalADStarAK());
 
     // Initialize Pose Estimator
     m_swervePoseEstimator =
@@ -144,7 +143,8 @@ public class Drive extends SubsystemBase {
             builder.addDoubleProperty(
                 "Back Right Velocity", () -> m_modules[3].getVelocityMetersPerSec(), null);
 
-            builder.addDoubleProperty("Robot Angle", () -> m_robotHeading.getRadians(), null);
+            builder.addDoubleProperty(
+                "Robot Angle", () -> getCurrentPose2d().getRotation().getRadians(), null);
           }
         });
     m_field.setRobotPose(this.getCurrentPose2d());
@@ -374,7 +374,7 @@ public class Drive extends SubsystemBase {
    * @return {@link Rotation2d} of the current angle of the robot.
    */
   public Rotation2d getRobotHeading() {
-    return m_robotHeading;
+    return this.getCurrentPose2d().getRotation();
   }
 
   /* ~~~~~~~~~~~~~~~~~~ Gyro ~~~~~~~~~~~~~~~~~~ */

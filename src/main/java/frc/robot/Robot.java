@@ -87,7 +87,11 @@ public class Robot extends LoggedRobot {
      * 4: Functionality: 0 = working, 1 = WIP, 2 = doesn't work
      */
 
+<<<<<<< feat#24-update-readme
     SmartDashboard.putString("Version Number", "38.0.38.0");
+=======
+    SmartDashboard.putString("Version Number", "37.0.37.0");
+>>>>>>> Dev
 
     SmartDashboard.putString("Last Deployed: ", BuildConstants.BUILD_DATE);
 
@@ -96,6 +100,8 @@ public class Robot extends LoggedRobot {
     PathfindingCommand.warmupCommand();
 
     m_robotContainer = new RobotContainer();
+
+    // m_robotContainer.zeroAll().schedule();
   }
 
   /** This function is called periodically during all modes. */

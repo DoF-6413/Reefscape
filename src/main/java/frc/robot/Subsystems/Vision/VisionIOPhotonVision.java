@@ -14,32 +14,36 @@ public class VisionIOPhotonVision implements VisionIO {
    *
    * @param index Number corresponding to camera that is to be initilized (0 - Front, 1 - Back)
    */
-  public VisionIOPhotonVision(int index) {
-    System.out.println(
-        "[Init] Creating VisionIOPhotonVision " + VisionConstants.CAMERA_NAMES[index]);
+  public VisionIOPhotonVision(String camera) {
+    System.out.println("[Init] Creating VisionIOPhotonVision " + camera);
 
     // Initialize camera
-    m_camera = new PhotonCamera(VisionConstants.CAMERA_NAMES[index]);
+    m_camera = new PhotonCamera(camera);
   }
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
-    // Update inputs with every results in queue
+    // // Update inputs with every results in queue // TODO: Test to reduce loop time
     for (var result : m_camera.getAllUnreadResults()) {
       inputs.pipelineResult = result;
-      inputs.hasTargets = result.hasTargets();
+      //   inputs.hasTargets = result.hasTargets();
       inputs.timestampSec = result.getTimestampSeconds();
-      if (inputs.hasTargets) {
-        // Update values with best target seen
-        inputs.target = result.getBestTarget();
-        inputs.fiducialID = result.getBestTarget().getFiducialId();
-        inputs.poseAmbiguity = result.getBestTarget().getPoseAmbiguity();
-      } else {
-        // Update values to default if no AprilTag is seen
-        inputs.target = null;
-        inputs.fiducialID = 0;
-        inputs.poseAmbiguity = 0.0;
-      }
+      //   if (inputs.hasTargets) {
+      //     // Update values with best target seen
+      //     inputs.target = result.getBestTarget();
+      //     inputs.fiducialID = result.getBestTarget().getFiducialId();
+      //     inputs.poseAmbiguity = result.getBestTarget().getPoseAmbiguity();
+      //   } else {
+      //     // Update values to default if no AprilTag is seen
+      //     inputs.target = null;
+      //     inputs.fiducialID = 0;
+      //     inputs.poseAmbiguity = 0.0;
+      //   }
     }
+  }
+
+  @Override
+  public String getCameraName() {
+    return m_camera.getName();
   }
 }

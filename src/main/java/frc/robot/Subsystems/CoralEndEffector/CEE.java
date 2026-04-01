@@ -4,7 +4,6 @@
 
 package frc.robot.Subsystems.CoralEndEffector;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotStateConstants;
@@ -13,10 +12,6 @@ import org.littletonrobotics.junction.Logger;
 public class CEE extends SubsystemBase {
   private final CEEIO m_io;
   private final CEEIOInputsAutoLogged m_inputs = new CEEIOInputsAutoLogged();
-
-  // PID controller
-  private final PIDController m_PIDController;
-  private boolean m_enablePID = false;
 
   /**
    * Constructs a new CORAL End Effector ({@link CEE}) instance.
@@ -32,16 +27,8 @@ public class CEE extends SubsystemBase {
     // Initialize the IO implementation
     m_io = io;
 
-    // Initialize the PID controller
-    m_PIDController = new PIDController(CEEConstants.KP, CEEConstants.KI, CEEConstants.KD);
-
-    // Tunable PID gains
-    SmartDashboard.putBoolean("PIDFF_Tuning/CEE/EnableTunung", false);
-    SmartDashboard.putNumber("PIDFF_Tuning/CEE/KP", CEEConstants.KP);
-    SmartDashboard.putNumber("PIDFF_Tuning/CEE/KI", CEEConstants.KI);
-    SmartDashboard.putNumber("PIDFF_Tuning/CEE/KD", CEEConstants.KD);
-
-    SmartDashboard.putBoolean("BeamBreak", false);
+    SmartDashboard.putBoolean("Sim/BeamBreak_Entrance", false);
+    SmartDashboard.putBoolean("Sim/BeamBreak_Exit", false);
   }
 
   @Override
@@ -50,17 +37,6 @@ public class CEE extends SubsystemBase {
     // Update and log inputs
     m_io.updateInputs(m_inputs);
     Logger.processInputs("CEE", m_inputs);
-
-    // Control the CEE through the PID controller if enabled, open loop voltage control if disabled
-    if (m_enablePID) {
-      // Calculate voltage based on PID controller
-      this.setVoltage(m_PIDController.calculate(m_inputs.velocityRadPerSec));
-
-      // Enable and update tunable PID gains through SmartDashboard
-      if (SmartDashboard.getBoolean("PIDFF_Tuning/CEE/EnableTuning", false)) {
-        this.updatePID();
-      }
-    }
   }
 
   /**
@@ -91,66 +67,22 @@ public class CEE extends SubsystemBase {
   }
 
   /**
-   * Sets the setpoint of the CEE PID controller.
-   *
-   * @param setpoint Velocity in radians per second.
-   */
-  public void setVelocity(double setpoint) {
-    Logger.recordOutput("Superstructure/Setpoints/CEEVelocity", setpoint);
-    m_PIDController.setSetpoint(setpoint);
-  }
-
-  /**
-   * Sets the PID gains for PID controller.
-   *
-   * @param kP Proportional gain value.
-   * @param kI Integral gain value.
-   * @param kD Derivative gain value.
-   */
-  public void setPID(double kP, double kI, double kD) {
-    m_PIDController.setPID(kP, kI, kD);
-  }
-
-  /**
-   * Enable closed loop PID control for the CEE.
-   *
-   * @param enable {@code true} to enable PID control, {@code false} to disable.
-   */
-  public void enablePID(boolean enable) {
-    m_enablePID = enable;
-  }
-
-  /** Update PID gains for the CEE motors from SmartDashboard inputs. */
-  private void updatePID() {
-    // If any value on SmartDashboard changes, update the gains
-    if (CEEConstants.KP != SmartDashboard.getNumber("PIDFF_Tuning/CEE/KP", CEEConstants.KP)
-        || CEEConstants.KI != SmartDashboard.getNumber("PIDFF_Tuning/CEE/KI", CEEConstants.KI)
-        || CEEConstants.KD != SmartDashboard.getNumber("PIDFF_Tuning/CEE/KD", CEEConstants.KD)) {
-      CEEConstants.KP = SmartDashboard.getNumber("PIDFF_Tuning/CEE/KP", CEEConstants.KP);
-      CEEConstants.KI = SmartDashboard.getNumber("PIDFF_Tuning/CEE/KI", CEEConstants.KI);
-      CEEConstants.KD = SmartDashboard.getNumber("PIDFF_Tuning/CEE/KD", CEEConstants.KD);
-      // Sets the new gains
-      this.setPID(CEEConstants.KP, CEEConstants.KI, CEEConstants.KD);
-    }
-  }
-
-  /**
    * Triggered means that the beam break is broken (an object is in between the sensor).
    *
    * @return {@code true} if the sensor has been triggered, {@code false} if not.
    */
   public boolean isBeamBreakEntranceTriggered() {
     return m_inputs.isBeamBreakEntranceTriggered;
-    // return SmartDashboard.getBoolean("BeamBreak", false); // for sim
+    // return SmartDashboard.getBoolean("Sim/BeamBreak_Entrance", false);
   }
 
   /**
    * Triggered means that the beam break is broken (an object is in between the sensor).
    *
-   * @return {@code true} if the sensor has been triggered, {@code false} if not.
+   * @return {@code true} if either sensor has been triggered, {@code false} if not.
    */
   public boolean isBeamBreakExitTriggered() {
     return m_inputs.isBeamBreakExitTriggered;
-    // return SmartDashboard.getBoolean("BeamBreak", false); // for sim
+    // return SmartDashboard.getBoolean("Sim/BeamBreak_Exit", false);
   }
 }

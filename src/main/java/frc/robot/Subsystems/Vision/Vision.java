@@ -58,10 +58,11 @@ public class Vision extends SubsystemBase {
           new PhotonPoseEstimator(
               FieldConstants.APRILTAG_FIELD_LAYOUT,
               PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-              VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
+              VisionConstants.CAMERA_OFFSETS.get(io[i].getCameraName()));
       m_photonPoseEstimators[i].setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
       Logger.recordOutput(
-          "Camera/" + VisionConstants.CAMERA_NAMES[i], VisionConstants.CAMERA_ROBOT_OFFSETS[i]);
+          "Camera/" + m_io[i].getCameraName(),
+          VisionConstants.CAMERA_OFFSETS.get(io[i].getCameraName()));
     }
   }
 
@@ -71,7 +72,7 @@ public class Vision extends SubsystemBase {
     for (int i = 0; i < m_inputs.length; i++) {
       // Update and log inputs
       m_io[i].updateInputs(m_inputs[i]);
-      Logger.processInputs("Vision/" + VisionConstants.CAMERA_NAMES[i], m_inputs[i]);
+      Logger.processInputs("Vision/" + m_io[i].getCameraName(), m_inputs[i]);
 
       // Check results and add available and unambiguous Vision measurements to list
       var currentResult = m_inputs[i].pipelineResult;
@@ -81,14 +82,17 @@ public class Vision extends SubsystemBase {
       if (optionalEstimatedPose.isEmpty())
         continue; // Move to next camera update iteration if no position is estimated
       var estimatedPose = optionalEstimatedPose.get().estimatedPose.toPose2d();
+
       double ambiguity =
-          (currentResult.targets.size() == 1)
-              ? currentResult.getBestTarget().getPoseAmbiguity()
-              : currentResult.getMultiTagResult().get().estimatedPose.ambiguity;
+          (currentResult.targets.size() > 1 && currentResult.getMultiTagResult().isPresent())
+              ? currentResult.getMultiTagResult().get().estimatedPose.ambiguity
+              : currentResult.getBestTarget().getPoseAmbiguity();
+      double tagDistance = currentResult.getBestTarget().getBestCameraToTarget().getX();
       if (
       // Ensure pose is trustworthy and within field bounds in order to be used
       ambiguity >= 0.0
           && ambiguity <= 0.2
+          && tagDistance <= 3.5
           && estimatedPose.getX() >= 0.0
           && estimatedPose.getX() <= FieldConstants.FIELD_LENGTH
           && estimatedPose.getY() >= 0.0
@@ -97,18 +101,21 @@ public class Vision extends SubsystemBase {
         m_estimatedPoses.add(estimatedPose);
         // Record estimated pose
         Logger.recordOutput(
-            "Odometry/Vision/EstimatedPoses/" + VisionConstants.CAMERA_NAMES[i], estimatedPose);
+            "Odometry/Vision/EstimatedPoses/" + m_io[i].getCameraName(), estimatedPose);
       }
     }
 
-    if (m_estimatedPoses.size() == 0)
+    if (m_estimatedPoses.size() == 0) {
+      m_estimatedPoses.clear();
       return; // Move to next periodic iteration if no poses estimated
+    }
 
     /* Add Vision measurements to Swerve Pose Estimator in Drive through the VisionConsumer */
     if (m_estimatedPoses.size() > 1) {
       // Average poses is both cameras see an AprilTag and clear pose list
       var averagePose =
           averageVisionPoses(m_estimatedPoses.toArray(new Pose2d[m_estimatedPoses.size()]));
+      Logger.recordOutput("Odometry/Vision/AveragePose", averagePose);
       m_consumer.accept(averagePose, m_inputs[0].timestampSec, m_stdDevs);
       m_estimatedPoses.clear();
     } else {

@@ -1,7 +1,6 @@
 package frc.robot.Subsystems.Vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.robot.Utils.LimelightHelpers.LimelightResults;
 import org.littletonrobotics.junction.AutoLog;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -39,7 +38,11 @@ public interface VisionIO {
   /**
    * @return Target information from the Limelight
    */
-  public default LimelightResults getLimeLightResults() {
+  // public default LimelightResults getLimeLightResults() {
+  //   return null;
+  // }
+
+  public default String getCameraName() {
     return null;
   }
 }
