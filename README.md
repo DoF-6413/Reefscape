@@ -64,12 +64,13 @@ chore#[Issue#]-[name]:
 - Branch name is all lowercase and hyphenated
 
 ## Naming Conventions
-- Folder and file names
+- Folder names
+  - Lower case at all times
+- File and Class names
   - CapitalizeEveryWordWithoutSpaces
-  - *unless it's a subsystem in Subsystems, which are all lowercase (ex: "arm", "utbintake")
 - Constants
   - ALL_CAPS_WITH_UNDERSCORES
-- Functions
+- Functions and non-Class variables
   - camelCase (lowercase first word, capitalize first letter of all subsequent words, no spaces)
 - Class variables
   - All class variables should begin with "m_" to denote they are a "member" of said class
