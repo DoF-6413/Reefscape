@@ -13,7 +13,6 @@ public class AutoCommands {
                 DriveCommands.robotRelativeDrive(drive, () -> driveSpeed, () -> 0.0, () -> 0.0)
                     .withTimeout(driveTime)));
   }
-<<<<<<< feat#24-update-readme
 
   /**
    * 1 Piece auto for scoring a specified CORAL on the G or H BRANCHES. Doesn't use Vision (only
@@ -158,6 +157,4 @@ public class AutoCommands {
                                 SuperstructureCommands.intakeCoral(
                                     periscope, algaePivot, aee, cee, funnel)))));
   }
-=======
->>>>>>> Dev
 }
