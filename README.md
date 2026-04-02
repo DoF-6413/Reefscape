@@ -10,7 +10,7 @@ Code base for FRC Team 6413's 2025 Reefscape Robot Code
      - 'Assignees': used to indicate who is working on what
      - 'Labels': used to organize issues, add as necessary
      - 'Development': link the branch to the issue
-     
+
   6. Sign in, sign out!
      - Use your designated folder and ssh key
      - Log out of Slack, Github, Google, and anything else at the end of the day
@@ -19,7 +19,7 @@ Code base for FRC Team 6413's 2025 Reefscape Robot Code
      - first number = Number of pushes (commits) to Dev
      - second number = Issue number
      - third number = Commit number (of this branch)
-     - fourth number = Functionality: 0 = working, 1 = WIP, 2 = doesn't work 
+     - fourth number = Functionality: 0 = working, 1 = WIP, 2 = doesn't work
 
 For example, with 6 commits to Dev, on the branch associated with issue 4 with 13 commits, which is completely functional (tested for consistency) should look like: "6.4.13.0"
 
@@ -93,7 +93,7 @@ chore#[Issue#]-[name]:
     - CORAL End Effector (CEE)
     - Funnel (FL)
     - Climber (CL)
-  - The code for a typical subsystem is organized by 6328's AdvantageKit framework, as follows: 
+  - The code for a typical subsystem is organized by 6328's AdvantageKit framework, as follows:
   - [subsystem]
     - [Subsystem.java]: main class for subsystem, runs commands depending on passed in IO (sim or real), extends SubsystemBase
     - [Subsystem]Constants.java: subsystem-specific constants
