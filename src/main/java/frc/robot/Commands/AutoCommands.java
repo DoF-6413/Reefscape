@@ -497,7 +497,7 @@ public class AutoCommands {
    * @param funnel {@link Funnel} subsystem
    * @param driveSpeed Percent speed of the Drivetrain
    * @param coralLevel CORAL level to score
-   * @return {@link Command} that runs the deadreckoned 1 piece auto.
+   * @return {@link Command} that runs the dead reckoned 1 piece auto.
    */
   public static Command deadreckonOnePiece(
       Drive drive,
@@ -571,7 +571,7 @@ public class AutoCommands {
   }
 
   /**
-   * 1.5 Piece auto for scoring a specified CORAL on the G or H BRANCHES. Uses deadre
+   * 1.5 Piece auto for scoring a specified CORAL on the G or H BRANCHES. Uses dead reckoning
    *
    * @param drive {@link Drive} subsystem
    * @param periscope {@link Periscope} subsystem
@@ -581,7 +581,7 @@ public class AutoCommands {
    * @param funnel {@link Funnel} subsystem
    * @param driveSpeed Percent speed of the Drivetrain
    * @param coralLevel CORAL level to score
-   * @return {@link Command} that runs the deadreckoned 1 piece auto.
+   * @return {@link Command} that runs the dead reckoned 1 piece auto.
    */
   public static Command unethicalOneAndHalfPiece(
       Drive drive,

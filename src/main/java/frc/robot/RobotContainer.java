@@ -1,36 +1,24 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Commands.AutoCommands;
 import frc.robot.Commands.DriveCommands;
 import frc.robot.Commands.PathfindingCommands;
 import frc.robot.Commands.SuperstructureCommands;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.RobotStateConstants;
-import frc.robot.Subsystems.Algae.EndEffector.*;
-import frc.robot.Subsystems.Algae.Pivot.*;
-import frc.robot.Subsystems.Climber.*;
-import frc.robot.Subsystems.CoralEndEffector.*;
 import frc.robot.Subsystems.Drive.*;
-import frc.robot.Subsystems.Funnel.*;
-import frc.robot.Subsystems.Periscope.*;
-import frc.robot.Subsystems.Vision.*;
-import frc.robot.Utils.PDH;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -38,25 +26,13 @@ public class RobotContainer {
   // Chassis
   private final Drive m_driveSubsystem;
 
-  // Mechanisms
-  private final AlgaePivot m_algaePivotSubsystem;
-  private final Periscope m_periscopeSubsystem;
-  private final Climber m_climberSubsystem;
-  private final Funnel m_funnelSubsystem;
-  private final AEE m_AEESubsystem;
-  private final CEE m_CEESubsystem;
-
-  // Utils
-  private final Vision m_visionSubsystem;
-  private final PDH m_pdh;
-
   // Controllers
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER);
-  private final CommandXboxController m_auxButtonBoard =
-      new CommandXboxController(OperatorConstants.AUX_BUTTON_BOARD);
-  private final CommandXboxController m_auxController =
-      new CommandXboxController(OperatorConstants.AUX_XBOX_CONTROLLER);
+  private final GenericHID m_joystickController =
+      new GenericHID(OperatorConstants.DRIVER_CONTROLLER);
+
+  private final JoystickButton gyroButton = new JoystickButton(m_joystickController, 4);
 
   // Autos
   private final LoggedDashboardChooser<Command> m_autoChooser =
@@ -126,56 +102,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new GyroIO() {});
-        m_algaePivotSubsystem = new AlgaePivot(new AlgaePivotIO() {});
-        m_periscopeSubsystem = new Periscope(new PeriscopeIO() {});
-        m_climberSubsystem = new Climber(new ClimberIO() {});
-        m_funnelSubsystem = new Funnel(new FunnelIO() {});
-        m_AEESubsystem = new AEE(new AEEIO() {});
-        m_CEESubsystem = new CEE(new CEEIO() {});
-        m_visionSubsystem = new Vision(m_driveSubsystem::addVisionMeasurement, new VisionIO() {});
         break;
     }
-
-    // Utils
-    m_pdh = new PDH();
-
-    /* PathPlanner Commands */
-    NamedCommands.registerCommand(
-        "Zero_Superstructure",
-        SuperstructureCommands.zero(
-            m_periscopeSubsystem,
-            m_algaePivotSubsystem,
-            m_AEESubsystem,
-            m_CEESubsystem,
-            m_funnelSubsystem));
-    NamedCommands.registerCommand(
-        "Position_L1",
-        SuperstructureCommands.positionsToL1(m_periscopeSubsystem, m_algaePivotSubsystem));
-    NamedCommands.registerCommand(
-        "Position_L2_CORAL",
-        SuperstructureCommands.positionsToL2Coral(
-            m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem));
-    NamedCommands.registerCommand(
-        "Position_L3_CORAL",
-        SuperstructureCommands.positionsToL3Coral(
-            m_periscopeSubsystem, m_algaePivotSubsystem, m_AEESubsystem));
-    NamedCommands.registerCommand(
-        "Position_L4",
-        SuperstructureCommands.positionsToL4(
-            m_periscopeSubsystem, m_algaePivotSubsystem, m_CEESubsystem));
-    NamedCommands.registerCommand(
-        "Score", SuperstructureCommands.score(m_AEESubsystem, m_CEESubsystem, m_funnelSubsystem));
-    NamedCommands.registerCommand(
-        "Intake_CORAL",
-        SuperstructureCommands.intakeCoral(
-            m_periscopeSubsystem,
-            m_algaePivotSubsystem,
-            m_AEESubsystem,
-            m_CEESubsystem,
-            m_funnelSubsystem));
-    NamedCommands.registerCommand(
-        "CEE_Out",
-        Commands.runOnce(() -> m_CEESubsystem.setPercentSpeed(CEEConstants.SCORE_PERCENT_SPEED)));
 
     /* Autonomous Routines */
     m_autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
@@ -375,9 +303,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
-    this.driverControllerBindings();
-    this.auxButtonBoardBindings();
-    this.auxControllerBindings();
+    // this.driverControllerBindings();
+    this.joystickControllerBindings();
   }
 
   /** Driver Controls */
@@ -397,9 +324,9 @@ public class RobotContainer {
         .onTrue(
             DriveCommands.fieldRelativeDrive(
                     m_driveSubsystem,
-                    () -> -m_driverController.getLeftY(),
-                    () -> -m_driverController.getLeftX(),
-                    () -> 0.8 * -m_driverController.getRightX())
+                    () -> m_driverController.getLeftY(),
+                    () -> m_driverController.getLeftX(),
+                    () -> -0.8 * m_driverController.getRightX())
                 .withName("FieldRelativeDrive"));
     // Lock robot heading to 0 degrees
     m_driverController
@@ -614,6 +541,7 @@ public class RobotContainer {
             new InstantCommand(() -> m_driverController.setRumble(RumbleType.kBothRumble, 1))
                 .withName("Controller Rumble"))
         .onFalse(new InstantCommand(() -> m_driverController.setRumble(RumbleType.kBothRumble, 0)));
+    /* Misc */
     // Stop in X
     m_driverController
         .b()
